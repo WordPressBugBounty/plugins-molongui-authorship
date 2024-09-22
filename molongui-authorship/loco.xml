@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bundle name="Molongui Authorship">
+    <domain name="molongui-authorship">
+        <project name="Molongui Authorship" slug="molongui-authorship">
+            <source>
+                <directory>.</directory>
+                <exclude>
+                    <directory>i18n</directory>
+                </exclude>
+            </source>
+            <target>
+                <directory>i18n</directory>
+            </target>
+            <template>
+                <file>i18n/molongui-authorship.pot</file>
+            </template>
+        </project>
+    </domain>
+</bundle>
