@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
-foreach( $author['posts'] as $related )
+foreach( $profile['posts'] as $related_id )
 {
     ?>
     <li>
@@ -10,32 +10,34 @@ foreach( $author['posts'] as $related )
 
             <?php if ( $add_microdata ) : ?>
             <div class="molongui-display-none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                <div itemprop="name"><?php echo $author['name']; ?></div>
-                <div itemprop="url"><?php echo esc_url( $author['archive'] ); ?></div>
+                <div itemprop="name"><?php echo esc_html( $profile['name'] ); ?></div>
+                <div itemprop="url"><?php echo esc_url( $profile['archive_url'] ); ?></div>
             </div>
             <?php endif; ?>
 
             <!-- Related entry thumb -->
             <div class="m-a-box-related-entry-thumb">
-                <?php if ( has_post_thumbnail( $related->ID ) ) : ?>
-                    <a href="<?php echo get_permalink( $related->ID ); ?>">
-                        <?php echo get_the_post_thumbnail( $related->ID, 'thumbnail', $attr = ( $add_microdata ? array( 'itemprop' => 'thumbnailUrl' ) : array() ) ) ?>
+                <?php if ( has_post_thumbnail( $related_id ) ) : ?>
+                    <a href="<?php echo esc_url( get_permalink( $related_id ) ); ?>">
+                        <?php echo get_the_post_thumbnail( $related_id, 'thumbnail', $attr = ( $add_microdata ? array( 'itemprop' => 'thumbnailUrl' ) : array() ) ) ?>
                     </a>
                 <?php else : ?>
-                    <img src="<?php echo MOLONGUI_AUTHORSHIP_URL.'assets/img/related_placeholder.svg'; ?>" width="<?php echo get_option( 'thumbnail_size_w' ).'px'; ?>">
+                    <img src="<?php echo esc_url( MOLONGUI_AUTHORSHIP_URL.'assets/img/related_placeholder.svg' ); ?>" width="<?php echo esc_attr( get_option( 'thumbnail_size_w' ).'px' ); ?>">
                 <?php endif; ?>
             </div>
 
             <div class="m-a-box-related-entry-data">
                 <!-- Related entry date -->
                 <div class="m-a-box-related-entry-date" <?php echo ( $add_microdata ? 'itemprop="datePublished"' : '' ); ?>>
-                    <?php echo get_the_date( '', $related->ID ); ?>
+                    <?php echo get_the_date( '', $related_id ); ?>
                 </div>
 
                 <!-- Related entry title -->
                 <div class="m-a-box-related-entry-title">
-                    <a class="molongui-remove-underline" href="<?php echo get_permalink( $related->ID ); ?>" <?php echo ( $add_microdata ? 'itemprop="url"' : '' ); ?>>
-                        <span <?php echo ( $add_microdata ? 'itemprop="headline"' : '' ); ?>><?php echo $related->post_title; ?></span>
+                    <a class="molongui-remove-underline" href="<?php echo esc_url( get_permalink( $related_id ) ); ?>" <?php echo ( $add_microdata ? 'itemprop="url"' : '' ); ?>>
+                        <span <?php echo ( $add_microdata ? 'itemprop="headline"' : '' ); ?>>
+                            <?php echo wp_kses_post( get_the_title( $related_id ) ); ?>
+                        </span>
                     </a>
                 </div>
             </div>

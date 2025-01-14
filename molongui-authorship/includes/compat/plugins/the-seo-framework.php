@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -34,7 +35,7 @@ add_filter( 'the_seo_framework_title_from_generation', function ( $generated, $a
 {
     global $wp_query;
 
-    if ( is_guest_author() and isset( $wp_query->guest_author_id ) )
+    if ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) )
     {
         if ( 'Untitled' === $generated )
         {

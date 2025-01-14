@@ -1,5 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'the_author_posts_link', function( $link )
 {
     if ( is_author() )
@@ -8,15 +12,15 @@ add_filter( 'the_author_posts_link', function( $link )
         $fn = 'hootkit_display_meta_info';
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
-            if ( function_exists('authorship_get_byline') )
+            if ( method_exists( 'Post', 'get_byline' ) )
             {
                 global $post;
 
-                $options        = authorship_get_options();
-                $separator      = !empty( $options['byline_multiauthor_separator'] ) ? $options['byline_multiauthor_separator'] : ',';
-                $last_separator = !empty( $options['byline_multiauthor_last_separator'] ) ? $options['byline_multiauthor_last_separator'] : __( "and", 'molongui-authorship' );
+                $options        = Settings::get();
+                $separator      = !empty( $options['co_authors_separator'] ) ? $options['co_authors_separator'] : ',';
+                $last_separator = !empty( $options['co_authors_last_separator'] ) ? $options['co_authors_last_separator'] : __( "and", 'molongui-authorship' );
 
-                return authorship_get_byline( $post->ID, $separator, $last_separator, true );
+                return Post::get_byline( $post->ID, $separator, $last_separator, true );
             }
         }
     }

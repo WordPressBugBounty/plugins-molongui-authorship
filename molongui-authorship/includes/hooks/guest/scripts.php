@@ -8,7 +8,6 @@ function authorship_register_edit_guest_scripts()
 
     Assets::register_script( $file, 'edit_guest' );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_edit_guest_scripts' );
 function authorship_enqueue_edit_guest_scripts()
 {
     $screen = get_current_screen();
@@ -17,7 +16,6 @@ function authorship_enqueue_edit_guest_scripts()
 
     Assets::enqueue_script( $file, 'edit_guest', true );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_enqueue_edit_guest_scripts' );
 function authorship_edit_guest_script_params()
 {
     $params = array

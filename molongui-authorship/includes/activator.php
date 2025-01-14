@@ -1,6 +1,16 @@
 <?php
+/*!
+ * Handles the activation process for Molongui Authorship plugin, ensuring the proper setup of required components.
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes
+ * @since      1.0.0
+ */
 
 namespace Molongui\Authorship;
+
+use Molongui\Authorship\Common\Utils\WP;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Activator
@@ -10,7 +20,7 @@ class Activator
 	    if ( function_exists('is_multisite') and is_multisite() and $network_wide )
 	    {
 		    if ( !is_super_admin() ) return;
-		    foreach ( molongui_get_sites() as $site_id )
+		    foreach ( WP::get_sites() as $site_id )
 		    {
 			    switch_to_blog( $site_id );
 			    self::activate_single_blog();
@@ -58,21 +68,18 @@ class Activator
 	}
     public static function add_default_options()
     {
-        require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/hooks/options/defaults.php';
-        require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/helpers/common/options/options.php';
-
-        authorship_add_defaults();
+        Settings::add_defaults();
     }
     public static function run_background_tasks()
     {
-        if ( apply_filters( 'authorship/check_wp_cron', true ) and ( defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON ) ) return false;
-
-        require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/helpers/common/options/options.php';
-
-        $options = authorship_get_options();
-
-        if ( $options['guest_authors'] or $options['enable_multi_authors'] )
+        if ( apply_filters( 'authorship/check_wp_cron', true ) and ( defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON ) )
         {
+            return;
+        }
+
+        if ( Settings::get( 'guest_author_enabled', true ) or Settings::get( 'co_authors_enabled', true ) )
+        {
+
             add_option( 'molongui_authorship_update_post_authors', true, '', true );
             add_option( 'molongui_authorship_update_post_counters', true, '', true );
         }

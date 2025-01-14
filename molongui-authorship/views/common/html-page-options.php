@@ -1,5 +1,8 @@
 <?php
 
+
+use Molongui\Authorship\Common\Modules\Settings;
+
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 ?>

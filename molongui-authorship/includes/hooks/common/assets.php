@@ -3,9 +3,6 @@
 use Molongui\Authorship\Common\Utils\Assets;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-
-add_action( 'admin_enqueue_scripts', array( Assets::class, 'register_media_uploader' ) );
-add_action( 'admin_enqueue_scripts', array( Assets::class, 'register_sweetalert' ) );
 if ( !function_exists( 'molongui_register_media_uploader' ) )
 {
     function molongui_register_media_uploader()
@@ -55,7 +52,6 @@ if ( !function_exists( 'molongui_register_selectr' ) )
         wp_register_script( 'molongui-selectr', $selectr_js_url, array(), $version, true );
         wp_register_style( 'molongui-selectr', $selectr_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_selectr' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_sortable' ) )
 {
@@ -73,7 +69,6 @@ if ( !function_exists( 'molongui_register_sortable' ) )
         }
         wp_register_script( 'molongui-sortable', $sortable_js_url, array( 'jquery' ), $version, true );
     }
-    add_action( 'admin_init', 'molongui_register_sortable' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_semantic_ui_dropdown' ) )
 {
@@ -94,7 +89,6 @@ if ( !function_exists( 'molongui_register_semantic_ui_dropdown' ) )
         wp_register_script( 'molongui-dropdown', $dropdown_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-dropdown' , $dropdown_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_semantic_ui_dropdown' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_semantic_ui_transition' ) )
 {
@@ -115,7 +109,6 @@ if ( !function_exists( 'molongui_register_semantic_ui_transition' ) )
         wp_register_script( 'molongui-transition', $transition_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-transition' , $transition_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_semantic_ui_transition' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_semantic_ui_icon' ) )
 {
@@ -133,7 +126,6 @@ if ( !function_exists( 'molongui_register_semantic_ui_icon' ) )
         }
         wp_register_style( 'molongui-icon', $icon_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_semantic_ui_icon' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_semantic_ui_label' ) )
 {
@@ -151,7 +143,6 @@ if ( !function_exists( 'molongui_register_semantic_ui_label' ) )
         }
         wp_register_style( 'molongui-label', $label_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_semantic_ui_label' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_semantic_ui_popup' ) )
 {
@@ -172,7 +163,6 @@ if ( !function_exists( 'molongui_register_semantic_ui_popup' ) )
         wp_register_script( 'molongui-popup', $popup_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-popup' , $popup_css_url, array(), $version, 'screen' );
     }
-    add_action( 'admin_init', 'molongui_register_semantic_ui_popup' ); // Can't use the 'admin_enqueue_scripts' hook!
 }
 if ( !function_exists( 'molongui_register_element_queries' ) )
 {
@@ -196,5 +186,4 @@ if ( !function_exists( 'molongui_register_element_queries' ) )
             wp_register_script( 'molongui-elementqueries', $elementqueries_js_url, array( 'jquery' ), $version, true );
         }
     }
-    add_action( 'init', 'molongui_register_element_queries' );
 }

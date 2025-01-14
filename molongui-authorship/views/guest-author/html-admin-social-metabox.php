@@ -1,12 +1,15 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Common\Utils\Plugin;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 ?>
 
 <div class="molongui-metabox">
 
     <ul class="m-tip"><li><?php _e( "Only filled in profiles will be displayed on the frontend as icons. If you are missing some networks you would like to configure, enable them on the plugin settings page: Authors > Settings > More tab > Social Networks section.", 'molongui-authorship' ); ?></li></ul>
-    <?php if ( !authorship_has_pro() and false !== array_search(true, array_column( $networks, 'premium' ) ) ) : ?>
+    <?php if ( !Plugin::has_pro() and false !== array_search(true, array_column( $networks, 'premium' ) ) ) : ?>
         <ul class="m-tip m-premium"><li><?php printf( __( "Disabled options are only available in the %sPro version%s of the plugin.", 'molongui-authorship' ), '<a href="'.MOLONGUI_AUTHORSHIP_WEB.'">', '</a>' ); ?></li></ul>
     <?php endif; ?>
 
@@ -14,9 +17,9 @@ defined( 'ABSPATH' ) or exit;
 
         <?php $network['value'] = get_post_meta( $post->ID, '_molongui_guest_author_'.$id, true ); ?>
 
-        <div class="m-field <?php echo ( ( !authorship_has_pro() and $network['premium'] ) ? 'm-premium' : '' ) ?>">
+        <div class="m-field <?php echo ( ( !Plugin::has_pro() and $network['premium'] ) ? 'm-premium' : '' ) ?>">
             <label class="m-title" for="_molongui_guest_author_<?php echo $id; ?>"><i class="m-a-icon-<?php echo $id; ?>"></i><?php echo $network['name']; ?></label>
-            <?php if ( !authorship_has_pro() and $network['premium'] ) : ?>
+            <?php if ( !Plugin::has_pro() and $network['premium'] ) : ?>
                 <div class="input-wrap">
                     <div class="m-tooltip">
                         <input type="text" disabled placeholder="<?php printf( __( "%s Premium feature", 'molongui-authorship' ), '&#128970;' ); ?>" value="" class="text">

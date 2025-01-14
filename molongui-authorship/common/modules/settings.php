@@ -6,6 +6,7 @@ use Molongui\Authorship\Common\Modules\Settings\Settings_Page;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Common\Utils\Plugin;
+use Molongui\Authorship\Common\Utils\Post;
 use Molongui\Authorship\Common\Utils\Request;
 use Molongui\Authorship\Common\Utils\User;
 use Molongui\Authorship\Common\Utils\WP;
@@ -16,6 +17,7 @@ class Settings
     use Settings_Page;
     public function __construct()
     {
+        add_filter( 'wp_default_styles', array( $this, 'dequeue_wp_forms_styles' ), PHP_INT_MAX );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
         add_filter( 'authorship/options_script_params', array( __CLASS__, 'localize_scripts' ), 10 );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'register_styles' ) );
@@ -25,6 +27,7 @@ class Settings
         add_action( 'wp_ajax_'.MOLONGUI_AUTHORSHIP_PREFIX.'_save_options', array( $this, 'save' ) );
         add_action( 'wp_ajax_'.MOLONGUI_AUTHORSHIP_PREFIX.'_export_options', array( $this, 'export' ) );
         add_action( 'wp_ajax_molongui_send_mail', array( $this, 'send_mail' ) );
+        add_action( 'wp_ajax_molongui_copy_system_details', array( $this, 'ajax_copy_system_details' ) );
         add_action( 'plugins_loaded', array( $this, 'load_custom_snippets' ), PHP_INT_MAX );
     }
     public static function get( $id = null, $default = false )
@@ -57,10 +60,11 @@ class Settings
     {
         $fw_options = array
         (
-            'custom_css'  => '',
-            'custom_php'  => '',
-            'keep_config' => true,
-            'keep_data'   => true,
+            'custom_css'          => '',
+            'custom_php'          => '',
+            'custom_php_in_admin' => false,
+            'uninstall_enabled'   => true,
+            'uninstall'           => 'files',
         );
 
         return apply_filters( 'authorship/default_options', $fw_options );
@@ -120,9 +124,9 @@ class Settings
     }
     public function export()
     {
-        if ( !WP::verify_nonce( 'mfw_export_options_nonce', 'nonce' ) )
+        if ( !WP::verify_nonce( 'molongui_export_options', 'nonce' ) )
         {
-            echo 'false';
+            echo 'Missing or invalid nonce.';
             wp_die();
         }
         if ( !current_user_can( 'manage_options' ) )
@@ -297,6 +301,20 @@ class Settings
         $sent = wp_mail( $user['mail'], $subject, $message, $headers );
         return $sent;
     }
+    public function ajax_copy_system_details()
+    {
+        check_ajax_referer( 'molongui-support-nonce', 'security', true );
+        $data = Debug::get_debug_data( 'debug' );
+        echo wp_json_encode( array
+        (
+            'result'   => 'success',
+            'data'     => $data,
+            'file'     => __FILE__,
+            'class'    => __CLASS__,
+            'function' => __FUNCTION__,
+        ));
+        wp_die();
+    }
     public static function custom_snippets_input( $sanitized_text_field, $key, $value )
     {
         $dont_sanitize = array( 'custom_css', 'custom_php' );
@@ -317,11 +335,23 @@ class Settings
     }
     public function load_custom_snippets()
     {
+        if ( wp_doing_ajax() )
+        {
+            $action = isset( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
+            if ( MOLONGUI_AUTHORSHIP_PREFIX.'_save_options' === $action )
+            {
+                return;
+            }
+        }
         if ( Request::get( 'nophpAuthorship' ) )
         {
             return;
         }
-        $load_on_admin = ( apply_filters( 'authorship/enable_custom_php_in_admin', false ) or Request::get( 'phpAuthorship' ) or Settings::get( 'enable_custom_php_in_admin' ) );
+        $load_on_admin = apply_filters( 'authorship/enable_custom_php_in_admin', Settings::get( 'custom_php_in_admin' ) );
+        if ( Request::get( 'phpAuthorship' ) )
+        {
+            $load_on_admin = true;
+        }
         if ( is_admin() and !$load_on_admin )
         {
             return;
@@ -345,6 +375,54 @@ class Settings
                 Debug::console_log( null, __( "Custom PHP snippets loaded." ) );
             }
         }
+    }
+    public static function enabled_post_screens()
+    {
+        $screens = self::enabled_post_types();
+        foreach ( $screens as $screen )
+        {
+            $screens[] = 'edit-'.$screen;
+        }
+        return $screens;
+    }
+    public static function enabled_post_types( $type = 'all', $select = false )
+    {
+        $post_types = $options = array();
+        $settings = Settings::get();
+        if ( !isset( $settings['post_types'] ) )
+        {
+            return ( $select ? $options : $post_types );
+        }
+        foreach ( Post::get_post_types( $type, 'objects', false ) as $post_type_name => $post_type_object )
+        {
+            if ( in_array( $post_type_name, explode( ",", $settings['post_types'] ) ) )
+            {
+                $post_types[] = $post_type_name;
+                $options[]    = array( 'id' => $post_type_name, 'label' => $post_type_object->labels->name, 'singular' => $post_type_object->labels->singular_name );
+            }
+        }
+        return ( $select ? $options : $post_types );
+    }
+    public static function is_post_type_enabled( $post_type = null, $post_types = null )
+    {
+        if ( !$post_type  )
+        {
+            if ( is_admin() )
+            {
+                $post_type = Post::get_post_type();
+            }
+            else
+            {
+                $post_type = get_post_type();
+            }
+        }
+
+        if ( !$post_types )
+        {
+            $post_types = self::enabled_post_types();
+        }
+
+        return (bool) in_array( $post_type, $post_types );
     }
 
 } // class

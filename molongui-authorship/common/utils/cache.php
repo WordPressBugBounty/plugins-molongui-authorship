@@ -74,20 +74,20 @@ class Cache
         {
             rocket_clean_minify();
         }
-        if ( class_exists( 'WP_Optimize' ) and method_exists( 'WP_Optimize', 'get_page_cache' ) )
+        if ( class_exists( '\WP_Optimize' ) and method_exists( '\WP_Optimize', 'get_page_cache' ) )
         {
-            if ( class_exists( 'WPO_Page_Cache' ) and method_exists( 'WPO_Page_Cache', 'purge' ) )
+            if ( class_exists( '\WPO_Page_Cache' ) and method_exists( '\WPO_Page_Cache', 'purge' ) )
             {
-                WP_Optimize()->get_page_cache()->purge();
+                \WP_Optimize()->get_page_cache()->purge();
             }
         }
         if ( class_exists( '\LiteSpeed\Purge' ) )
         {
             do_action('litespeed_purge_all'); //\LiteSpeed\Purge::purge_all();
         }
-        if ( class_exists( 'autoptimizeCache' ) and method_exists( 'autoptimizeCache', 'clearall' ) )
+        if ( class_exists( '\autoptimizeCache' ) and method_exists( '\autoptimizeCache', 'clearall' ) )
         {
-            autoptimizeCache::clearall();
+            \autoptimizeCache::clearall();
         }
         if ( function_exists( 'sg_cachepress_purge_everything' ) )
         {
@@ -95,9 +95,9 @@ class Cache
         }
         do_action( 'breeze_clear_all_cache' );
         do_action( 'wphb_clear_page_cache' );
-        if ( class_exists( 'comet_cache' ) and method_exists( 'comet_cache', 'clear' ) )
+        if ( class_exists( '\comet_cache' ) and method_exists( '\comet_cache', 'clear' ) )
         {
-            comet_cache::clear();
+            \comet_cache::clear();
         }
     }
 

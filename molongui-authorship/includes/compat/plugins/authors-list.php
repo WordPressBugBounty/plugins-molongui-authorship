@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -19,7 +20,7 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
 
     return $user;
 }, 10, 4 );
-add_filter( 'authorship/get_the_author_description/skip', function ( $default, $description, $user_id, $original_user_id )
+add_filter( 'authorship/pre_the_author_description', function ( $default, $description, $user_id, $original_user_id )
 {
     if ( defined( 'AUTHORS_LIST_VERSION' ) and version_compare( AUTHORS_LIST_VERSION,'2.0.0', '<' ) )
     {
@@ -32,9 +33,12 @@ add_filter( 'authorship/get_the_author_description/skip', function ( $default, $
 
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
 
-    if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) ) return true;
-    return $default;
+    if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
+    {
+        return $description;
+    }
 
+    return $default;
 }, 10, 4 );
 add_filter( 'authorship/pre_author_link', function( $link, $original_link, $author_id, $author_nicename )
 {

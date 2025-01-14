@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/editor_caps', function( $default, $post_type )
 {
     if ( 'event' === $post_type )

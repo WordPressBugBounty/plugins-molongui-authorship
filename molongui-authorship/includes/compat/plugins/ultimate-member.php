@@ -1,5 +1,6 @@
 <?php
-defined('ABSPATH') or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'um_profile_query_make_posts', 'authorship_um_add_coauthored_1', 10, 1 );
 add_filter( 'posts_where'                , 'authorship_um_add_coauthored_2', 10, 2 );
 function authorship_um_add_coauthored_1( $args )

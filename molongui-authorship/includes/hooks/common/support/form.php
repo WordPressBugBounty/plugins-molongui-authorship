@@ -54,4 +54,4 @@ function authorship_send_mail()
     echo( $sent ? 'sent' : 'error' );
     wp_die();
 }
-add_action( 'wp_ajax_molongui_send_mail', 'authorship_send_mail' );
+//add_action( 'wp_ajax_molongui_send_mail', 'authorship_send_mail' );

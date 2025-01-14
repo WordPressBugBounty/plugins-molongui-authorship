@@ -1,9 +1,14 @@
 <?php
-defined( 'ABSPATH' ) or exit;
 
-$options  = authorship_get_options();
-$is_pro   = authorship_has_pro();
-$networks = authorship_get_social_networks( 'enabled' );
+use Molongui\Authorship\Common\Utils\Plugin;
+use Molongui\Authorship\Settings;
+use Molongui\Authorship\Social;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+$options  = Settings::get();
+$is_pro   = Plugin::has_pro();
+$networks = Social::get( 'enabled' );
 
 ?>
 
@@ -63,7 +68,7 @@ $networks = authorship_get_social_networks( 'enabled' );
         <!-- Social Profiles -->
         <div id="molongui-social-profiles">
             <h3><?php _e( "Social Profiles", 'molongui-authorship' ); ?></h3>
-            <ul class="m-tip"><li><?php printf( __( "The Molongui Authorship plugin allows you to add %smore than %s different social profiles%s, so if you don't see here the ones you want to add, just go to the %splugin settings page%s and enable those you need to edit. %sSocial profiles will be displayed as icons on the author box and other relevant sections. Any blank profile will not be displayed.", 'molongui-authorship' ), '<strong>', '110', '</strong>', '<a href="'.authorship_options_url( 'more' ).'" target="_blank">', '</a>', '<br>' ); ?></li></ul>
+            <ul class="m-tip"><li><?php printf( __( "The Molongui Authorship plugin allows you to add %smore than %s different social profiles%s, so if you don't see here the ones you want to add, just go to the %splugin settings page%s and enable those you need to edit. %sSocial profiles will be displayed as icons on the author box and other relevant sections. Any blank profile will not be displayed.", 'molongui-authorship' ), '<strong>', '110', '</strong>', '<a href="'.Settings::url( 'integrations' ).'" target="_blank">', '</a>', '<br>' ); ?></li></ul>
             <?php if ( !$is_pro and false !== array_search(true, array_column( $networks, 'premium' ) ) ) : ?>
                 <ul class="m-tip m-premium"><li><?php printf( __( "Disabled options are only available in the %sPro version%s of the plugin.", 'molongui-authorship' ), '<a href="'.MOLONGUI_AUTHORSHIP_WEB.'">', '</a>' ); ?></li></ul>
             <?php endif; ?>
@@ -94,13 +99,13 @@ $networks = authorship_get_social_networks( 'enabled' );
 
     <?php endif; ?>
 
-    <?php if ( authorship_is_feature_enabled( 'box' ) ) : ?>
+    <?php if ( Settings::is_enabled( 'author-box' ) ) : ?>
 
         <!-- Author Box Settings -->
         <div id="molongui-box-settings">
 
             <h3><?php _e( "Author Box Settings", 'molongui-authorship' ); ?></h3>
-            <ul class="m-tip"><li><?php printf( __( "On the %splugin settings page%s you can configure all the display settings that affects how the author box is displayed by default. Nonetheless, below you have some settings that override that global configuration for this user.", 'molongui-authorship' ), '<a href="'.authorship_options_url( 'author-box' ).'" target="_blank">', '</a>' ); ?></li></ul>
+            <ul class="m-tip"><li><?php printf( __( "On the %splugin settings page%s you can configure all the display settings that affects how the author box is displayed by default. Nonetheless, below you have some settings that override that global configuration for this user.", 'molongui-authorship' ), '<a href="'.Settings::url( 'reading' ).'" target="_blank">', '</a>' ); ?></li></ul>
 
             <table class="form-table" role="presentation">
                 <tbody>

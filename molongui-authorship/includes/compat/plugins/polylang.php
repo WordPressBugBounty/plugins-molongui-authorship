@@ -2,6 +2,7 @@
 
 namespace Molongui\Authorship;
 
+use Molongui\Authorship\Common\Utils\Request;
 use Molongui\Authorship\Post;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
@@ -25,9 +26,7 @@ class Polylang
     }
     public static function disable_guest_author_translation( $post_types, $is_settings )
     {
-        $options = authorship_get_options();
-
-        if ( isset( $options['pll_translate_guests'] ) and !$options['pll_translate_guests'] )
+        if ( !empty( Settings::get( 'pll_translate_guests', true ) ) )
         {
             unset( $post_types['guest_author'] );
         }
@@ -58,10 +57,13 @@ class Polylang
     }
     public static function remove_lang_from_query( $query )
     {
-        if ( !molongui_is_request( 'ajax' ) ) return;
+        if ( !Request::is_from( 'ajax' ) )
+        {
+            return;
+        }
 
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
-        $fn    = 'get_posts_count';
+        $fn    = 'get_post_type_count';
         $class = 'Molongui\Authorship\Author';
         if ( ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and
                isset( $dbt[$key]['class'] ) and ( $dbt[$key]['class'] == $class ) )

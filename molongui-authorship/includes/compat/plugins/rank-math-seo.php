@@ -1,8 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )
 {
-    if ( is_author() or is_guest_author() )
+    if ( is_author() or molongui_is_guest_author() )
     {
           $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
         $fn = 'generate_postdata';
@@ -44,7 +45,7 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
     $fn_2  = 'canonical';
     $class = 'RankMath\Paper\Author';
 
-    if ( !is_guest_author() )
+    if ( !molongui_is_guest_author() )
     {
         if ( $j = array_search( $fn_1, array_column( $dbt, 'function' ) ) )
         {
@@ -67,7 +68,7 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
     $fn_2  = 'process';
     $class = 'RankMath\Schema\Author';
 
-    if ( !is_guest_author() )
+    if ( !molongui_is_guest_author() )
     {
         if ( $j = array_search( $fn_1, array_column( $dbt, 'function' ) ) )
         {

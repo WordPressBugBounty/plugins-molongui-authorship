@@ -177,10 +177,13 @@ trait Options
                 'id'      => 'tools',
                 'name'    => __( 'Tools' ),
             );
+
+            $fw_options = apply_filters( 'authorship/tools/before_plugin_settings_panel', $fw_options );
             $fw_options[] = array
             (
                 'display' => true,
                 'type'    => 'header',
+                'id'      => 'tools_plugin_settings_panel',
                 'label'   => __( "Plugin Settings", 'molongui-authorship' ),
                 'buttons' => array(),
             );
@@ -239,7 +242,7 @@ trait Options
             );
             $fw_options = array_merge( $fw_options, apply_filters( 'authorship/options/common_tools', $plugin_tools ) );
         }
-        if ( apply_filters( 'authorship/options/add_help_tab', true ) )
+        if ( apply_filters( 'authorship/show_help_options', true ) )
         {
             $fw_options[] = array
             (

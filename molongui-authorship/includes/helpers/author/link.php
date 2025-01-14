@@ -1,24 +1,36 @@
 <?php
 
 use Molongui\Authorship\Author;
-defined( 'ABSPATH' ) or exit;
+use Molongui\Authorship\Post;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 function authorship_author_link( $link, $post_id = null )
 {
-    $options = authorship_get_options();
+    $options = Settings::get();
     if ( empty( $options['byline_name_link'] ) )
     {
         return apply_filters( 'authorship/author_link', '#molongui-disabled-link', array( 'url' => '#molongui-disabled-link', 'link' => $link, 'pid' => $post_id ) );
     }
     if ( empty( $post_id ) )
     {
-        $post = authorship_get_post();
-        if ( empty( $post ) ) return $link;
+        $post = Post::get();
+        if ( empty( $post ) )
+        {
+            return $link;
+        }
         $post_id = apply_filters( 'molongui_authorship_filter_link_post_id', isset( $post->ID ) ? $post->ID : null, $post, $link );
 
-        if ( !$post_id ) return $link;
+        if ( !$post_id )
+        {
+            return $link;
+        }
     }
     $authors = authorship_get_post_authors( $post_id );
-    if ( !$authors ) return $link;
+    if ( !$authors )
+    {
+        return $link;
+    }
     $modifiers_tag = ( ( !empty( $options['byline_prefix'] ) or !empty( $options['byline_suffix'] ) ) and authorship_has_pro() ) ? '?m_bm=true' : '';
     if ( is_multiauthor_post( $post_id ) and !empty( $options['byline_multiauthor_link'] ) and $options['byline_multiauthor_display'] != 'main' )
     {

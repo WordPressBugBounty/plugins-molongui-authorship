@@ -1,7 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'uwp_check_redirect_author_page', function()
 {
-    if ( is_guest_author() ) return false;
+    if ( molongui_is_guest_author() ) return false;
     return true;
 });

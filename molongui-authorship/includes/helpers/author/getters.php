@@ -6,6 +6,7 @@ use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 defined( 'ABSPATH' ) or exit;
+
 if ( !function_exists( 'molongui_get_author_by' ) )
 {
     function molongui_get_author_by( $field, $value, $type = 'user', $meta = true )
@@ -41,7 +42,7 @@ if ( !function_exists( 'molongui_get_author_by' ) )
                         ),
                     ),
                     'site_id'    => get_current_blog_id(),
-                    'language'   => array( Helpers::class, 'get_language' ),
+                    'language'   => Helpers::get_language(),
                 );
             }
             else
@@ -51,7 +52,7 @@ if ( !function_exists( 'molongui_get_author_by' ) )
                     $field      => $value,
                     'post_type' => MOLONGUI_AUTHORSHIP_CPT,
                     'site_id'   => get_current_blog_id(),
-                    'language'  => array( Helpers::class, 'get_language' ),
+                    'language'  => Helpers::get_language(),
                 );
             }
             $guest = Cache::query( $args, 'guests' );
@@ -60,6 +61,7 @@ if ( !function_exists( 'molongui_get_author_by' ) )
         return false;
     }
 }
+
 if ( !function_exists( 'molongui_get_author_type_by_nicename' ) )
 {
     function molongui_get_author_type_by_nicename( $nicename )
@@ -128,6 +130,7 @@ function molongui_find_authors()
     }
     return $authors;
 }
+
 if ( !function_exists('authorship_get_users') )
 {
     function authorship_get_users( $args = null )
@@ -140,7 +143,7 @@ if ( !function_exists('authorship_get_users') )
             'order'    => apply_filters( 'authorship/user/order', 'ASC' ),
             'orderby'  => apply_filters( 'authorship/user/orderby', 'name' ),
             'site_id'  => get_current_blog_id(),
-            'language' => apply_filters( 'authorship/get_users/language', array( Helpers::class, 'get_language' ) ),
+            'language' => apply_filters( 'authorship/get_users/language', Helpers::get_language() ),
         );
 
         $parsed_args = wp_parse_args( $args, $defaults );
@@ -174,6 +177,7 @@ if ( !function_exists('authorship_get_users') )
         return $users;
     }
 }
+
 if ( !function_exists( 'molongui_get_guests' ) )
 {
     function molongui_get_guests( $args = null )
@@ -191,7 +195,7 @@ if ( !function_exists( 'molongui_get_guests' ) )
             'no_found_rows'  => true,
             'dropdown'       => false,
             'site_id'        => get_current_blog_id(),
-            'language'       => apply_filters( 'authorship/get_guests/language', array( Helpers::class, 'get_language' ) ),
+            'language'       => apply_filters( 'authorship/get_guests/language', Helpers::get_language() ),
         );
 
         $parsed_args = wp_parse_args( $args, $defaults );
@@ -217,6 +221,7 @@ if ( !function_exists( 'molongui_get_guests' ) )
         return $guests->posts;
     }
 }
+
 if ( !function_exists( 'molongui_get_authors' ) )
 {
     function molongui_get_authors( $type = 'authors', $include_users = array(), $exclude_users = array(), $include_guests = array(), $exclude_guests = array(), $order = 'ASC', $orderby = 'name', $get_data = false, $min_post_count = 0, $post_types = array( 'post' ) )
@@ -372,16 +377,7 @@ if ( !function_exists( 'molongui_get_authors' ) )
         {
             $authors = array_slice( $authors, 0, $limit );
         }
-        
-        /*!
-         * FILTER HOOK
-         *
-         * Allows filtering the number of authors to be returned. Value 0 (all) is supported, but should be used with
-         * caution on larger sites.
-         *
-         * @param bool  By default, return all authors.
-         * @since 4.9.6
-         */
+
         /*!
          * FILTER HOOK
          *
@@ -446,6 +442,7 @@ if ( !function_exists( 'molongui_get_authors' ) )
         return $authors;
     }
 }
+
 if ( !function_exists( 'authorship_get_archived_users' ) )
 {
     function authorship_get_archived_users()
@@ -461,6 +458,7 @@ if ( !function_exists( 'authorship_get_archived_users' ) )
         return $archived_users;
     }
 }
+
 if ( !function_exists( 'authorship_get_archived_guests' ) )
 {
     function authorship_get_archived_guests()

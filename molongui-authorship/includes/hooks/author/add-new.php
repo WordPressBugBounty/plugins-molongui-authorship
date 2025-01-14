@@ -1,5 +1,7 @@
 <?php
 
+use Molongui\Authorship\User;
+
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 function authorship_add_author()
 {
@@ -68,10 +70,10 @@ function authorship_add_author()
         {
             $notify = !empty( $_REQUEST['user-notify'] ) ? 'both' : 'admin';
             wp_new_user_notification( $user_id, null, $notify );
-            authorship_user_clear_object_cache();
+            User::clear_object_cache();
             wp_safe_redirect( add_query_arg( 'user_id', $user_id, self_admin_url( 'user-edit.php#molongui-user-fields' ) ) );
             die();
         }
     }
 }
-add_action( 'admin_post_add_author', 'authorship_add_author' );
+//add_action( 'admin_post_add_author', 'authorship_add_author' );

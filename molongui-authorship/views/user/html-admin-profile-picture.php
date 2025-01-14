@@ -1,8 +1,11 @@
 <?php
-defined( 'ABSPATH' ) or exit;
 
-$user_profile = authorship_is_feature_enabled( 'user_profile' );
-$local_avatar = authorship_is_feature_enabled( 'avatar' );
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+$user_profile = Settings::is_enabled( 'user-profile' );
+$local_avatar = Settings::is_enabled( 'local-avatar' );
 
 ?>
 

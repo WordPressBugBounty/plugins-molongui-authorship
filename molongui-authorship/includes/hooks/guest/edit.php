@@ -60,7 +60,6 @@ function authorship_guest_save( $post_id )
     add_filter( 'redirect_post_location', 'authorship_guest_add_notice_query_var', 99, 2 );
     do_action( 'authorship/guest/save', $post_id, $_POST );
 }
-add_action( 'save_post_'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_guest_save' );
 function authorship_guest_add_notice_query_var( $location, $post_id )
 {
     remove_filter( 'redirect_post_location', 'authorship_guest_add_notice_query_var', 99 );
@@ -83,7 +82,6 @@ function authorship_guest_add_removable_arg( $args )
     array_push( $args, 'authorship_guest_save' );
     return $args;
 }
-add_filter( 'removable_query_args', 'authorship_guest_add_removable_arg' );
 function authorship_guest_admin_notices()
 {
     if ( !isset( $_GET['authorship_guest_save'] ) ) return;
@@ -114,9 +112,6 @@ function authorship_guest_admin_notices()
     </div>
     <?php
 }
-add_action( 'admin_notices', 'authorship_guest_admin_notices' );
-add_action( 'trashed_post'  , 'authorship_guest_clear_object_cache' );
-add_action( 'untrashed_post', 'authorship_guest_clear_object_cache' );
 function authorship_guest_delete( $guest_id )
 {
     $author      = new Author( $guest_id, 'guest' );
@@ -124,7 +119,6 @@ function authorship_guest_delete( $guest_id )
 
     add_filter( 'authorship/admin/guest/delete', function() use ( $guest_posts ) { return $guest_posts; } );
 }
-add_action( 'delete_post', 'authorship_guest_delete' );
 function authorship_guest_deleted( $guest_id, $guest = null )
 {
     $post_ids = apply_filters( 'authorship/admin/guest/delete', array() );
@@ -157,14 +151,12 @@ function authorship_guest_deleted( $guest_id, $guest = null )
     authorship_guest_clear_object_cache();
     do_action( 'authorship/admin/guest/deleted', $guest_id, $guest );
 }
-add_action( 'deleted_post', 'authorship_guest_deleted', 10, 2 );
 function authorship_guest_remove_media_buttons()
 {
     global $current_screen;
 
     if ( MOLONGUI_AUTHORSHIP_CPT == $current_screen->post_type ) remove_action( 'media_buttons', 'media_buttons' );
 }
-add_action( 'admin_head', 'authorship_guest_remove_media_buttons' );
 function authorship_guest_remove_preview_button()
 {
     $current_screen = get_current_screen();
@@ -172,14 +164,12 @@ function authorship_guest_remove_preview_button()
     if ( apply_filters( 'authorship/admin/guest/show_preview_button', false, $current_screen ) ) return;
     echo '<style>#post-preview{ display:none !important; }</style>';
 }
-add_action( 'admin_head', 'authorship_guest_remove_preview_button' );
 function authorship_guest_add_top_section_after_title()
 {
     global $post;
     if ( $post->post_type !== MOLONGUI_AUTHORSHIP_CPT ) return;
     do_meta_boxes( get_current_screen(), 'top', $post );
 }
-add_action( 'edit_form_after_title', 'authorship_guest_add_top_section_after_title' );
 function authorship_guest_add_meta_boxes( $post_type )
 {
     if ( !current_user_can( 'edit_others_pages' ) and !current_user_can( 'edit_others_posts' ) ) return;
@@ -264,12 +254,6 @@ function authorship_guest_add_meta_boxes( $post_type )
         do_action( 'authorship/admin/guest/metaboxes', $post_type );
     }
 }
-add_action( 'add_meta_boxes', 'authorship_guest_add_meta_boxes' );
-add_filter( 'authorship/admin/guest/convert/metabox', function()
-{
-    if ( !current_user_can( 'create_users' ) ) return false;
-    return true;
-}, 9 );
 function authorship_guest_render_profile_metabox( $post )
 {
     wp_nonce_field( 'molongui_authorship_guest', 'molongui_authorship_guest_nonce' );
@@ -330,13 +314,11 @@ function authorship_guest_add_conversion_metabox_class( $classes )
     if ( apply_filters( 'authorship/admin/guest/convert/metabox', '__return_true' ) ) array_push( $classes, 'free' );
     return $classes;
 }
-add_filter( 'postbox_classes_'.MOLONGUI_AUTHORSHIP_CPT.'_authorconversiondiv', 'authorship_guest_add_conversion_metabox_class' );
 function authorship_guest_add_short_bio_metabox_class( $classes )
 {
     if ( apply_filters( 'authorship/admin/guest/shortbio/metabox', '__return_true' ) ) array_push( $classes, 'free' );
     return $classes;
 }
-add_filter( 'postbox_classes_'.MOLONGUI_AUTHORSHIP_CPT.'_authorshortbiodiv', 'authorship_guest_add_short_bio_metabox_class' );
 function authorship_guest_filter_cpt_title( $data , $postarr )
 {
     if ( $data['post_type'] != MOLONGUI_AUTHORSHIP_CPT ) return $data;
@@ -354,4 +336,4 @@ function authorship_guest_filter_cpt_title( $data , $postarr )
     $data['post_name'] = '';
     return $data;
 }
-add_filter( 'wp_insert_post_data', 'authorship_guest_filter_cpt_title', 99, 2 );
+//add_filter( 'wp_insert_post_data', 'authorship_guest_filter_cpt_title', 99, 2 );

@@ -18,6 +18,7 @@ class Control
     public $_value;
     public $_class;
     public $_desc;
+    public $_hidden;
     public $_step;
     public $_name;
     public $_option_cls;
@@ -55,8 +56,17 @@ class Control
         $this->_value 			= ( isset( $this->_id ) and isset( $this->_saved[$this->_id] ) ) ? $this->_saved[$this->_id] : $this->_default;
 
         $this->_class 			= ( isset( $data['class'] ) ) ? $data['class'] : null;
-        $this->_desc 			= ( isset( $data['desc'] ) ) ? '<span class="description">'.$data['desc'].'</span>' : null;
-        $this->_desc 		   .= ( isset( $data['alert'] ) ) ? '<span class="description alert">'.$data['alert'].'</span>' : null;
+
+        if ( 'toggle' === $this->_type )
+        {
+            $this->_desc = ( isset( $data['desc'] ) ) ? $data['desc'] : '';
+        }
+        else
+        {
+            $this->_desc  = ( isset( $data['desc'] ) ) ? '<span class="description">'.$data['desc'].'</span>' : null;
+            $this->_desc .= ( isset( $data['alert'] ) ) ? '<span class="description alert">'.$data['alert'].'</span>' : null;
+        }
+        $this->_hidden 		    = ( isset( $data['hidden'] ) ) ? $data['hidden'] : '';
         $this->_step 		    = ( isset( $data['step'] ) ) ? $data['step'] : 1;
         $this->_name 			= ( isset( $data['name'] ) ) ? esc_html( $data['name'] ) : null;
         $this->_option_cls 		= ( isset( $data['option_cls'] ) ) ? $data['option_cls'] : null;
@@ -78,40 +88,59 @@ class Control
 
         $this->allowed_html = array
         (
+            'style'  => array(),
             'div'    => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
             'span'   => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
             'p'      => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
-            'ol'   => array
+            'ol'     => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
-            'ul'   => array
+            'ul'     => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
-            'li'   => array
+            'li'     => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
+            ),
+            'img'    => array
+            (
+                'src'    => array(),
+                'height' => array(),
+                'width'  => array(),
+                'alt'    => array(),
+                'title'  => array(),
+                'id'     => array(),
+                'class'  => array(),
+                'style'  => array(),
             ),
             'code'   => array
             (
-                'style' => array(),
+                'id'    => array(),
                 'class' => array(),
+                'style' => array(),
             ),
             'br'     => array(),
             'i'      => array(),
@@ -120,10 +149,12 @@ class Control
             'b'      => array(),
             'a'      => array
             (
-                'href'  => array(),
-                'title' => array(),
-                'style' => array(),
-                'class' => array(),
+                'id'     => array(),
+                'href'   => array(),
+                'target' => array(),
+                'title'  => array(),
+                'class'  => array(),
+                'style'  => array(),
             ),
             'input'  => array
             (
@@ -134,6 +165,55 @@ class Control
                 'style'       => array(),
                 'class'       => array(),
                 'placeholder' => array(),
+                'checked'     => array(),
+                'disabled'    => array(),
+            ),
+            'label'  => array
+            (
+                'for'   => array(),
+                'id'    => array(),
+                'class' => array(),
+                'style' => array(),
+            ),
+            'svg'    => array
+            (
+                'class'           => array(),
+                'version'         => array(),
+                'xmlns'           => array(),
+                'width'           => array(),
+                'height'          => array(),
+                'viewbox'         => array(), // Must be lowercase!
+                'role'            => array(),
+                'fill'            => array(),
+                'aria-hidden'     => array(),
+                'aria-labelledby' => array(),
+                'stroke'          => true,
+                'stroke-width'    => true,
+                'stroke-linecap'  => true,
+                'stroke-linejoin' => true,
+            ),
+            'path'   => array
+            (
+                'fill' => array(),
+                'd'    => array(),
+            ),
+            'circle' => array
+            (
+                'cx'           => true,
+                'cy'           => true,
+                'r'            => true,
+                'fill'         => true,
+                'stroke'       => true,
+                'stroke-width' => true,
+            ),
+            'line'   => array
+            (
+                'x1'           => true,
+                'y1'           => true,
+                'x2'           => true,
+                'y2'           => true,
+                'stroke'       => true,
+                'stroke-width' => true,
             ),
         );
     }
@@ -198,7 +278,11 @@ class Control
         $html  = '<div class="m-card '. ( empty( $this->_data['class'] ) ? '' : $this->_data['class'] ).'"'. $group . $deps . $hide . ' >';
         $html .= $help;
         $html .= !empty( $this->_data['title'] ) ? '<div class="m-option-title">'.wp_kses( $this->_data['title'], $this->allowed_html ).'</div>'  : '';
-        $html .= !empty( $this->_data['desc']  ) ? '<p class="m-option-description">'.wp_kses( $this->_data['desc'], $this->allowed_html ).'</p>' : '';
+
+        if ( 'toggle' !== $this->_type )
+        {
+            $html .= !empty( $this->_data['desc']  ) ? '<p class="m-option-description">'.wp_kses( $this->_data['desc'], $this->allowed_html ).'</p>' : '';
+        }
 
         $class = empty( $this->_data['notice'] ) ? '' : ' has-notice';
         $html .= '<div class="m-option' . $class . '">';
@@ -391,7 +475,7 @@ class Control
 
         return $output;
     }
-    private function toggle()
+    private function toggleOFF()
     {
         $output  = $this->prepend();
 
@@ -404,6 +488,41 @@ class Control
         $output .= $this->append();
 
         return $output;
+    }
+    private function toggle()
+    {
+        $toggle = $this->prepend();
+
+        ob_start();
+
+        ?>
+        <div class="molongui-ui-control molongui-ui-control__toggle">
+
+            <div class="molongui-ui-toggle <?php echo esc_attr( $this->_data['class'] ); ?>">
+                <input type="checkbox" role="switch" class="molongui-ui-toggle__input" id="<?php echo esc_attr( $this->_id ); ?>" name="<?php echo esc_attr( $this->_id ); ?>" <?php echo checked( $this->_value, true, false ); ?> />
+                <div class="molongui-ui-toggle__text">
+                    <label for="<?php echo esc_attr( $this->_id ); ?>" class="molongui-ui-toggle__label">
+                        <?php echo wp_kses( $this->_data['label'], $this->allowed_html ); ?>
+                    </label>
+                    <div class="molongui-ui-toggle__description">
+                        <?php echo wp_kses( $this->_desc, $this->allowed_html ); ?>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ( !empty( $this->_hidden ) ) : ?>
+            <div class="molongui-ui-hidden">
+                <?php echo wp_kses( $this->_hidden, $this->allowed_html ); ?>
+            </div>
+            <?php endif; ?>
+
+        </div>
+        <?php
+
+        $toggle .= ob_get_clean();
+        $toggle .= $this->append();
+
+        return $toggle;
     }
     private function toggle_group()
     {
@@ -440,12 +559,6 @@ class Control
             <i class="dropdown icon"></i>
             <div class="text default"><?php echo wp_kses( $this->_data['default'], $this->allowed_html ); ?></div>
             <div class="menu">
-                <!--
-                <div class="ui icon search input">
-                    <i class="search icon"></i>
-                    <input type="text" placeholder="Search tags...">
-                </div>
-                <div class="divider"></div>-->
                 <?php foreach( $this->_data['options'] as $option ) : ?>
                     <div class="item <?php echo ( !empty( $option['disabled'] ) ? 'disabled' : '' ); ?>" data-value="<?php echo esc_attr( $option['id'] ); ?>">
                         <?php if ( !empty( $option['icon'] ) ) : ?><i class="<?php echo esc_html( $option['icon'] ); ?>"></i><?php endif; ?>

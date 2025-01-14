@@ -14,7 +14,6 @@ function authorship_update_counters()
     echo json_encode( is_wp_error( $result ) ? 'false' : $result );
     wp_die();
 }
-add_action( 'wp_ajax_authorship_update_counters', 'authorship_update_counters' );
 function authorship_clear_cache_action()
 {
     check_ajax_referer( 'authorship_clear_cache_nonce', 'nonce', true );
@@ -22,4 +21,4 @@ function authorship_clear_cache_action()
     echo json_encode( true );
     wp_die();
 }
-add_action( 'wp_ajax_authorship_clear_cache_action', 'authorship_clear_cache_action' );
+//add_action( 'wp_ajax_authorship_clear_cache_action', 'authorship_clear_cache_action' );

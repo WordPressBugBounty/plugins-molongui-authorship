@@ -1,30 +1,6 @@
 <?php
 defined( 'ABSPATH' ) or exit;
-add_filter( 'authorship/options/styles', function( $file )
-{
-    $styles = MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/options.xxxx.min.css';
-    if ( file_exists( MOLONGUI_AUTHORSHIP_DIR. $file ) )
-    {
-        $file = MOLONGUI_AUTHORSHIP_URL . $styles;
-    }
-
-    return $file;
-
-}, 10, 1 );
-add_filter( 'authorship/options/script', function( $file )
-{
-    $script = 'assets/js/options.60b4.min.js';
-    if ( file_exists( MOLONGUI_AUTHORSHIP_DIR . $script ) )
-    {
-        $file = MOLONGUI_AUTHORSHIP_FOLDER . '/' . $script;
-    }
-
-    return $file;
-
-}, 10, 1 );
-add_action( 'authorship/options/enqueue_required_scripts', function()
-{
-});
+/*
 add_filter( 'authorship/options/script_params', function( $fw_params )
 {
     $params = apply_filters( "authorship/options/params", array
@@ -61,3 +37,4 @@ add_filter( 'authorship/options/script_params', function( $fw_params )
 
     return $fw_params + $params;
 }, 10, 1 );
+*/

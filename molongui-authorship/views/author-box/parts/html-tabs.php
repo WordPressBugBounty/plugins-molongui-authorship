@@ -1,7 +1,10 @@
 <?php
 
+use Molongui\Authorship\Common\Utils\Helpers;
+
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-$box_tabs = array
+$random_id = Helpers::rand();
+$box_tabs  = array
 (
     'name' => 'mab-tabs-'.$random_id,
     'tabs' => array
@@ -9,7 +12,7 @@ $box_tabs = array
         'profile' => array
         (
             'id'      => 'mab-tab-profile-'.$random_id,
-            'label'   => apply_filters( 'authorship/box/profile/title', $options['author_box_profile_title'], $author ),//( $options['author_box_profile_title'] ? $options['author_box_profile_title'] : __( "About the author", 'molongui-authorship' ) ),
+            'label'   => apply_filters( 'authorship/box/profile/title', $options['author_box_profile_title'], $profile ),//( $options['author_box_profile_title'] ? $options['author_box_profile_title'] : __( "About the author", 'molongui-authorship' ) ),
             'class'   => 'm-a-box-profile-title',//'m-a-box-string-about-the-author',
             'checked' => true,
             'display' => true,
@@ -17,7 +20,7 @@ $box_tabs = array
         'related' => array
         (
             'id'      => 'mab-tab-related-'.$random_id,
-            'label'   => apply_filters( 'authorship/box/related/title', $options['author_box_related_title'], $author ),//( $options['author_box_related_title'] ? $options['author_box_related_title'] : __( "Related posts", 'molongui-authorship' ) ),
+            'label'   => apply_filters( 'authorship/box/related/title', $options['author_box_related_title'], $profile ),//( $options['author_box_related_title'] ? $options['author_box_related_title'] : __( "Related posts", 'molongui-authorship' ) ),
             'class'   => 'm-a-box-related-title',//'m-a-box-string-related-posts',
             'checked' => false,
             'display' => $show_related,
@@ -36,14 +39,26 @@ $active_class = 'm-a-box-tab-active';
 ?>
 
 <script type="text/javascript">
-
-	function molonguiHandleTab(myRadio)
+	function molonguiHandleTab(inputElement)
 	{
-        let mabId = myRadio.id.slice( myRadio.id.lastIndexOf('-')+1 );
-		document.querySelector( '#mab-'+mabId+' .m-a-box-tabs nav label.m-a-box-tab.<?php echo $active_class; ?>' ).classList.remove( '<?php echo $active_class; ?>' );
-		document.querySelector( 'label[for='+myRadio.id+']' ).classList.add( '<?php echo $active_class; ?>' );
-	}
+        let navElement = inputElement.nextElementSibling;
+        while (navElement)
+        {
+            if (navElement.tagName.toLowerCase() === 'nav')
+            {
+                const activeTab = navElement.querySelector('.<?php echo $active_class; ?>');
+                if (activeTab)
+                {
+                    activeTab.classList.remove( '<?php echo $active_class; ?>' );
+                    navElement.querySelector('label[for='+inputElement.id+']').classList.add( '<?php echo $active_class; ?>' );
+                }
 
+                break; // Stop once the first <nav> is found
+            }
+
+            navElement = navElement.nextElementSibling;
+        }
+	}
 </script>
 
 <?php

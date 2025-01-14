@@ -1,8 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )
 {
-    if ( is_author() or is_guest_author() )
+    if ( is_author() or molongui_is_guest_author() )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
         $fn    = 'get_author';
@@ -51,4 +52,17 @@ add_filter( 'molongui_edit_main_query_only', function( $default, &$query )
         return false;
     }
     return $default;
+}, 10, 2 );
+add_filter( 'authorship/author_link', function( $value, $args )
+{
+    $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
+    $fn   = 'get_author_posts_url';
+    $file = 'td-composer/mobile/parts/logged.php';
+
+    if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and
+         isset( $dbt[$key]['file'] ) and substr_compare( $dbt[$key]['file'], $file, strlen( $dbt[$key]['file'] )-strlen( $file ), strlen( $file ) ) === 0
+    ){
+        return $args['link'];
+    }
+    return $value;
 }, 10, 2 );

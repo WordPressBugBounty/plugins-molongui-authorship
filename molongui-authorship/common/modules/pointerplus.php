@@ -56,7 +56,7 @@ class PointerPlus {
                             unset( $pointers[ $key ] );
                         }
                     } else {
-                        new WP_Error( 'broke', __( 'PointerPlus Error: post_type is not an array!' ) );
+                        new \WP_Error( 'broke', __( 'PointerPlus Error: post_type is not an array!' ) );
                     }
                 } else {
                     unset( $pointers[ $key ] );
@@ -79,7 +79,7 @@ class PointerPlus {
                             unset( $pointers[ $key ] );
                         }
                     } else {
-                        new WP_Error( 'broke', __( 'PointerPlus Error: pages is not an array!' ) );
+                        new \WP_Error( 'broke', __( 'PointerPlus Error: pages is not an array!' ) );
                     }
                 }
             }

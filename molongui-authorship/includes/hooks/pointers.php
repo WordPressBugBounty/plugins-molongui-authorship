@@ -1,7 +1,6 @@
 <?php
 
 use Molongui\Authorship\Common\Modules\PointerPlus;
-$pointerplus = new PointerPlus( array( 'prefix' => 'molongui-authorship' ) );
 function authorship_admin_pointers( $pointers, $prefix )
 {
     $options = authorship_get_options();
@@ -137,4 +136,4 @@ function authorship_admin_pointers( $pointers, $prefix )
 
     return $pointers;
 }
-add_filter( 'molongui-authorship-pointerplus_list', 'authorship_admin_pointers', 10, 2 );
+//add_filter( 'molongui-authorship-pointerplus_list', 'authorship_admin_pointers', 10, 2 );

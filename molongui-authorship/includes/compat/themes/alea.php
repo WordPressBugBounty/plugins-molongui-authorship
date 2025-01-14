@@ -1,7 +1,10 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'get_the_author_nickname', function()
 {
-    return authorship_get_byline();
+    return Post::get_byline();
 });
 

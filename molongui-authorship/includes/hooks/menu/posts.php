@@ -17,4 +17,4 @@ function authorship_add_posts_menu_items()
         );
     }
 }
-add_action( 'admin_menu', 'authorship_add_posts_menu_items' );
+//add_action( 'admin_menu', 'authorship_add_posts_menu_items' );

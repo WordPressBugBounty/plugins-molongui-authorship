@@ -87,7 +87,6 @@ function authorship_post_add_author_meta()
 
     echo $meta;
 }
-add_action( 'wp_head', 'authorship_post_add_author_meta', -1 );
 function authorship_post_add_facebook_author_meta( $author )
 {
     $meta = '';

@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Author_Filters;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -102,11 +105,11 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
     {
         return $original_link;
     }
-    if ( ( is_author() or is_guest_author() )
+    if ( ( is_author() or molongui_is_guest_author() )
           and
           $i = array_search( 'get_author_feed_link', array_column( $dbt, 'function' ) ) )
     {
-        return authorship_filter_author_page_link( $original_link );
+        return Author_Filters::the_author_page_link( $original_link );
     }
 
     return $link;
@@ -170,17 +173,24 @@ add_filter( 'authorship/get_avatar_data/skip', function( $default, $args, $dbt )
     }
     return $default;
 }, 10, 3 );
-add_filter( 'authorship/render_box', function( $default )
+add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
-    if ( empty( $dbt ) ) return $default;
+    if ( empty( $dbt ) )
+    {
+        return $default;
+    }
     $wp_fns = array
     (
+        'get_the_excerpt', // wp-includes/post-template.php
         'wp_trim_excerpt', // wp-includes/formatting.php
     );
-    if ( array_intersect( $wp_fns, array_column( $dbt, 'function' ) ) ) return false;
+    if ( array_intersect( $wp_fns, array_column( $dbt, 'function' ) ) )
+    {
+        return false;
+    }
     return $default;
-}, 10, 1 );
+} );
 if ( version_compare( get_bloginfo( 'version' ),'5.3.0', '<' ) )
 {
     if ( !function_exists( 'wp_get_registered_image_subsizes()' ) )

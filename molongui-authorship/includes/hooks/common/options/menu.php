@@ -21,7 +21,6 @@ function authorship_admin_menu()
     add_submenu_page( 'molongui', ucfirst( sprintf( __( "%s Settings", 'molongui-authorship' ), MOLONGUI_AUTHORSHIP_TITLE ) ), ucfirst( sprintf( __( "%s Settings", 'molongui-authorship' ), MOLONGUI_AUTHORSHIP_TAG ) ), 'manage_options', MOLONGUI_AUTHORSHIP_NAME, 'authorship_render_settings_page' );
     authorship_reorder_submenu_items();
 }
-add_action( 'admin_menu', 'authorship_admin_menu' );
 function authorship_menu_item_styles()
 {
     ?>
@@ -30,4 +29,4 @@ function authorship_menu_item_styles()
     </style>
     <?php
 }
-add_action( 'admin_head', 'authorship_menu_item_styles' );
+//add_action( 'admin_head', 'authorship_menu_item_styles' );

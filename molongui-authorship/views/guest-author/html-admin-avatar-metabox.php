@@ -1,5 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Admin\Author_Box_Editor;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 ?>
 
 <div class="molongui-metabox">
@@ -10,9 +14,9 @@ defined( 'ABSPATH' ) or exit;
 
             <label class="m-title"><strong><?php _e( "Avatar Display Disabled", 'molongui-authorship' ); ?></strong></label>
             <p class="m-description">
-                <?php _e( "Avatar display is disabled", 'molongui-authorship' ); echo ". "; printf( __( "You can enable author avatars at the %sMolongui Author Box Editor%s. There you can select whether to display custom local images, gravatars or author acronym.", 'molongui-authorship' ), '<a href="'.authorship_editor_url().'">', '</a>' ) ; ?>
+                <?php _e( "Avatar display is disabled", 'molongui-authorship' ); echo ". "; printf( __( "You can enable author avatars at the %sMolongui Author Box Editor%s. There you can select whether to display custom local images, gravatars or author acronym.", 'molongui-authorship' ), '<a href="'.Author_Box_Editor::url().'">', '</a>' ) ; ?>
             </p>
-            <a class="button button-large" href="<?php echo authorship_editor_url(); ?>"><?php _e( "Open Customizer", 'molongui-authorship' ); ?></a>
+            <a class="button button-large" href="<?php echo Author_Box_Editor::url(); ?>"><?php _e( "Open Customizer", 'molongui-authorship' ); ?></a>
 
         <?php else : ?>
 
@@ -54,9 +58,9 @@ defined( 'ABSPATH' ) or exit;
             <?php endif; ?>
 
             <p class="m-description">
-                <?php printf( __( "If you want to upload a custom image for this guest author, enable local avatars for both, users and guests, on the plugin settings page (click %shere%s).", 'molongui-authorship' ), '<a href="'.authorship_options_url( 'users' ).'">', '</a>' ); ?>
+                <?php printf( __( "If you want to upload a custom image for this guest author, enable local avatars for both, users and guests, on the plugin settings page (click %shere%s).", 'molongui-authorship' ), '<a href="'.Settings::url().'">', '</a>' ); ?>
             </p>
-            <a class="button button-large" href="<?php echo authorship_options_url( 'users' ); ?>"><?php _e( "Settings Page", 'molongui-authorship' ); ?></a>
+            <a class="button button-large" href="<?php echo Settings::url(); ?>"><?php _e( "Settings Page", 'molongui-authorship' ); ?></a>
 
         <?php endif; ?>
     </div>

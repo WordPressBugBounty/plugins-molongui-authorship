@@ -19,14 +19,28 @@
     if (typeof window === "undefined") {
         return null;
     }
+    // https://github.com/Semantic-Org/Semantic-UI/issues/3855
+    // https://github.com/marcj/css-element-queries/issues/257
+    var globalWindow = typeof window != 'undefined' && window.Math == Math
+        ? window
+        : typeof self != 'undefined' && self.Math == Math
+            ? self
+            : Function('return this')();
     // Only used for the dirty checking, so the event callback count is limited to max 1 call per fps per sensor.
     // In combination with the event based resize sensor this saves cpu time, because the sensor is too fast and
     // would generate too many unnecessary events.
-    var requestAnimationFrame = window.requestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
+    var requestAnimationFrame = globalWindow.requestAnimationFrame ||
+        globalWindow.mozRequestAnimationFrame ||
+        globalWindow.webkitRequestAnimationFrame ||
         function (fn) {
-            return window.setTimeout(fn, 20);
+            return globalWindow.setTimeout(fn, 20);
+        };
+
+    var cancelAnimationFrame = globalWindow.cancelAnimationFrame ||
+        globalWindow.mozCancelAnimationFrame ||
+        globalWindow.webkitCancelAnimationFrame ||
+        function (timer) {
+            globalWindow.clearTimeout(timer);
         };
 
     /**
@@ -75,6 +89,18 @@
     }
 
     /**
+     * Apply CSS styles to element.
+     *
+     * @param {HTMLElement} element
+     * @param {Object} style
+     */
+    function setStyle(element, style) {
+        Object.keys(style).forEach(function(key) {
+            element.style[key] = style[key];
+        });
+    }
+
+    /**
      * Class for dimension change detection.
      *
      * @param {Element|Element[]|Elements|jQuery} element
@@ -83,6 +109,9 @@
      * @constructor
      */
     var ResizeSensor = function(element, callback) {
+        //Is used when checking in reset() only for invisible elements
+        var lastAnimationFrameForInvisibleCheck = 0;
+
         /**
          *
          * @constructor
@@ -131,35 +160,64 @@
             element.resizeSensor = document.createElement('div');
             element.resizeSensor.dir = 'ltr';
             element.resizeSensor.className = 'resize-sensor';
-            var style = 'pointer-events: none; position: absolute; left: 0px; top: 0px; right: 0; bottom: 0; ' +
-                'overflow: hidden; z-index: -1; visibility: hidden; max-width: 100%;';
-            var styleChild = 'position: absolute; left: 0; top: 0; transition: 0s;';
 
-            element.resizeSensor.style.cssText = style;
-            element.resizeSensor.innerHTML =
-                '<div class="resize-sensor-expand" style="' + style + '">' +
-                    '<div style="' + styleChild + '"></div>' +
-                '</div>' +
-                '<div class="resize-sensor-shrink" style="' + style + '">' +
-                    '<div style="' + styleChild + ' width: 200%; height: 200%"></div>' +
-                '</div>';
+            var style = {
+                pointerEvents: 'none',
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                right: '0px',
+                bottom: '0px',
+                overflow: 'hidden',
+                zIndex: '-1',
+                visibility: 'hidden',
+                maxWidth: '100%'
+            };
+            var styleChild = {
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                transition: '0s',
+            };
+
+            setStyle(element.resizeSensor, style);
+
+            var expand = document.createElement('div');
+            expand.className = 'resize-sensor-expand';
+            setStyle(expand, style);
+
+            var expandChild = document.createElement('div');
+            setStyle(expandChild, styleChild);
+            expand.appendChild(expandChild);
+
+            var shrink = document.createElement('div');
+            shrink.className = 'resize-sensor-shrink';
+            setStyle(shrink, style);
+
+            var shrinkChild = document.createElement('div');
+            setStyle(shrinkChild, styleChild);
+            setStyle(shrinkChild, { width: '200%', height: '200%' });
+            shrink.appendChild(shrinkChild);
+
+            element.resizeSensor.appendChild(expand);
+            element.resizeSensor.appendChild(shrink);
             element.appendChild(element.resizeSensor);
 
             var computedStyle = window.getComputedStyle(element);
             var position = computedStyle ? computedStyle.getPropertyValue('position') : null;
-            if ('absolute' !== position && 'relative' !== position && 'fixed' !== position) {
+            if ('absolute' !== position && 'relative' !== position && 'fixed' !== position && 'sticky' !== position) {
                 element.style.position = 'relative';
             }
 
-            var expand = element.resizeSensor.childNodes[0];
-            var expandChild = expand.childNodes[0];
-            var shrink = element.resizeSensor.childNodes[1];
-            var dirty, rafId;
+            var dirty = false;
+
+            //last request animation frame id used in onscroll event
+            var rafId = 0;
             var size = getElementSize(element);
-            var lastWidth = size.width;
-            var lastHeight = size.height;
+            var lastWidth = 0;
+            var lastHeight = 0;
             var initialHiddenCheck = true;
-            var lastAnimationFrame = 0;
+            lastAnimationFrameForInvisibleCheck = 0;
 
             var resetExpandShrink = function () {
                 var width = element.offsetWidth;
@@ -181,10 +239,9 @@
                     var invisible = element.offsetWidth === 0 && element.offsetHeight === 0;
                     if (invisible) {
                         // Check in next frame
-                        if (!lastAnimationFrame){
-                            lastAnimationFrame = requestAnimationFrame(function(){
-                                lastAnimationFrame = 0;
-
+                        if (!lastAnimationFrameForInvisibleCheck){
+                            lastAnimationFrameForInvisibleCheck = requestAnimationFrame(function(){
+                                lastAnimationFrameForInvisibleCheck = 0;
                                 reset();
                             });
                         }
@@ -235,8 +292,11 @@
             addEvent(expand, 'scroll', onScroll);
             addEvent(shrink, 'scroll', onScroll);
 
-            // Fix for custom Elements
-            requestAnimationFrame(reset);
+            // Fix for custom Elements and invisible elements
+            lastAnimationFrameForInvisibleCheck = requestAnimationFrame(function(){
+                lastAnimationFrameForInvisibleCheck = 0;
+                reset();
+            });
         }
 
         forEachElement(element, function(elem){
@@ -244,17 +304,28 @@
         });
 
         this.detach = function(ev) {
+            // clean up the unfinished animation frame to prevent a potential endless requestAnimationFrame of reset
+            if (lastAnimationFrameForInvisibleCheck) {
+                cancelAnimationFrame(lastAnimationFrameForInvisibleCheck);
+                lastAnimationFrameForInvisibleCheck = 0;
+            }
             ResizeSensor.detach(element, ev);
         };
 
         this.reset = function() {
-            element.resizeSensor.resetSensor();
+            //To prevent invoking element.resizeSensor.resetSensor if it's undefined
+            if (element.resizeSensor.resetSensor) {
+                element.resizeSensor.resetSensor();
+            }
         };
     };
 
     ResizeSensor.reset = function(element) {
         forEachElement(element, function(elem){
-            elem.resizeSensor.resetSensor();
+            //To prevent invoking element.resizeSensor.resetSensor if it's undefined
+            if (element.resizeSensor.resetSensor) {
+                elem.resizeSensor.resetSensor();
+            }
         });
     };
 

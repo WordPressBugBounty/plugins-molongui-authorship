@@ -8,7 +8,6 @@ function authorship_register_edit_user_scripts()
 
     Assets::register_script( $file, 'edit_user' );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_edit_user_scripts' );
 function authorship_enqueue_edit_user_scripts()
 {
     $screen = get_current_screen();
@@ -17,7 +16,6 @@ function authorship_enqueue_edit_user_scripts()
 
     Assets::enqueue_script( $file, 'edit_user', true );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_enqueue_edit_user_scripts' );
 function authorship_edit_user_script_params()
 {
     $params = array

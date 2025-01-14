@@ -1,8 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
-    if ( !is_author() and !is_guest_author() ) return $user;
+    if ( !is_author() and !molongui_is_guest_author() ) return $user;
 
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
     $fn    = 'get_author_name';
@@ -20,7 +21,7 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
 }, 10, 4 );
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )
 {
-    if ( is_author() or is_guest_author() )
+    if ( is_author() or molongui_is_guest_author() )
     {
         $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
         $fn   = 'get_the_author_meta';

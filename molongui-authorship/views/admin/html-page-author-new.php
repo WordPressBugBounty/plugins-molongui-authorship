@@ -1,5 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Common\Utils\WP;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 $error = get_option( 'molongui_authorship_add_author_error_'.get_current_user_id() );
 if ( $error )
 {
@@ -14,14 +18,13 @@ if ( $error )
     delete_option( 'molongui_authorship_add_author_error_'.get_current_user_id() );
     delete_option( 'molongui_authorship_add_author_input_'.get_current_user_id() );
 }
-$options = authorship_get_options();
-if ( empty( $options['guest_authors'] ) )
+if ( empty( Settings::get( 'guest_author_enabled' ) ) )
 {
     $input['user-account'] = true;
     $force_user_account    = true;
 }
 
-$current_color = molongui_get_admin_color();
+$current_color = WP::get_admin_color();
 ?>
 <!--
 <style>

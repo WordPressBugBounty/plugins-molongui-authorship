@@ -6,7 +6,6 @@ function authorship_enable_post_authors_update()
 {
     new \Molongui\Authorship\Update_Post_Authors();
 }
-add_action( 'authorship/init', 'authorship_enable_post_authors_update' );
 function authorship_post_authors_update()
 {
     if ( apply_filters( 'authorship/check_wp_cron', true ) and ( defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON ) ) return false;
@@ -17,7 +16,6 @@ function authorship_post_authors_update()
         authorship_update_post_authors();
     }
 }
-add_action( 'admin_init', 'authorship_post_authors_update', 10 );
 function authorship_post_authors_update_completed()
 {
     if ( get_option( 'm_update_post_authors_complete' ) )
@@ -34,4 +32,4 @@ function authorship_post_authors_update_completed()
         echo '<div class="notice notice-warning is-dismissible">' . $message . '</div>';
     }
 }
-add_action( 'admin_notices', 'authorship_post_authors_update_completed' );
+//add_action( 'admin_notices', 'authorship_post_authors_update_completed' );

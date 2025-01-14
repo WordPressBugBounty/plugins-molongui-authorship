@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'get_the_author_user_url', function( $value )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );

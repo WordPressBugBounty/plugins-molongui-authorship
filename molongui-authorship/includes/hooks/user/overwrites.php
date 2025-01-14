@@ -1,7 +1,9 @@
 <?php
 
 use Molongui\Authorship\Author;
-defined( 'ABSPATH' ) or exit;
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 if ( !authorship_byline_takeover() ) return;
 function authorship_get_user_by( $user, $field, $value )
 {
@@ -52,7 +54,7 @@ function authorship_get_user_by( $user, $field, $value )
      * If you choose to ignore this notice and use this filter, please note that you do so at on your own risk
      * and knowing that it could cause code failure.
      */
-    $post_id = apply_filters( '_authorship/get_user_by/post_id', authorship_get_post_id(), $user, $field, $value );
+    $post_id = apply_filters( '_authorship/get_user_by/post_id', Post::get_id(), $user, $field, $value );
     global $wp_query;
     if ( is_object( $wp_query ) and $wp_query->is_author )
     {
@@ -197,7 +199,6 @@ function authorship_get_user_by( $user, $field, $value )
     }
     return $user;
 }
-add_filter( '_authorship/get_user_by', 'authorship_get_user_by', 10, 3 );
 function authorship_no_userdata( $false, $field, $value )
 {
     global $wp_query;
@@ -210,7 +211,6 @@ function authorship_no_userdata( $false, $field, $value )
     }
     else return $false;
 }
-add_filter( '_authorship/no_userdata', 'authorship_no_userdata', 10, 3 );
 function authorship_get_guest_by( $field, $value )
 {
     global $wp_query;
@@ -218,7 +218,7 @@ function authorship_get_guest_by( $field, $value )
     $author_id   = $wp_query->guest_author_id;
     $author_type = 'guest';
     $author      = new Author( $author_id, $author_type );
-    $post_id = apply_filters( '_authorship/get_user_by/post_id', authorship_get_post_id(), null, $field, $value );
+    $post_id = apply_filters( '_authorship/get_user_by/post_id', Post::get_id(), null, $field, $value );
     $aim = 'info';
     if ( in_the_loop() )
     {

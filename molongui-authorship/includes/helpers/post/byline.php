@@ -76,6 +76,7 @@ function authorship_get_byline( $pid = null, $separator = null, $last_separator 
     Debug::console_log( array('post_id' => $pid, 'post_authors' => $post_authors, 'names_to_display' => $names_to_display, 'separator' => $separator, 'last_separator' => $last_separator ), _x( "Byline information", 'debug message', 'molongui-authorship' ) );
     return apply_filters( 'authorship/post_byline', $byline, $pid, $post_authors );
 }
+
 if ( !function_exists( 'get_byline' ) )
 {
     function get_byline( $pid = null, $separator = null, $last_separator = null, $linked = false )
@@ -95,7 +96,29 @@ function authorship_get_byline_separators( $separator = null, $last_separator = 
     {
         $last_separator = ( !empty( $options['byline_multiauthor_last_separator'] ) ? $options['byline_multiauthor_last_separator'] : __( 'and', 'molongui-authorship' ) );
     }
-    $space = apply_filters( 'authorship/byline_separator_autospace', '__return_true' ) ? ' ' : '';
+
+    /*!
+     * FILTER HOOK
+     *
+     * Allows filtering the character to add after/around byline separators.
+     *
+     * @param string A space is added after/around byline separators by default.
+     * @since 5.0.0
+     */
+    $space = apply_filters( 'authorship/byline_separator_space', '&nbsp;' );
+
+    /*!
+     * DEPRECATED FILTER HOOK
+     *
+     * Allowed filtering whether to automatically add a space after/around byline separators.
+     *
+     * @use   authorship/byline_separator_space
+     * @since 4.6.18
+     */
+    if ( !apply_filters_deprecated( 'authorship/byline_separator_autospace', array( true ), '5.0.0', 'authorship/byline_separator_space' ) )
+    {
+        $space = '';
+    }
 
     $separator      = $separator.$space;
     $last_separator = $space.$last_separator.$space;

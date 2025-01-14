@@ -11,7 +11,6 @@ function authorship_register_common_options_styles()
 
     Assets::register_style( $file, 'common_options', $deps );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_common_options_styles' );
 function authorship_enqueue_common_options_styles()
 {
     $file = apply_filters( 'authorship/options/common_styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/options-rtl.aeec.min.css' : '/assets/css/common/options.c589.min.css' ) );

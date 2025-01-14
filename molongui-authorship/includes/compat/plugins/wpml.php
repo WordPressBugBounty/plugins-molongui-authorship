@@ -40,7 +40,7 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
         {
             global $wp_query;
 
-            if ( is_guest_author() and isset( $wp_query->guest_author_id ) )
+            if ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) )
             {
                 foreach ( $languages as $lang )
                 {
@@ -48,14 +48,14 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                     {
                         $id = apply_filters( 'wpml_object_id', $wp_query->guest_author_id, 'guest_author', false, $lang );
                         $author   = new Molongui\Authorship\Author( $id, 'guest' );
-                        $wpml_url = apply_filters( 'wpml_permalink', $author->get_url(), $lang );
+                        $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
                         $w_active_languages[$lang]['url'] = $wpml_url;
                     }
                     else
                     {
                         $id = apply_filters( 'wpml_object_id', $wp_query->guest_author_id, 'guest_author', false, $lang );
                         global $sitepress;
-                        $temp_lang_switch = new WPML_Temporary_Switch_Language( $sitepress, $lang );
+                        $temp_lang_switch = new \WPML_Temporary_Switch_Language( $sitepress, $lang );
                         $author = new Molongui\Authorship\Author( $id, 'guest' );
 
                         $args = array
@@ -82,10 +82,10 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                         $temp_lang_switch->restore_lang();
                         if ( !empty( $posts ) )
                         {
-                            $wpml_url = apply_filters( 'wpml_permalink', $author->get_url(), $lang );
+                            $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
                             global $sitepress, $wpml_post_translations, $wpml_term_translations;
                             $current_language = $sitepress->get_current_language();
-                            $languages_helper = new WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
+                            $languages_helper = new \WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
                             $language_details = $languages_helper->get_ls_language( $lang, $current_language, false );
 
                             $w_active_languages[$lang]['code']             = $language_details['code'];
@@ -112,13 +112,13 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                     if ( !empty( $w_active_languages[$lang] ) )
                     {
                         $author = new Molongui\Authorship\Author( get_queried_object_id(), 'user' );
-                        $wpml_url = apply_filters( 'wpml_permalink', $author->get_url(), $lang );
+                        $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
                         $w_active_languages[$lang]['url'] = $wpml_url;
                     }
                     else
                     {
                         global $sitepress;
-                        $temp_lang_switch = new WPML_Temporary_Switch_Language( $sitepress, $lang );
+                        $temp_lang_switch = new \WPML_Temporary_Switch_Language( $sitepress, $lang );
                         $author = new Molongui\Authorship\Author( get_queried_object_id(), 'user' );
 
                         $args = array
@@ -145,10 +145,10 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                         $temp_lang_switch->restore_lang();
                         if ( !empty( $posts ) )
                         {
-                            $wpml_url = apply_filters( 'wpml_permalink', $author->get_url(), $lang );
+                            $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
                             global $sitepress, $wpml_post_translations, $wpml_term_translations;
                             $current_language = $sitepress->get_current_language();
-                            $languages_helper = new WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
+                            $languages_helper = new \WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
                             $language_details = $languages_helper->get_ls_language( $lang, $current_language, false );
 
                             $w_active_languages[$lang]['code']             = $language_details['code'];

@@ -1,6 +1,7 @@
 <?php
 
 use Molongui\Authorship\Author;
+use Molongui\Authorship\Author_Filters;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Astra
@@ -9,7 +10,6 @@ class Astra
     {
         add_filter( 'molongui_authorship_do_filter_name', array( $this, 'filter_the_author_name' ), 10, 2 );
         add_filter( 'get_the_author_user_email', array( $this, 'filter_the_author_user_email' ), 10, 3 );
-        authorship_add_byline_support();
     }
     public function filter_the_author_name( $leave, &$args )
     {
@@ -18,7 +18,7 @@ class Astra
 
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
-            $args['display_name'] = authorship_filter_archive_title( $args['display_name'] );
+            $args['display_name'] = Author_Filters::filter_the_archive_title( $args['display_name'] );
             return true;
         }
         return false;
@@ -30,9 +30,9 @@ class Astra
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
             global $wp_query;
-            $author_id = ( is_guest_author() and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
-            $author_class = new Author( $author_id, !empty( $wp_query->is_guest_author ) ? 'guest' : 'user' );
-            return $author_class->get_mail();
+            $author_id = ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
+            $author = new Author( $author_id, !empty( $wp_query->is_guest_author ) ? 'guest' : 'user' );
+            return $author->get_email();
         }
         return $value;
     }
@@ -60,12 +60,12 @@ class Astra
         {
             global $wp_query;
 
-            $author_type = is_guest_author() ? 'guest' : 'user';
+            $author_type = molongui_is_guest_author() ? 'guest' : 'user';
             $author_id   = ( 'guest' === $author_type and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
             $author      = new Author( $author_id, $author_type );
 
             remove_filter( 'get_the_author_description', array( $this, 'filter_the_author_description' ), PHP_INT_MAX, 3 );
-            $author_bio  = $author->get_bio();
+            $author_bio  = $author->get_description();
             add_filter( 'get_the_author_description', array( $this, 'filter_the_author_description' ), PHP_INT_MAX, 3 );
 
             return $author_bio;

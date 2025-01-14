@@ -57,7 +57,7 @@ class Update_Post_Counters
                 $author_id   = $author_info[1];
                 $author_type = $author_info[0];
                 $class = new Author( $author_id, $author_type );
-                $count = $class->get_posts_count( $post_type );
+                $count = $class->count_posts( $post_type );
                 switch ( $author_type )
                 {
                     case 'user':
@@ -141,7 +141,7 @@ class Update_Post_Counters_Request extends WP_Background_Process
     {
         if ( !is_array( $item ) or !isset( $item['author'] ) or !isset( $item['post_type'] ) ) return false;
         $author = new Author( $item['author']['id'], $item['author']['type'] );
-        $count  = $author->get_posts_count( $item['post_type'] );
+        $count  = $author->count_posts( $item['post_type'] );
         switch ( $item['author']['type'] )
         {
             case 'user':

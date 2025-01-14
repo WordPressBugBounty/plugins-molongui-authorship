@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'molongui_authorship_filter_the_author_display_name_post_id', function( $post_id, $post, $display_name )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
@@ -55,10 +58,13 @@ add_filter( 'get_the_author_user_email', function( $value, $user_id = null, $ori
     {
         global $tdb_state_single;
         $tdcl_query = $tdb_state_single->get_wp_query();
-        $authors = authorship_get_post_authors( $tdcl_query->queried_object_id );
-        $author_class = new Molongui\Authorship\Author( $authors[0]->id, $authors[0]->type );
-        add_filter( '_authorship/get_avatar_data/filter/post_id', function() use ( $tdcl_query ){ return $tdcl_query->queried_object_id; } );
-        return $author_class->get_mail();
+        $post_authors = Post::get_authors( $tdcl_query->queried_object_id );
+        $author = new Molongui\Authorship\Author( $post_authors[0]->id, $post_authors[0]->type );
+        add_filter( '_authorship/get_avatar_data/filter/post_id', function() use ( $tdcl_query )
+        {
+            return $tdcl_query->queried_object_id;
+        });
+        return $author->get_email();
     }
     return $value;
 }, 10, 3 );
@@ -122,7 +128,7 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
         $wp_query = $aq->getValue( $tdb_state_author );
         if ( isset( $wp_query->is_author ) )
         {
-            if ( is_guest_author() and isset( $wp_query->guest_author_id ) )
+            if ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) )
             {
                 $author_id   = $wp_query->guest_author_id;
                 $author_type = 'guest';

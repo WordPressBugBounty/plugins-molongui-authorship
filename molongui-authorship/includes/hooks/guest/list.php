@@ -8,7 +8,6 @@ function authorship_remove_mine_filter( $views )
 
     return $views;
 }
-add_filter( 'views_edit-'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_remove_mine_filter' );
 function authorship_guest_add_list_columns( $columns )
 {
     unset( $columns['title'] );
@@ -37,7 +36,6 @@ function authorship_guest_add_list_columns( $columns )
     if ( 'trash' == get_query_var( 'post_status' ) ) unset( $new_cols['guestAuthorEntries'] );
     return array_merge( $columns, $new_cols );
 }
-add_filter( 'manage_'.MOLONGUI_AUTHORSHIP_CPT.'_posts_columns', 'authorship_guest_add_list_columns' );
 function authorship_guest_fill_list_columns( $column, $ID )
 {
     $value = '';
@@ -154,7 +152,6 @@ function authorship_guest_fill_list_columns( $column, $ID )
         return;
     }
 }
-add_action( 'manage_'.MOLONGUI_AUTHORSHIP_CPT.'_posts_custom_column', 'authorship_guest_fill_list_columns', 5, 2 );
 function authorship_guest_remove_view_link( $actions )
 {
     if ( !apply_filters( 'authorship/guest/row_actions/remove_view_link', true ) ) return $actions;
@@ -163,7 +160,6 @@ function authorship_guest_remove_view_link( $actions )
 
     return $actions;
 }
-add_filter( 'post_row_actions', 'authorship_guest_remove_view_link', 10, 1 );
 function authorship_guest_remove_bulk_edit_action( $actions )
 {
     if ( !apply_filters( 'authorship/guest/bulk_actions/remove_edit', true ) ) return $actions;
@@ -171,4 +167,4 @@ function authorship_guest_remove_bulk_edit_action( $actions )
     unset( $actions['edit'] );
     return $actions;
 }
-add_filter( 'bulk_actions-'.'edit-'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_guest_remove_bulk_edit_action' );
+//add_filter( 'bulk_actions-'.'edit-'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_guest_remove_bulk_edit_action' );

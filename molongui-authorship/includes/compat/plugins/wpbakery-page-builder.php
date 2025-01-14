@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_action( 'init', function()
 {
     remove_filter( 'vc_gitem_template_attribute_post_author', 'vc_gitem_template_attribute_post_author', 10 );
@@ -15,7 +18,7 @@ add_filter( 'vc_gitem_template_attribute_post_author', function( $value, $data )
 
     if ( !empty( $post->ID ) )
     {
-        return authorship_get_byline( $post->ID, '', '', false );
+        return Post::get_byline( $post->ID, '', '', false );
     }
     return $value;
 
@@ -30,9 +33,9 @@ add_filter( 'vc_gitem_template_attribute_post_author_href', function( $value, $d
 
     if ( isset( $post->ID ) and $post->ID )
     {
-        $author = new Molongui\Authorship\Author();
-        $main = get_main_author( $post->ID );
-        return $author->get_url( $main->id, $main->type, false, false );
+        $main = Post::get_main_author( $post->ID );
+        $author = new Molongui\Authorship\Author( $main->id, $main->type );
+        return $author->get_archive_url();
     }
     return $value;
 

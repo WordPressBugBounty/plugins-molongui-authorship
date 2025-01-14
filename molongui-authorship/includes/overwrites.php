@@ -1,30 +1,37 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+/*!
+ * WordPress core function overrides.
+ *
+ * @internal   Plugin helper functions are not yet available, so they cannot be used in this file.
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes
+ * @since      4.4.2
+ */
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 if ( !function_exists( 'get_user_by' ) )
 {
     function get_user_by( $field, $value )
     {
-        global $current_user;
-
         $userdata = WP_User::get_data_by( $field, $value );
 
         if ( ! $userdata )
         {
             /*!
-             * PRIVATE FILTER.
+             * [PRIVATE] FILTER HOOK
+             * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
+             * If you choose to use it, you do so at your own risk, as it may cause code issues.
              *
-             * For internal use only. Not intended to be used by plugin or theme developers.
-             * Future compatibility NOT guaranteed.
-             *
-             * Please do not rely on this filter for your custom code to work. As a private filter it is meant to be
-             * used only by Molongui. It may be edited, renamed or removed from future releases without prior notice or
-             * deprecation phase.
-             *
-             * If you choose to ignore this notice and use this filter, please note that you do so at on your own risk
-             *  andknowing that it could cause code failure.
+             * @since 4.4.2
              */
             $user = apply_filters( '_authorship/no_userdata', false, $field, $value );
-            if ( $user ) return $user;
+
+            if ( $user )
+            {
+                return $user;
+            }
 
             return false;
         }
@@ -33,17 +40,11 @@ if ( !function_exists( 'get_user_by' ) )
         $user->init( $userdata );
 
         /*!
-         * PRIVATE FILTER.
+         * [PRIVATE] FILTER HOOK
+         * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
+         * If you choose to use it, you do so at your own risk, as it may cause code issues.
          *
-         * For internal use only. Not intended to be used by plugin or theme developers.
-         * Future compatibility NOT guaranteed.
-         *
-         * Please do not rely on this filter for your custom code to work. As a private filter it is meant to be used
-         * only by Molongui. It may be edited, renamed or removed from future releases without prior notice or
-         * deprecation phase.
-         *
-         * If you choose to ignore this notice and use this filter, please note that you do so at on your own risk and
-         * knowing that it could cause code failure.
+         * @since 4.4.2
          */
         $user = apply_filters( '_authorship/get_user_by', $user, $field, $value );
 

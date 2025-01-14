@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
         <!-- Author bio -->
         <?php include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-bio.php'; ?>
 
-        <?php if ( $options['author_box_layout'] == 'slim' and !empty( $options['author_box_related_show'] ) ) : ?>
+        <?php if ( $options['author_box_layout'] == 'slim' and !empty( $options['author_box_show_related_posts'] ) ) : ?>
 
             <!-- Author related posts -->
             <div class="m-a-box-related" data-related-layout="<?php echo $options['author_box_related_layout']; ?>">
@@ -37,19 +37,34 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
                     <ul>
                         <?php
-                        if ( !empty( $author['posts'] ) )
+                        if ( !empty( $profile['posts'] ) )
                         {
-                            if ( file_exists( $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-'.$options['author_box_related_layout'].'.php' ) )
+                            /*!
+                             * FILTER HOOK
+                             * Allows filtering the related posts markup before it is generated.
+                             *
+                             * @param string $related_layout Default related posts layout markup. Defaults to null.
+                             * @param array  $options        Plugin settings.
+                             * @param array  $profile        Author data.
+                             * @since 5.0.0
+                             */
+                            $related_layout = apply_filters( 'molongui_authorship/author_box_related_markup', null, $options, $profile );
+
+                            if ( is_null( $related_layout ) )
                             {
+                                $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-'.$options['author_box_related_layout'].'.php';
+
+                                if ( !file_exists( $file ) )
+                                {
+                                    $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-layout-1.php';
+                                }
+
                                 ob_start();
                                 include $file;
                                 $related_layout = ob_get_clean();
                             }
-                            else
-                            {
-                                $related_layout = '';
-                            }
-                            echo apply_filters( 'authorship/author_box/related_layout', $related_layout, $options, $author );
+
+                            echo $related_layout;
                         }
                         else
                         {

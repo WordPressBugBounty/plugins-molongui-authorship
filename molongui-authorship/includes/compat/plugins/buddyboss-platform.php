@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     $i  = 5;

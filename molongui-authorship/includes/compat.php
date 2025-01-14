@@ -1,9 +1,10 @@
 <?php
 
+use Molongui\Authorship\Settings;
+
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/compat/wordpress.php';
-authorship_add_byline_support();
-if ( apply_filters( 'authorship/theme_compatibility', authorship_is_feature_enabled( 'theme_compat' ) ) )
+if ( apply_filters( 'authorship/theme_compatibility', Settings::is_enabled( 'theme-compat' ) ) )
 {
     $theme = wp_get_theme();
 
@@ -46,7 +47,7 @@ if ( apply_filters( 'authorship/theme_compatibility', authorship_is_feature_enab
     elseif ( 'Thrive Themes' == $theme->get( 'Author' ) or
            ( $theme->parent() and 'Thrive Themes' == $theme->parent()->get( 'Author' ) ) )          require_once $path . 'thrive-themes.php';
 }
-if ( apply_filters( 'authorship/plugin_compatibility', authorship_is_feature_enabled( 'plugin_compat' ) ) )
+if ( apply_filters( 'authorship/plugin_compatibility', Settings::is_enabled( 'plugin-compat' ) ) )
 {
     if ( !function_exists( 'is_plugin_active' ) ) require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 
@@ -80,6 +81,7 @@ if ( apply_filters( 'authorship/plugin_compatibility', authorship_is_feature_ena
     if ( is_plugin_active( 'polylang/polylang.php' ) ) require_once $path . 'polylang.php';
     if ( is_plugin_active( 'post-grid/post-grid.php' ) ) require_once $path . 'post-grid.php';
     if ( is_plugin_active( 'premium-addons-for-elementor/premium-addons-for-elementor.php' ) ) require_once $path . 'premium-addons-for-elementor.php';
+    if ( is_plugin_active( 'reusable-content-blocks/reusablec-block.php' ) ) require_once $path . 'reusable-content-blocks.php';
     if ( is_plugin_active( 'seo-by-rank-math/rank-math.php' ) ) require_once $path . 'rank-math-seo.php';
     if ( is_plugin_active( 'schema/schema.php' ) or
          is_plugin_active( 'schema-premium/schema-premium.php' ) ) require_once $path . 'schema.php';

@@ -10,7 +10,6 @@ function authorship_validate_freemium_options( $options, $current )
 
     return $options;
 }
-add_filter( 'authorship/validate_options', 'authorship_validate_freemium_options', 10, 2 );
 function authorship_validate_options( $options, $current )
 {
     if ( empty( $options['author_box_related_show'] ) ) $options['author_box_related_show'] = '0';
@@ -19,8 +18,6 @@ function authorship_validate_options( $options, $current )
 
     return $options;
 }
-add_filter( 'authorship/validate_options', 'authorship_validate_options', 10, 2 );
-add_action( 'authorship/options', 'authorship_add_defaults' );
 function authorship_keep_db_19_keys( $options, $current )
 {
     $needed = array
@@ -54,5 +51,4 @@ function authorship_keep_db_19_keys( $options, $current )
 
     return $options;
 }
-add_filter( 'authorship/validate_options', 'authorship_keep_db_19_keys', 20, 2 );
-add_filter( 'authorship/validate_editor_options', 'authorship_keep_db_19_keys', 20, 2 );
+//add_filter( 'authorship/validate_editor_options', 'authorship_keep_db_19_keys', 20, 2 );

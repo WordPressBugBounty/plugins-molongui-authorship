@@ -23,7 +23,6 @@ function authorship_autoadd_box()
     }
     add_filter( 'the_content', 'authorship_render_box', $options['box_hook_priority'], 1 );
 }
-add_action( 'init', 'authorship_autoadd_box' );
 function authorship_dont_autoadd_box()
 {
     $autoadd = false;
@@ -66,4 +65,4 @@ function authorship_dont_autoadd_box()
 
     return $autoadd;
 }
-add_filter( 'authorship/render_box', 'authorship_dont_autoadd_box', 9 );
+//add_filter( 'authorship/render_box', 'authorship_dont_autoadd_box', 9 );

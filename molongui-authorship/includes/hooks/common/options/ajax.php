@@ -31,7 +31,6 @@ function authorship_save_options()
     }
     wp_die();
 }
-add_action( 'wp_ajax_'.MOLONGUI_AUTHORSHIP_PREFIX.'_save_options', 'authorship_save_options' );
 function authorship_export_options()
 {
     if ( !WP::verify_nonce( 'mfw_export_options_nonce', 'nonce' ) )
@@ -47,4 +46,4 @@ function authorship_export_options()
     echo wp_json_encode( $options );
     wp_die();
 }
-add_action( 'wp_ajax_'.MOLONGUI_AUTHORSHIP_PREFIX.'_export_options', 'authorship_export_options' );
+//add_action( 'wp_ajax_'.MOLONGUI_AUTHORSHIP_PREFIX.'_export_options', 'authorship_export_options' );

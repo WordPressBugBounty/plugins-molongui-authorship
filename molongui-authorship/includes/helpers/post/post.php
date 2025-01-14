@@ -7,6 +7,7 @@ use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
 if ( !function_exists( 'is_guest_post' ) )
 {
     function is_guest_post( $post_id = null )
@@ -22,6 +23,7 @@ if ( !function_exists( 'is_guest_post' ) )
         return false;
     }
 }
+
 if ( !function_exists( 'has_guest_author' ) )
 {
     function has_guest_author( $post_id = null )
@@ -42,6 +44,7 @@ if ( !function_exists( 'has_guest_author' ) )
         return false;
     }
 }
+
 if ( !function_exists( 'is_multiauthor_post' ) )
 {
     function is_multiauthor_post( $post_id = null )
@@ -56,6 +59,7 @@ if ( !function_exists( 'is_multiauthor_post' ) )
         return count( get_post_meta( $post_id, '_molongui_author', false ) ) > 1;
     }
 }
+
 if ( !function_exists( 'is_multiauthor_link' ) )
 {
     function is_multiauthor_link( $link )
@@ -65,6 +69,7 @@ if ( !function_exists( 'is_multiauthor_link' ) )
         return ( strpos( $link, $arg ) !== false ? true : false );
     }
 }
+
 if ( !function_exists( 'get_main_author' ) )
 {
     function get_main_author( $post_id )
@@ -99,6 +104,7 @@ if ( !function_exists( 'get_main_author' ) )
         return $data;
     }
 }
+
 if ( !function_exists( 'authorship_get_wp_post_author' ) )
 {
     function authorship_get_wp_post_author( $post_id )
@@ -126,7 +132,7 @@ function authorship_get_post_authors( $post_id = null, $key = '' )
     }
 
     $data = array();
-    if ( !in_array( authorship_get_post_type( $post_id ), molongui_supported_post_types( MOLONGUI_AUTHORSHIP_NAME, 'all' ) ) )
+    if ( !in_array( Post::get_post_type( $post_id ), molongui_supported_post_types( MOLONGUI_AUTHORSHIP_NAME, 'all' ) ) )
     {
         $data[] = authorship_get_wp_post_author( $post_id );
     }
@@ -186,6 +192,7 @@ function authorship_get_post_authors( $post_id = null, $key = '' )
         return false;
     }
 }
+
 if ( !function_exists( 'get_post_authors' ) )
 {
     function get_post_authors( $post_id = null, $key = '' )
@@ -193,6 +200,7 @@ if ( !function_exists( 'get_post_authors' ) )
         return authorship_get_post_authors( $post_id, $key );
     }
 }
+
 if ( !function_exists( 'get_coauthored_posts' ) )
 {
     function get_coauthored_posts( $authors, $get_all = false, $exclude = array(), $entry = 'post', $meta_query = array() )
@@ -246,7 +254,7 @@ if ( !function_exists( 'get_coauthored_posts' ) )
             'post__not_in'   => $exclude,
             'meta_query'     => $mq,
             'site_id'        => get_current_blog_id(),
-            'language'       => array( Helpers::class, 'get_language' ),
+            'language'       => Helpers::get_language(),
         );
         $data = Cache::query( $args, 'posts' );
         if ( !empty( $data->posts ) ) foreach ( $data->posts as $post ) $posts[] = $post;
@@ -266,7 +274,7 @@ function authorship_post_status( $post_type = '' )
 }
 function authorship_is_post_type_enabled( $post_type = '', $post_id = null )
 {
-    $post_type  = !empty( $post_type ) ? $post_type : authorship_get_post_type( $post_id );
+    $post_type  = !empty( $post_type ) ? $post_type : Post::get_post_type( $post_id );
     $post_types = molongui_supported_post_types( MOLONGUI_AUTHORSHIP_NAME, 'all' );
 
     return (bool) in_array( $post_type, $post_types );

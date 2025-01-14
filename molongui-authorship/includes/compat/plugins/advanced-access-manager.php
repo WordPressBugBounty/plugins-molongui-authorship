@@ -1,5 +1,6 @@
 <?php
-defined('ABSPATH') or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_action( 'init', function()
 {
     if ( is_admin() ) return;

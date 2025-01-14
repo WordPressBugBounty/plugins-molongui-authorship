@@ -2,103 +2,93 @@
 
 namespace Molongui\Authorship\Common\Modules;
 
-use Molongui\Authorship\Common\Utils\Assets;
+use Molongui\Authorship\Common\Utils\Helpers;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Notice
 {
-    public function __construct()
+    private $id;
+    private $message;
+    private $type;
+    private $dismissible;
+    private $dismissal_period;
+    private $screens;
+    private $action = 'authorship_dismiss_admin_notice_';
+    private $meta_key = 'authorship_dismissed_notice_';
+    public function __construct( $id, $message, $type = 'success', $dismissible = true, $dismissal_period = 0, $screens = array() )
     {
-        add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-        add_action( 'wp_ajax_authorship_notice_dismiss', array( $this, 'dismiss' ) );
+        $this->id               = $id;
+        $this->message          = $message;
+        $this->type             = $type;
+        $this->dismissible      = $dismissible;
+        $this->dismissal_period = $dismissal_period * DAY_IN_SECONDS; // Convert time span to seconds
+        $this->screens          = $screens;
+        add_action( 'admin_notices', array( $this, 'display' ) );
+        add_action( 'wp_ajax_' . $this->action . $this->id, array( $this, 'dismiss' ) );
     }
-    public function register_styles()
+    public function display()
     {
-        $file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/modules/notice/assets/css/styles-rtl.5221.min.css' : '/modules/notice/assets/css/styles.be16.min.css' );
-        if ( file_exists( trailingslashit( WP_PLUGIN_DIR ) . $file ) )
-        {
-            wp_register_style( 'molongui-authorship-notice-styles', plugins_url( '/' ).$file, array(), MOLONGUI_AUTHORSHIP_VERSION, 'screen' );
-        }
-    }
-    public function register_scripts()
-    {
-        $file = MOLONGUI_AUTHORSHIP_FOLDER . '/modules/notice/assets/js/scripts.8b4a.min.js';
-        if ( file_exists( trailingslashit( WP_PLUGIN_DIR ) . $file ) )
-        {
-            wp_register_script( 'molongui-authorship-notice-scripts', plugins_url( '/' ).$file, array( 'jquery' ), MOLONGUI_AUTHORSHIP_VERSION, true );
-            wp_localize_script( 'molongui-authorship-notice-scripts', 'authorship_notice_params', array
-            (
-                'ajax_nonce' => wp_create_nonce( 'molongui-authorship-notice-nonce' ),
-            ));
-        }
-    }
-    public static function dismiss()
-    {
-        check_ajax_referer( 'molongui-authorship-notice-nonce', 'nonce', true );
-        $id   = sanitize_text_field( $_POST['dismissible_id'] );
-        $days = sanitize_text_field( $_POST['dismissible_length'] );
-        $notices = get_option( MOLONGUI_AUTHORSHIP_NOTICES );
-        $notices[$id] = ( 'forever' == $days ? 'forever' : time() + absint( $days ) * DAY_IN_SECONDS );
-        update_option( MOLONGUI_AUTHORSHIP_NOTICES, $notices, true );
-        wp_die();
-    }
-    public static function display( $id, $content, $screens = array(), $dismissible = false, $type = 'error', $class = '', $load_styles = false  )
-    {
-        if ( $dismissible and self::is_dismissed( $id ) )
+        if ( !current_user_can('manage_options' ) )
         {
             return;
         }
-        if ( !empty( $screens ) )
+        if ( get_user_meta( get_current_user_id(), $this->meta_key . $this->id, true ) )
         {
-            global $current_screen;
-            if ( !in_array( $current_screen->id, $screens ) )
+            return;
+        }
+        $dismissed_time = get_user_meta( get_current_user_id(), $this->meta_key . $this->id, true );
+        if ( $dismissed_time )
+        {
+            if ( $this->dismissal_period === 0 )
+            {
+                return;
+            }
+            if ( time() - $dismissed_time < $this->dismissal_period )
             {
                 return;
             }
         }
-
-        $data_attr = '';
-
-        if ( $dismissible )
+        if ( !empty( $this->screens ) )
         {
-            $data_attr  = 'data-dismissible="'.$dismissible.'"';
-            $class     .= ' is-dismissible';
-            wp_enqueue_script( 'molongui-authorship-notice-scripts' );
-            Assets::enqueue_sweetalert();
+            global $current_screen;
+            if ( !in_array( $current_screen->id, $this->screens ) )
+            {
+                return;
+            }
         }
-        if ( $load_styles )
-        {
-            wp_enqueue_style( 'molongui-authorship-notice-styles' );
-        }
-
+        $nonce = wp_create_nonce( $this->action . $this->id );
         ?>
-        <div id="<?php echo esc_attr( $id ); ?>" class="notice notice-<?php echo esc_attr( $type ); ?> <?php echo esc_attr( $class ) ?>" <?php echo esc_attr( $data_attr ); ?>>
-            <?php echo wp_kses_post( wpautop( $content ) ); ?>
+        <div class="notice notice-<?php echo esc_attr( $this->type ); ?> <?php echo $this->dismissible ? 'is-dismissible' : ''; ?>" id="<?php echo esc_attr( $this->id ); ?>">
+            <?php echo wp_kses_post( $this->message ); ?>
+
+            <?php ob_start(); ?>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function()
+                {
+                    document.addEventListener('click', function(event)
+                    {
+                        if (event.target.closest('.notice-dismiss') && event.target.closest('#<?php echo esc_js( $this->id ); ?>'))
+                        {
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('POST', '<?php echo admin_url( 'admin-ajax.php' ); ?>', true);
+                            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                            xhr.send('action=<?php echo esc_js( $this->action . $this->id ); ?>&nonce=<?php echo esc_js( $nonce ); ?>');
+                        }
+                    });
+                });
+            </script>
+            <?php echo Helpers::minify_js( ob_get_clean() ); ?>
         </div>
         <?php
     }
-    public static function is_dismissed( $id )
+    public function dismiss()
     {
-        $notices = get_option( MOLONGUI_AUTHORSHIP_NOTICES );
-        if ( !isset( $notices[$id] ) )
+        if ( !isset( $_POST['nonce'] ) or !wp_verify_nonce( $_POST['nonce'], $this->action . $this->id ) )
         {
-            return false;
+            wp_die( 'Invalid nonce.' );
         }
-        if ( 'forever' == $notices[$id] )
-        {
-            return true;
-        }
-        if ( time() >= $notices[$id] )
-        {
-            unset( $notices[$id] );
-            update_option( MOLONGUI_AUTHORSHIP_NOTICES, $notices, true );
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        update_user_meta( get_current_user_id(), $this->meta_key . $this->id, time() );
+        wp_die( 'Admin Notice permanently dismissed.' );
     }
 
 } // class

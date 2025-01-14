@@ -25,7 +25,6 @@ function authorship_filter_author_link( $link, $author_id, $author_nicename )
 
     return empty( $link ) ? $original_link : $link;
 }
-add_filter( 'author_link', 'authorship_filter_author_link', PHP_INT_MAX, 3 );
 function authorship_dont_filter_author_link( $link, $original_link, $author_id, $author_nicename )
 {
     return $original_link;
@@ -36,14 +35,12 @@ function authorship_register_byline_scripts()
 
     Assets::register_script( $file, 'byline' );
 }
-add_action( 'wp_enqueue_scripts', 'authorship_register_byline_scripts' );
 function authorship_enqueue_byline_scripts()
 {
     $file = apply_filters( 'authorship/byline/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/byline.334a.min.js' );
 
     Assets::enqueue_script( $file, 'byline' );
 }
-add_action( 'wp_enqueue_scripts', 'authorship_enqueue_byline_scripts' );
 function authorship_byline_script_params()
 {
     $options = authorship_get_options();

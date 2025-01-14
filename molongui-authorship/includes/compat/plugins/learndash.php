@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );

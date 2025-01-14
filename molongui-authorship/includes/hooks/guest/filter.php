@@ -6,7 +6,6 @@ function authorship_guest_query_var( $query_vars )
 
     return $query_vars;
 }
-add_action( 'query_vars', 'authorship_guest_query_var' );
 function authorship_filter_guest_posts( $wp_query )
 {
     if ( !molongui_is_request( 'admin' ) ) return false;
@@ -25,4 +24,4 @@ function authorship_filter_guest_posts( $wp_query )
     );
     $wp_query->set( 'meta_query', $meta_query );
 }
-add_action( 'pre_get_posts', 'authorship_filter_guest_posts', 999 );
+//add_action( 'pre_get_posts', 'authorship_filter_guest_posts', 999 );

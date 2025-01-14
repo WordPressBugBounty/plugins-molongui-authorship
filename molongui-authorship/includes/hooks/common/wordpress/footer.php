@@ -16,4 +16,4 @@ function authorship_admin_footer( $footer_text )
     }
     return $footer_text;
 }
-add_filter( 'admin_footer_text', array( Plugin::class, 'custom_admin_footer' ), PHP_INT_MAX );
+//add_filter( 'admin_footer_text', array( Plugin::class, 'custom_admin_footer' ), PHP_INT_MAX );

@@ -32,7 +32,6 @@ function authorship_display_install_notice()
     );
     authorship_notice_display( $notice['id'], $notice['type'], $notice['content'], $notice['dismissible'], $notice['dismissal'], $notice['class'], $notice['pages'] );
 }
-add_action( 'admin_notices', 'authorship_display_install_notice' );
 function authorship_display_whatsnew_notice()
 {
     if ( !get_transient( MOLONGUI_AUTHORSHIP_NAME . '-updated' ) ) return;
@@ -65,13 +64,13 @@ function authorship_display_whatsnew_notice()
     );
     authorship_notice_display( $notice['id'], $notice['type'], $notice['content'], $notice['dismissible'], $notice['dismissal'], $notice['class'], $notice['pages'] );
 }
-add_action( 'admin_notices', 'authorship_display_whatsnew_notice' );
 function authorship_reset_whatsnew_notice( $response, $hook_extra, $result )
 {
     if ( isset( $hook_extra['plugin'] ) and $hook_extra['plugin'] != MOLONGUI_AUTHORSHIP_BASENAME ) return $result;
     delete_transient( MOLONGUI_AUTHORSHIP_NAME . '-activated' );
     set_transient( MOLONGUI_AUTHORSHIP_NAME . '-updated', 1 );
     $notices = get_option( MOLONGUI_AUTHORSHIP_NOTICES );
+
     if ( !empty( $notices ) )
     {
         unset( $notices['whatsnew-notice-dismissal'] );
@@ -79,7 +78,6 @@ function authorship_reset_whatsnew_notice( $response, $hook_extra, $result )
     }
     return $result;
 }
-add_filter( 'upgrader_post_install', 'authorship_reset_whatsnew_notice', 10, 3 );
 function authorship_display_upgrade_notice()
 {
     if ( !apply_filters( 'authorship/admin/show_upgrade_notice', true ) ) return;
@@ -218,7 +216,6 @@ function authorship_notice_dismiss()
     update_option( $key, $notices );
     wp_die();
 }
-add_action( 'wp_ajax_molongui_notice_dismiss', 'authorship_notice_dismiss' );
 function authorship_register_notice_styles()
 {
     $file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/notice-rtl.5221.min.css' : '/assets/css/common/notice.be16.min.css' );
@@ -227,7 +224,6 @@ function authorship_register_notice_styles()
         wp_register_style( 'molongui-notice-styles', plugins_url( '/' ).$file, array(), MOLONGUI_AUTHORSHIP_VERSION, 'screen' );
     }
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_notice_styles' );
 function authorship_register_notice_scripts()
 {
     $file = MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/notice.d651.min.js';
@@ -240,7 +236,6 @@ function authorship_register_notice_scripts()
         ));
     }
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_notice_scripts' );
 
 /*!
  * PRIVATE ACTION HOOK.
@@ -254,4 +249,4 @@ add_action( 'admin_enqueue_scripts', 'authorship_register_notice_scripts' );
  * If you choose to ignore this notice and use this filter, please note that you do so at on your own risk and knowing
  * that it could cause code failure.
  */
-do_action( '_molongui/notice/loaded' );
+//do_action( '_molongui/notice/loaded' );

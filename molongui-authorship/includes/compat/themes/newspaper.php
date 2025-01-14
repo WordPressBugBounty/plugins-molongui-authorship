@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_user_by/post_id', function( $post_id, $user, $field, $value )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_PROVIDE_OBJECT, 7 );
@@ -60,23 +63,26 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
     {
         $post_id = $dbt[$key]['object']->post->ID;
 
-        if ( is_guest_post( $post_id ) )
+        if ( Post::is_guest( $post_id ) )
         {
-            $main = get_main_author( $post_id );
+            $main = Post::get_main_author( $post_id );
             $author->id   = $main->id;
             $author->type = 'guest';
         }
     }
     return $author;
 }, 10, 3 );
-add_filter( 'authorship/render_box', function( $default )
+add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
 {
-    if ( doing_action( 'tdc_footer' ) ) return false;
+    if ( doing_action( 'tdc_footer' ) )
+    {
+        return false;
+    }
     return $default;
 });
 /*
 add_filter( '_authorship/filter/count/author_type', function( $type )
 {
-    if ( is_guest_author() ) return 'guest';
+    if ( molongui_is_guest_author() ) return 'guest';
     return $type;
 });*/

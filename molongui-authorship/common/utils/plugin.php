@@ -2,8 +2,6 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-use Molongui\Authorship\Common\Modules\Settings;
-
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Plugin
 {
@@ -13,54 +11,6 @@ class Plugin
         $r = activate_plugins( $plugin );
 
         return $r;
-    }
-    public static function enabled_post_screens( $plugin_id, $type = 'all' )
-    {
-        $screens = self::enabled_post_types( $plugin_id, $type );
-        foreach ( $screens as $screen )
-        {
-            $screens[] = 'edit-'.$screen;
-        }
-        return $screens;
-    }
-    public static function enabled_post_types( $type = 'all', $select = false )
-    {
-        $post_types = $options = array();
-        $settings = Settings::get();
-        if ( !isset( $settings['post_types'] ) )
-        {
-            return ( $select ? $options : $post_types );
-        }
-        foreach ( Post::get_post_types( $type, 'objects', false ) as $post_type_name => $post_type_object )
-        {
-            if ( in_array( $post_type_name, explode( ",", $settings['post_types'] ) ) )
-            {
-                $post_types[] = $post_type_name;
-                $options[]    = array( 'id' => $post_type_name, 'label' => $post_type_object->labels->name, 'singular' => $post_type_object->labels->singular_name );
-            }
-        }
-        return ( $select ? $options : $post_types );
-    }
-    public static function is_post_type_enabled( $post_type = null, $post_types = null )
-    {
-        if ( !$post_type  )
-        {
-            if ( is_admin() )
-            {
-                $post_type = Post::get_post_type();
-            }
-            else
-            {
-                $post_type = get_post_type();
-            }
-        }
-
-        if ( !$post_types )
-        {
-            $post_types = self::enabled_post_types();
-        }
-
-        return (bool) in_array( $post_type, $post_types );
     }
     public static function custom_admin_footer( $footer_text )
     {
@@ -81,12 +31,12 @@ class Plugin
     {
         return did_action( 'authorship_pro/init' );
     }
-    public static function add_go_pro_link( $links )
+    public static function add_quick_links( $links )
     {
         $more_links = array
         (
             'settings' => '<a href="' . admin_url( 'admin.php?page=' . MOLONGUI_AUTHORSHIP_NAME ) . '">' . __( "Settings" ) . '</a>',
-            'docs'     => '<a href="' . 'https://www.molongui.com/help/docs/' . '" target="blank" >' . __( "Docs", 'molongui-authorship' ) . '</a>'
+            'docs'     => '<a href="' . 'https://www.molongui.com/help/docs/' . MOLONGUI_AUTHORSHIP_ID . '" target="blank" >' . __( "Docs", 'molongui-authorship' ) . '</a>'
         );
 
         if ( apply_filters( 'authorship/action_links/go_pro', true ) )

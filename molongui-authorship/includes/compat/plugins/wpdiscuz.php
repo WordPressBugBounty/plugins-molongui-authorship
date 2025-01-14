@@ -1,7 +1,8 @@
 <?php
 
 use Molongui\Authorship\Author;
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -45,10 +46,10 @@ add_filter( 'get_comment_author_url', function( $commentAuthorUrl, $comment_id, 
 {
     $email = $comment->comment_author_email;
     if ( !$email ) return $commentAuthorUrl;
-    if ( $guest = molongui_get_author_by( '_molongui_guest_author_mail', $email, 'guest' ) )
+    if ( $guest = Author::get_by( '_molongui_guest_author_mail', $email, 'guest' ) )
     {
         $author = new Author( $guest->ID, 'guest' );
-        $commentAuthorUrl = $author->get_url();
+        $commentAuthorUrl = $author->get_archive_url();
     }
     return $commentAuthorUrl;
 

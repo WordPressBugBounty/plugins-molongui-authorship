@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $user_id = $user->ID;
 $profileuser = get_user_to_edit( $user_id );

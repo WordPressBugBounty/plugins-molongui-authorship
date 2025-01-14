@@ -15,4 +15,4 @@ function authorship_ab_new_items()
         'href'   => admin_url( 'admin.php?page=author-new' ),
     ));
 }
-add_action( 'wp_before_admin_bar_render', 'authorship_ab_new_items' );
+//add_action( 'wp_before_admin_bar_render', 'authorship_ab_new_items' );

@@ -19,7 +19,6 @@ function authorship_save_editor_options()
     }
     wp_die();
 }
-add_action( 'wp_ajax_authorship_save_editor_options', 'authorship_save_editor_options' );
 function authorship_validate_editor_spacing_options( $options, $current )
 {
     $size = array
@@ -45,7 +44,6 @@ function authorship_validate_editor_spacing_options( $options, $current )
 
     return $options;
 }
-add_filter( 'authorship/validate_editor_options', 'authorship_validate_editor_spacing_options', 10, 2 );
 function authorship_validate_editor_premium_options( $options, $current = array() )
 {
     $defaults = authorship_get_defaults();
@@ -76,11 +74,10 @@ function authorship_validate_editor_premium_options( $options, $current = array(
 
     return $options;
 }
-add_filter( 'authorship/validate_editor_options', 'authorship_validate_editor_premium_options', 10, 2 );
 function authorship_validate_saved_options( $options )
 {
     if ( authorship_is_editor() ) return $options;
 
     return authorship_validate_editor_premium_options( $options, $options );
 }
-add_filter( 'authorship/get_options', 'authorship_validate_saved_options', 10, 1 );
+//add_filter( 'authorship/get_options', 'authorship_validate_saved_options', 10, 1 );

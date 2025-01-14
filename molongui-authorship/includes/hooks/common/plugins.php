@@ -1,6 +1,8 @@
 <?php
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+return;
 if ( did_action( '_molongui/plugins/loaded' ) ) return;
 
 $file     = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/plugins-rtl.cb71.min.css' : '/assets/css/common/plugins.3d97.min.css' );
@@ -13,12 +15,10 @@ if ( file_exists( $filepath ) )
     if ( $filesize > 4096 )
     {
         add_filter( 'molongui/plugins/inline/stylesheet', '__return_false', 0 );
-        add_action( 'admin_enqueue_scripts', 'authorship_load_plugins_styles' );
     }
     elseif ( $filesize )
     {
         add_filter( 'molongui/plugins/inline/stylesheet', '__return_true', 0 );
-        add_action( 'admin_head', 'authorship_load_plugins_styles' );
     }
 }
 function authorship_load_plugins_styles()
@@ -57,12 +57,10 @@ if ( file_exists( $filepath ) )
     if ( $filesize > 4096 )
     {
         add_filter( 'molongui/plugins/inline/scripts', '__return_false', 0 );
-        add_action( 'admin_enqueue_scripts', 'authorship_load_plugins_scripts', 99 );
     }
     elseif ( $filesize )
     {
         add_filter( 'molongui/plugins/inline/scripts', '__return_true', 0 );
-        add_action( 'admin_footer-toplevel_page_molongui', 'authorship_load_plugins_scripts' );
     }
 }
 function authorship_load_plugins_scripts()
@@ -96,4 +94,4 @@ function authorship_load_plugins_scripts()
  * If you choose to ignore this notice and use this filter, please note that you do so at on your own risk and knowing
  * that it could cause code failure.
  */
-do_action( '_molongui/plugins/loaded' );
+//do_action( '_molongui/plugins/loaded' );

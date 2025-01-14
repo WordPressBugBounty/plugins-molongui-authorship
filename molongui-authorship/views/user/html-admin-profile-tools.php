@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 ?>
 
@@ -14,7 +15,7 @@ defined( 'ABSPATH' ) or exit;
         <!-- Archive Author -->
         <tr class="user-m-archive-author-wrap">
             <th scope="row"><label for="molongui_author_archived"><?php _e( "Archive Author", 'molongui-authorship' ); ?></label></th>
-            <td><label for="molongui_author_archived"><input type="checkbox" name="molongui_author_archived" id="molongui_author_archived" value="1" <?php checked( get_the_author_meta( 'molongui_author_archived', $user->ID ) ); disabled( $user_box_display, 'hide' ); ?>> <?php _e( "Check this box to archive this author so he/she won't be displayed as an eligible author for your posts. Won't be listed in the authors dropdown in your edit-post screen.", 'molongui-authorship' ); ?></label></td>
+            <td><label for="molongui_author_archived"><input type="checkbox" name="molongui_author_archived" id="molongui_author_archived" value="1" <?php checked( get_the_author_meta( 'molongui_author_archived', $user->ID ) ); disabled( $user_box_display, 'hide' ); ?>> <?php _e( "Check to archive this author and prevent them from being eligible as an author for your posts.", 'molongui-authorship' ); ?></label></td>
         </tr>
 
         <!-- Convert User to Guest -->

@@ -16,7 +16,6 @@ function authorship_add_authors_menu()
         5
     );
 }
-add_action( 'admin_menu', 'authorship_add_authors_menu' );
 function authorship_authors_menu_icon()
 {
     return '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"
@@ -37,7 +36,6 @@ function authorship_add_authors_submenu()
         'authors',
         'authorship_render_authors_screen'
     );
-    add_action( "load-$page_hook", 'authorship_add_authors_screen_options' );
 
     if ( current_user_can( 'create_users' ) or $options['guest_authors'] )
     {
@@ -96,7 +94,6 @@ function authorship_add_authors_submenu()
         'authorship_render_help_screen'
     );
 }
-add_action( 'admin_menu', 'authorship_add_authors_submenu' );
 function authorship_add_authors_screen_options()
 {
     $arguments = array
@@ -113,7 +110,6 @@ function authorship_set_authors_screen_options( $screen_option, $option, $value 
 
     return $screen_option;
 }
-add_filter( 'set-screen-option', 'authorship_set_authors_screen_options', 10, 3 );
 function authorship_render_authors_screen()
 {
     $authors_table = new \Molongui\Authorship\Authors_List_Table( 'molongui-authorship' );

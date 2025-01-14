@@ -1,6 +1,7 @@
 <?php
 
 use Molongui\Authorship\Common\Utils\Helpers;
+use Molongui\Authorship\Post;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )

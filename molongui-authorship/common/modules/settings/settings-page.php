@@ -9,17 +9,62 @@ use Molongui\Authorship\Common\Utils\WP;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 trait Settings_Page
 {
-    use Options;
     public static function is_settings_page()
     {
-        $current_screen = get_current_screen();
-        return ( strpos( $current_screen->id, MOLONGUI_AUTHORSHIP_NAME ) );
+        $current_screen = null;
+
+        if ( function_exists( 'get_current_screen' ) )
+        {
+            $current_screen = get_current_screen();
+        }
+
+        if ( $current_screen )
+        {
+            return (bool) strpos( $current_screen->id, MOLONGUI_AUTHORSHIP_NAME );
+        }
+        else
+        {
+            global $pagenow;
+            return $pagenow === 'admin.php' && isset( $_GET['page'] ) && $_GET['page'] === MOLONGUI_AUTHORSHIP_NAME;
+        }
+    }
+    public function dequeue_wp_forms_styles( $wp_styles )
+    {
+        if ( !( is_admin() && self::is_settings_page() ) )
+        {
+            return $wp_styles;
+        }
+
+        $style_handle = 'forms';
+        if ( isset( $wp_styles->registered[ $style_handle ] ) )
+        {
+            unset( $wp_styles->registered[ $style_handle ] );
+            if ( in_array( $style_handle, $wp_styles->queue, true ) )
+            {
+                $wp_styles->queue = array_diff( $wp_styles->queue, array( $style_handle ) );
+            }
+            foreach ( $wp_styles->registered as $handle => $style )
+            {
+                if ( in_array( $style_handle, $style->deps, true ) )
+                {
+                    $wp_styles->registered[ $handle ]->deps = array_diff( $style->deps, array( $style_handle ) );
+                }
+            }
+        }
+
+        return $wp_styles;
+    }
+    public function void_wp_forms_styles( $html, $handle, $href, $media )
+    {
+        if ( 'forms' === $handle && is_admin() && self::is_settings_page() )
+        {
+            return '';
+        }
+        return $html;
     }
     public static function render()
     {
-        $common_options = self::get_options();
-        $plugin_options = apply_filters( 'authorship/plugin_settings', array() );
-        $settings = array_merge_recursive( $plugin_options, (array)$common_options );
+        $settings = apply_filters( 'authorship/plugin_settings', array() );
         if ( $settings )
         {
             foreach ( $settings as $key => $value )
@@ -114,9 +159,12 @@ trait Settings_Page
     public static function register_scripts()
     {
         do_action( 'authorship/options/enqueue_required_deps' );
-        Assets::enqueue_semantic();
         Assets::enqueue_sweetalert();
         $deps = apply_filters( 'authorship/options/script_deps', array() );
+        if ( !empty( $deps ) )
+        {
+            add_filter( "authorship/options/inline_script", '__return_false' );
+        }
         $file = apply_filters( 'authorship/options/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/options.xxxx.min.js' );
 
         Assets::register_script( $file, 'options', $deps );
@@ -124,10 +172,6 @@ trait Settings_Page
     public static function enqueue_scripts()
     {
         $file = apply_filters( 'authorship/options/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/options.xxxx.min.js' );
-        if ( !empty( $deps ) )
-        {
-            add_filter( "mpb/options/inline_script", '__return_false' );
-        }
 
         Assets::enqueue_script( $file, 'options', true );
     }
@@ -141,8 +185,8 @@ trait Settings_Page
             'options_page'   => esc_url( admin_url( 'admin.php?page=' . MOLONGUI_AUTHORSHIP_NAME . '&tab=' . MOLONGUI_AUTHORSHIP_PREFIX . '_pro_' . 'license' ) ),
             'cm_settings' => array
             (
-                'custom_css' => wp_enqueue_code_editor( array( 'type' => 'text/css', 'codemirror' => array( 'mode' => 'css', 'autofocus' => true ) ) ),
-                'custom_php' => wp_enqueue_code_editor( array( 'type' => 'application/x-httpd-php', 'codemirror' => array( 'mode' => 'php', 'autofocus' => true ) ) ),
+                'custom_css' => wp_enqueue_code_editor( array( 'type' => 'text/css', 'codemirror' => array( 'mode' => 'css', 'lint' => true, 'autofocus' => true ) ) ),
+                'custom_php' => wp_enqueue_code_editor( array( 'type' => 'application/x-httpd-php', 'codemirror' => array( 'mode' => 'php', 'lint' => true, 'autofocus' => true ) ) ),
             ),
             1 => __( "Premium feature", 'molongui-authorship' ),
             2 => __( "This feature is available only for Premium users. Upgrade to Premium to unlock it!", 'molongui-authorship' ),
@@ -201,14 +245,14 @@ trait Settings_Page
     public static function register_styles()
     {
         if ( apply_filters( 'authorship/options/enqueue_colorpicker', false ) ) wp_enqueue_style( 'wp-color-picker' );
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.fcde.min.css' : '/common/modules/settings/assets/css/styles.1af2.min.css' ) );
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.e456.min.css' : '/common/modules/settings/assets/css/styles.9f01.min.css' ) );
         $deps = array();
 
         Assets::register_style( $file, 'options', $deps );
     }
     public static function enqueue_styles()
     {
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.fcde.min.css' : '/common/modules/settings/assets/css/styles.1af2.min.css' ) );
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.e456.min.css' : '/common/modules/settings/assets/css/styles.9f01.min.css' ) );
 
         Assets::enqueue_style( $file, 'options', true );
     }
@@ -220,131 +264,143 @@ trait Settings_Page
     }
     public static function support_tab_content()
     {
-        $tidio_url = Helpers::get_tidio_url();
+        $tidio_url   = Helpers::get_tidio_url();
+        $chat_online = Helpers::is_time_in_range( '09:00', '15:00' );
 
         ob_start(); ?>
 
-        <h2 class="m-section-title"><?php esc_html_e( "Need help? Let us know and we will be happy to assist.", 'molongui-authorship' ); ?></h2>
+        <?php UI::heading( array( 'title' => __( "Need help? Let us know and we will be happy to assist", 'molongui-authorship' ) ) ); ?>
 
-        <!-- Docs -->
-        <div class="m-card m-card-header">
-            <div class="m-card-header__label">
-                <span class="m-card-header__label-text"><?php esc_html_e( "Plugin Documentation", 'molongui-authorship' ); ?></span>
-            </div>
-            <div class="m-card-header__actions">
-                <a href="<?php echo 'https://www.molongui.com/help/docs/'; ?>" target="_blank" type="button" class="m-button is-compact is-primary same-width"><?php esc_html_e( "Read Docs", 'molongui-authorship' ); ?></a>
-            </div>
-        </div>
-        <div class="m-card">
-            <div>
-                <?php esc_html_e( "Learn the basics to help you make the most of Molongui plugins.", 'molongui-authorship' ); ?>
-            </div>
-        </div>
+        <div class="molongui-ui-columns">
 
-        <!-- Open Ticket -->
-        <div class="m-card m-card-header">
-            <div class="m-card-header__label">
-                <span class="m-card-header__label-text"><?php esc_html_e( "Open a Support Ticket", 'molongui-authorship' ); ?></span>
-            </div>
-            <div class="m-card-header__actions">
-                <a href="<?php echo 'https://www.molongui.com/help/support/'; ?>" target="_blank" type="button" class="m-button is-compact same-width"><?php esc_html_e( "Get Support", 'molongui-authorship' ); ?></a>
-            </div>
-        </div>
-        <div class="m-card">
-            <div>
-                <?php
-                /*! // translators: %1$s: Opening i tag. %2$s: Closing i tag. */
-                printf( esc_html__( "Documentation didn't help? Submit a ticket below and get help from our friendly and knowledgeable %sMolonguis%s. We reply to every ticket, please check your Spam folder if you haven't heard from us.", 'molongui-authorship' ), '<i>', '</i>');
-                ?>
-            </div>
-        </div>
-        <div class="m-card">
-            <div>
-                <form id="molongui-help-ticket-form">
-                    <div id="molongui-form-error" class="hidden"><?php esc_html_e( "All fields are mandatory", 'molongui-authorship' ); ?></div>
-                    <p>
-                        <label for="your-name"><?php esc_html_e( "Name", 'molongui-authorship' ); ?></label>
-                        <input type="text" name="your-name" required placeholder="<?php esc_attr_e( "Your name here", 'molongui-authorship' ); ?>">
-                    </p>
-                    <p>
-                        <label for="your-email"><?php esc_html_e( "Email", 'molongui-authorship' ); ?></label>
-                        <input type="email" name="your-email" required placeholder="<?php esc_attr_e( "Your e-mail here", 'molongui-authorship' ); ?>">
-                    </p>
-                    <p>
-                        <label for="your-subject"><?php esc_html_e( "Subject", 'molongui-authorship' ); ?></label>
-                        <input type="text" name="your-subject" required placeholder="<?php esc_attr_e( "Brief issue description", 'molongui-authorship' ); ?>">
-                    </p>
-                    <p>
-                        <label for="plugin"><?php esc_html_e( "Plugin", 'molongui-authorship' ); ?></label>
-                        <select name="plugin" required>
-                            <option value="">---</option>
-                            <option value="Molongui Authorship">Molongui Post Authors and Author Box</option>
-                            <option value="Molongui Contributors">Molongui Post Contributors</option>
-                            <option value="Molongui Deals, Sales Promotions and Upsells for WooCommerce">Molongui Order Bump for WooCommerce</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="your-message"><?php esc_html_e( "Message", 'molongui-authorship' ); ?></label>
-                        <textarea name="your-message" cols="40" rows="7" required placeholder="<?php esc_attr_e( "Explain your issue providing a URL we can check", 'molongui-authorship' ); ?>"></textarea>
-                    </p>
-                    <p><input type="checkbox" id="molongui-accept-tos" name="molongui-accept-tos" value="1">
-                        <?php
-                        /*! // translators: %1$s: Opening a tag. %2$s: Closing a tag. */
-                        printf( esc_html__( "I have read and accept the %sprivacy policy%s.", 'molongui-authorship' ), '<a href="https://www.molongui.com/privacy/">', '</a>' );
-                        ?>
-                    </p>
-                    <p class="hidden"><input type="hidden" name="ticket-id" value="<?php echo esc_attr( 'HR'.gmdate('y').'-'.gmdate('mdHis') ); ?>"></p>
-                    <button type="submit" id="molongui-submit-ticket" class="m-button is-compact is-primary"><?php esc_html_e( "Open Support Ticket", 'molongui-authorship' ); ?></button>
-                </form>
-            </div>
-        </div>
+            <div class="molongui-ui-column molongui-ui-column-left">
 
-        <!-- Live Chat -->
-        <div class="m-card m-card-header">
-            <div class="m-card-header__label">
-                <span class="m-card-header__label-text"><?php esc_html_e( "Live Support", 'molongui-authorship' ); ?></span>
-            </div>
-            <div class="m-card-header__actions">
-                <a href="<?php echo esc_url( $tidio_url ); ?>" target="_blank" type="button" class="m-button is-compact same-width"><?php esc_html_e( "Open Chat", 'molongui-authorship' ); ?></a>
-            </div>
-        </div>
-        <div class="m-card">
-            <div>
-                <?php esc_html_e( "Need answers and documentation didn't help? Chat with us. You can open the chat by clicking either on the link below, on the button above or on the floating dark button on the bottom right.", 'molongui-authorship' ); ?>
-            </div>
-            <div>
-                <ul class="m-list">
-                    <li><span class="dashicons dashicons-translation"></span>
-                        <?php
-                        /*! // translators: %1$s: Opening strong tag. %2$s: Closing strong tag. %3$s: Opening strong tag. %4$s: Closing strong tag. */
-                        printf( esc_html__( "We speak %sEnglish%s and %sSpanish%s", 'molongui-bump-offer' ), '<strong>', '</strong>', '<strong>', '</strong>' ); ?></li>
-                    <li><span class="dashicons dashicons-clock"></span>
-                        <?php
-                        /*! // translators: %1$s: Opening strong tag. %2$s: Closing strong tag. */
-                        printf( esc_html__( "We answer Monday to Friday, from 9 AM to 5 PM (%sCentral European Time%s)", 'molongui-bump-offer' ), '<strong>', '</strong>' );
-                        ?>
-                    </li>
-                    <li><span class="dashicons dashicons-email"></span><?php esc_html_e( "If offline, please leave your email address so we can get in touch with you", 'molongui-bump-offer' ); ?></li>
-                </ul>
-            </div>
-        </div>
-        <a class="m-card is-card-link is-compact" target="_blank" href="<?php echo esc_url( $tidio_url ); ?>" title="<?php esc_attr_e( "Click to open Live Chat", 'molongui-authorship' ); ?>">
-            <svg class="gridicon gridicons-external m-card__link-indicator" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M19 13v6c0 1.105-.895 2-2 2H5c-1.105 0-2-.895-2-2V7c0-1.105.895-2 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.793 7.793 1.414 1.414L19 6.414V11h2V3h-8z"></path></g></svg>
-            <?php esc_html_e( "Open Live Support Chat", 'molongui-authorship' ); ?>
-        </a>
+                <!-- Documentation -->
+                <div class="molongui-ui-card">
+                    <div class="molongui-ui-card__title">
+                        <?php esc_html_e( "Explore Our Documentation", 'molongui-authorship' ); ?>
+                    </div>
+                    <div class="molongui-ui-card__description">
+                        <?php esc_html_e( "Find detailed guides, FAQs, and troubleshooting tips in our comprehensive plugin documentation. Get the answers you need to make the most out of your plugin!", 'molongui-authorship' ); ?>
+                    </div>
+                    <a class="molongui-ui-card__button" href="<?php echo 'https://www.molongui.com/help/docs/'; ?>" target="_blank" type="button">
+                        <?php esc_html_e( "Open Docs →", 'molongui-authorship' ); ?>
+                    </a>
+                </div>
 
-        <!-- Send Report -->
-        <div class="m-card m-card-header">
-            <div class="m-card-header__label">
-                <span class="m-card-header__label-text"><?php esc_html_e( "System Status Report", 'molongui-authorship' ); ?></span>
+                <!-- Live Chat -->
+                <div class="molongui-ui-card">
+                    <div class="molongui-ui-card__title">
+                        <?php esc_html_e( "Live Support Chat", 'molongui-authorship' ); ?>
+                    </div>
+                    <div class="molongui-ui-card__description">
+                        <?php esc_html_e( "Need immediate help and couldn't find answers in the documentation? Chat with us directly! Our support team is here to assist you.", 'molongui-authorship' ); ?>
+                    </div>
+                    <div class="molongui-ui-card__description">
+                        <?php if ( $chat_online ) : ?>
+                            <span class="dashicons dashicons-clock"></span>
+                            <?php echo sprintf( "%s%s%s"
+                                            , _x( "Live Chat is currently", 'This is followed by the Live Chat Support status', 'molongui-authorship' )
+                                            , ': '
+                                            , '<b style="color:green">' . __( "Online", 'molongui-authorship' ) . '</b>'
+                                       );
+                            ?>
+                        <?php else: ?>
+                            <span class="dashicons dashicons-clock"></span>
+                            <?php echo sprintf( "%s%s%s"
+                                            , _x( "Live Chat is currently", 'This is followed by the Live Chat Support status', 'molongui-authorship' )
+                                            , ': '
+                                            , '<b style="color:red">' . __( "Offline", 'molongui-authorship' ) . '</b>'
+                                       );
+                            ?>
+                        <?php endif; ?>
+                    </div>
+                    <a class="molongui-ui-card__button" target="_blank" href="<?php echo esc_url( $tidio_url ); ?>" title="<?php esc_attr_e( "Click to open Live Chat", 'molongui-authorship' ); ?>">
+                        <?php esc_html_e( "Chat Now →", 'molongui-authorship' ); ?>
+                    </a>
+                </div>
+
+                <!-- System Details -->
+                <div class="molongui-ui-card">
+                    <div class="molongui-ui-card__title">
+                        <?php esc_html_e( "System Details", 'molongui-authorship' ); ?>
+                    </div>
+                    <div class="molongui-ui-card__description">
+                        <?php esc_html_e( "Sometimes we may need more information about your site and plugin setup to assist you better. You can generate a detailed report and send it to our support team for faster troubleshooting.", 'molongui-authorship' ); ?>
+                    </div>
+                    <input type="hidden" name="system-details" value="">
+                    <div style="display:flex; gap:1em">
+                        <a class="molongui-ui-card__button" id="molongui-system-details-report" type="button">
+                            <?php esc_html_e( "Send Report", 'molongui-authorship' ); ?>
+                        </a>
+                        <a class="molongui-ui-card__button molongui-ui-card__button--secondary" id="molongui-system-details" type="button">
+                            <?php esc_html_e( "Copy Details", 'molongui-authorship' ); ?>
+                        </a>
+                    </div>
+                </div>
+
             </div>
-            <div class="m-card-header__actions">
-                <a id="send-molongui-support-report" type="button" class="m-button is-compact is-primary same-width"><?php esc_html_e( "Send Report", 'molongui-authorship' ); ?></a>
-            </div>
-        </div>
-        <div class="m-card">
-            <div>
-                <?php esc_html_e( "Sometimes we may ask you to send us your system status report so we can get a better knowledge of your installation.", 'molongui-authorship' ); ?>
+
+            <div class="molongui-ui-column molongui-ui-column-right">
+                <div class="molongui-ui-card">
+                    <div class="molongui-ui-card__title">
+                        <?php esc_html_e( "Help Request", 'molongui-authorship' ); ?>
+                    </div>
+                    <div class="molongui-ui-card__description" style="margin:1em 0 2em">
+                        <?php esc_html_e( "Still need help? Submit a support ticket using the form below. Our team is here to assist you!", 'molongui-authorship' ); ?>
+                        <div style="display:flex; margin:2em 0 0">
+                            <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; background:#e8c00e">
+                                <span class="dashicons dashicons-tickets-alt" style="flex:0; width: 3em; height: 3em; font-size:3em; color:#102A43"></span>
+                                <div style="flex:0; font-weight:bold; color:#102A43">
+                                    <?php esc_html_e( "Ticket Notes", 'molongui-authorship' ); ?>
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:1em; padding:1em; background:#e8e8e8">
+                                <div>
+                                    <?php echo wp_kses_post( __( "<b>Languages</b>: English and Spanish", 'molongui-authorship' ) ); ?>
+                                </div>
+                                <div>
+                                    <?php echo wp_kses_post( __( "<b>Response</b>: We usually reply within 24 hours", 'molongui-authorship' ) ); ?>
+                                </div>
+                                <div>
+                                    <?php echo wp_kses_post( __( "<b>Follow-Up</b>: We respond to all tickets. If you haven't heard back, check your Spam folder.", 'molongui-authorship' ) ); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Help Request -->
+                    <form id="molongui-help-request-form">
+                        <div id="molongui-form-error" class="hidden">
+                            <?php esc_html_e( "All fields are mandatory", 'molongui-authorship' ); ?>
+                        </div>
+                        <p>
+                            <label for="your-name"><?php esc_html_e( "Name", 'molongui-authorship' ); ?></label>
+                            <input type="text" required id="your-name" name="your-name" placeholder="<?php esc_attr_e( "Your name here", 'molongui-authorship' ); ?>">
+                        </p>
+                        <p>
+                            <label for="your-email"><?php esc_html_e( "Email", 'molongui-authorship' ); ?></label>
+                            <input type="email" required id="your-email" name="your-email" placeholder="<?php esc_attr_e( "Your email address here", 'molongui-authorship' ); ?>">
+                        </p>
+                        <p>
+                            <label for="your-subject"><?php esc_html_e( "Subject", 'molongui-authorship' ); ?></label>
+                            <input type="text" required id="your-subject" name="your-subject" placeholder="<?php esc_attr_e( "Brief issue description", 'molongui-authorship' ); ?>">
+                        </p>
+                        <p>
+                            <label for="your-message"><?php esc_html_e( "Message", 'molongui-authorship' ); ?></label>
+                            <textarea required id="your-message" name="your-message" cols="40" rows="7" placeholder="<?php esc_attr_e( "Explain your issue providing a URL we can check", 'molongui-authorship' ); ?>"></textarea>
+                        </p>
+                        <p>
+                            <input type="checkbox" required id="molongui-accept-tos" name="molongui-accept-tos" value="1">
+                            <?php
+                            /*! // translators: %1$s: Opening a tag. %2$s: Closing a tag. */
+                            printf( esc_html__( "I have read and accept the %sprivacy policy%s.", 'molongui-authorship' ), '<a href="https://www.molongui.com/privacy/">', '</a>' );
+                            ?>
+                        </p>
+                        <input type="hidden" name="plugin-id" value="<?php echo esc_attr( MOLONGUI_AUTHORSHIP_TITLE ); ?>">
+                        <input type="hidden" name="ticket-id" value="<?php echo esc_attr( 'HR'.gmdate('y').'-'.gmdate('mdHis') ); ?>">
+                        <button type="submit" id="molongui-submit-ticket" class="molongui-ui-card__button"><?php esc_html_e( "Submit Ticket", 'molongui-authorship' ); ?></button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -378,6 +434,207 @@ trait Settings_Page
         <?php
 
         return ob_get_clean();
+    }
+    public static function custom_css_control()
+    {
+        UI::textarea( array
+        (
+            'id'          => 'custom_css',
+            'value'       => self::get( 'custom_css', '' ),
+            'disabled'    => '',
+            'echo'        => true,
+            'class'       => 'codemirror-css',
+            'label'       => '',
+            'description' => __( 'Enter here any CSS rules you want to add to your site to modify default plugin styles. If you need help customizing anything, feel free to <a href="https://www.molongui.com/help/support/" target="_blank">open a support ticket</a> with us and we will be happy to help.', 'molongui-authorship' ),
+            'rows'        => 10,
+            'placeholder' => '',
+            'tooltip'     => '',
+        ));
+    }
+    public static function custom_php_control()
+    {
+        UI::textarea( array
+        (
+            'id'          => 'custom_php',
+            'value'       => self::get( 'custom_php', '' ),
+            'disabled'    => '',
+            'echo'        => true,
+            'class'       => 'codemirror-php',
+            'label'       => '',
+            'description' => sprintf( '%s%s%s%s%s%s'
+                                , '<p>'
+                                , __( "Add any PHP snippet here to modify the plugin's default behavior or for other purposes. <b>Keep the opening PHP tag</b> <code>&lt;?php</code> on the first line. Snippets will only run on your site's frontend by default, preventing loss of Dashboard access in case of errors. To run them in the Dashboard, enable the setting below.", 'molongui-authorship' )
+                                , '</p>'
+                                , '<div style="border-left:3px solid #fbb638; background:#f0f0f1; margin:1rem 0; font-family:Consolas,Monaco,monospace; font-size:11px; padding:8px">'
+                                , __( "Ensure your code is error-free as no error checking occurs during saving.", 'molongui-authorship' )
+                                , '</div>'
+                             ),
+            'rows'        => 10,
+            'placeholder' => '',
+            'tooltip'     => '',
+        ));
+
+        UI::checkbox( array
+        (
+            'id'          => 'custom_php_in_admin',
+            'value'       => self::get( 'custom_php_in_admin', false ),
+            'label'       => __( "Run custom PHP also in WordPress admin area <code>Exercise extreme caution!</code>", 'molongui-authorship' ),
+            'echo'        => true,
+            'class'       => '',
+            'help'        => sprintf( "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
+                                , '<p>'
+                                , __( "Activating this setting allows custom code to run in the WordPress admin area.", 'molongui-authorship' )
+                                , '</p>'
+                                , '<p>'
+                                , __( "Running custom code in the backend has risks. If the code contains errors and causes a fatal error, you may lose access to your dashboard. However, you can recover from this situation:", 'molongui-authorship' )
+                                , '</p>'
+                                , '<p>'
+                                , __( "<b>Revert Changes</b>: Append <code>?nophpAuthorship</code> to the end of your wp-admin URL to disable the custom code temporarily. For example:", 'molongui-authorship' )
+                                , '</p>'
+                                , '<p><code>' . esc_url( admin_url( '/options-general.php?page=molongui-authorship&tab=tools&nophpAuthorship' ) ) . '</code></p>'
+                                , '<p>'
+                                , __( "This parameter disables the custom code, allowing you to regain access and fix the issue.", 'molongui-authorship' )
+                                , '</p>'
+                                , '<p>'
+                                , __( "<b>Testing New Code</b>: Before permanently enabling custom code in the admin area, test your code by appending <code>?phpAuthorship</code> to the end of your wp-admin URL to simulate the environment.", 'molongui-authorship' )
+                                , '</p>'
+                                , '<p>'
+                                , __( "This approach helps ensure the stability of your code before you apply changes.", 'molongui-authorship' )
+                                , '</p>'
+                                , '<hr>'
+                                , '<a href="https://www.molongui.com/help/using-the-custom-php-setting/" target="_blank">' . __( "Learn more about custom PHP snippets", 'molongui-authorship' ) . '</a>'
+                             ),
+            'description' => '',
+            'content'     => array
+            (
+                'off' => '',
+                'on'  => '',
+            ),
+        ));
+    }
+    public static function plugin_settings_control()
+    {
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "Export", 'molongui-authorship' ),
+            'description' => __( "Export the plugin settings to create a backup or restore it on another installation.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'    => 'export_options',
+                'label' => __( "Backup", 'molongui-authorship' ),
+                'link'  => '',
+                'nonce' => 'molongui_export_options',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "Import", 'molongui-authorship' ),
+            'description' => __( "Restore the plugin settings from a previously exported backup file.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => 'import_options',
+                'label'  => __( "Import", 'molongui-authorship' ),
+                'accept' => '.json',
+                'nonce'  => wp_nonce_field( 'molongui_import_options', 'molongui_import_options_nonce' ),
+            ),
+            'echo'        => true,
+            'disabled'    => apply_filters( 'authorship/disable_premium_setting', 'premium' ),
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "Reset", 'molongui-authorship' ),
+            'description' => __( "Reset the plugin settings to their default values", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'    => 'reset_options',
+                'label' => __( "Reset", 'molongui-authorship' ),
+                'link'  => '',
+                'nonce' => wp_nonce_field( 'molongui_reset_options', 'molongui_reset_options_nonce' ),
+            ),
+            'echo'        => true,
+            'disabled'    => apply_filters( 'authorship/disable_premium_setting', 'premium' ),
+            'class'       => '',
+        ));
+
+        echo '</div>';
+    }
+    public static function plugin_data_removal()
+    {
+        UI::toggle( array
+        (
+            'id'          => 'uninstall_enabled',
+            'value'       => self::get( 'uninstall_enabled', false ),
+            'label'       => __( "Enable Data Removal on Uninstall", 'molongui-authorship' ),
+            'disabled'    => false,
+            'echo'        => true,
+            'class'       => '',
+            'description' => __( "Choose what plugin data should be removed when uninstalling. Enabling this setting lets you decide which information—such as plugin data and configuration—should be deleted along with the plugin files (which are always removed upon uninstall). Use this to control the level of data cleanup during uninstallation.", 'molongui-authorship' ),
+            'content'     => array
+            (
+                'off' => '',
+                'on'  => self::get_plugin_data_removal_hidden_content(),
+            ),
+        ));
+    }
+    public static function get_plugin_data_removal_hidden_content()
+    {
+        $uninstall = self::get( 'uninstall', 'files' );
+        if ( empty( $uninstall ) or !is_string( $uninstall ) )
+        {
+            $uninstall = 'files';
+        }
+        else
+        {
+            if ( strpos( 'files,', $uninstall ) !== 0 )
+            {
+                $uninstall = 'files,' . $uninstall;
+            }
+        }
+
+        return UI::checkbox_group( array
+        (
+            'id'       => 'uninstall',
+            'selected' => $uninstall,
+            'options'  => array
+            (
+                array
+                (
+                    'value'    => 'files',
+                    'label'    => __( "Plugin files", 'molongui-authorship' ),
+                    'disabled' => true,
+                ),
+                array
+                (
+                    'value'    => 'config',
+                    'label'    => __( "Plugin configuration", 'molongui-authorship' ),
+                    'disabled' => false,
+                ),
+                array
+                (
+                    'value'    => 'data',
+                    'label'    => __( "Plugin data", 'molongui-authorship' ),
+                    'disabled' => false,
+                ),
+            ),
+            'echo'     => false,
+            'title'    => '',
+            'class'    => 'molongui-ui-checkbox-group--vertical',
+            'tooltip'  => __( "If you want to keep plugin files, don't remove the plugin, just deactivate it.", 'molongui-authorship' ),
+        ));
     }
 
 } // trait

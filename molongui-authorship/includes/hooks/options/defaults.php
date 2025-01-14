@@ -212,4 +212,4 @@ function authorship_set_defaults( $fw_options )
         'enable_plugin_compat' => true,
     ));
 }
-add_filter( 'authorship/default_options', 'authorship_set_defaults' );
+//add_filter( 'authorship/default_options', 'authorship_set_defaults' );

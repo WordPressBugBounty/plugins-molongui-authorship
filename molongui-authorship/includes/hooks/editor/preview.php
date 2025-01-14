@@ -6,7 +6,6 @@ function authorship_box_preview_style_element()
     <div id="m-editor-live-preview__changes"></div>
     <?php
 }
-add_action( 'admin_print_footer_scripts', 'authorship_box_preview_style_element', PHP_INT_MAX );
 function authorship_box_preview_action()
 {
     check_ajax_referer( 'authorship_box_editor_nonce', 'nonce', true );
@@ -27,7 +26,6 @@ function authorship_box_preview_action()
     echo $markup;
     wp_die();
 }
-add_action( 'wp_ajax_authorship_box_preview_action', 'authorship_box_preview_action' );
 function authorship_box_preview_profile_layout( $output, $options, $author, $random_id )
 {
     $add_microdata = false;
@@ -111,7 +109,6 @@ function authorship_box_preview_profile_layout( $output, $options, $author, $ran
 
     return $output;
 }
-add_filter( 'authorship/author_box/profile_layout', 'authorship_box_preview_profile_layout', 10, 4 );
 function authorship_box_preview_related_layout( $output, $options, $author )
 {
     $add_microdata = false;
@@ -173,4 +170,4 @@ function authorship_box_preview_related_layout( $output, $options, $author )
 
     return $output;
 }
-add_filter( 'authorship/author_box/related_layout', 'authorship_box_preview_related_layout', 10, 3 );
+//add_filter( 'authorship/author_box/related_layout', 'authorship_box_preview_related_layout', 10, 3 );

@@ -1,6 +1,8 @@
 <?php
 
+use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Author;
+use Molongui\Authorship\Author_Box;
 use Molongui\Authorship\Common\Modules\Settings;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Post;
@@ -13,7 +15,7 @@ function authorship_render_box( $content )
     {
         return $content;
     }
-    if ( !apply_filters( 'authorship/render_box', true ) )
+    if ( !apply_filters( 'authorship/render_box', true, $post_id ) )
     {
         return $content;
     }
@@ -114,7 +116,7 @@ function authorship_box_markup( $post, $post_authors, $options = array(), $check
             $random_id = molongui_rand();
             $box_ids[] = $random_id;
             molongui_enqueue_element_queries();
-            authorship_enqueue_box_styles();
+            Author_Box_Editor::enqueue_styles();
             ob_start();
             include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-layout.php';
             $html .= ob_get_clean();
@@ -134,7 +136,7 @@ function authorship_box_markup( $post, $post_authors, $options = array(), $check
         $common_posts = get_coauthored_posts( $post_authors, false, array(), 'selected' );
         $show_related = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_related_show'] ) and ( !empty( $common_posts ) or !empty( $options['author_box_related_show_empty'] ) ) );
         molongui_enqueue_element_queries();
-        authorship_enqueue_box_styles();
+        Author_Box::enqueue_styles();
         ob_start();
         include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-multiauthor-layout.php';
         $html .= ob_get_clean();

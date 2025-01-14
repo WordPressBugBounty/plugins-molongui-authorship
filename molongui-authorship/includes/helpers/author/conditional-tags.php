@@ -1,26 +1,23 @@
 <?php
 
 use Molongui\Authorship\Author;
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
 if ( !function_exists( 'is_guest_author' ) )
 {
     function is_guest_author()
     {
-        global $wp_query;
-
-        if ( !isset( $wp_query ) )
-        {
-            _doing_it_wrong( __FUNCTION__, __( "Conditional query tags do not work before the query is run. Before then, they always return false." ), '3.1.0' );
-            return false;
-        }
-
-        return isset( $wp_query->is_guest_author ) ? $wp_query->is_guest_author : false;
+        _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_is_guest_author()' );
+        return molongui_is_guest_author();
     }
 }
+
 if ( !function_exists( 'molongui_is_guest' ) )
 {
     function molongui_is_guest( $author = null )
     {
+        _deprecated_function( __FUNCTION__, '5.0.0' );
         if ( empty( $author ) ) return false;
         if ( $author instanceof \WP_User ) return false;
         if ( $author instanceof \WP_Post ) return true;
@@ -29,25 +26,16 @@ if ( !function_exists( 'molongui_is_guest' ) )
         return false;
     }
 }
+
 if ( !function_exists( 'has_local_avatar' ) )
 {
     function has_local_avatar( $author_id = null, $author_type = 'user' )
     {
-        if ( empty( $author_id ) ) return false;
-
-        switch( $author_type )
-        {
-            case 'user':
-                $img = get_user_meta( $author_id, 'molongui_author_image_url', true );
-                return ( !empty( $img ) ? true : false );
-
-            case 'guest':
-                return ( has_post_thumbnail( $author_id ) ? true : false );
-        }
-
-        return false;
+        _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_has_local_avatar()' );
+        return molongui_has_local_avatar( $author_id, $author_type );
     }
 }
+
 if ( !function_exists( 'authorship_author_has_posts' ) )
 {
     function authorship_author_has_posts( $author, $post_types )
@@ -65,6 +53,7 @@ if ( !function_exists( 'authorship_author_has_posts' ) )
         return $has_posts;
     }
 }
+
 if ( !function_exists( 'authorship_author_name_exists' ) )
 {
     function authorship_author_name_exists( $id, $type )
@@ -107,6 +96,7 @@ function authorship_is_author_archived( $id = null, $type = 'user' )
 
     return $archived ? true : false;
 }
+
 if ( !function_exists( 'is_author_archived' ) )
 {
     function is_author_archived( $id, $type )

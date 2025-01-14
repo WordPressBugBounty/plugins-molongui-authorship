@@ -8,4 +8,4 @@ function authorship_filter_export_options( $options )
 
     return $options;
 }
-add_filter( 'authorship/export_options', 'authorship_filter_export_options' );
+//add_filter( 'authorship/export_options', 'authorship_filter_export_options' );

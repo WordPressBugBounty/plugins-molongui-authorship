@@ -8,4 +8,4 @@ function authorship_enqueue_tidio()
         echo '<script src="//code.tidio.co/foioudbu7xqepgvwseufnvhcz6wkp7am.js" async></script>';
     }
 }
-add_action( 'admin_footer-molongui_page_molongui-support', 'authorship_enqueue_tidio' );
+//add_action( 'admin_footer-molongui_page_molongui-support', 'authorship_enqueue_tidio' );

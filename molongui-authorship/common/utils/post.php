@@ -154,25 +154,13 @@ class Post
             }
         }
     }
-    public static function can_save_post( $post_id )
+    public static function can_save_post( $post_id, $_post = null )
     {
-        if ( is_null( $post_id ) or empty( $_POST ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( !isset( $_POST['post_ID'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( (int)$_POST['post_ID'] !== (int)$post_id ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( !isset( $_POST['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
         if ( defined( 'DOING_AUTOSAVE' ) and DOING_AUTOSAVE )
+        {
+            return false;
+        }
+        if ( empty( $post_id ) )
         {
             return false;
         }
@@ -180,7 +168,27 @@ class Post
         {
             return false;
         }
-        if ( 'page' == $_POST['post_type'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if ( !empty( $_POST ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        {
+            $_post = $_POST;
+        }
+        if ( !isset( $_post ) or empty( $_post ) )
+        {
+            return false;
+        }
+        if ( !isset( $_post['post_ID'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        {
+            return false;
+        }
+        if ( (int)$_post['post_ID'] !== (int)$post_id ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        {
+            return false;
+        }
+        if ( !isset( $_post['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        {
+            return false;
+        }
+        if ( 'page' == $_post['post_type'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
         {
             if ( !current_user_can( 'edit_page', $post_id ) )
             {
@@ -249,7 +257,6 @@ class Post
                 $sql_query .= implode( " UNION ALL ", $sql_query_sel );
                 $wpdb->query( $sql_query );
             }
-
             do_action( 'authorship/post_cloned', $new_post_id, $post_id );
 
             if ( $redirect )

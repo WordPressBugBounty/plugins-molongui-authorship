@@ -7,7 +7,7 @@ class AvadaBuilder
 {
     public function __construct()
     {
-        add_filter( 'authorship/render_box', array( $this, 'hide_author_box' ), 10, 4 );
+        add_filter( 'molongui_authorship/add_author_box_to_content', array( $this, 'hide_author_box' ), 10, 4 );
     }
     public function hide_author_box( $default )
     {

@@ -2,12 +2,39 @@
 
 == Changelog ==
 
+= 5.0.0 (2025-01-14) =
+
+* Added: Ability to customize the order of social profiles.
+* Added: Ready-to-use templates for the author box.
+* Added: Dummy author data for author box preview.
+* Added: Row action to update posts counts for users and guest authors.
+* Added: Bulk action to update posts counts for selected users and guest authors.
+* Added: Option to hide the author name on the author box.
+* Added: Option to run custom PHP on the Dashboard.
+* Added: Ability to customize the position and icon of the 'Authors' menu.
+* Enhanced: Compatibility with the Newspaper theme.
+* Enhanced: Compatibility with the Reusable Content Blocks plugin.
+* Fixed: Custom CSS styles not loading correctly.
+* Fixed: Incorrect query argument value.
+* Fixed: Author search box could not find authors containing dots or spaces in their names.
+* Fixed: Acronym author box avatars not displaying letters centered correctly.
+* Changed: Redesigned plugin settings page.
+* Changed: Replaced the author dropdown with a search-as-you-type input in the Author Box Editor.
+* Changed: Switched the JavaScript library used for search-as-you-type suggestions.
+* Changed: Improved responsiveness by using native CSS properties, removing JavaScript-based solutions.
+* Changed: Updated framework files to version 3.3.0.
+* Changed: Added compatibility with WordPress 6.7.
+* Removed: The option to hide HTML elements on the frontend. Use 'Custom CSS' instead.
+* Removed: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the 'authorship/assets/load_remote' filter.
+* Dev: Major code refactor.
+* Dev: Removed 'get_byline' helper function.
+* Dev: Removed 'get_post_authors' helper function.
+
 = 4.9.7 (2024-08-29) =
 
 * Added filter to control the separator used before each author meta item
 * Fixed PHP warning on undefined property
 * Fixed issue with the Molongui Post Contributors plugin
-* Minor code refactor
 
 = 4.9.6 (2024-08-01) =
 

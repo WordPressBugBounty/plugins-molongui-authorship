@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'molongui_edit_main_query_only', function( $default, &$query )
 {
     if ( empty( $query->query_vars['author'] ) ) return $default;

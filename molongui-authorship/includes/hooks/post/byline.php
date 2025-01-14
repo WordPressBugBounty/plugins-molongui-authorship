@@ -12,7 +12,7 @@ function authorship_the_author_posts_link( $link )
 
     return empty( $link ) ? $original_link : $link;
 }
-add_filter( 'the_author_posts_link', 'authorship_the_author_posts_link', PHP_INT_MAX );
+/*
 add_filter( 'authorship/pre_author_link', function( $link, $original_link, $author_id, $author_nicename )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -25,3 +25,4 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
 
     return $link;
 }, 10, 4 );
+*/

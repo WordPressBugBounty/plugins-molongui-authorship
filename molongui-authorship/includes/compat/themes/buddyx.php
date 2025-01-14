@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     global $is_related_posts;
@@ -14,9 +17,9 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
     )
     {
         global $post;
-        if ( is_guest_post( $post->ID ) )
+        if ( Post::is_guest( $post->ID ) )
         {
-            $main = get_main_author( $post->ID );
+            $main = Post::get_main_author( $post->ID );
             $author->id   = $main->id;
             $author->type = 'guest';
         }

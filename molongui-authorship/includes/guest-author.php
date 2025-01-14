@@ -1,6 +1,17 @@
 <?php
+/*!
+ * Registers the custom post type used to store guest author information and provides utility functions related to guest
+ * authors.
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes
+ * @since      4.9.5
+ */
 
 namespace Molongui\Authorship;
+
+use Molongui\Authorship\Common\Utils\WP;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Guest_Author
@@ -8,16 +19,17 @@ class Guest_Author
     const POST_TYPE = 'guest_author';
     public function __construct()
     {
-        if ( authorship_is_feature_enabled( 'guest' ) )
+        if ( Settings::is_enabled( 'guest-author' ) )
         {
             add_action( 'init', array( $this, 'register_post_type' ) );
             add_filter( 'post_type_link', array( $this, 'post_link' ), 10, 4 );
-            add_filter( 'post_updated_messages', array( $this, 'custom_messages' ) );
-            add_action( 'admin_menu', array( $this, 'remove_menu_item' ) );
-            add_action( 'transition_post_status', array( $this, 'maybe_update_guest_count' ), 10, 3 );
         }
     }
-    function register_post_type()
+    public static function get_post_type()
+    {
+        return self::POST_TYPE;
+    }
+    public function register_post_type()
     {
         $options = Settings::get();
         $labels = array
@@ -26,7 +38,7 @@ class Guest_Author
             'singular_name'			=> _x( "Guest Author", 'post type singular name', 'molongui-authorship' ),
             'menu_name'				=> __( "Guest Authors", 'molongui-authorship' ),
             'name_admin_bar'		=> __( "Guest Author", 'molongui-authorship' ),
-            'all_items'				=> ( ( !empty( $options['guests_menu_level'] ) and $options['guests_menu_level'] != 'top' ) ? __( "Guest Authors", 'molongui-authorship' ) : __( "All Guest Authors", 'molongui-authorship' ) ),
+            'all_items'				=> ( ( !empty( $options['dashboard_guest_authors_menu_location'] ) and $options['dashboard_guest_authors_menu_location'] != 'top' ) ? __( "Guest Authors", 'molongui-authorship' ) : __( "All Guest Authors", 'molongui-authorship' ) ),
             'add_new'				=> _x( "Add New", 'Guest author custom post type', 'molongui-authorship' ),
             'add_new_item'			=> __( "Add New Guest Author", 'molongui-authorship' ),
             'edit_item'				=> __( "Edit Guest Author", 'molongui-authorship' ),
@@ -42,9 +54,9 @@ class Guest_Author
             'use_featured_image'    => _x( "Use as Profile Image", 'Guest author custom post type', 'molongui-authorship' ),
         );
         $show_in_menu = false;
-        if ( $options['guests_menu'] )
+        if ( $options['dashboard_guest_authors_menu'] )
         {
-            $show_in_menu = ( ( !empty( $options['guests_menu_level'] ) and $options['guests_menu_level'] !== 'top' ) ? $options['guests_menu_level'] : true );
+            $show_in_menu = ( ( !empty( $options['dashboard_guest_authors_menu_location'] ) and $options['dashboard_guest_authors_menu_location'] !== 'top' ) ? $options['dashboard_guest_authors_menu_location'] : true );
         }
         $args = array
         (
@@ -59,7 +71,7 @@ class Guest_Author
             'show_in_admin_bar '	=> true,
             'menu_position'			=> 5,
             'menu_icon'				=> 'dashicons-id',
-            'supports'		 		=> authorship_is_feature_enabled( 'avatar' ) ? array( 'thumbnail' ) : array( '' ),
+            'supports'		 		=> Settings::is_enabled( 'local-avatar' ) ? array( 'thumbnail' ) : array( '' ),
             'register_meta_box_cb'	=> '',
             'has_archive'			=> false,
             'rewrite'				=> false,//array( 'slug' => 'guest-author' ),
@@ -70,98 +82,83 @@ class Guest_Author
         );
         register_post_type( self::POST_TYPE, $args );
     }
-    function post_link( $post_link, $post, $leavename, $sample )
+    public function post_link( $post_link, $post, $leavename, $sample )
     {
         if ( self::POST_TYPE === $post->post_type )
         {
             $guest = new Author( $post->ID, 'guest', $post );
-            $post_link = $guest->get_url();
+            $post_link = $guest->get_archive_url();
         }
 
         return $post_link;
     }
-    function custom_messages( $msg )
+    public static function get_guest_by( $field, $value )
     {
-        $msg[self::POST_TYPE] = array
-        (
-            0  => '',                                                   // Unused. Messages start at index 1.
-            1  => __( "Guest author updated.", 'molongui-authorship' ),
-            2  => "Custom field updated.",                              // Probably better do not touch
-            3  => "Custom field deleted.",                              // Probably better do not touch
-            4  => __( "Guest author updated.", 'molongui-authorship' ),
-            5  => __( "Guest author restored to revision", 'molongui-authorship' ),
-            6  => __( "Guest author published.", 'molongui-authorship' ),
-            7  => __( "Guest author saved.", 'molongui-authorship' ),
-            8  => __( "Guest author submitted.", 'molongui-authorship' ),
-            9  => __( "Guest author scheduled.", 'molongui-authorship' ),
-            10 => __( "Guest author draft updated.", 'molongui-authorship' ),
-        );
-
-        return $msg;
-    }
-    function remove_menu_item()
-    {
-        $menu_level = Settings::get( 'guests_menu_level' );
-
-        $slug = 'edit.php?post_type='.self::POST_TYPE;
-
-        if ( !current_user_can( 'edit_others_pages' ) and !current_user_can( 'edit_others_posts' ) )
+        $the_query = WP::the_query();
+        if ( !isset( $the_query->guest_author_id ) )
         {
-            if ( 'top' !== $menu_level )
-            {
-                if ( 'users.php' === $menu_level )
-                {
-                    $menu_level = 'profile.php';
-                }
+            return null;
+        }
 
-                remove_submenu_page( $menu_level, $slug );
+        $author = new Author( $the_query->guest_author_id, 'guest' );
+        $post_id = apply_filters( '_authorship/get_user_by/post_id', Post::get_id(), null, $field, $value );
+        $aim = 'info';
+        if ( in_the_loop() )
+        {
+            if ( !empty( $post_id ) )
+            {
+                $aim = 'byline';
+            }
+        }
+        $aim = apply_filters( '_authorship/get_user_by/aim', $aim, null, $field, $value );
+
+        if ( 'byline' === $aim )
+        {
+            if ( !empty( $post_id ) )
+            {
+                $post_main_author = Post::get_main_author( $post_id );
+                $main_author      = new Author( $post_main_author->id, $post_main_author->type );
+
+                $display_name  = Post::get_byline( $post_id );
+                $user_nicename = $main_author->get_slug();
             }
             else
             {
-                remove_menu_page( $slug );
+                return null;
             }
         }
-    }
-    public function maybe_update_guest_count( $new_status, $old_status, $post )
-    {
-        if ( self::POST_TYPE === $post->post_type and ( ( $new_status === 'publish' and $old_status !== 'publish' ) or ( $new_status !== 'publish' and $old_status === 'publish' ) ) )
-        {
-            self::update_guest_count();
-        }
-    }
-    public static function update_guest_count()
-    {
-        /*!
-         * FILTER HOOK
-         *
-         * Allows the use of 'wp_count_posts' instead of a custom SQL query to count the number of guest authors.
-         *
-         * When dealing with a large number of guests, using 'wp_count_posts' can become slow. A more efficient way
-         * to get the guest count is to run a custom SQL query directly on the database. This approach bypasses
-         * the overhead of 'wp_count_posts' and can be significantly faster.
-         *
-         * @since 4.9.5
-         */
-        if ( apply_filters( 'molongui_authorship/guest_count_custom_sql_query', true ) )
-        {
-            global $wpdb;
-            $query = $wpdb->prepare(
-                "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = %s AND post_status = %s",
-                self::POST_TYPE, 'publish'
-            );
-            $guest_count = $wpdb->get_var( $query );
-        }
-        else
-        {
-            $guest_count = wp_count_posts( self::POST_TYPE );
-            $guest_count = isset( $guest_count->publish ) ? $guest_count->publish : 0;
-        }
+        $user = new \WP_User();
+        $user->guest_id         = $author->get_id();
+        $user->display_name     = ( !empty( $display_name ) ? $display_name : $author->get_name() );
+        $user->user_url         = $author->get_website();
+        $user->description      = $author->get_description();
+        $user->user_description = $user->description;
+        $user->user_nicename    = ( !empty( $user_nicename ) ? $user_nicename : $author->get_slug() );
+        $user->nickname         = $user->display_name;
+        $user->user_email       = $author->get_email();
+        $user->first_name       = $author->get_first_name();
+        $user->last_name        = $author->get_last_name();
+        $user->user_registered  = get_the_date( '', $author->get_id() );
 
-        update_option( 'molongui_authorship_guest_count', $guest_count, false );
+        return $user;
     }
     public static function get_guest_count()
     {
         return get_option( 'molongui_authorship_guest_count', 0 );
+    }
+    public static function is_guest_archive()
+    {
+        $the_query = WP::the_query();
+
+        if ( !isset( $the_query ) )
+        {
+            $caller = debug_backtrace()[1]['function'];
+
+            _doing_it_wrong( __FUNCTION__, sprintf( __( "The %s function is calling it before the query is run. Before then, it always return false." ), '<strong>'.$caller.'</strong>' ), '3.2.3' );
+            return false;
+        }
+
+        return isset( $the_query->is_guest_author ) ? $the_query->is_guest_author : false;
     }
 
 } // class

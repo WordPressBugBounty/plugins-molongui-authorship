@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 /**
  * AUTHOR BOX
@@ -33,9 +34,9 @@ defined( 'ABSPATH' ) or exit;
  * @see     blog-designer/public/class-blog-designer-lite-public.php
  *
  * @since   4.6.7
- * @version 4.8.0
+ * @version 5.0.0
  *//*
-add_filter( 'authorship/render_box', function( $default )
+add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     $fn  = 'bd_views';

@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Author_Filters;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'molongui_authorship_do_filter_name', function( $leave, &$args )
 {
     if ( $leave ) return $leave;
@@ -8,7 +11,7 @@ add_filter( 'molongui_authorship_do_filter_name', function( $leave, &$args )
          isset( $args['dbt'][3]['file'] ) and substr_compare( $args['dbt'][3]['file'], '/themes/parallelus-vellum/author.php', strlen( $args['dbt'][3]['file'] )-strlen( '/themes/parallelus-vellum/author.php' ), strlen( '/themes/parallelus-vellum/author.php' ) ) === 0
     )
     {
-        $args['display_name'] = authorship_filter_archive_title( $args['display_name'] );
+        $args['display_name'] = Author_Filters::filter_the_archive_title( $args['display_name'] );
         return true;
     }
     return false;

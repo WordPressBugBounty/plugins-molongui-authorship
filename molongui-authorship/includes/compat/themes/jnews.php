@@ -43,10 +43,13 @@ add_filter( 'molongui_authorship_filter_link_post_id', function( $post_id, $post
     }
     return $post_id;
 }, 10, 3 );
-add_filter( 'authorship/render_box', function( $default )
+add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
-    if ( in_the_loop() and isset( $dbt[7]['function'] ) and $dbt[7]['function'] == "render_footer" and isset( $dbt[7]['class'] ) and $dbt[7]['class'] == "JNews\Footer\FooterBuilder" ) return false;
+    if ( in_the_loop() and isset( $dbt[7]['function'] ) and $dbt[7]['function'] == "render_footer" and isset( $dbt[7]['class'] ) and $dbt[7]['class'] == "JNews\Footer\FooterBuilder" )
+    {
+        return false;
+    }
     return $default;
 });
 add_filter( 'jnews_default_query_args', function( $args )
@@ -55,7 +58,7 @@ add_filter( 'jnews_default_query_args', function( $args )
     if ( is_admin() or !$wp_query->is_main_query() ) return $args;
     if ( empty( $wp_query->get( 'meta_query' ) ) ) return $args;
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
-    if ( is_author() or is_guest_author() )
+    if ( is_author() or molongui_is_guest_author() )
     {
         $fn    = 'render_content';
         $class = 'JNews\Archive\AuthorArchive';

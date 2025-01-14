@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 if ( defined( JETPACK__VERSION ) and version_compare( JETPACK__VERSION, '9.1.0', '>=' ) )
 {
     add_filter( 'jetpack_content_options_featured_image_exclude_cpt', function( $excluded_post_types )

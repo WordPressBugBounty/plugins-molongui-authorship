@@ -1,7 +1,11 @@
 <?php
-defined( 'ABSPATH' ) or exit;
 
-$options  = authorship_get_options();
+use Molongui\Authorship\Common\Utils\Plugin;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+$options = Settings::get();
 
 ?>
 
@@ -12,13 +16,13 @@ $options  = authorship_get_options();
         <label class="m-title" for="_molongui_guest_author_box_display"><strong><?php _e( "Display", 'molongui-authorship' ); ?></strong></label>
         <p class="m-description">
             <?php _e( "Choose whether to display the author box for this author regardless of other post or plugin settings", 'molongui-authorship' ); ?>
-            <?php if ( !authorship_has_pro() ) echo ' <i>'.sprintf( __( "Disabled options are only available with the %sPro version%s of the plugin.", 'molongui-authorship' ), '<a href="'.MOLONGUI_AUTHORSHIP_WEB.'">', '</a>' ).'</i>'; ?>
+            <?php if ( !Plugin::has_pro() ) echo ' <i>'.sprintf( __( "Disabled options are only available with the %sPro version%s of the plugin.", 'molongui-authorship' ), '<a href="'.MOLONGUI_AUTHORSHIP_WEB.'">', '</a>' ).'</i>'; ?>
         </p>
         <?php ob_start(); ?>
         <select name="_molongui_guest_author_box_display" id="_molongui_guest_author_box_display">
             <option value="default" <?php selected( $guest_author_hide_box, 'default' ); ?>><?php _e( "Default", 'molongui-authorship' ); ?></option>
-            <option value="show"    <?php selected( $guest_author_hide_box, 'show' ); disabled( !authorship_has_pro() ); ?>><?php _e( "Show", 'molongui-authorship' ); ?></option>
-            <option value="hide"    <?php selected( $guest_author_hide_box, 'hide' ); disabled( !authorship_has_pro() ); ?>><?php _e( "Hide", 'molongui-authorship' ); ?></option>
+            <option value="show"    <?php selected( $guest_author_hide_box, 'show' ); disabled( !Plugin::has_pro() ); ?>><?php _e( "Show", 'molongui-authorship' ); ?></option>
+            <option value="hide"    <?php selected( $guest_author_hide_box, 'hide' ); disabled( !Plugin::has_pro() ); ?>><?php _e( "Hide", 'molongui-authorship' ); ?></option>
         </select>
         <?php
         $select = ob_get_clean();

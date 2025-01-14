@@ -1,10 +1,18 @@
 <?php
 
 use Molongui\Authorship\Author;
-defined( 'ABSPATH' ) or exit;
-if ( molongui_is_request( 'admin' ) ) return;
-$options = authorship_get_options();
-if ( !empty( $options['add_opengraph_meta'] ) )
+use Molongui\Authorship\Author_Filters;
+use Molongui\Authorship\Common\Utils\Request;
+use Molongui\Authorship\Post;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+if ( Request::is_from( 'admin' ) )
+{
+    return;
+}
+$options = Settings::get();
+if ( !empty( $options['opengraph_meta_enabled'] ) )
 {
     add_filter( 'wpseo_opengraph_type' , 'authorship_wpseo_remove_opengraph', 999, 1 );
     add_filter( 'wpseo_opengraph_desc' , 'authorship_wpseo_remove_opengraph', 999, 1 );
@@ -14,7 +22,7 @@ if ( !empty( $options['add_opengraph_meta'] ) )
     {
         function authorship_wpseo_remove_opengraph( $value )
         {
-            if ( is_author() or is_guest_author() ) return false;
+            if ( is_author() or molongui_is_guest_author() ) return false;
             return $value;
         }
     }
@@ -35,9 +43,15 @@ function molongui_authorship_wpseo_schema_author( $graph_piece, $context = null 
     {
         $pid = $context->indexable->object_id;
     }
-    $post_authors = authorship_get_post_authors( $pid );
-    if ( !$post_authors or !is_array( $post_authors ) ) return $graph_piece;
-    if ( is_array( $post_authors ) and count( $post_authors ) <= 1 ) return $graph_piece;
+    $post_authors = Post::get_authors( $pid );
+    if ( !$post_authors or !is_array( $post_authors ) )
+    {
+        return $graph_piece;
+    }
+    if ( is_array( $post_authors ) and count( $post_authors ) <= 1 )
+    {
+        return $graph_piece;
+    }
     $authors = array();
     $i = 0;
     foreach ( $post_authors as $post_author )
@@ -64,7 +78,7 @@ function molongui_authorship_wpseo_schema_author( $graph_piece, $context = null 
 function molongui_authorship_wpseo_replacements( $replacements, $args = null )
 {
     if ( !is_author() ) return $replacements;
-    if ( is_guest_author() ) return $replacements;
+    if ( molongui_is_guest_author() ) return $replacements;
     if ( isset( $replacements['%%name%%'] ) )
     {
         $author = new Molongui\Authorship\Author( get_query_var( 'author', 0 ), 'user' );
@@ -74,7 +88,7 @@ function molongui_authorship_wpseo_replacements( $replacements, $args = null )
 }
 function molongui_authorship_wpseo_canonical( $canonical )
 {
-    if ( !is_author() and !is_guest_author() ) return $canonical;
+    if ( !is_author() and !molongui_is_guest_author() ) return $canonical;
     $canonical = molongui_authorship_get_actual_author_data( 'url', $canonical );
     return $canonical;
 }
@@ -83,18 +97,18 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     $fn  = 'generate_canonical';
 
-    if ( ( is_author() or is_guest_author() ) and
+    if ( ( is_author() or molongui_is_guest_author() ) and
          $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
-        $link = authorship_filter_author_page_link( $original_link );
+        $link = Author_Filters::the_author_page_link( $original_link );
     }
 
     return $link;
 }, 10, 4 );
 function molongui_authorship_wpseo_adjacent_rel_url( $url, $rel )
 {
-    if ( !is_author() and !is_guest_author() ) return $url;
-    if ( !is_multiauthor_link( $url ) ) return $url;
+    if ( !is_author() and !molongui_is_guest_author() ) return $url;
+    if ( !Post::is_multiauthor_link( $url ) ) return $url;
     if ( substr( $url, -1 ) == '/' )
     {
         $parts = explode( "/", substr( $url, 0, -1 ) );
@@ -113,17 +127,17 @@ function molongui_authorship_wpseo_adjacent_rel_url( $url, $rel )
 }
 function molongui_authorship_wpseo_opengraph_url( $url )
 {
-    if ( !is_author() and !is_guest_author() ) return $url;
+    if ( !is_author() and !molongui_is_guest_author() ) return $url;
     $url = molongui_authorship_get_actual_author_data( 'url', $url );
     return $url;
 }
 function molongui_authorship_get_actual_author_data( $key, $default )
 {
-    if ( is_guest_author() )
+    if ( molongui_is_guest_author() )
     {
         if ( $author = get_query_var( 'guest-author-name', 0 ) )
         {
-            $guest = molongui_get_author_by( 'name', $author, 'guest', false );
+            $guest = Molongui\Authorship\Author::get_by( 'name', $author, 'guest', false );
             if ( $guest )
             {
                 $author = new Molongui\Authorship\Author( $guest->ID, 'guest', $guest );
@@ -131,7 +145,7 @@ function molongui_authorship_get_actual_author_data( $key, $default )
                 switch ( $key )
                 {
                     case 'url':
-                        $url = $author->get_url();
+                        $url = $author->get_archive_url();
                         return $url;
 
                     break;
@@ -147,10 +161,10 @@ function molongui_authorship_get_actual_author_data( $key, $default )
     }
     elseif ( $key == 'url' )
     {
-        if ( is_multiauthor_link( ( $default ) ) )
+        if ( Post::is_multiauthor_link( ( $default ) ) )
         {
             $author = new Molongui\Authorship\Author( get_query_var( 'author', 0 ), 'user' );
-            return $author->get_url();
+            return $author->get_archive_url();
         }
     }
     return $default;
@@ -158,17 +172,17 @@ function molongui_authorship_get_actual_author_data( $key, $default )
 add_filter( 'wpseo_breadcrumb_links', function( $crumbs )
 {
 
-    if ( is_author() or is_guest_author() )
+    if ( is_author() or molongui_is_guest_author() )
     {
-        $prefix = WPSEO_Options::get( 'breadcrumbs-archiveprefix' );
+        $prefix = \WPSEO_Options::get( 'breadcrumbs-archiveprefix' );
         $prefix = empty( $prefix ) ? '' : $prefix . ' ';
         $last = key( array_slice( $crumbs, -1, 1, true ) ); //$last = array_key_last( $crumbs );
 
-        if ( is_guest_author() and !in_the_loop() )
+        if ( molongui_is_guest_author() and !in_the_loop() )
         {
             if ( $author = get_query_var( 'guest-author-name', 0 ) )
             {
-                $guest = molongui_get_author_by( 'name', $author, 'guest', false );
+                $guest = Molongui\Authorship\Author::get_by( 'name', $author, 'guest', false );
                 if ( $guest ) $crumbs[$last]['text'] = $prefix . esc_html( $guest->post_title );
             }
         }
@@ -206,7 +220,7 @@ if ( !function_exists( 'authorship_wpseo_opengraph_img' ) )
 {
     function authorship_wpseo_opengraph_img( $url )
     {
-        if ( !is_author() and !is_guest_author() ) return $url;
+        if ( !is_author() and !molongui_is_guest_author() ) return $url;
         $url = molongui_authorship_get_actual_author_data( 'img', $url );
         return $url;
     }

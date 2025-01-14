@@ -6,33 +6,24 @@ function authorship_template_tags()
     {
         function get_the_molongui_author( $pid = null, $separator = '', $last_separator = '', $before = '', $after = '' )
         {
-            if ( ( is_null( $pid ) or !is_integer( $pid ) ) and !in_the_loop() ) return '';
-            $options = authorship_get_options();
-            $output  = '';
-            $output .= apply_filters( 'molongui_byline_prefix', ( !empty( $before ) ? $before : $options['byline_prefix'] ) );
-            $output .= authorship_get_byline( $pid, $separator, $last_separator, false );
-            $output .= apply_filters( 'molongui_byline_suffix', ( !empty( $after ) ? $after : $options['byline_suffix'] ) );
-            return $output;
+            _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_get_the_author()' );
+            return molongui_get_the_author( $pid, $separator, $last_separator, $before, $after );
         }
         function the_molongui_author( $pid = null, $separator = '', $last_separator = '', $before = '', $after = '' )
         {
-            echo get_the_molongui_author( $pid, $separator, $last_separator, $before, $after );
+            _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_the_author()' );
+            molongui_the_author( $pid, $separator, $last_separator, $before, $after );
         }
         function get_the_molongui_author_posts_link( $pid = null, $separator = null, $last_separator = null, $before = '', $after = '' )
         {
-            if ( ( is_null( $pid ) or !is_integer( $pid ) ) and !in_the_loop() ) return '';
-            $options = authorship_get_options();
-            $output  = '';
-            $output .= apply_filters( 'molongui_byline_prefix', ( !empty( $before ) ? $before : $options['byline_prefix'] ) );
-            $linked  = apply_filters( 'molongui_author_byline_linked', true );
-            $output .= authorship_get_byline( $pid, $separator, $last_separator, $linked );
-            $output .= apply_filters( 'molongui_byline_suffix', ( !empty( $after ) ? $after : $options['byline_suffix'] ) );
-            return $output;
+            _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_get_the_author_posts_link()' );
+            return molongui_get_the_author_posts_link( $pid, $separator, $last_separator, $before, $after );
         }
         function the_molongui_author_posts_link( $pid = null, $separator = null, $last_separator = null, $before = '', $after = '' )
         {
-            echo get_the_molongui_author_posts_link( $pid, $separator, $last_separator, $before, $after );
+            _deprecated_function( __FUNCTION__, '5.0.0', 'molongui_the_author_posts_link()' );
+            echo molongui_the_author_posts_link( $pid, $separator, $last_separator, $before, $after );
         }
     }
 }
-add_action( 'authorship/init', 'authorship_template_tags' );
+//add_action( 'authorship/init', 'authorship_template_tags' );

@@ -1,121 +1,162 @@
 <?php
+/*!
+ * Author Data Model.
+ *
+ * This class serves as the data model for handling and retrieving author information, both for registered WordPress
+ * users and guest authors, providing a unified interface to interact with author-related data.
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes
+ * @since      2.0.0
+ */
 
 namespace Molongui\Authorship;
 
+use Molongui\Authorship\Admin\Admin_Post;
 use Molongui\Authorship\Common\Utils\Cache;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Helpers;
+use Molongui\Authorship\Common\Utils\Plugin;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author
 {
-    private $id;
-    private $type;
-    private $author;
-    private $display_errors;
-	public function __construct( $id = null, $type = null, $object = null, $errors = false )
+    private $author = null;
+    private $id = null;
+    private $type = null;
+    private $user_login = null;
+    private $user_nicename = null;
+    private $slug = null;
+    private $email = null;
+    private $archive_url = null;
+    private $link = null;
+    private $display_name = null;
+    private $first_name = null;
+    private $last_name = null;
+    private $description = null;
+    private $website = null;
+    private $avatar = null;
+    private $user_roles = null;
+    private $metas;
+    private $data;
+    private $has_data;
+    public function __construct( $id = 0, $type = 'user' )
     {
-        $this->display_errors = $errors;
-        if ( $object === false )
+        $id   = apply_filters( 'authorship/author/id', $id, $type );
+        $type = apply_filters( 'authorship/author/type', $type, $id );
+
+        if ( $id instanceof \WP_User )
         {
-            $this->author = null;
+            $this->id     = $id->ID;
+            $this->type   = 'user';
+            $this->author = $id;
             return;
         }
-        if ( !empty( $object ) and is_object( $object ) )
+        elseif ( $id instanceof \WP_Post )
         {
-            if ( $object instanceof \WP_User )
-            {
-                $this->id   = $object->ID;
-                $this->type = 'user';
-            }
-            else
-            {
-                $this->id   = $object->ID;
-                $this->type = 'guest';
-            }
-            $this->author = $object;
+            $this->id     = $id->ID;
+            $this->type   = 'guest';
+            $this->author = $id;
             return;
         }
-        $this->id   = apply_filters( 'authorship/author/id', $id, $type );
-        $this->type = apply_filters( 'authorship/author/type', $type, $id );
-        if ( !in_array( $this->type, array( 'user', 'guest' ) ) )
+        if ( !empty( $id ) and is_numeric( $id ) )
+        {
+            $this->id = $id;
+        }
+        else
+        {
+            $this->id = 0;
+        }
+
+        if ( !empty( $type ) and is_string( $type ) and in_array( $type, array( 'user', 'guest', 'dummy' ) ) )
+        {
+            $this->type = $type;
+        }
+        else
         {
             $this->type = 'user';
         }
-        if ( empty( $this->id ) or !is_numeric( $this->id ) )
-        {
-            $authors = molongui_find_authors();
 
-            if ( !empty( $authors ) )
+        if ( 'dummy' === $this->type )
+        {
+            $this->data     = self::get_dummy_data();
+            $this->has_data = true;
+            foreach ( $this->data as $property_id => $property_value )
             {
-                $this->id   = $authors[0]->id;
-                $this->type = $authors[0]->type;
-            }
-            else
-            {
-                $this->author = null;
+                switch ( $property_id )
+                {
+                    case 'name':
+                        $this->display_name = $property_value;
+                        break;
+
+                    case 'mail':
+                        $this->email = $property_value;
+                        break;
+
+                    case 'web':
+                        $this->website = $property_value;
+                        break;
+
+                    case 'bio':
+                        $this->description = $property_value;
+                        break;
+
+                    default:
+                        $this->metas[$property_id] = $property_value;
+                }
             }
         }
+        elseif ( 0 === $this->id )
+        {
+            $post_authors = Authors::find();
 
-        $this->author = $this->get( $this->id, $this->type );
+            if ( !empty( $post_authors ) )
+            {
+                $this->id   = $post_authors[0]->id;
+                $this->type = $post_authors[0]->type;
+            }
+        }
     }
-    public function validate( &$id = null, &$type = null, $detail = true, $find = true )
+    private function load()
     {
-        if ( empty( $id ) and empty( $type ) )
-        {
-            if ( $find )
-            {
-                if ( !$authors = molongui_find_authors() ) return ( $detail ? __( 'No author ID nor author type provided. Please, indicate both values.', 'molongui-authorship' ) : false );
-                $id   = $authors[0]->id;
-                $type = $authors[0]->type;
-            }
-            else
-            {
-                return ( $detail ? __( 'No author ID nor author type provided. Please, provide author id and type when instantiating the Author Class.', 'molongui-authorship' ) : false );
-            }
-        }
-        if ( ( empty( $id ) or empty( $type ) ) and $id != 0 ) return ( $detail ? __( 'No author id or author type provided. Please, indicate both values.', 'molongui-authorship' ) : false );
-        if ( !is_numeric( $id ) or $id == 0 ) return ( $detail ? __( "Wrong id provided. It must be an integer higher than 0.", 'molongui-authorship' ) : false );
-        $type = is_string( $type ) ? strtolower( $type ) : '';
-        if ( !in_array( $type, array( 'user', 'guest' ) ) ) return ( $detail ? __( "No accepted author type provided. Please, indicate 'user' or 'guest'.", 'molongui-authorship' ) : false );
-        switch ( $type )
+        switch ( $this->type )
         {
             case 'user':
-                if ( !in_array( $id, authorship_get_users( array( 'fields' => 'ID' ) ) ) ) return ( $detail ? sprintf( __( 'No user exists with the given ID (%s).', 'molongui-authorship' ), $id ) : false );
-            break;
+                add_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10, 2 );
+                $this->author = get_user_by( 'id', $this->id );
+                remove_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10 );
+                break;
 
             case 'guest':
-                if ( !in_array( $id, molongui_get_guests( array( 'fields' => 'ids' ) ) ) ) return ( $detail ? sprintf( __( 'No guest author exists with the given ID (%s).', 'molongui-authorship' ), $id ) : false );
-            break;
+                $this->author = get_post( $this->id );
+                break;
         }
-        return true;
+        if ( ( !$this->author or !is_object( $this->author ) ) )
+        {
+            $this->author = new \WP_User();
+            Debug::console_log( sprintf( "No %s exists with the given ID (%s).", ( $this->type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $this->id ), __FUNCTION__ );
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.2.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->author = apply_filters_deprecated( 'authorship/author/get', array( $this->author, $this->id, $this->type ), '5.0.0' );
+        }
     }
-    public function get( $id = null, $type = null )
+    public function get()
     {
-        $id     = isset( $id ) ? $id : $this->id;
-        $type   = isset( $type ) ? $type : $this->type;
-        $author = null;
-        switch ( $type )
+        if ( !isset( $this->author ) )
         {
-            case 'user':
-                add_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10, 2 );
-                $author = get_user_by( 'id', $id );
-                remove_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10 );
-
-            break;
-
-            case 'guest':
-                $author = get_post( $id );
-
-            break;
+            $this->load();
         }
-        if ( ( !$author or !is_object( $author ) ) )
-        {
-            $author = new \WP_User(); //null;
-
-            Debug::console_log( sprintf( _x( "No %s exists with the given ID (%s).", 'console log error message', 'molongui-authorship' ), ( $type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $id ), __FUNCTION__ );
-        }
-        return apply_filters( 'authorship/author/get', $author, $id, $type );
+        return $this->author;
     }
     public function get_id()
     {
@@ -125,256 +166,416 @@ class Author
     {
         return $this->type;
     }
-    public function get_author()
-	{
-        return $this->author;
-	}
-	public function get_name()
-	{
-		$name = '';
-        if ( !empty( $this->author ) )
+    public function get_name()
+    {
+        return $this->get_display_name();
+    }
+    public function get_display_name()
+    {
+        if ( isset( $this->display_name ) )
         {
-            $format = apply_filters( 'authorship/author/name/format', 'display_name' );
-
-            switch ( $this->type )
-            {
-                case 'user':
-
-                    switch ( $format )
-                    {
-                        case 'first_name_first'    : $name = get_user_meta( $this->id, 'first_name', true ) . ' '  . get_user_meta( $this->id, 'last_name', true  ); break;
-                        case 'last_name_first'     : $name = get_user_meta( $this->id, 'last_name', true  ) . ', ' . get_user_meta( $this->id, 'first_name', true ); break;
-                        case 'display_name':default: $name = $this->author->display_name; break;
-                    }
-
-                break;
-
-                case 'guest':
-                    switch ( $format )
-                    {
-                        case 'first_name_first'    : $name = $this->get_meta( 'first_name' ) . ' '  . $this->get_meta( 'last_name'  ); break;
-                        case 'last_name_first'     : $name = $this->get_meta( 'last_name'  ) . ', ' . $this->get_meta( 'first_name' ); break;
-                        case 'display_name':default: $name = $this->author->post_title; break;
-                    }
-
-                break;
-            }
+            return apply_filters( 'molongui_authorship/get_author_display_name', $this->display_name, $this->id, $this->type );
         }
-		if ( empty( $name ) and $this->display_errors ) $name = sprintf( __( 'No %s exists with the given ID (%s).', 'molongui-authorship' ), ( $this->type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $this->id );
-		return apply_filters( 'authorship/author/name', $name, $this->id, $this->type, $this->author );
-	}
-	public function get_slug()
-	{
-		$slug = '';
-        if ( !empty( $this->author ) )
+        $format = apply_filters( 'authorship/author/name/format', 'display_name' );
+        switch ( $format )
         {
-            switch ( $this->type )
-            {
-                case 'user':
-                    $slug = $this->author->user_nicename;
+            case 'first_name_first':
+                $this->display_name = $this->get_first_name() . '&nbsp;'  . $this->get_last_name();
                 break;
 
-                case 'guest':
-                    $slug = $this->author->post_name;
+            case 'last_name_first':
+                $this->display_name = $this->get_last_name() . ',&nbsp;' . $this->get_first_name();
                 break;
-            }
-		}
-		if ( empty( $slug ) and $this->display_errors ) $slug = sprintf( __( 'No %s exists with the given ID (%s).', 'molongui-authorship' ), ( $this->type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $this->id );
-		return apply_filters( 'authorship/author/slug', $slug, $this->id, $this->type, $this->author );
-	}
-	public function get_url()
-	{
-		$url = '';
-		$options = authorship_get_options();
-        if ( !empty( $this->author ) )
+
+            case 'display_name':
+            default:
+                switch ( $this->type )
+                {
+                    case 'user':
+                        $this->display_name = $this->get()->display_name;
+                        break;
+
+                    case 'guest':
+                        $this->display_name = $this->get()->post_title;
+                        break;
+                }
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
-            switch ( $this->type )
-            {
-                case 'user':
-                    add_filter( 'authorship/pre_author_link', 'authorship_dont_filter_author_link', 10, 4 );
-                    add_filter( 'molongui_authorship_dont_filter_name', '__return_true' );
-                    add_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10, 2 );
-                    $url = get_author_posts_url( $this->id, $this->author->user_nicename );
-                    remove_filter( 'authorship/pre_author_link', 'authorship_dont_filter_author_link', 10 );
-                    remove_filter( 'molongui_authorship_dont_filter_name', '__return_true' );
-                    remove_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10 );
-
-                break;
-
-                case 'guest':
-
-                    $url = '#molongui-disabled-link';
-
-                break;
-            }
-		}
-		if ( empty( $url ) and $this->display_errors ) $url = sprintf( __( 'No %s exists with the given ID (%s).', 'molongui-authorship' ), ( $this->type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $this->id );
-		return apply_filters( 'authorship/author/url', $url, $this->id, $this->type, $this->author, $options );
-	}
-	public function get_link()
-	{
-		$name = $url = $link = '';
-        $name = $this->get_name();
-        $url = $this->get_url();
-		if ( !empty( $name ) and !empty( $url ) ) $link = '<a href="'.esc_url( $url ).'">'.esc_html( $name).'</a>';
-		return apply_filters( 'authorship/author/link', $link, $name, $url, $this->id, $this->type, $this->author );
-	}
-	public function get_bio()
-	{
-		$bio = '';
+            $this->display_name = apply_filters_deprecated( 'authorship/author/name', array( $this->display_name, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_data' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_display_name', $this->display_name, $this->id, $this->type, $this );
+    }
+    public function get_first_name()
+    {
+        if ( isset( $this->first_name ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_first_name', $this->first_name, $this->id, $this->type, $this );
+        }
         switch ( $this->type )
         {
             case 'user':
-                add_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10, 2 );
-                $bio = get_the_author_meta( 'description', $this->id );
-                remove_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10 );
-
-            break;
+                $this->first_name = $this->get()->first_name;
+                break;
 
             case 'guest':
-
-                if ( !empty( $this->author ) ) $bio = $this->author->post_content;
-
-            break;
+                $this->first_name = $this->get_meta( 'first_name' );
+                break;
         }
-        $bio = apply_filters( 'authorship/author/bio', $bio, $this->id, $this->type, $this->author );
-		if ( $this->display_errors and empty( $bio ) )
+        return apply_filters( 'molongui_authorship/get_author_first_name', $this->first_name, $this->id, $this->type, $this );
+    }
+    public function get_last_name()
+    {
+        if ( isset( $this->last_name ) )
         {
-            $bio = sprintf( __( "Author's bio is empty or no %s exists with the given ID (%s).", 'molongui-authorship' ), ( 'guest' == $this->type ? __( "guest author", 'molongui-authorship' ) : __( "user", 'molongui-authorship' ) ), $this->id );
+            return apply_filters( 'molongui_authorship/get_author_first_name', $this->last_name, $this->id, $this->type, $this );
         }
-        return $bio;
-	}
-	public function get_mail()
-	{
-		$mail = '';
-        if ( !empty( $this->author ) )
+        switch ( $this->type )
         {
-            switch ( $this->type )
-            {
-                case 'user':
-                    $mail = $this->author->user_email;
+            case 'user':
+                $this->last_name = $this->get()->last_name;
                 break;
 
-                case 'guest':
-                    $mail = get_post_meta( $this->id, '_molongui_guest_author_mail', true );
+            case 'guest':
+                $this->last_name = $this->get_meta( 'last_name' );
                 break;
-            }
-		}
-		if ( empty( $mail ) and $this->display_errors ) $mail = sprintf( __( 'No %s exists with the given ID (%s).', 'molongui-authorship' ), ( $this->type == 'guest' ? __( 'guest author', 'molongui-authorship' ) : __( 'user', 'molongui-authorship' ) ), $this->id );
-		return apply_filters( 'authorship/author/mail', $mail, $this->id, $this->type, $this->author );
-	}
+        }
+        return apply_filters( 'molongui_authorship/get_author_last_name', $this->last_name, $this->id, $this->type, $this );
+    }
+    public function get_mail()
+    {
+        return $this->get_email();
+    }
+    public function get_email()
+    {
+        if ( isset( $this->email ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_email', $this->email, $this->id, $this->type, $this );
+        }
+        switch ( $this->type )
+        {
+            case 'user':
+                $this->email = $this->get()->user_email;
+                break;
+
+            case 'guest':
+                $this->email = get_post_meta( $this->id, '_molongui_guest_author_mail', true );
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.1.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->email = apply_filters_deprecated( 'authorship/author/mail', array( $this->email, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_email' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_email', $this->email, $this->id, $this->type, $this );
+    }
+    public function get_slug()
+    {
+        if ( isset( $this->slug ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_slug', $this->slug, $this->id, $this->type, $this );
+        }
+        switch ( $this->type )
+        {
+            case 'user':
+                $this->slug = $this->get()->user_nicename;
+                break;
+
+            case 'guest':
+                $this->slug = $this->get()->post_name;
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.1.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->slug = apply_filters_deprecated( 'authorship/author/slug', array( $this->slug, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_slug' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_slug', $this->slug, $this->id, $this->type, $this );
+    }
+    public function get_url()
+    {
+        return $this->get_archive_url();
+    }
+    public function get_archive_url()
+    {
+        if ( isset( $this->archive_url ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_archive_url', $this->archive_url, $this->id, $this->type, $this );
+        }
+        switch ( $this->type )
+        {
+            case 'user':
+                add_filter( 'authorship/pre_author_link', array( Helpers::class, 'short_circuit' ), 10, 4 );
+                add_filter( 'molongui_authorship_dont_filter_name', '__return_true' );
+                add_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10, 2 );
+                $this->archive_url = get_author_posts_url( $this->id, $this->get()->user_nicename );
+                remove_filter( 'authorship/pre_author_link', array( Helpers::class, 'short_circuit' ), 10 );
+                remove_filter( 'molongui_authorship_dont_filter_name', '__return_true' );
+                remove_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10 );
+                break;
+
+            case 'guest':
+                $this->archive_url = '#molongui-disabled-link';
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.1.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->archive_url = apply_filters_deprecated( 'authorship/author/url', array( $this->archive_url, $this->id, $this->type, $this->author, array() ), '5.0.0', 'molongui_authorship/get_author_archive_url' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_archive_url', $this->archive_url, $this->id, $this->type, $this );
+    }
+    public function get_link()
+    {
+        if ( isset( $this->link ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_link', $this->link, $this->id, $this->type, $this );
+        }
+
+        $name = $this->get_display_name();
+        $url  = $this->get_archive_url();
+
+        if ( !empty( $name ) and !empty( $url ) )
+        {
+            $this->link = '<a href="'.esc_url( $url ).'">'.esc_html( $name).'</a>';
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.2.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->link = apply_filters_deprecated( 'authorship/author/link', array( $this->link, $name, $url, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_link' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_link', $this->link, $this->id, $this->type, $this );
+    }
+    public function get_bio()
+    {
+        return $this->get_description();
+    }
+    public function get_description()
+    {
+        if ( isset( $this->description ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_description', $this->description, $this->id, $this->type, $this );
+        }
+        switch ( $this->type )
+        {
+            case 'user':
+                add_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10, 2 );
+                $this->description = get_the_author_meta( 'description', $this->id );
+                remove_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10 );
+                break;
+
+            case 'guest':
+                $this->description = $this->get()->post_content;
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.1.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->description = apply_filters_deprecated( 'authorship/author/bio', array( $this->description, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_description' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_description', $this->description, $this->id, $this->type, $this );
+    }
+    public function get_web()
+    {
+        return $this->get_website();
+    }
+    public function get_website()
+    {
+        if ( isset( $this->website ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_website', $this->website, $this->id, $this->type, $this );
+        }
+        switch ( $this->type )
+        {
+            case 'user':
+                $this->website = $this->get()->user_url;
+                break;
+
+            case 'guest':
+                $this->website = $this->get_meta( 'web' );
+                break;
+        }
+        return apply_filters( 'molongui_authorship/get_author_website', $this->website, $this->id, $this->type, $this );
+    }
     public function get_meta( $key )
     {
-        if ( empty( $key ) ) $meta = __( "Which meta do you want to retrieve? You need to provide a 'key' attribute.", 'molongui-authorship' );
-        $meta = '';
-        if ( !empty( $this->author ) )
+        if ( empty( $key ) )
         {
-            switch ( $this->type )
+            Debug::console_log( "Which meta value do you want to retrieve? You need to provide a 'key' attribute.", __FUNCTION__ );
+            return '';
+        }
+        if ( 'all' === $key )
+        {
+            return $this->get_all_meta();
+        }
+        if ( isset( $this->metas ) and !empty( $this->metas ) )
+        {
+            if ( isset( $this->metas[$key] ) )
             {
-                case 'user':
-
-                    switch ( $key )
-                    {
-                        case 'all'       : $meta = get_user_meta( $this->id ); break;
-                        case 'web'       : $meta = $this->author->user_url;    break;
-                        case 'first_name': $meta = $this->author->first_name;  break;
-                        case 'last_name' : $meta = $this->author->last_name;   break;
-                        default          :
-                            add_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10, 2 );
-                            $meta = get_the_author_meta( 'molongui_author_'.$key, $this->id );
-                            remove_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10 );
-
-                        break;
-                    }
-
-                break;
-
-                case 'guest':
-
-                    if ( $key === 'all' )
-                    {
-                        $meta = get_post_meta( $this->id );
-                    }
-                    else
-                    {
-                        $meta = get_post_meta( $this->id, '_molongui_guest_author_'.$key, true );
-                    }
-
-                break;
+                return apply_filters( "molongui_authorship/get_author_meta_{$key}", $this->metas[$key], $this->id, $this->type, $this );
             }
         }
-        if ( empty( $meta ) and $this->display_errors ) $meta = sprintf( __( 'No %s exists for this author (%s).', 'molongui-authorship' ), $key, $this->id );
-        return apply_filters( 'authorship/author/meta', $meta, $this->id, $this->type, $this->author, $key );
+
+        $this->metas[$key] = '';
+        switch ( $this->type )
+        {
+            case 'user':
+                add_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10, 2 );
+                $this->metas[$key] = get_the_author_meta( 'molongui_author_'.$key, $this->id );
+                remove_filter( 'authorship/pre_get_user_by', array( Helpers::class, 'short_circuit' ), 10 );
+                break;
+
+            case 'guest':
+                $this->metas[$key] = get_post_meta( $this->id, '_molongui_guest_author_'.$key, true );
+                break;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      3.1.8
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->metas[$key] = apply_filters_deprecated( 'authorship/author/meta', array( $this->metas[$key], $this->id, $this->type, $this->author, $key ), '5.0.0', 'molongui_authorship/get_author_meta_{$key}' );
+        }
+        return apply_filters( "molongui_authorship/get_author_meta_{$key}", $this->metas[$key], $this->id, $this->type, $this );
     }
-	public function get_post_count( $post_types = null )
-	{
-		$count = array();
-
-		if ( !isset( $post_types ) )
+    public function get_all_meta()
+    {
+        if ( isset( $this->metas ) and !empty( $this->metas ) )
         {
-            $post_types = molongui_supported_post_types( MOLONGUI_AUTHORSHIP_PREFIX, 'all' );
+            return $this->metas;
         }
-        elseif ( !is_array( $post_types ) )
+        switch ( $this->type )
         {
-            $post_types = array( $post_types );
-        }
-        if ( !empty( $this->author ) )
-        {
-            switch ( $this->type )
-            {
-                case 'user':
-                    foreach( $post_types as $post_type ) $count[$post_type] = $this->get_meta( $post_type.'_count' );
+            case 'user':
+                $this->metas = get_user_meta( $this->id );
                 break;
 
-                case 'guest':
-                    foreach( $post_types as $post_type ) $count[$post_type] = $this->get_meta( $post_type.'_count' );
+            case 'guest':
+                $this->metas = get_post_meta( $this->id );
                 break;
-            }
-		}
-		return apply_filters( 'authorship/author/post_count', $count, $this->id, $this->type, $this->author, $post_types );
-	}
+        }
+
+        return $this->metas;
+    }
 	public function get_user_roles()
     {
-        $user_roles = array();
-        if ( empty( $this->author ) ) $this->author = $this->get( $this->id, $this->type );
+        if ( isset( $this->user_roles ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_user_roles', $this->user_roles, $this->id, $this->type );
+        }
 
         switch ( $this->type )
         {
             case 'user':
-                add_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10, 2 );
-                $user_meta  = get_userdata( $this->id );
-                remove_filter( 'authorship/pre_get_user_by', 'authorship_void_filter', 10 );
-                $user_roles = $user_meta->roles;
-            break;
+                $this->user_roles  = $this->get()->roles;
+                break;
 
             case 'guest':
-                $user_roles = array( _x( "Guest author", 'User role', 'molongui-authorship' ) );
-            break;
+                $this->user_roles = array( _x( "Guest Author", 'User role', 'molongui-authorship' ) );
+                break;
         }
-        return apply_filters( 'authorship/author/user_roles', $user_roles, $this->id, $this->type, $this->author );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.5.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->user_roles = apply_filters_deprecated( 'authorship/author/user_roles', array( $this->user_roles, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_user_roles' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_user_roles', $this->user_roles, $this->id, $this->type, $this );
     }
 	public function get_user_login()
     {
-        $user_login = array();
-        if ( empty( $this->author ) ) $this->author = $this->get( $this->id, $this->type );
+        if ( isset( $this->user_login ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_user_login', $this->user_login, $this->id, $this->type, $this );
+        }
 
         switch ( $this->type )
         {
             case 'user':
-                $user_login = $this->author->user_login;
-            break;
+                $this->user_login = $this->get()->user_login;
+                break;
 
             case 'guest':
-                $user_login = '';
-            break;
+                $this->user_login = '';
+                break;
         }
-        return apply_filters( 'authorship/author/user_login', $user_login, $this->id, $this->type, $this->author );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.5.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->user_login = apply_filters_deprecated( 'authorship/author/user_login', array( $this->user_login, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_user_login' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_user_login', $this->user_login, $this->id, $this->type, $this );
+    }
+    public function get_img()
+    {
+        return $this->get_avatar();
     }
 	public function get_avatar( $size = 'full', $context = 'screen', $source = null, $default = null )
 	{
-		$avatar  = '';
 		$attr    = array();
-        $options = apply_filters( '_authorship/get_options', authorship_get_options() );
+        $options = apply_filters( '_authorship/get_options', Settings::get() );
         $size    = apply_filters( 'authorship/get_avatar/size', $size, $options );
         $context = apply_filters( 'authorship/get_avatar/context', $context, $options );
         $source  = apply_filters( 'authorship/get_avatar/source', $source, $options );
@@ -394,82 +595,131 @@ class Author
         }
 		if ( $context == 'box' )
 		{
-            if ( authorship_is_feature_enabled( 'box_styles' ) )
+            if ( apply_filters( 'molongui_authorship/load_author_box_styles', true ) )
             {
                 $width  = $options['author_box_avatar_width'];
                 $height = $options['author_box_avatar_height'];
                 $size   = array( $width, $height );
             }
-            if ( authorship_is_feature_enabled( 'microdata' ) ) $attr = array_merge( $attr, array( 'itemprop' => 'image' ) );
+            if ( !empty( Settings::get( 'seo_settings_enabled' ) ) and !empty( Settings::get( 'schema_markup_enabled' ) ) )
+            {
+                $attr = array_merge( $attr, array( 'itemprop' => 'image' ) );
+            }
 		}
-        switch ( !empty( $source ) ? $source : ( !empty( $options['author_box_avatar_source'] ) ?  $options['author_box_avatar_source'] : '' ) )
+        switch ( !empty( $source ) ? $source : ( !empty( $options['author_box_avatar_source'] ) ? $options['author_box_avatar_source'] : '' ) )
         {
             case 'gravatar':
-                if ( $context != 'url' ) $avatar = $this->get_gravatar( $this->get_mail(), array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
-                else $avatar = get_avatar_url( $this->get_mail() );
-
-            break;
+                if ( $context != 'url' )
+                {
+                    $this->avatar = $this->get_gravatar( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                }
+                else
+                {
+                    $this->avatar = get_avatar_url( $this->get_email() );
+                }
+                break;
 
             case 'acronym':
-                if ( $context != 'url' ) $avatar = $this->get_acronym( $this->get_name(), array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
-                else $avatar = '';
-
-            break;
+                if ( $context != 'url' )
+                {
+                    $this->avatar = $this->get_acronym( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                }
+                else
+                {
+                    $this->avatar = '';
+                }
+                break;
 
             case 'local':
             default:
-
-                if ( authorship_is_feature_enabled( 'avatar' ) )
+                if ( Settings::is_enabled( 'local-avatar' ) )
                 {
                     switch ( $this->type )
                     {
                         case 'user':
                             if ( $img_id = get_user_meta( $this->id, 'molongui_author_image_id', true ) )
                             {
-                                if ( $context == 'url' ) $avatar = wp_get_attachment_url( $img_id );
-                                else $avatar = wp_get_attachment_image( $img_id, $size, false, $attr );
+                                if ( $context == 'url' )
+                                {
+                                    $this->avatar = wp_get_attachment_url( $img_id );
+                                }
+                                else
+                                {
+                                    $this->avatar = wp_get_attachment_image( $img_id, $size, false, $attr );
+                                }
                             }
-
-                        break;
+                            break;
 
                         case 'guest':
                             if ( has_post_thumbnail( $this->id ) )
                             {
-                                if ( $context == 'url' ) $avatar = get_the_post_thumbnail_url( $this->id, $size );
-                                else $avatar = get_the_post_thumbnail( $this->id, $size, $attr );
+                                if ( $context == 'url' )
+                                {
+                                    $this->avatar = get_the_post_thumbnail_url( $this->id, $size );
+                                }
+                                else
+                                {
+                                    $this->avatar = get_the_post_thumbnail( $this->id, $size, $attr );
+                                }
                             }
-
-                        break;
+                            break;
                     }
                 }
-                if ( empty( $avatar ) and $context != 'url' )
+                if ( empty( $this->avatar ) )
                 {
                     switch ( empty( $default ) ? $options['author_box_avatar_fallback'] : $default )
                     {
                         case 'gravatar':
-                            $avatar = $this->get_gravatar( $this->get_mail(), array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
-
-                        break;
+                            if ( $context === 'url' )
+                            {
+                                $this->avatar = get_avatar_url( $this->get_email() );
+                            }
+                            else
+                            {
+                                $this->avatar = $this->get_gravatar( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                            }
+                            break;
 
                         case 'acronym':
-                            $avatar = $this->get_acronym( $this->get_name(), array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
-
-                        break;
+                            if ( $context !== 'url' )
+                            {
+                                $this->avatar = $this->get_acronym( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                            }
+                            break;
 
                         case 'none':
                         default:
-
-                        break;
+                            $this->avatar = '';
+                            break;
                     }
                 }
-
-            break;
+                break;
         }
-		return apply_filters( 'authorship/author/get_avatar', $avatar, $this->id, $this->type, $size, $context );
-	}
-	public function get_gravatar ( $mail, $attr, $options = array() )
+
+        if ( !isset( $this->avatar ) )
+        {
+            $this->avatar = '';
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.3.3
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->avatar = apply_filters_deprecated( 'authorship/author/get_avatar', array( $this->avatar, $this->id, $this->type, $this->author, $size, $context ), '5.0.0', 'molongui_authorship/get_author_avatar' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_avatar', $this->avatar, $this->id, $this->type, $size, $context, $this );
+    }
+	public function get_gravatar( $attr, $options = array() )
 	{
-        if ( empty( $options ) ) $options = authorship_get_options();
+        if ( empty( $options ) )
+        {
+            $options = Settings::get();
+        }
         $attr['force_display'] = true;
         $size  = get_option( 'thumbnail_size_w', 96 );
         $has_w = !empty( $attr['width'] );
@@ -479,32 +729,42 @@ class Author
         elseif (  $has_w and !$has_h ) $size = $attr['width'];
         elseif ( !$has_w and  $has_h ) $size = $attr['height'];
         $attr['extra_attr']  = '';
-        if ( authorship_is_feature_enabled( 'microdata' ) ) $attr['extra_attr'] .= 'itemprop = "image"';
+        if ( !empty( Settings::get( 'seo_settings_enabled' ) ) and !empty( Settings::get( 'schema_markup_enabled' ) ) )
+        {
+            $attr['extra_attr'] .= 'itemprop = "image"';
+        }
         $default = $options['author_box_avatar_default_gravatar'];
-        if ( $default == 'random' )
+        if ( 'random' === $default )
         {
             $defaults = array( 'mp', 'identicon', 'monsterid', 'wavatar', 'retro', 'robohash', 'blank' );
             $default  = $defaults[array_rand( $defaults )];
         }
         add_filter( 'authorship/get_avatar_data/skip', '__return_true' );
-        $gravatar = get_avatar( $mail, $size, $default, false, $attr );
+        $gravatar = get_avatar( $this->get_email(), $size, $default, false, $attr );
         remove_filter( 'authorship/get_avatar_data/skip', '__return_true' );
 		return ( !$gravatar ? '' : $gravatar );
 	}
-	public function get_acronym ( $name, $attr, $options = array() )
+	public function get_acronym( $attr, $options = array() )
 	{
-		if ( empty( $name ) ) return '';
-		if ( empty( $options ) ) $options = authorship_get_options();
+        $name = $this->get_display_name();
+
+		if ( empty( $name ) )
+        {
+            return '';
+        }
+		if ( empty( $options ) )
+        {
+            $options = Settings::get();
+        }
 
 		$class  = empty( $attr['class'] )  ? '' : $attr['class'];
         $style  = empty( $attr['style'] )  ? '' : $attr['style'];
         $width  = empty( $attr['width'] )  ? '' : ' width:'  . $attr['width'].'px;';
         $height = empty( $attr['height'] ) ? '' : ' height:' . $attr['height'].'px;';
-        $valign = '';
 		$html  = '';
         $html .= '<div data-avatar-type="acronym" class="' . $class . ' acronym-container" style="' . $style . $width . $height . '">';
-		$html .= '<div class="molongui-vertical-aligned" style="' . $valign . '">';
-		$html .= molongui_get_acronym( $name );
+		$html .= '<div>';
+		$html .= Helpers::get_acronym( $name );
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -512,84 +772,122 @@ class Author
 	}
     public function get_data()
     {
-        $data = array();
-        if ( empty( $this->author ) ) return $data;
-        $networks = authorship_get_social_networks( 'enabled' );
-        if ( $this->type == 'guest' ) do_action( 'authorship/author/guest/before_get_data', $this->id );
-        $fields = apply_filters( 'authorship/get_author_data/fields', array
+        if ( !empty( $this->has_data ) )
+        {
+            return apply_filters( 'molongui_authorship/get_author_data', $this->data, $this->id, $this->type, $this );
+        }
+        $fields = apply_filters( 'molongui_authorship/get_author_data_fields', array
         (
             'id',
             'type',
-            'name',
+            'name',             // todo: Rename to 'display_name'. Change meta key too.
             'first_name',
             'last_name',
             'slug',
-            'mail',
+            'mail',             // todo: Rename to 'email'. Change meta key too.
             'phone',
-            'web',
+            'web',              // todo: Rename to 'website'. Change meta key too.
             'custom_link',
-            'archive',
-            'img',
-            'job',
+            'archive_url',
+            'avatar',
+            'job',              // todo: Rename to 'position'. Change meta key too.
             'company',
             'company_link',
-            'bio',
+            'bio',              // todo: Rename to 'description'. Change meta key too.
             'post_count',
             'user_roles',
             'user_login',
-            'box',
+            'box_display',      // todo: Rename to 'author_box_display'. Change meta key too.
             'show_meta_mail',
             'show_meta_phone',
-            'show_social_mail',
-            'show_social_web',
-            'show_social_phone',
-            'archived',
-            'social',
+            'show_icon_mail',   // todo: Rename to 'show_social_mail'. Change meta key too.
+            'show_icon_web',    // todo: Rename to 'show_social_web'. Change meta key too.
+            'show_icon_phone',  // todo: Rename to 'show_social_phone'. Change meta key too.
+            'archived',         // todo: Rename to 'is_archived'. Change meta key too.
+            'social_profiles',
         ));
-        $data['id']   = $this->id;
-        $data['type'] = $this->type;
-        $data['name'] = $this->get_name();
-        if ( in_array( 'first_name', $fields ) )        $data['first_name']        = $this->get_meta( 'first_name' );
-        if ( in_array( 'last_name', $fields ) )         $data['last_name']         = $this->get_meta( 'last_name' );
-        if ( in_array( 'slug', $fields ) )              $data['slug']              = $this->get_slug();
-        if ( in_array( 'mail', $fields ) )              $data['mail']              = $this->get_mail();
-        if ( in_array( 'phone', $fields ) )             $data['phone']             = $this->get_meta( 'phone' );
-        if ( in_array( 'web', $fields ) )               $data['web']               = $this->get_meta( 'web' );
-        if ( in_array( 'custom_link', $fields ) )       $data['custom_link']       = $this->get_meta( 'custom_link' );
-        if ( in_array( 'archive', $fields ) )           $data['archive']           = $this->get_url();
-        if ( in_array( 'img', $fields ) )               $data['img']               = $this->get_avatar( 'thumbnail', 'box' );
-        if ( in_array( 'job', $fields ) )               $data['job']               = $this->get_meta( 'job' );
-        if ( in_array( 'company', $fields ) )           $data['company']           = $this->get_meta( 'company' );
-        if ( in_array( 'company_link', $fields ) )      $data['company_link']      = $this->get_meta( 'company_link' );
-        if ( in_array( 'bio', $fields ) )               $data['bio']               = $this->get_bio();
-        if ( in_array( 'post_count', $fields ) )        $data['post_count']        = $this->get_post_count();
-        if ( in_array( 'user_roles', $fields ) )        $data['user_roles']        = $this->get_user_roles();
-        if ( in_array( 'user_login', $fields ) )        $data['user_login']        = $this->get_user_login();
-        if ( in_array( 'box', $fields ) )               $data['box']               = $this->get_meta( 'box_display' );
-        if ( in_array( 'show_meta_mail', $fields ) )    $data['show_meta_mail']    = $this->get_meta( 'show_meta_mail' );
-        if ( in_array( 'show_meta_phone', $fields ) )   $data['show_meta_phone']   = $this->get_meta( 'show_meta_phone' );
-        if ( in_array( 'show_social_mail', $fields ) )  $data['show_social_mail']  = $this->get_meta( 'show_icon_mail' );
-        if ( in_array( 'show_social_web', $fields ) )   $data['show_social_web']   = $this->get_meta( 'show_icon_web' );
-        if ( in_array( 'show_social_phone', $fields ) ) $data['show_social_phone'] = $this->get_meta( 'show_icon_phone' );
-        if ( in_array( 'archived', $fields ) )          $data['archived']          = $this->get_meta( 'archived' );
 
-        if ( in_array( 'social', $fields ) ) foreach ( $networks as $id => $network ) $data[$id] = $this->get_meta( $id );
-        if ( $this->type == 'guest' ) do_action( 'authorship/author/guest/after_get_data', $this->id );
-        return apply_filters( 'authorship/author/data', $data, $this->id, $this->type, $this->author );
-    }
-    function get_posts_count( $post_type = 'post' )
-    {
-        $post_statuses_to_count = Post::get_countable_post_statuses();
+        if ( ( $key = array_search( 'social_profiles', $fields ) ) !== false )
+        {
+            $fields = array_merge( $fields, array_keys( Social::get( 'enabled' ) ) );
+            unset( $fields[$key] );
+        }
 
-        $args = array
-        (
-            'fields'      => 'ids',
-            'post_type'   => $post_type,
-            'post_status' => $post_statuses_to_count,
-        );
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0.
+         *
+         * @param      int   $this->id  Author ID.
+         * @since      2.0.0
+         * @since      4.2.0 Renamed hook from 'molongui_authorship_before_get_guest_author_data'
+         * @deprecated 5.0.0
+         */
+        if ( 'guest' === $this->type )
+        {
+            do_action_deprecated( 'authorship/author/guest/before_get_data', array( $this->id ), '5.0.0' );
+        }
+        if ( !empty( $fields ) )
+        {
+            foreach ( $fields as $field )
+            {
+                $method = 'get_' . $field;
+                $params = array();
 
-        $count = count( $this->get_posts( $args ) );
-        return apply_filters( 'authorship/author/posts_count', $count, $this->id, $this->type, $post_type );
+                if ( 'avatar' === $field )
+                {
+                    $params = array( 'thumbnail', 'box' );
+                }
+
+                if ( method_exists( $this, $method ) )
+                {
+                    $this->data[$field] = $this->{$method}(...$params);
+                }
+                else
+                {
+                    $this->data[$field] = $this->get_meta( $field );
+                }
+            }
+
+            $this->has_data = $fields;
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0.
+         *
+         * @param      int   $this->id Author ID.
+         * @since      2.0.0
+         * @since      4.2.0 Renamed hook from 'molongui_authorship_after_get_guest_author_data'
+         * @deprecated 5.0.0
+         */
+        if ( 'guest' === $this->type )
+        {
+            do_action_deprecated( 'authorship/author/guest/after_get_data', array( $this->id ), '5.0.0' );
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $this->data = apply_filters_deprecated( 'authorship/author/data', array( $this->data, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_data' );
+        }
+
+        /*!
+         * FILTER HOOK
+         * Allows filtering the fetched data before it is returned.
+         *
+         * @param string $data The author's data.
+         * @param int    $id   The author's id.
+         * @param int    $type The author's type, either 'user' or 'guest'.
+         * @param Author $this The current author instance.
+         * @since 5.0.0
+         */
+        return apply_filters( 'molongui_authorship/get_author_data', $this->data, $this->id, $this->type, $this->author );
     }
     public function get_posts( $args = null )
     {
@@ -612,28 +910,31 @@ class Author
             'author_id'           => $this->id,
             'author_type'         => $this->type,
             'site_id'             => apply_filters( 'authorship/get_posts/blog_id', get_current_blog_id() ),
-            'language'            => apply_filters( 'authorship/get_posts/language', array( Helpers::class, 'get_language' ) ),
+            'language'            => apply_filters( 'authorship/get_posts/language', Helpers::get_language() ),
         );
         $parsed_args = wp_parse_args( $original_args, $defaults );
         switch ( $parsed_args['post_type'] )
         {
             case 'all':
-                $parsed_args['post_type'] = molongui_get_post_types( 'all', 'names', false );
+                $parsed_args['post_type'] = Post::get_post_types();
             break;
 
             case 'selected':
-                $parsed_args['post_type'] = molongui_supported_post_types( MOLONGUI_AUTHORSHIP_PREFIX, 'all', false );
+                $parsed_args['post_type'] = Settings::enabled_post_types();
             break;
 
             case 'related':
-                $options                       = authorship_get_options();
+                $options                       = Settings::get();
                 $parsed_args['post_type']      = explode( ",", $options['author_box_related_post_types'] );
 
             break;
         }
         $parsed_args = apply_filters( 'authorship/author/get_posts/args', $parsed_args, $original_args, $this->id, $this->type, $this->author );
         $posts = apply_filters( 'authorship/author/pre_get_posts', null, $this->id, $this->type, $this->author, $parsed_args, $args );
-        if ( null !== $posts ) return $posts;
+        if ( null !== $posts )
+        {
+            return $posts;
+        }
         $hash  = md5( serialize( $parsed_args ) );
         $key   = 'posts' . '_' . $hash;
         $posts = Cache::get( $key );
@@ -746,7 +1047,10 @@ class Author
                 $data = empty( $data->posts ) ? array() : $data->posts;
                 $data = apply_filters( 'authorship/author/get_posts', $data, $this->id, $this->type, $this->author, $parsed_args );
                 $post_ids = $parsed_args['fields'] == 'ids' ? array_unique( $data ) : array_unique( wp_list_pluck( $data, 'ID' ) );
-                if ( empty( $post_ids ) ) return array();
+                if ( empty( $post_ids ) )
+                {
+                    return array();
+                }
                 $args = array
                 (
                     'post_type'           => $parsed_args['post_type'],
@@ -772,8 +1076,275 @@ class Author
             $hashes = get_option( $db_key, array() );
             $update = update_option( $db_key, !in_array( $hash, $hashes ) ? array_merge( $hashes, array( $hash ) ) : $hashes, true );
         }
-        $posts = apply_filters( 'authorship/author/posts', $posts, $this->id, $this->type, $this->author, $parsed_args );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $posts = apply_filters_deprecated( 'authorship/author/posts', array( $posts, $this->id, $this->type, $this->author, $parsed_args ), '5.0.0', 'molongui_authorship/get_author_posts' );
+        }
+        $posts = apply_filters( 'molongui_authorship/get_author_posts', $posts, $this->id, $this->type, $this, $parsed_args );
+
         return ( !empty( $posts ) ? $posts : array() );
+    }
+    public function get_posts_count( $post_types = null )
+    {
+        $count = array();
+
+        if ( !isset( $post_types ) )
+        {
+            $post_types = Settings::enabled_post_types();
+        }
+        elseif ( !is_array( $post_types ) )
+        {
+            $post_types = array( $post_types );
+        }
+        if ( !empty( $post_types ) )
+        {
+            foreach( $post_types as $post_type )
+            {
+                $count[$post_type] = $this->get_meta( $post_type.'_count' );
+            }
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.0.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $count = apply_filters_deprecated( 'authorship/author/post_count', array( $count, $this->id, $this->type, $this->author, $post_types ), '5.0.0', 'molongui_authorship/get_author_posts_count' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_posts_count', $count, $post_types, $this->id, $this->type, $this );
+    }
+    public function count_posts( $post_type = 'post' )
+    {
+        $post_statuses_to_count = Admin_Post::get_countable_post_statuses();
+
+        $args = array
+        (
+            'fields'      => 'ids',
+            'post_type'   => $post_type,
+            'post_status' => $post_statuses_to_count,
+        );
+
+        $count = count( $this->get_posts( $args ) );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $count = apply_filters_deprecated( 'authorship/author/posts_count', array( $count, $this->id, $this->type, $post_type ), '5.0.0', 'molongui_authorship/count_author_posts' );
+        }
+        return apply_filters( 'molongui_authorship/count_author_posts', $count, $post_type, $this->id, $this->type, $this );
+    }
+    public function update_post_type_count( $value, $post_type = 'post' )
+    {
+        switch ( $this->type )
+        {
+            case 'user':
+                $meta_key = 'molongui_author_'.$post_type.'_count';
+                update_user_meta( $this->id, $meta_key, $value );
+                break;
+
+            case 'guest':
+                $meta_key = '_molongui_guest_author_'.$post_type.'_count';
+                update_post_meta( $this->id, $meta_key, $value );
+                break;
+        }
+    }
+    public static function get_by( $field, $value, $type = 'user', $meta = true )
+    {
+        if ( $type == 'user' )
+        {
+            $user_query = new \WP_User_Query
+            (
+                array
+                (
+                    'search'        => $value,
+                    'search_fields' => array( $field ),
+                )
+            );
+            $user = $user_query->get_results();
+
+            return ( empty( $user['0'] ) ? false : $user['0'] );
+        }
+        elseif ( $type == 'guest' )
+        {
+            if ( $meta )
+            {
+                $args = array
+                (
+                    'post_type'  => MOLONGUI_AUTHORSHIP_CPT,
+                    'meta_query' => array
+                    (
+                        array
+                        (
+                            'key'     => $field,
+                            'value'   => $value,
+                            'compare' => '=',
+                        ),
+                    ),
+                    'site_id'    => get_current_blog_id(),
+                    'language'   => Helpers::get_language(),
+                );
+            }
+            else
+            {
+                $args = array
+                (
+                    $field      => $value,
+                    'post_type' => MOLONGUI_AUTHORSHIP_CPT,
+                    'site_id'   => get_current_blog_id(),
+                    'language'  => Helpers::get_language(),
+                );
+            }
+            $guest = Cache::query( $args, 'guests' );
+            if ( $guest->have_posts() )
+            {
+                return ( empty( $guest->posts['0'] ) ? false : $guest->posts['0'] );
+            }
+        }
+        return false;
+    }
+    public static function get_type_by_nicename( $nicename )
+    {
+        if ( $guest = self::get_by( 'name', $nicename, 'guest', false ) )
+        {
+            return 'guest';
+        }
+        elseif ( $author = self::get_by( 'user_nicename', $nicename ) )
+        {
+            return 'user';
+        }
+        return 'not_found';
+    }
+    public static function get_dummy_data()
+    {
+        $dummy_data = array
+        (
+            'id'              => 0,
+            'type'            => 'dummy',
+            'name'            => 'John Doe',
+            'first_name'      => 'John',
+            'last_name'       => 'Doe',
+            'slug'            => 'john-doe',
+            'mail'            => 'john@example.com',
+            'phone'           => '555-807-8464',
+            'web'             => 'https://www.example.com',
+            'custom_link'     => 'https://www.example.com',
+            'archive_url'     => '#',
+            'avatar'          => '<img src="'.MOLONGUI_AUTHORSHIP_URL.'/assets/img/dummy-author-avatar.jpg">',
+            'job'             => 'Journalist',
+            'company'         => 'The Daily Planet',
+            'company_link'    => 'https://www.thedailyplanet.com',
+            'bio'             => 'John Doe is a seasoned journalist with over 25 years at The Daily Mail. Specializing in investigative reporting and current affairs, John is known for uncovering the truth and delivering compelling stories. His work spans politics, human interest, and breaking news.',
+            'short_bio'       => 'John Doe, with 25+ years at The Daily Mail, excels in investigative reporting on politics, human interest, and breaking news.',
+            'post_count'      => array(),
+            'user_roles'      => array(),
+            'user_login'      => '',
+            'box_display'     => 1,
+            'show_meta_mail'  => 1,
+            'show_meta_phone' => 0,
+            'show_icon_mail'  => 0,
+            'show_icon_web'   => 0,
+            'show_icon_phone' => 0,
+            'archived'        => 0,
+        );
+        foreach ( array_slice( array_keys( Social::get('enabled' ) ), 0, 4 ) as $key )
+        {
+            $dummy_data[$key] = '#';
+        }
+
+        return $dummy_data;
+    }
+    public function has_bio()
+    {
+        return !empty( $this->get_description() );
+    }
+    public function has_description()
+    {
+        return !empty( $this->get_description() );
+    }
+    public function has_avatar()
+    {
+        $has_avatar = false;
+
+        switch( $this->type )
+        {
+            case 'user':
+                $img = get_user_meta( $this->id, 'molongui_author_image_url', true );
+                $has_avatar = !empty( $img );
+                break;
+
+            case 'guest':
+                $has_avatar = has_post_thumbnail( $this->id );
+                break;
+        }
+
+        return $has_avatar;
+    }
+    public function has_posts( $post_types = array() )
+    {
+        $has_posts = false;
+
+        if ( empty( $post_types ) )
+        {
+            $post_types = Settings::enabled_post_types();
+        }
+        elseif ( is_string( $post_types ) )
+        {
+            $post_types = array( $post_types );
+        }
+        foreach ( $post_types as $post_type )
+        {
+            if ( !empty( $this->author['post_count'][$post_type] ) )
+            {
+                $has_posts = true;
+                break;
+            }
+        }
+
+        return $has_posts;
+    }
+    public function is_archived()
+    {
+        return !empty( $this->get_meta( 'archived' ) );
+    }
+    public function is_display_name_available( $id, $type )
+    {
+        global $wpdb;
+        $user_displayname_check  = false;
+        $guest_displayname_check = false;
+        $author = new Author( $id, $type );
+        $name   = $author->get_name();
+        if ( $type == 'user' )
+        {
+            $user_displayname_check  = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->users WHERE display_name = %s AND ID != '{$id}' LIMIT 1", $name ) );
+            $guest_displayname_check = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = '".MOLONGUI_AUTHORSHIP_CPT."' LIMIT 1", $name ) );
+        }
+        else
+        {
+            $user_displayname_check  = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->users WHERE display_name = %s LIMIT 1", $name ) );
+            $guest_displayname_check = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = '".MOLONGUI_AUTHORSHIP_CPT."' AND ID != '{$id}' LIMIT 1", $name ) );
+        }
+        if ( !$user_displayname_check and !$guest_displayname_check ) return false;
+        if (  $user_displayname_check and !$guest_displayname_check ) return 'user';
+        if ( !$user_displayname_check and  $guest_displayname_check ) return 'guest';
+        if (  $user_displayname_check and  $guest_displayname_check ) return 'both';
     }
 
 } // class

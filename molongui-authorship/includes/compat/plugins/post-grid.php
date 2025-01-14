@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'post_grid_query_args', function( $query_args, $args )
 {
     if ( !is_author() ) return $query_args;
@@ -19,7 +20,7 @@ add_filter( 'post_grid_query_args', function( $query_args, $args )
     $meta_query = $wp_query->get( 'meta_query' );
     if ( empty( $meta_query ) or !is_array( $meta_query ) )
     {
-        $type = is_guest_author() ? 'guest' : 'user';
+        $type = molongui_is_guest_author() ? 'guest' : 'user';
 
         $meta_query = array
         (

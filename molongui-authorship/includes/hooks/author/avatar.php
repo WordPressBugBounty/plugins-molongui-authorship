@@ -13,7 +13,6 @@ function authorship_add_image_sizes()
     }
     do_action( 'authorship/add_image_size' );
 }
-add_action( 'after_setup_theme', 'authorship_add_image_sizes' );
 function authorship_filter_avatar( $args, $id_or_email )
 {
     if ( !authorship_is_feature_enabled( 'avatar' ) ) return $args;
@@ -198,4 +197,4 @@ if ( empty( $dbt ) ) return $args;
     }
     return $args;
 }
-add_filter( 'pre_get_avatar_data', 'authorship_filter_avatar', 999, 2 );
+//add_filter( 'pre_get_avatar_data', 'authorship_filter_avatar', 999, 2 );

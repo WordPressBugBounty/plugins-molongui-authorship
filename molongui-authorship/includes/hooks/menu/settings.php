@@ -48,4 +48,4 @@ function authorship_add_settings_menu_items()
         $position++;
     }
 }
-add_action( 'admin_menu', 'authorship_add_settings_menu_items' );
+//add_action( 'admin_menu', 'authorship_add_settings_menu_items' );

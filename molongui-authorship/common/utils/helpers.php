@@ -79,6 +79,14 @@ class Helpers
 
         return ( serialize( $array1 ) === serialize( $array2 ) );
     }
+    public static function array_find_partial_matches( $array, $searchString )
+    {
+        $searchString = strtolower( $searchString );
+        return array_filter( $array, function ( $item ) use ( $searchString )
+        {
+            return strpos(strtolower( $item ), $searchString ) !== false;
+        });
+    }
     public static function string_to_array( $string )
     {
         $no_whitespaces = preg_replace( '/\s*,\s*/', ',', filter_var( $string, FILTER_SANITIZE_STRING ) );
@@ -196,6 +204,7 @@ class Helpers
                         {
                             $text = ' ';
                         }
+
                         $cleaned_snippet .= $text;
                     }
                     else
@@ -326,6 +335,24 @@ class Helpers
             ),
             $input);
     }
+    public static function get_attachment_image_url( $attachment_id )
+    {
+        $url = wp_get_attachment_image_url( $attachment_id );
+
+        return is_null( $url ) ? '' : $url;
+    }
+    public static function get_attachment_edit_url( $attachment_id )
+    {
+        return add_query_arg
+        (
+            array
+            (
+                'action'       => 'edit',
+                'image-editor' => '1',
+            ),
+            get_edit_post_link( $attachment_id, 'edit' )
+        );
+    }
     public static function get_base64_svg( $svg, $base64 = true )
     {
         if ( $base64 )
@@ -413,6 +440,23 @@ class Helpers
 
         return apply_filters( 'authorship/is_elementor_editor', $edit_mode );
     }
+    public static function is_time_in_range( $startTime, $endTime, $timezone = 'Europe/Berlin', $weekday = true )
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set( $timezone );
+        $currentTime = strtotime( date( 'H:i' ) );
+        $currentDay  = (int) date( 'N' ); // Day of the week (1 for Monday, 7 for Sunday)
+        $start       = strtotime( $startTime );
+        $end         = strtotime( $endTime );
+        $isWithinRange = $currentTime >= $start && $currentTime < $end;
+        if ( $weekday )
+        {
+            $isWithinRange = $isWithinRange && ( $currentDay >= 1 && $currentDay <= 5 );
+        }
+        date_default_timezone_set( $originalTimezone );
+
+        return $isWithinRange;
+    }
     public static function load_tidio()
     {
         if ( apply_filters( 'authorship/load_tidio', true ) )
@@ -432,7 +476,7 @@ class Helpers
     {
         return array( false, null );
     }
-    public static function bypass_filter( $null, $original_value )
+    public static function short_circuit( $null, $original_value )
     {
         return $original_value;
     }

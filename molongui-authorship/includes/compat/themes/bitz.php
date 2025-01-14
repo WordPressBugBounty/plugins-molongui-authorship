@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Author_Filters;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'molongui_authorship_do_filter_name', function( $leave, &$args )
 {
     if ( $leave ) return $leave;
@@ -8,7 +11,7 @@ add_filter( 'molongui_authorship_do_filter_name', function( $leave, &$args )
          and isset( $args['dbt'][3]['file'] ) and substr_compare( $args['dbt'][3]['file'], $file, strlen( $args['dbt'][3]['file'] )-strlen( $file ), strlen( $file ) ) === 0
     )
     {
-        $args['display_name'] = authorship_filter_archive_title( $args['display_name'] );
+        $args['display_name'] = Author_Filters::filter_the_archive_title( $args['display_name'] );
         return true;
     }
     return false;
@@ -24,8 +27,15 @@ add_filter( 'get_the_author_ID', function( $value, $user_id = null, $original_us
          and ( isset( $dbt[$i]['function'] ) and ( $dbt[$i]['function'] == 'get_the_author_meta' ) )
     ){
         global $wp_query;
-        if ( is_guest_author() and isset( $wp_query->guest_author_id ) ) return $wp_query->guest_author_id;
-        else return $wp_query->query_vars['author'];
+
+        if ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) )
+        {
+            return $wp_query->guest_author_id;
+        }
+        else
+        {
+            return $wp_query->query_vars['author'];
+        }
     }
     return $value;
 }, 10, 3 );
@@ -40,9 +50,9 @@ add_filter( 'get_the_author_description', function( $value, $user_id = null, $or
          and ( isset( $dbt[$i]['function'] ) and ( $dbt[$i]['function'] == 'the_author_meta' ) )
     ){
         global $wp_query;
-        $author_id = ( is_guest_author() and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
-        $author_class = new Molongui\Authorship\Author();
-        return $author_class->get_bio( $author_id, ( isset( $wp_query->is_guest_author ) and $wp_query->is_guest_author ) ? 'guest' : 'user', false, false );
+        $author_id = ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
+        $author = new Molongui\Authorship\Author();
+        return $author->get_description( $author_id, ( isset( $wp_query->is_guest_author ) and $wp_query->is_guest_author ) ? 'guest' : 'user', false, false );
     }
     return $value;
 }, 10, 3 );

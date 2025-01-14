@@ -5,6 +5,21 @@ namespace Molongui\Authorship\Common\Utils;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class WP
 {
+    public static function the_query()
+    {
+        global $wp_the_query;
+
+        return apply_filters( 'authorship/the_query', $wp_the_query );
+    }
+    public static function home_url()
+    {
+        if ( function_exists( 'pll_home_url' ) && ( !defined( 'PLL_FILTER_HOME_URL' ) || !PLL_FILTER_HOME_URL ) )
+        {
+            $lang = apply_filters( 'authorship/lang', '' );
+            return pll_home_url( $lang );
+        }
+        return home_url();
+    }
     public static function verify_nonce( $action, $nonce = null, $source = 'post' )
     {
         if ( in_array( $source, array( 'get', 'post', 'request', 'server' ) ) )
@@ -56,6 +71,29 @@ class WP
 
         return !empty( $nonce ) and wp_verify_nonce( sanitize_text_field( wp_unslash( $nonce ) ), $action );
     }
+    public static function get_sites()
+    {
+        if ( function_exists( 'get_sites' ) and function_exists( 'get_current_network_id' ) )
+        {
+            $site_ids = get_sites( array( 'fields' => 'ids', 'network_id' => get_current_network_id() ) );
+        }
+        else
+        {
+            global $wpdb;
+            $site_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs WHERE site_id = $wpdb->siteid;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+        }
+
+        return $site_ids;
+    }
+    public static function get_domain()
+    {
+        $scheme    = isset( $_SERVER['REQUEST_SCHEME'] ) ? sanitize_text_field( $_SERVER['REQUEST_SCHEME'] ) . '://' : '';
+        $host      = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
+        $subfolder = isset( $_SERVER['DOCUMENT_URI'] ) ? explode('wp-admin', sanitize_text_field( $_SERVER['DOCUMENT_URI'] ) ) : '';
+        $subfolder = is_array( $subfolder ) ? $subfolder[0] : '';
+
+        return $scheme . $host . $subfolder;
+    }
     public static function get_image_sizes( $type = 'all' )
     {
         $image_sizes = array();
@@ -82,29 +120,6 @@ class WP
         }
         return $image_sizes;
     }
-    public static function get_sites()
-    {
-        if ( function_exists( 'get_sites' ) and function_exists( 'get_current_network_id' ) )
-        {
-            $site_ids = get_sites( array( 'fields' => 'ids', 'network_id' => get_current_network_id() ) );
-        }
-        else
-        {
-            global $wpdb;
-            $site_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs WHERE site_id = $wpdb->siteid;" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-        }
-
-        return $site_ids;
-    }
-    public static function get_domain()
-    {
-        $scheme    = isset( $_SERVER['REQUEST_SCHEME'] ) ? sanitize_text_field( $_SERVER['REQUEST_SCHEME'] ) . '://' : '';
-        $host      = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
-        $subfolder = isset( $_SERVER['DOCUMENT_URI'] ) ? explode('wp-admin', sanitize_text_field( $_SERVER['DOCUMENT_URI'] ) ) : '';
-        $subfolder = is_array( $subfolder ) ? $subfolder[0] : '';
-
-        return $scheme . $host . $subfolder;
-    }
     public static function get_admin_color()
     {
         $css = $scheme = '';
@@ -125,6 +140,35 @@ class WP
         }
 
         return !empty($css) ? $css : '';
+    }
+    public static function is_callback_hooked( $hook, $callback, $priority = 10 )
+    {
+        global $wp_filter;
+        if ( !isset( $wp_filter[ $hook ] ) )
+        {
+            return false;
+        }
+        if ( is_a( $wp_filter[ $hook ], 'WP_Hook' ) )
+        {
+            $callbacks = $wp_filter[ $hook ]->callbacks;
+        }
+        else
+        {
+            $callbacks = $wp_filter[ $hook ];
+        }
+        if ( !isset( $callbacks[ $priority ] ) )
+        {
+            return false;
+        }
+        foreach ( $callbacks[ $priority ] as $hooked_callback )
+        {
+            if ( $hooked_callback['function'] === $callback )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 } // class

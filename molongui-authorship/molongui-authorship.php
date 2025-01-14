@@ -11,10 +11,10 @@
  * @wordpress-plugin
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
- * Description:       Best Author Box for WordPress! Easy, Beautiful and Responsive. Add authors, co-authors, multiple authors and guest authors to your WordPress posts.
- * Version:           4.9.7
+ * Description:       All-in-One Authorship Solution: Seamless Author Boxes, Guest Authors, and Co-Authors for your posts. Boost your site's authority, credibility, engagement & SEO.
+ * Version:           5.0.0
  * Requires at least: 5.2
- * Tested up to:      6.6
+ * Tested up to:      6.7
  * Requires PHP:      5.6.20
  * Author:            Molongui
  * Author URI:        https://www.molongui.com
@@ -35,32 +35,16 @@
 
 namespace Molongui\Authorship;
 
-use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Modules\DB_Update;
+use Molongui\Authorship\Common\Utils\Debug;
+use Molongui\Authorship\Common\Utils\Singleton;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+require_once __DIR__ . '/common/utils/singleton.php';
 final class MolonguiAuthorship
 {
-    const VERSION = '4.9.7';
-    private static $_instance = null;
-    public function __clone()
-    {
-        _doing_it_wrong( __FUNCTION__, esc_html__( "Cloning instances of this class is forbidden.", 'molongui-authorship' ), '4.4.0' );
-    }
-    public function __wakeup()
-    {
-        _doing_it_wrong( __FUNCTION__, esc_html__( "Unserializing instances of this class is forbidden.", 'molongui-authorship' ), '4.4.0' );
-    }
-    public static function instance()
-    {
-        if ( is_null( self::$_instance ) )
-        {
-            self::$_instance = new self();
-            do_action( 'authorship/loaded' );
-        }
-
-        return self::$_instance;
-    }
+    const VERSION = '5.0.0';
+    use Singleton;
     function __construct()
     {
         add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
@@ -75,6 +59,8 @@ final class MolonguiAuthorship
         add_action( 'wpmu_new_blog', array( $this, 'activate_on_new_blog' ), 10, 6 );
         add_action( 'plugin_loaded' , array( $this, 'on_plugin_loaded'  ) );
         add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
+        do_action( 'authorship/loaded' );
+
         return true;
     }
     public function load_plugin_textdomain()
@@ -148,7 +134,7 @@ final class MolonguiAuthorship
             'MOLONGUI_AUTHORSHIP_NAMESPACE'       => '\Molongui\Authorship',
             'MOLONGUI_AUTHORSHIP_PREFIX'          => 'molongui_authorship',
             'MOLONGUI_AUTHORSHIP_NAME'            => 'molongui-authorship',                // slug
-            'MOLONGUI_AUTHORSHIP_DB_SCHEMA'       => 23,
+            'MOLONGUI_AUTHORSHIP_DB_SCHEMA'       => 24,
             'MOLONGUI_AUTHORSHIP_DB_VERSION'      => 'molongui_authorship_db_version',     // Options key
             'MOLONGUI_AUTHORSHIP_INSTALL'         => 'molongui_authorship_install',        // Options key
             'MOLONGUI_AUTHORSHIP_NOTICES'         => 'molongui_authorship_notices',        // Options key
@@ -198,16 +184,20 @@ final class MolonguiAuthorship
         {
             if ( class_exists( '\Molongui\Authorship\Common\Utils\Debug' ) )
             {
-                Debug::console_log( null, "The ".MOLONGUI_AUTHORSHIP_TITLE." plugin is disabled. Remove the 'noAuthorship' query string from the URL in order to enable it." );
+                Debug::console_log( null, sprintf(
+                    "The %s plugin is disabled. Remove the 'noAuthorship' query string from the URL to enable it.",
+                    MOLONGUI_AUTHORSHIP_TITLE
+                ));
             }
             return false;
         }
         $this->update_db();
-
-        if ( $this->is_compatible() )
+        if ( !$this->is_compatible() )
         {
-            $this->init();
+            return false;
         }
+        $this->load();
+        return true;
     }
     private function maybe_enable_debug_mode()
     {
@@ -238,24 +228,47 @@ final class MolonguiAuthorship
             $update_db->run_update();
         }
     }
-    public function init()
+    public function load()
     {
         $paths = array
         (
             MOLONGUI_AUTHORSHIP_DIR . 'dropins/',
-
             MOLONGUI_AUTHORSHIP_DIR . 'includes/helpers/',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/hooks/',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/deprecated/',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
 
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/author-box.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/author-filters.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/authors.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/conditional-tags.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/guest-author.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/post.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/settings.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/social.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/template-tags.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/user.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
 
             MOLONGUI_AUTHORSHIP_DIR . 'common/hooks.php',
         );
+
+        if ( is_admin() or ( defined( 'WP_CLI' ) and WP_CLI ) )
+        {
+            $admin_paths = array
+            (
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
+
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-guest-author.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-post.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/author-box-editor.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/dashboard.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
+                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
+            );
+            $paths = array_merge( $paths, $admin_paths );
+        }
         foreach ( $paths as $path )
         {
             self::require_file( $path );

@@ -1,12 +1,16 @@
 <?php
 
 namespace Molongui\Authorship;
+
+use Molongui\Authorship\Admin\Author_Box_Editor;
+use Molongui\Authorship\Common\Utils\Plugin;
+
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Highlights
 {
 	public function highlights_plugin()
 	{
-        $is_pro = authorship_has_pro();
+        $is_pro = Plugin::has_pro();
 		ob_start();
 		?>
 		<p><?php  _e( "Molongui Authorship is probably the most complete suite on all about authors and authorship. Check below some of its awesome features:", 'molongui-authorship' ); ?></p>
@@ -28,6 +32,15 @@ class Highlights
 			'message' => $message,
 			'buttons' => array
 			(
+				'customizer' => array
+				(
+                    'href'   => Author_Box_Editor::url(),
+                    'target' => '_self',
+                    'class'  => 'molongui-notice-button-green',
+                    'icon'   => '',
+                    'label'  => __( "Editor", 'molongui-authorship' ),
+                    'hidden' => false,
+				),
 				'settings' => array
 				(
 					'href'   => 'admin.php?page=' . MOLONGUI_AUTHORSHIP_NAME,
@@ -61,7 +74,7 @@ class Highlights
 	}
 	public function highlights_release_210()
 	{
-        $is_pro = authorship_has_pro();
+        $is_pro = Plugin::has_pro();
 		ob_start();
 		?>
 			<p><?php _e( "We have listened to you and we have focused this update on improving the customization of the author box.", 'molongui-authorship' ); ?></p>
@@ -108,7 +121,7 @@ class Highlights
 	}
 	public function highlights_release_300()
 	{
-        $is_pro = authorship_has_pro();
+        $is_pro = Plugin::has_pro();
 		ob_start();
 		?>
         <p><?php _e( "Huge update with endless author box layout combinations!", 'molongui-authorship' ); ?></p>

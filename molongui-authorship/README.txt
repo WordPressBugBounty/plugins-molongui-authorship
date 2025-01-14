@@ -1,15 +1,15 @@
-=== Author Box, Guest Author and Co-Authors for Your Posts - Molongui ===
+=== Molongui Authorship – Author Boxes, Guest Authors & Co-Authors for WordPress ===
 Contributors: molongui
 Donate link: https://www.paypal.me/amitzy/
 Tags: author box, author bio, guest author, co-authors, multiple authors
 Requires PHP: 5.6.20
 Requires at least: 5.2
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
-Easily add an author, a guest author or multiple authors to your posts and display their info in a beautiful and fully customizable author box.
+All-in-One Authorship Solution: Seamless Author Boxes, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement and SEO.
 
 == Description ==
 
@@ -197,12 +197,39 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.0 (2025-01-14) =
+
+* Added: Ability to customize the order of social profiles.
+* Added: Ready-to-use templates for the author box.
+* Added: Dummy author data for author box preview.
+* Added: Row action to update posts counts for users and guest authors.
+* Added: Bulk action to update posts counts for selected users and guest authors.
+* Added: Option to hide the author name on the author box.
+* Added: Option to run custom PHP on the Dashboard.
+* Added: Ability to customize the position and icon of the 'Authors' menu.
+* Enhanced: Compatibility with the Newspaper theme.
+* Enhanced: Compatibility with the Reusable Content Blocks plugin.
+* Fixed: Custom CSS styles not loading correctly.
+* Fixed: Incorrect query argument value.
+* Fixed: Author search box could not find authors containing dots or spaces in their names.
+* Fixed: Acronym author box avatars not displaying letters centered correctly.
+* Changed: Redesigned plugin settings page.
+* Changed: Replaced the author dropdown with a search-as-you-type input in the Author Box Editor.
+* Changed: Switched the JavaScript library used for search-as-you-type suggestions.
+* Changed: Improved responsiveness by using native CSS properties, removing JavaScript-based solutions.
+* Changed: Updated framework files to version 3.3.0.
+* Changed: Added compatibility with WordPress 6.7.
+* Removed: The option to hide HTML elements on the frontend. Use 'Custom CSS' instead.
+* Removed: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the 'authorship/assets/load_remote' filter.
+* Dev: Major code refactor.
+* Dev: Removed 'get_byline' helper function.
+* Dev: Removed 'get_post_authors' helper function.
+
 = 4.9.7 (2024-08-29) =
 
 * Added filter to control the separator used before each author meta item
 * Fixed PHP warning on undefined property
 * Fixed issue with the Molongui Post Contributors plugin
-* Minor code refactor
 
 = 4.9.6 (2024-08-01) =
 
@@ -366,170 +393,6 @@ In order to run, Molongui Authorship requires:
 * Deprecated 'authorship/filter_author_link' filter. Use 'authorship/pre_author_link' instead.
 * Deprecated '_authorship/filter/get_user_by' filter. Use 'authorship/pre_get_user_by' instead.
 
-= 4.6.22 (2023-08-16) =
-
-* Fixed author custom fields being removed under certain circumstances
-
-= 4.6.21 (2023-08-15) =
-
-* Fixed byline displaying co-authors multiple times on Extra theme
-* Improved compatibility with the LearnPress Certificates plugin for LearnPress
-* Improved compatibility with the LearnPress Students List plugin for LearnPress
-
-= 4.6.20 (2023-08-09) =
-
-* Fixed XSS vulnerability (PSID f13cec368476)
-* Fixed post byline showing wrong additional author count on some cases
-* Updated links to plugin online documentation
-
-= 4.6.19 (2023-07-31) =
-
-* Added WordPress 6.3 compatibility
-* Added global setting to display author email in the author box
-* Added global setting to display author phone in the author box
-* Added Vero social network
-* Added Peepeth social network
-* Updated Twitter's icon. Follow [this article](https://www.molongui.com/help/how-to-bring-back-the-old-twitter-logo) to bring back old blue bird logo.
-* Some minor code refactor
-
-= 4.6.18 (2023-07-11) =
-
-* Added option to make author name and author avatar in the author box to link to a custom URL
-* Added filter hook to control whether automatically add spaces to byline separators
-* Improved compatibility with the Top 10 plugin
-* Improved compatibility with the Authors List plugin
-* Removed obsolete temporary database entries that caused post counters update to fail on some installations
-* Fixed authors list not being ordered by user roles
-
-= 4.6.17 (2023-05-02) =
-
-* Improved compatibility with the tagDiv Cloud Library plugin
-* Updated Loco Translate XML file
-* Fixed show empty related entries not working properly
-* Fixed 'get_the_author_posts' not working for guest authors
-* Fixed post counters not updating for users with no role
-* Added WordPress 6.2 compatibility
-
-= 4.6.16 (2023-02-15) =
-
-* Fixed role not displayed for guest authors on the authors admin screen
-
-= 4.6.15 (2023-02-14) =
-
-* Fixed PHP fatal error
-
-= 4.6.14 (2023-02-14) =
-
-* Improved navigation experience for screen reader users
-* Improved some UI notifications
-* Improved compatibility with the Advanced Access Manager (AAM) plugin
-* Added filter to remove HTML comments
-* Fixed tabbed layout labels not taking variable tags
-* Fixed author box title not being displayed on multi-authored posts
-* Fixed some author box rtl styling issues when using a CDN
-* Fixed background tasks running simultaneously on plugin activation
-* Fixed author filter being overwritten for every post type
-* Fixed apostrophes being escaped with backslashes
-* Fixed PHP notices when updating a misconfigured plugin
-* Fixed issues with author names on post bylines and author pages when using tagDiv Cloud templates
-
-= 4.6.13 (2022-12-08) =
-
-* Added Mastodon social network
-* Added filter to allow background tasks having WP_Cron disabled
-* Improved compatibility with the Newspaper theme
-* Improved compatibility with the WP OAuth Server plugin
-* Fixed some PHP warnings
-* Added WordPress 6.1 compatibility
-
-= 4.6.12 (2022-09-06) =
-
-* Fixed "Invalid post type" error when adding a new author
-
-= 4.6.11 (2022-08-11) =
-
-* Fixed PHP warning about missing ID property
-
-= 4.6.10 (2022-07-18) =
-
-* Added hook to disable author box responsiveness completely
-* Fixed issue with object cache
-* Fixed social icons style preview not working properly
-
-= 4.6.9 (2022-07-07) =
-
-* Fixed author pages not working on certain installations
-
-= 4.6.8 (2022-07-06) =
-
-* Fixed PHP warning displayed when global $wp_query not set
-
-= 4.6.7 (2022-07-06) =
-
-* Improved compatibility with the LearnDash plugin
-* Improved compatibility with the Premium Addons for Elementor plugin
-* Fixed not being able to display social icons once disabled
-* Fixed some minor issues
-
-= 4.6.6 (2022-06-09) =
-
-* Improved compatibility with the Newspaper theme
-* Fixed wrong main author retrieval on some cases
-* Fixed PHP warning
-
-= 4.6.5 (2022-06-01) =
-
-* Fixed default WordPress author field displayed on edit post screen on WP 6.0
-* Removed setting to enable plugin template tags. They are enabled now by default
-
-= 4.6.4 (2022-05-27) =
-
-* Fixed author box settings resetting to default
-* Fixed some author box styles
-* Removed wrong input field on the new author form
-
-= 4.6.3 (2022-05-18) =
-
-* Improved compatibility with the Hootkit plugin
-* Fixed author pages showing no posts
-* Fixed author avatar and name not linking to author pages
-
-= 4.6.2 (2022-05-16) =
-
-* Fixed author avatar and name links
-
-= 4.6.1 (2022-05-16) =
-
-* Fixed plugin scripts not being loaded
-
-= 4.6.0 (2022-05-16) =
-
-* Added a visual editor to easily customize the author box appearance
-* Added many new options to style the author box
-* Added option to hide author bio in the author box
-* Added option to make author name and avatar link to custom URL
-* Added option to provide your own custom CSS for the author box
-* Moved many styling options from plugin settings page to the new author box visual editor
-* Dropped usage of WP Customizer to customize author box styles. Use the new visual editor
-* Reduced stylesheets size.
-* Improved compatibility with the Newspaper theme
-* Improved compatibility with the Flatsome theme
-* Improved compatibility with the The Issue theme
-* Improved compatibility with the Mission News theme
-* Improved compatibility with the WPML plugin
-* Improved compatibility with the The SEO Framework plugin
-* Improved compatibility with the Divi FilterGrid plugin
-* Fixed 'Mine' filter count displaying wrong value
-* Fixed default plugin settings not initialized upon installation
-* [DEV] Deprecated 'm-a-box-headline' CSS class. Replaced with 'm-a-box-header'
-* [DEV] Deprecated 'm-a-box-string-headline' CSS class. Replaced with 'm-a-box-header-title'
-* [DEV] Deprecated 'm-a-box-title' CSS class. Replaced with 'm-a-box-name'
-* [DEV] Deprecated 'm-a-box-meta-separator' CSS class. Replaced with 'm-a-box-meta-divider'
-* [DEV] Deprecated 'icon-container' CSS class. Replaced with 'm-icon-container'
-* [DEV] Removed 'm-a-box-string-about-the-author' CSS class. Replaced with 'm-a-box-profile-title'
-* [DEV] Removed 'm-a-box-string-related-posts' CSS class. Replaced with 'm-a-box-related-title'
-* Added WordPress 6.0 compatibility
-
 See changelog for all versions [here](https://www.molongui.com/help/molongui-authorship-changelog/ "Full changelog").
 
 
@@ -568,7 +431,10 @@ Minimum required PHP version raised to 5.6.20
 Clear your cache after updating
 
 = 4.8.3 =
-Pro users: Please update the Pro plugin to the latest version before installing this update to the Base plugin.
+Pro users: Please update the Pro plugin to the latest version before installing this update.
 
 = 4.8.4 =
-Pro users: Please update the Pro plugin to the latest version before installing this update to the Base plugin.
+Pro users: Please update the Pro plugin to the latest version before installing this update.
+
+= 5.0.0 =
+This is a major update. Please clear your cache after updating.

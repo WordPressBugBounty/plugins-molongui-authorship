@@ -12,4 +12,4 @@ function authorship_filter_the_author_ID( $id, $user_id = null, $original_user_i
     }
     return $id;
 }
-add_filter( 'get_the_author_ID', 'authorship_filter_the_author_ID', 999, 3 );
+//add_filter( 'get_the_author_ID', 'authorship_filter_the_author_ID', 999, 3 );

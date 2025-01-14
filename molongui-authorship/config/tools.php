@@ -1,5 +1,6 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $tools = array();
 if ( true )
@@ -19,6 +20,10 @@ if ( true )
         'type'     => 'title',
         'label'    => __( "Convenient tools to easily manage plugin data.", 'molongui-authorship' ),
     );
+
+    $tools = apply_filters( 'molongui_authorship/tools/before_tools_section', $tools );
+
+    $tools = apply_filters( 'molongui_authorship/tools/before_authorship_panel', $tools );
     $tools[] = array
     (
         'display'  => true,
@@ -27,7 +32,7 @@ if ( true )
         'search'   => '',
         'type'     => 'header',
         'class'    => '',
-        'id'       => 'tools_authorship_header',
+        'id'       => 'tools_authorship_panel',
         'label'    => __( "Authorship", 'molongui-authorship' ),
         'buttons'  => array(),
     );
@@ -74,6 +79,8 @@ if ( true )
             'disabled' => false,
         ),
     );
+
+    $tools = apply_filters( 'molongui_authorship/tools/before_guest_authors_panel', $tools );
     $tools[] = array
     (
         'display'  => true,
@@ -82,7 +89,7 @@ if ( true )
         'search'   => '',
         'type'     => 'header',
         'class'    => '',
-        'id'       => 'tools_guests_header',
+        'id'       => 'tools_guests_panel',
         'label'    => __( "Guest Authors", 'molongui-authorship' ),
         'buttons'  => array(),
     );
@@ -109,12 +116,14 @@ if ( true )
     );
 
     $tools = array_merge( $tools, apply_filters( '_authorship/options/guest/tools/markup', $guest_tools ) );
+
+    $tools = apply_filters( 'molongui_authorship/tools/before_misc_panel', $tools );
     $tools[] = array
     (
         'display'  => true,
         'advanced' => false,
         'type'     => 'header',
-        'id'       => 'tools_misc_header',
+        'id'       => 'tools_misc_panel',
         'deps'     => 'enable_cache',
         'class'    => '',
         'label'    => __( "Misc", 'molongui-authorship' ),

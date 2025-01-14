@@ -1,8 +1,10 @@
 <?php
+
+use Molongui\Authorship\Common\Utils\WP;
 defined( 'WP_UNINSTALL_PLUGIN' ) or exit;
 if ( function_exists( 'is_multisite' ) and is_multisite() )
 {
-	foreach ( molongui_get_sites() as $site_id )
+	foreach ( WP::get_sites() as $site_id )
 	{
 		switch_to_blog( $site_id );
 		molongui_authorship_uninstall_single_site();
@@ -20,12 +22,21 @@ function molongui_authorship_uninstall_single_site()
     $plugin_name   = 'molongui-authorship';
     $plugin_prefix = 'molongui_authorship';
     $options       = get_option( $plugin_prefix.'_options' );
-    if ( isset( $options['keep_config'] ) and $options['keep_config'] == 0 )
+
+    if ( isset( $options['uninstall'] ) and is_string( $options['uninstall'] ) )
+    {
+        $uninstall = explode( ',', $options['uninstall'] );
+    }
+    else
+    {
+        return;
+    }
+    if ( in_array( 'config', $uninstall ) )
 	{
         $like = $plugin_prefix.'_%';
         $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '{$like}';" );
 	}
-    if ( isset( $options['keep_data'] ) and $options['keep_data'] == 0 )
+    if ( in_array( 'data', $uninstall ) )
 	{
 		$ids = $wpdb->get_results
         (

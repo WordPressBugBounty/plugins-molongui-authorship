@@ -3,7 +3,9 @@
 use Molongui\Authorship\Common\Utils\Helpers;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-$show_related = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_related_show'] ) and ( !empty( $author['posts'] ) or !empty( $options['author_box_related_show_empty'] ) ) );
+
+$add_microdata = ( !empty( $options['seo_settings_enabled'] ) and !empty( $options['schema_markup_enabled'] ) );
+$show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) and ( !empty( $profile['posts'] ) or !empty( $options['author_box_related_show_empty'] ) ) );
 ?>
 
 <?php if ( apply_filters( 'authorship/add_html_comments', true ) ) : ?>
@@ -14,20 +16,22 @@ $show_related = ( $options['author_box_layout'] != 'slim' and !empty( $options['
 <?php ob_start(); ?>
 
 <div class="molongui-clearfix"></div>
-<div id="mab-<?php echo $random_id; ?>"
-     class="m-a-box <?php echo ( !empty( $options['author_box_custom_css_class'] ) ? $options['author_box_custom_css_class'] : '' ); ?>"
+<div class="m-a-box <?php echo ( !empty( $options['author_box_custom_css_class'] ) ? $options['author_box_custom_css_class'] : '' ); ?>"
      <?php echo ( apply_filters( '_authorship/doing_shortcode/author_box', false ) ? 'data-is-shortcode="yes"' : '' ); ?>
      data-box-layout="<?php echo ( isset( $options['author_box_layout'] ) ? $options['author_box_layout'] : '' ); ?>"
-     data-box-position="<?php echo ( isset( $options['box_position'] ) ? $options['box_position'] : '' ); ?>"
-     data-multiauthor="<?php echo ( $is_multiauthor ? 'true' : 'false' ); ?>"
-     data-author-id="<?php echo $author['id']; ?>"
-     data-author-type="<?php echo $author['type']; ?>"
-     data-author-archived="<?php echo $author['archived']; ?>">
+     data-box-position="<?php echo ( isset( $options['author_box_position'] ) ? $options['author_box_position'] : '' ); ?>"
+     data-multiauthor="<?php echo ( $multiple ? 'true' : 'false' ); ?>"
+     data-author-id="<?php echo $profile['id']; ?>"
+     data-author-type="<?php echo $profile['type']; ?>"
+     data-author-archived="<?php echo $profile['archived']; ?>">
 
 	<?php
-    if ( $show_headline and !empty( $options['author_box_header_title'] )  )
+    if ( !empty( $options['author_box_header_title'] ) )
     {
-        include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-header.php';
+        if ( $profile === reset($profiles ) )
+        {
+            include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-header.php';
+        }
     }
     if ( $show_tabs = ( !empty( $options['author_box_layout'] ) and $options['author_box_layout'] == 'tabbed' ) )
     {
@@ -42,15 +46,30 @@ $show_related = ( $options['author_box_layout'] != 'slim' and !empty( $options['
 
         <div class="m-a-box-tab m-a-box-content m-a-box-profile"
              data-profile-layout="<?php echo $options['author_box_profile_layout']; ?>"
-             data-author-ref="<?php echo $author['type'].'-'.$author['id']; ?>"
-             <?php echo ( $add_microdata ? 'itemscope itemid="'.$author['archive'].'" itemtype="https://schema.org/Person"' : '' ); ?>
+             data-author-ref="<?php echo $profile['type'].'-'.$profile['id']; ?>"
+             <?php echo ( $add_microdata ? 'itemscope itemid="'.$profile['archive_url'].'" itemtype="https://schema.org/Person"' : '' ); ?>
         >
             <?php
 
-            ob_start();
-            include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/profile/html-layout-1.php';
-            $profile_layout = ob_get_clean();
-            echo apply_filters( 'authorship/author_box/profile_layout', $profile_layout, $options, $author, $random_id );
+            /*!
+             * FILTER HOOK
+             * Allows filtering the author profile markup before it is generated.
+             *
+             * @param string $profile_layout Default author profile layout markup. Defaults to null.
+             * @param array  $options        Plugin settings.
+             * @param array  $profile        Author data.
+             * @since 5.0.0
+             */
+            $profile_layout = apply_filters( 'molongui_authorship/author_box_profile_markup', null, $options, $profile );
+
+            if ( is_null( $profile_layout ) )
+            {
+                ob_start();
+                include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/profile/html-layout-1.php';
+                $profile_layout = ob_get_clean();
+            }
+
+            echo $profile_layout;
 
             ?>
         </div><!-- End of .m-a-box-profile -->
@@ -72,19 +91,34 @@ $show_related = ( $options['author_box_layout'] != 'slim' and !empty( $options['
 
                     <ul>
                         <?php
-                        if ( !empty( $author['posts'] ) )
+                        if ( !empty( $profile['posts'] ) )
                         {
-                            if ( file_exists( $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-'.$options['author_box_related_layout'].'.php' ) )
+                            /*!
+                             * FILTER HOOK
+                             * Allows filtering the related posts markup before it is generated.
+                             *
+                             * @param string $related_layout Default related posts layout markup. Defaults to null.
+                             * @param array  $options        Plugin settings.
+                             * @param array  $profile        Author data.
+                             * @since 5.0.0
+                             */
+                            $related_layout = apply_filters( 'molongui_authorship/author_box_related_markup', null, $options, $profile );
+
+                            if ( is_null( $related_layout ) )
                             {
+                                $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-'.$options['author_box_related_layout'].'.php';
+
+                                if ( !file_exists( $file ) )
+                                {
+                                    $file = MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/related/html-layout-1.php';
+                                }
+
                                 ob_start();
                                 include $file;
                                 $related_layout = ob_get_clean();
                             }
-                            else
-                            {
-                                $related_layout = '';
-                            }
-                            echo apply_filters( 'authorship/author_box/related_layout', $related_layout, $options, $author );
+
+                            echo $related_layout;
                         }
                         else
                         {

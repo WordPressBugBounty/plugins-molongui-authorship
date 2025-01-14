@@ -1,5 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Post;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     $fn     = 'get_avatar';
@@ -37,9 +41,9 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
     )
     {
         global $post;
-        if ( is_guest_post( $post->ID ) )
+        if ( Post::is_guest( $post->ID ) )
         {
-            $main = get_main_author( $post->ID );
+            $main = Post::get_main_author( $post->ID );
             $author->id   = $main->id;
             $author->type = 'guest';
         }
@@ -50,9 +54,9 @@ add_filter( 'bp_core_get_user_domain', function( $domain, $user_id, $user_nicena
 {
     if ( apply_filters( 'authorship/buddyboss_author_link', false ) ) return $domain;
 
-    $options = authorship_get_options();
+    $options = Settings::get();
 
-    if ( $options['guest_authors'] or $options['enable_multi_authors'] )
+    if ( $options['guest_author_enabled'] or $options['co_authors_enabled'] )
     {
         $fn   = 'bp_core_get_user_domain';
         $file = '/template-parts/entry-meta.php';

@@ -13,7 +13,6 @@ function authorship_register_options_scripts()
 
     Assets::register_script( $file, 'options', $deps );
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_options_scripts' );
 function authorship_enqueue_options_scripts()
 {
     $file = apply_filters( 'authorship/options/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/options.xxxx.min.js' );
@@ -100,10 +99,3 @@ function authorship_menu_target_blank()
     <?php
     echo preg_replace( '/\s+/S', ' ', ob_get_clean() );
 }
-add_action( 'admin_footer', 'authorship_menu_target_blank' );
-add_filter( 'authorship/option/textarea', function( $output, $option )
-{
-
-
-    return $output;
-}, 10, 2 );

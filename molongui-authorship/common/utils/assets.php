@@ -25,19 +25,6 @@ class Assets
             {
                 wp_localize_script( $handle, str_replace( '-', '_', $handle ).'_params', $params );
             }
-            else
-            {
-                $function = 'authorship_'.$scope.'_script_params';
-                if ( function_exists( $function ) )
-                {
-                    $params = call_user_func( $function );
-
-                    if ( !empty( $params ) )
-                    {
-                        wp_localize_script( $handle, str_replace( '-', '_', $handle ).'_params', $params );
-                    }
-                }
-            }
             do_action( "authorship/{$scope}/script_registered", $scope );
         }
     }
@@ -74,15 +61,6 @@ class Assets
                         do_action( "authorship/{$scope}/pre_inline_script", $scope, $filepath, $handle );
                         $contents = file_get_contents( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
                         $params = apply_filters( "authorship/{$scope}_script_params", '' );
-                        if ( empty( $params ) )
-                        {
-                            $function = 'authorship_'.$scope.'_script_params';
-                            if ( function_exists( $function ) )
-                            {
-                                $params = call_user_func( $function );
-                            }
-                        }
-
                         if ( !empty( $params ) )
                         {
                             $jsextra = str_replace( '-', '_', $handle ).'_params';
@@ -128,25 +106,6 @@ class Assets
             $version = !empty( $version ) ? $version : MOLONGUI_AUTHORSHIP_VERSION;
 
             wp_register_style( $handle, plugins_url( '/' ) . $file, $deps, $version, 'all' );
-            $extra = apply_filters( "authorship/{$scope}_extra_styles", '' );
-
-            if ( !empty( $extra ) )
-            {
-                wp_add_inline_style( $handle, $extra );
-            }
-            else
-            {
-                $function = 'authorship_'.$scope.'_extra_styles';
-                if ( function_exists( $function ) )
-                {
-                    $extra = call_user_func( $function );
-
-                    if ( !empty( $extra ) )
-                    {
-                        wp_add_inline_style( $handle, $extra );
-                    }
-                }
-            }
             do_action( "authorship/{$scope}/styles_registered", $scope );
         }
     }
@@ -199,15 +158,6 @@ class Assets
                          */
                         $contents = apply_filters( "_authorship/{$scope}/styles_contents", $contents, $filepath );
                         $extra = apply_filters( "authorship/{$scope}_extra_styles", '' );
-                        if ( empty( $extra ) )
-                        {
-                            $function = 'authorship_'.$scope.'_extra_styles';
-                            if ( function_exists( $function ) )
-                            {
-                                $extra = call_user_func( $function );
-                            }
-                        }
-
                         echo '<style id="'.esc_attr( $handle ).'-inline-css" data-file="'.esc_attr( basename( $filepath ) ).'" data-version="'.esc_attr( $version ).'">' . $contents . $extra . '</style>';
                     });
 
@@ -230,6 +180,12 @@ class Assets
             else
             {
                 wp_enqueue_style( $handle );
+                $extra = apply_filters( "authorship/{$scope}_extra_styles", '' );
+
+                if ( !empty( $extra ) )
+                {
+                    wp_add_inline_style( $handle, $extra );
+                }
             }
             do_action( "authorship/{$scope}/styles_loaded", $scope );
         }
@@ -251,7 +207,7 @@ class Assets
     {
         $version = '2.1.2';
 
-        if ( apply_filters( 'authorship/assets/load_remote', true ) )
+        if ( apply_filters( 'authorship/assets/load_remote', false ) )
         {
             $sweetalert_js_url = 'https://cdn.jsdelivr.net/npm/sweetalert@'.$version.'/dist/sweetalert.min.js';
         }
@@ -272,6 +228,73 @@ class Assets
         {
             wp_enqueue_script( $handle );
             wp_add_inline_script( $handle, 'var molongui_swal = swal;' );
+        }
+    }
+    public static function register_typeahead()
+    {
+        $version = apply_filters( 'authorship/typeahead_version', '1.3.4' );
+
+        if ( file_exists( MOLONGUI_AUTHORSHIP_DIR . 'common/assets/vendor/typeahead/'.$version.'/typeahead.jquery.min.js' ) )
+        {
+            $typeahead_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/typeahead/'.$version.'/typeahead.jquery.min.js';
+        }
+        else
+        {
+            $typeahead_js_url = 'https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/'.$version.'/typeahead.jquery.min.js';
+        }
+        wp_register_script( 'molongui-typeahead', $typeahead_js_url, array( 'jquery' ), $version, true );
+    }
+    public static function enqueue_typeahead()
+    {
+        $handle = 'molongui-typeahead';
+        if ( !wp_script_is( $handle, 'registered' ) )
+        {
+            self::register_typeahead();
+        }
+        if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
+        {
+            wp_enqueue_script( $handle );
+        }
+    }
+    public static function register_element_queries()
+    {
+        if ( apply_filters( 'authorship/load_element_queries', true ) )
+        {
+            $version = '1.2.2';
+
+            if ( apply_filters( 'authorship/assets/load_remote', false ) )
+            {
+                $rs_js_url = 'https://cdn.jsdelivr.net/npm/css-element-queries@'.$version.'/src/ResizeSensor.min.js';
+                $eq_js_url = 'https://cdn.jsdelivr.net/npm/css-element-queries@'.$version.'/src/ElementQueries.min.js';
+            }
+            else
+            {
+                $rs_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ResizeSensor.min.js';
+                $eq_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ElementQueries.min.js';
+            }
+            wp_register_script( 'molongui-resizesensor',   $rs_js_url, array( 'jquery' ), $version, true );
+            wp_register_script( 'molongui-elementqueries', $eq_js_url, array( 'jquery' ), $version, true );
+        }
+    }
+    public static function enqueue_element_queries()
+    {
+        $handle = 'molongui-resizesensor';
+        if ( !wp_script_is( $handle, 'registered' ) )
+        {
+            self::register_element_queries();
+        }
+        if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
+        {
+            wp_enqueue_script( $handle );
+        }
+        $handle = 'molongui-elementqueries';
+        if ( !wp_script_is( $handle, 'registered' ) )
+        {
+            self::register_element_queries();
+        }
+        if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
+        {
+            wp_enqueue_script( $handle );
         }
     }
     public static function register_selectr()
@@ -325,47 +348,6 @@ class Assets
         if (!wp_script_is($handle, 'registered'))
         {
             self::register_sortable();
-        }
-        if (wp_script_is($handle, 'registered') and !wp_script_is($handle, 'enqueued'))
-        {
-            wp_enqueue_script($handle);
-        }
-    }
-    public static function register_element_queries()
-    {
-        $version = '1.2.2'; //'1.2.3';
-
-        if ( apply_filters( 'authorship/load_element_queries', true ) )
-        {
-            if ( apply_filters( 'authorship/assets/load_remote', true ) )
-            {
-                $resizesensor_js_url   = 'https://cdn.jsdelivr.net/npm/css-element-queries@'.$version.'/src/ResizeSensor.min.js';
-                $elementqueries_js_url = 'https://cdn.jsdelivr.net/npm/css-element-queries@'.$version.'/src/ElementQueries.min.js';
-            }
-            else
-            {
-                $resizesensor_js_url   = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ResizeSensor.min.js';
-                $elementqueries_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ElementQueries.min.js';
-            }
-            wp_register_script( 'molongui-resizesensor',   $resizesensor_js_url,   array( 'jquery' ), $version, true );
-            wp_register_script( 'molongui-elementqueries', $elementqueries_js_url, array( 'jquery' ), $version, true );
-        }
-    }
-    public static function enqueue_element_queries()
-    {
-        $handle = 'molongui-resizesensor';
-        if (!wp_script_is($handle, 'registered'))
-        {
-            self::register_element_queries();
-        }
-        if (wp_script_is($handle, 'registered') and !wp_script_is($handle, 'enqueued'))
-        {
-            wp_enqueue_script($handle);
-        }
-        $handle = 'molongui-elementqueries';
-        if (!wp_script_is($handle, 'registered'))
-        {
-            self::register_element_queries();
         }
         if (wp_script_is($handle, 'registered') and !wp_script_is($handle, 'enqueued'))
         {

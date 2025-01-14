@@ -6,7 +6,6 @@ function authorship_guest_quick_edit_add_title_field()
 
     if ( 'edit.php' == $pagenow and $post_type == MOLONGUI_AUTHORSHIP_CPT ) add_post_type_support( $post_type, 'title' );
 }
-add_action( 'admin_head', 'authorship_guest_quick_edit_add_title_field' );
 function authorship_guest_quick_edit_add_custom_fields( $column_name, $post_type )
 {
     if ( $column_name != 'guestDisplayBox' ) return;
@@ -30,7 +29,6 @@ function authorship_guest_quick_edit_add_custom_fields( $column_name, $post_type
     </fieldset>
     <?php
 }
-add_action( 'quick_edit_custom_box', 'authorship_guest_quick_edit_add_custom_fields', 10, 2 );
 function authorship_guest_quick_edit_populate_custom_fields()
 {
     $current_screen = get_current_screen();
@@ -65,7 +63,6 @@ function authorship_guest_quick_edit_populate_custom_fields()
     </script>
     <?php
 }
-add_action( 'admin_footer', 'authorship_guest_quick_edit_populate_custom_fields' );
 function authorship_guest_quick_edit_save_custom_fields( $post_id, $post )
 {
     if ( !isset( $_POST['quick_edit_guest_nonce'] ) or !wp_verify_nonce( $_POST['quick_edit_guest_nonce'], 'quick_edit_guest' ) ) return;
@@ -75,4 +72,4 @@ function authorship_guest_quick_edit_save_custom_fields( $post_id, $post )
     if ( isset( $_POST['post_title'] ) ) update_post_meta( $post_id, '_molongui_guest_author_display_name', sanitize_text_field( $_POST['post_title'] ) );
     if ( isset( $_POST['_molongui_guest_author_box_display'] ) ) update_post_meta( $post_id, '_molongui_guest_author_box_display', sanitize_text_field( $_POST['_molongui_guest_author_box_display'] ) );
 }
-add_action( 'save_post_'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_guest_quick_edit_save_custom_fields', 10, 2 );
+//add_action( 'save_post_'.MOLONGUI_AUTHORSHIP_CPT, 'authorship_guest_quick_edit_save_custom_fields', 10, 2 );

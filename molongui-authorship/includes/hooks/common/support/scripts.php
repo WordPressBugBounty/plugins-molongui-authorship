@@ -16,7 +16,6 @@ function authorship_register_support_scripts()
         Assets::enqueue_sweetalert();
     });
 }
-add_action( 'admin_enqueue_scripts', 'authorship_register_support_scripts' );
 function authorship_enqueue_support_scripts()
 {
     $file  = apply_filters( 'authorship/support/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/support.3f45.min.js' );

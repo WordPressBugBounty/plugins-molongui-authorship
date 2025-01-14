@@ -8,5 +8,4 @@ function authorship_use_cdn()
         return !empty( $options['assets_cdn'] );
     });
 }
-add_action( 'admin_init', 'authorship_use_cdn', 0 );
-add_action( 'init', 'authorship_use_cdn', 0 );
+//add_action( 'init', 'authorship_use_cdn', 0 );

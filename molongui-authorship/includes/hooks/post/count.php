@@ -6,7 +6,6 @@ function authorship_enable_post_count_update()
 {
     new \Molongui\Authorship\Update_Post_Counters();
 }
-add_action( 'authorship/init', 'authorship_enable_post_count_update' );
 function authorship_post_counters_update()
 {
     if ( apply_filters( 'authorship/check_wp_cron', true ) and ( defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON ) ) return false;
@@ -28,7 +27,6 @@ function authorship_post_counters_update()
         }
     }
 }
-add_action( 'admin_init', 'authorship_post_counters_update', 11 );
 function authorship_post_counters_update_completed()
 {
     if ( get_option( 'm_update_post_counters_complete' ) )
@@ -45,7 +43,6 @@ function authorship_post_counters_update_completed()
         echo '<div class="notice notice-warning is-dismissible">' . $message . '</div>';
     }
 }
-add_action( 'admin_notices', 'authorship_post_counters_update_completed' );
 function authorship_post_count( $count, $userid, $post_type, $public_only )
 {
     $post_count = apply_filters( 'authorship/pre_post_count', null, $count, $userid, $post_type, $public_only );
@@ -85,4 +82,4 @@ function authorship_post_count( $count, $userid, $post_type, $public_only )
     $post_count  = array_sum( $post_counts );
     return apply_filters( 'authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
 }
-add_filter( 'get_usernumposts', 'authorship_post_count', 999, 4 );
+//add_filter( 'get_usernumposts', 'authorship_post_count', 999, 4 );

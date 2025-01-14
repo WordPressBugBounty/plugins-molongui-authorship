@@ -1,5 +1,9 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+
+use Molongui\Authorship\Admin\Author_Box_Editor;
+use Molongui\Authorship\Settings;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $header_templates = apply_filters( 'authorship/header_templates', array
 (
@@ -45,8 +49,8 @@ $header_templates = apply_filters( 'authorship/header_templates', array
     ),
 ));
 
-authorship_editor_heading( __( "Header", 'molongui-authorship' ) );
-authorship_editor_input( 'author_box_header_title', __( "Custom title", 'molongui-authorship' ), array
+Author_Box_Editor::render_heading( __( "Header", 'molongui-authorship' ) );
+Author_Box_Editor::render_input( 'author_box_header_title', __( "Custom title", 'molongui-authorship' ), array
     (
         'placeholder' => __( "About the author", 'molongui-authorship' ),
         'info-title'  => __( "Optional - A title for the author box", 'molongui-authorship' ),
@@ -55,7 +59,7 @@ authorship_editor_input( 'author_box_header_title', __( "Custom title", 'molongu
         'info-more'   => '',
     )
 );
-authorship_editor_input( 'author_box_header_url', __( "Title URL", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_header_url', __( "Title URL", 'molongui-authorship' ), array
     (
         'info-title' => __( "Optional - URL to make the title link to", 'molongui-authorship' ),
         'info-desc'  => __( "Whether and where to make the author box title link to.", 'molongui-authorship' ),
@@ -64,8 +68,8 @@ authorship_editor_input( 'author_box_header_url', __( "Title URL", 'molongui-aut
         'parent'     => 'header',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_header_bottom_space', __( "Bottom space (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_header_bottom_space', __( "Bottom space (px)", 'molongui-authorship' ), array
     (
         'type'       => 'number',
         'default'    => 20,
@@ -76,15 +80,15 @@ authorship_editor_input( 'author_box_header_bottom_space', __( "Bottom space (px
         'parent'     => 'header',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_header_font_size', __( "Size (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_header_font_size', __( "Size (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
         'parent' => 'header',
     )
 );
-authorship_editor_input( 'author_box_header_line_height', __( "Line height (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_header_line_height', __( "Line height (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
@@ -92,38 +96,38 @@ authorship_editor_input( 'author_box_header_line_height', __( "Line height (px)"
         'parent' => 'header',
     )
 );
-authorship_editor_select( 'author_box_header_font_weight', __( "Weight", 'molongui-authorship' ), authorship_font_weight(), array
+Author_Box_Editor::render_select( 'author_box_header_font_weight', __( "Weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_select( 'author_box_header_text_transform', __( "Transform", 'molongui-authorship' ), authorship_text_transform(), array
+Author_Box_Editor::render_select( 'author_box_header_text_transform', __( "Transform", 'molongui-authorship' ), Author_Box_Editor::text_transform(), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_select( 'author_box_header_font_style', __( "Style", 'molongui-authorship' ), authorship_font_style(), array
+Author_Box_Editor::render_select( 'author_box_header_font_style', __( "Style", 'molongui-authorship' ), Author_Box_Editor::font_style(), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_select( 'author_box_header_text_decoration', __( "Decoration", 'molongui-authorship' ), authorship_text_decoration(), array
+Author_Box_Editor::render_select( 'author_box_header_text_decoration', __( "Decoration", 'molongui-authorship' ), Author_Box_Editor::text_decoration(), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_select( 'author_box_header_text_align', __( "Alignment", 'molongui-authorship' ), authorship_text_align(), array
+Author_Box_Editor::render_select( 'author_box_header_text_align', __( "Alignment", 'molongui-authorship' ), Author_Box_Editor::text_align(), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_colorpicker( 'author_box_header_color', __( "Color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_header_color', __( "Color", 'molongui-authorship' ), array
     (
         'parent' => 'header',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_header_tag', __( "HTML tag (SEO)", 'molongui-authorship' ), authorship_html_tags(), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_header_tag', __( "HTML tag (SEO)", 'molongui-authorship' ), Author_Box_Editor::html_tags(), array
     (
         'default'    => 'h3',
         'info-title' => __( "The HTML tag for the author box title", 'molongui-authorship' ),
@@ -165,13 +169,13 @@ $link = array
     'none'    => __( "Don't link", 'molongui-authorship' ),
 );
 
-authorship_editor_heading( __( "Avatar", 'molongui-authorship' ) );
-authorship_editor_select( 'author_box_avatar_show', __( "Show avatar", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_heading( __( "Avatar", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_avatar_show', __( "Show avatar", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default' => '1',
     )
 );
-authorship_editor_select( 'author_box_avatar_source', __( "Source", 'molongui-authorship' ), $avatar_source, array
+Author_Box_Editor::render_select( 'author_box_avatar_source', __( "Source", 'molongui-authorship' ), $avatar_source, array
     (
         'default'    => 'local',
         'info-title' => __( "Author profile image source", 'molongui-authorship' ),
@@ -181,7 +185,7 @@ authorship_editor_select( 'author_box_avatar_source', __( "Source", 'molongui-au
         'parent'     => 'avatar',
     )
 );
-authorship_editor_select( 'author_box_avatar_fallback', __( "Fallback", 'molongui-authorship' ), $avatar_fallback, array
+Author_Box_Editor::render_select( 'author_box_avatar_fallback', __( "Fallback", 'molongui-authorship' ), $avatar_fallback, array
     (
         'default'    => 'gravatar',
         'info-title' => __( "What to display if no custom avatar available?", 'molongui-authorship' ),
@@ -191,7 +195,7 @@ authorship_editor_select( 'author_box_avatar_fallback', __( "Fallback", 'molongu
         'parent'     => 'avatar',
     )
 );
-authorship_editor_select( 'author_box_avatar_default_gravatar', __( "Default Gravatar", 'molongui-authorship' ), $avatar_default, array
+Author_Box_Editor::render_select( 'author_box_avatar_default_gravatar', __( "Default Gravatar", 'molongui-authorship' ), $avatar_default, array
     (
         'default'    => 'mp',
         'info-title' => __( "What to display if no gravatar configured?", 'molongui-authorship' ),
@@ -201,26 +205,40 @@ authorship_editor_select( 'author_box_avatar_default_gravatar', __( "Default Gra
         'parent'     => 'avatar',
     )
 );
-authorship_editor_colorpicker( 'author_box_avatar_background_color', __( "Background color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_avatar_background_color', __( "Background color", 'molongui-authorship' ), array
     (
         'default' => '#1d2327',
         'parent'  => 'avatar',
     )
 );
-authorship_editor_colorpicker( 'author_box_avatar_color', __( "Color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_avatar_color', __( "Color", 'molongui-authorship' ), array
     (
         'default' => '#dd9933',
         'parent'  => 'avatar',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_avatar_border_style', __( "Border style", 'molongui-authorship' ), authorship_border_style(), array
+Author_Box_Editor::render_input( 'author_box_avatar_font_size', __( "Size (px)", 'molongui-authorship' ), array
+    (
+        'type'        => 'number',
+        'min'         => 0,
+        'default'     => 78,
+        'placeholder' => '78',
+        'parent'      => 'avatar',
+    )
+);
+Author_Box_Editor::render_select( 'author_box_avatar_font_weight', __( "Weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
+    (
+        'parent' => 'avatar',
+    )
+);
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_avatar_border_style', __( "Border style", 'molongui-authorship' ), Author_Box_Editor::border_style(), array
     (
         'default' => 'none',
         'parent'  => 'avatar',
     )
 );
-authorship_editor_input( 'author_box_avatar_border_width', __( "Border width", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_avatar_border_width', __( "Border width", 'molongui-authorship' ), array
     (
         'type'        => 'number',
         'min'         => 0,
@@ -229,14 +247,13 @@ authorship_editor_input( 'author_box_avatar_border_width', __( "Border width", '
         'parent'      => 'avatar',
     )
 );
-authorship_editor_colorpicker( 'author_box_avatar_border_color', __( "Border color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_avatar_border_color', __( "Border color", 'molongui-authorship' ), array
     (
         'parent'  => 'avatar',
     )
 );
-authorship_editor_input( 'author_box_avatar_border_radius', __( "Border radius (%)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_avatar_border_radius', __( "Border radius (%)", 'molongui-authorship' ), array
     (
-
         'type'        => 'range',
         'min'         => 0,
         'max'         => 100,
@@ -245,8 +262,8 @@ authorship_editor_input( 'author_box_avatar_border_radius', __( "Border radius (
         'parent'      => 'avatar',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_avatar_width', __( "Width", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_avatar_width', __( "Width", 'molongui-authorship' ), array
     (
         'type'        => 'number',
         'placeholder' => '150',
@@ -259,7 +276,7 @@ authorship_editor_input( 'author_box_avatar_width', __( "Width", 'molongui-autho
         'parent'      => 'avatar',
     )
 );
-authorship_editor_input( 'author_box_avatar_height', __( "Height", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_avatar_height', __( "Height", 'molongui-authorship' ), array
     (
         'type'        => 'number',
         'placeholder' => '150',
@@ -272,8 +289,8 @@ authorship_editor_input( 'author_box_avatar_height', __( "Height", 'molongui-aut
         'parent'      => 'avatar',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_avatar_link', __( "Link", 'molongui-authorship' ), $link, array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_avatar_link', __( "Link", 'molongui-authorship' ), $link, array
     (
         'default'    => 'archive',
         'info-title' => __( "Whether to make the avatar a link", 'molongui-authorship' ),
@@ -286,55 +303,94 @@ authorship_editor_select( 'author_box_avatar_link', __( "Link", 'molongui-author
 
 $name_underline = array( 'keep' => __( "Keep it", 'molongui-authorship' ), 'remove' => __( "Remove it", 'molongui-authorship' ) );
 
-authorship_editor_heading( __( "Author Name", 'molongui-authorship' ) );
-authorship_editor_input( 'author_box_name_font_size', __( "Size (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_heading( __( "Author Name", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_name_show', __( "Show author name", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+    (
+        'default'    => '1',
+        'info-title' => __( "Author Display Name", 'molongui-authorship' ),
+        'info-desc'  => __( "Whether to show the author display name.", 'molongui-authorship' ),
+        'info-tip'   => '',
+        'info-more'  => '',
+    )
+);
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_name_font_size', __( "Size (px)", 'molongui-authorship' ), array
     (
         'type'        => 'number',
         'min'         => 0,
         'default'     => 22,
         'placeholder' => '22',
+        'parent'      => 'name',
     )
 );
-authorship_editor_input( 'author_box_name_line_height', __( "Line height (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_name_line_height', __( "Line height (px)", 'molongui-authorship' ), array
     (
-        'type' => 'number',
-        'min'  => 0,
-        'step' => 1,
+        'type'   => 'number',
+        'min'    => 0,
+        'step'   => 1,
+        'parent' => 'name',
     )
 );
-authorship_editor_select( 'author_box_name_font_weight', __( "Weight", 'molongui-authorship' ), authorship_font_weight() );
-authorship_editor_select( 'author_box_name_text_transform', __( "Transform", 'molongui-authorship' ), authorship_text_transform() );
-authorship_editor_select( 'author_box_name_font_style', __( "Style", 'molongui-authorship' ), authorship_font_style() );
-authorship_editor_select( 'author_box_name_text_decoration', __( "Decoration", 'molongui-authorship' ), authorship_text_decoration() );
-authorship_editor_select( 'author_box_name_text_align', __( "Alignment", 'molongui-authorship' ), authorship_text_align() );
-authorship_editor_colorpicker( 'author_box_name_color', __( "Color", 'molongui-authorship' ) );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_name_link', __( "Link", 'molongui-authorship' ), $link, array
+Author_Box_Editor::render_select( 'author_box_name_font_weight', __( "Weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_select( 'author_box_name_text_transform', __( "Transform", 'molongui-authorship' ), Author_Box_Editor::text_transform(), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_select( 'author_box_name_font_style', __( "Style", 'molongui-authorship' ), Author_Box_Editor::font_style(), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_select( 'author_box_name_text_decoration', __( "Decoration", 'molongui-authorship' ), Author_Box_Editor::text_decoration(), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_select( 'author_box_name_text_align', __( "Alignment", 'molongui-authorship' ), Author_Box_Editor::text_align(), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_colorpicker( 'author_box_name_color', __( "Color", 'molongui-authorship' ), array
+    (
+        'parent' => 'name',
+    )
+);
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_name_link', __( "Link", 'molongui-authorship' ), $link, array
     (
         'default'    => 'archive',
         'info-title' => __( "Whether to make the author name a link", 'molongui-authorship' ),
         'info-desc'  => __( "You can make the author name in the author box link to a page listing all posts by the author (Author page), to the author's website (Author website) or to a custom URL you can configure for each author (Custom URL). You can also disable the link.", 'molongui-authorship' ),
         'info-tip'   => __( "Regardless of this setting, the author name might not become a link. i.e. When author archive pages are disabled.", 'molongui-authorship' ),
         'info-more'  => '',
+        'parent'     => 'name',
     )
 );
-authorship_editor_select( 'author_box_name_underline', __( "Inherited underline", 'molongui-authorship' ), $name_underline, array
+Author_Box_Editor::render_select( 'author_box_name_underline', __( "Inherited underline", 'molongui-authorship' ), $name_underline, array
     (
         'default'    => 'keep',
         'info-title' => __( "Default underline", 'molongui-authorship' ),
         'info-desc'  => __( "You can use this setting if the 'Decoration' setting above is not working as expected. Use the 'Remove it' option to (try to) remove the underline added by your theme or any other third plugin.", 'molongui-authorship' ),
         'info-tip'   => '',
         'info-more'  => '',
+        'parent'     => 'name',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_name_tag', __( "HTML tag (SEO)", 'molongui-authorship' ), authorship_html_tags(), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_name_tag', __( "HTML tag (SEO)", 'molongui-authorship' ), Author_Box_Editor::html_tags(), array
     (
         'default'    => 'h5',
         'info-title' => __( "The HTML tag for the author name", 'molongui-authorship' ),
         'info-desc'  => __( "Selecting the HTML tag that best suits your strategy might improve your SEO.", 'molongui-authorship' ),
         'info-tip'   => '',
         'info-more'  => '',
+        'parent'     => 'name',
     )
 );
 
@@ -359,9 +415,8 @@ $meta_divider = array
     '<br>' => __( 'Line break', 'molongui-authorship' ),
 );
 
-authorship_editor_heading( __( "Meta Info", 'molongui-authorship' ) );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_meta_show', __( "Show meta info", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_heading( __( "Meta Info", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_meta_show', __( "Show meta info", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default'    => '1',
         'info-title' => __( "Author meta info", 'molongui-authorship' ),
@@ -370,33 +425,35 @@ authorship_editor_select( 'author_box_meta_show', __( "Show meta info", 'molongu
         'info-more'  => '',
     )
 );
-authorship_editor_select( 'author_box_meta_show_email', __( "Display email", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_select( 'author_box_meta_show_email', __( "Display email", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default'    => '0',
         'info-title' => __( "Author email address", 'molongui-authorship' ),
         'info-desc'  => __( "Whether to show the author email address. This applies to all your authors. If you want to enable this option just for some authors, keep this disabled and enable the option on a per author basis.", 'molongui-authorship' ),
         'info-tip'   => '',
         'info-more'  => '',
+        'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_show_phone', __( "Display phone", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_select( 'author_box_meta_show_phone', __( "Display phone", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default'    => '0',
         'info-title' => __( "Author phone number", 'molongui-authorship' ),
         'info-desc'  => __( "Whether to show the author phone number. This applies to all your authors. If you want to enable this option just for some authors, keep this disabled and enable the option on a per author basis.", 'molongui-authorship' ),
         'info-tip'   => '',
         'info-more'  => '',
+        'parent' => 'meta',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_meta_font_size', __( "Size (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_meta_font_size', __( "Size (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
         'parent' => 'meta',
     )
 );
-authorship_editor_input( 'author_box_meta_line_height', __( "Line height (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_meta_line_height', __( "Line height (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
@@ -404,38 +461,38 @@ authorship_editor_input( 'author_box_meta_line_height', __( "Line height (px)", 
         'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_font_weight', __( "Weight", 'molongui-authorship' ), authorship_font_weight(), array
+Author_Box_Editor::render_select( 'author_box_meta_font_weight', __( "Weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_text_transform', __( "Transform", 'molongui-authorship' ), authorship_text_transform(), array
+Author_Box_Editor::render_select( 'author_box_meta_text_transform', __( "Transform", 'molongui-authorship' ), Author_Box_Editor::text_transform(), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_font_style', __( "Style", 'molongui-authorship' ), authorship_font_style(), array
+Author_Box_Editor::render_select( 'author_box_meta_font_style', __( "Style", 'molongui-authorship' ), Author_Box_Editor::font_style(), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_text_decoration', __( "Decoration", 'molongui-authorship' ), authorship_text_decoration(), array
+Author_Box_Editor::render_select( 'author_box_meta_text_decoration', __( "Decoration", 'molongui-authorship' ), Author_Box_Editor::text_decoration(), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_select( 'author_box_meta_text_align', __( "Alignment", 'molongui-authorship' ), authorship_text_align(), array
+Author_Box_Editor::render_select( 'author_box_meta_text_align', __( "Alignment", 'molongui-authorship' ), Author_Box_Editor::text_align(), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_colorpicker( 'author_box_meta_color', __( "Color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_meta_color', __( "Color", 'molongui-authorship' ), array
     (
         'parent' => 'meta',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_meta_divider', __( "Divider", 'molongui-authorship' ), $meta_divider, array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_meta_divider', __( "Divider", 'molongui-authorship' ), $meta_divider, array
     (
         'default'    => '|',
         'info-title' => __( "Author meta data separator", 'molongui-authorship' ),
@@ -445,7 +502,7 @@ authorship_editor_select( 'author_box_meta_divider', __( "Divider", 'molongui-au
         'parent'     => 'meta',
     )
 );
-authorship_editor_input( 'author_box_meta_divider_spacing', __( "Divider spacing", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_meta_divider_spacing', __( "Divider spacing", 'molongui-authorship' ), array
     (
         'type'    => 'number',
         'min'     => 0,
@@ -454,8 +511,8 @@ authorship_editor_input( 'author_box_meta_divider_spacing', __( "Divider spacing
         'parent'  => 'meta',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_meta_at', __( "\"at\" text", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_meta_at', __( "\"at\" text", 'molongui-authorship' ), array
     (
         'placeholder' => __( "at", 'molongui-authorship' ),
         'default'     => __( "at", 'molongui-authorship' ),
@@ -466,7 +523,7 @@ authorship_editor_input( 'author_box_meta_at', __( "\"at\" text", 'molongui-auth
         'parent'      => 'meta',
     )
 );
-authorship_editor_input( 'author_box_meta_web', __( "\"Website\" text", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_meta_web', __( "\"Website\" text", 'molongui-authorship' ), array
     (
         'placeholder' => __( "Website", 'molongui-authorship' ),
         'default'     => __( "Website", 'molongui-authorship' ),
@@ -477,7 +534,7 @@ authorship_editor_input( 'author_box_meta_web', __( "\"Website\" text", 'molongu
         'parent'      => 'meta',
     )
 );
-authorship_editor_input( 'author_box_meta_posts', __( "\"More Posts\" text", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_meta_posts', __( "\"More Posts\" text", 'molongui-authorship' ), array
     (
         'placeholder' => __( "+ posts", 'molongui-authorship' ),
         'default'     => __( "+ posts", 'molongui-authorship' ),
@@ -488,10 +545,10 @@ authorship_editor_input( 'author_box_meta_posts', __( "\"More Posts\" text", 'mo
         'parent'      => 'meta',
     )
 );
-authorship_editor_input( 'author_box_meta_bio', __( "\"Bio\" text", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_meta_bio', __( "\"Bio\" text", 'molongui-authorship' ), array
     (
-        'placeholder' => __( "Bio", 'molongui-authorship' ),
-        'default'     => __( "Bio", 'molongui-authorship' ),
+        'placeholder' => __( "Bio ⮌", 'molongui-authorship' ),
+        'default'     => __( "Bio ⮌", 'molongui-authorship' ),
         'info-title'  => '',
         'info-desc'   => __( "Text to show as toggle button to display author's bio when displaying related posts.", 'molongui-authorship' ),
         'info-tip'    => '',
@@ -519,8 +576,8 @@ $bio_source = array
     ),
 );
 
-authorship_editor_heading( __( "Author Bio", 'molongui-authorship' ) );
-authorship_editor_select( 'author_box_bio_source', __( "Source", 'molongui-authorship' ), $bio_source, array
+Author_Box_Editor::render_heading( __( "Author Bio", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_bio_source', __( "Source", 'molongui-authorship' ), $bio_source, array
     (
         'default'    => 'full',
         'info-title' => __( "Author bio", 'molongui-authorship' ),
@@ -529,15 +586,15 @@ authorship_editor_select( 'author_box_bio_source', __( "Source", 'molongui-autho
         'info-more'  => '',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_bio_font_size', __( "Text size", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_bio_font_size', __( "Text size", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
         'parent' => 'bio',
     )
 );
-authorship_editor_input( 'author_box_bio_line_height', __( "Line height (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_bio_line_height', __( "Line height (px)", 'molongui-authorship' ), array
 (
         'type'   => 'number',
         'min'    => 0,
@@ -545,32 +602,32 @@ authorship_editor_input( 'author_box_bio_line_height', __( "Line height (px)", '
         'parent' => 'bio',
     )
 );
-authorship_editor_select( 'author_box_bio_font_weight', __( "Font weight", 'molongui-authorship' ), authorship_font_weight(), array
+Author_Box_Editor::render_select( 'author_box_bio_font_weight', __( "Font weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
     (
         'parent' => 'bio',
     )
 );
-authorship_editor_select( 'author_box_bio_text_transform', __( "Text transform", 'molongui-authorship' ), authorship_text_transform(), array
+Author_Box_Editor::render_select( 'author_box_bio_text_transform', __( "Text transform", 'molongui-authorship' ), Author_Box_Editor::text_transform(), array
     (
         'parent' => 'bio',
     )
 );
-authorship_editor_select( 'author_box_bio_font_style', __( "Text style", 'molongui-authorship' ), authorship_font_style(), array
+Author_Box_Editor::render_select( 'author_box_bio_font_style', __( "Text style", 'molongui-authorship' ), Author_Box_Editor::font_style(), array
     (
         'parent' => 'bio',
     )
 );
-authorship_editor_select( 'author_box_bio_text_decoration', __( "Text decoration", 'molongui-authorship' ), authorship_text_decoration(), array
+Author_Box_Editor::render_select( 'author_box_bio_text_decoration', __( "Text decoration", 'molongui-authorship' ), Author_Box_Editor::text_decoration(), array
     (
         'parent' => 'bio',
     )
 );
-authorship_editor_select( 'author_box_bio_text_align', __( "Text alignment", 'molongui-authorship' ), authorship_text_align(), array
+Author_Box_Editor::render_select( 'author_box_bio_text_align', __( "Text alignment", 'molongui-authorship' ), Author_Box_Editor::text_align(), array
     (
         'parent' => 'bio',
     )
 );
-authorship_editor_colorpicker( 'author_box_bio_color', __( "Font color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_bio_color', __( "Font color", 'molongui-authorship' ), array
     (
         'parent' => 'bio',
     )
@@ -590,34 +647,34 @@ $social_style = array
     'branded-boxed'           => __( "Branded boxed", 'molongui-authorship' ),
 );
 
-authorship_editor_heading( __( "Social Icons", 'molongui-authorship' ) );
-authorship_editor_select( 'author_box_social_show', __( "Show social icons", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_heading( __( "Social Icons", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_social_show', __( "Show social icons", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default' => '1',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_social_style', __( "Style", 'molongui-authorship' ), $social_style, array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_social_style', __( "Style", 'molongui-authorship' ), $social_style, array
     (
         'default' => 'layout-1',
         'parent'  => 'social',
     )
 );
-authorship_editor_input( 'author_box_social_font_size', __( "Size (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_social_font_size', __( "Size (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
         'parent' => 'social',
     )
 );
-authorship_editor_colorpicker( 'author_box_social_color', __( "Color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_social_color', __( "Color", 'molongui-authorship' ), array
     (
         'default' => '#ffffff',
         'parent'  => 'social',
     )
 );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_social_target', __( "Open in a new tab", 'molongui-authorship' ), array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_social_target', __( "Open in a new tab", 'molongui-authorship' ), array
     (
         'type'    => 'checkbox',
         'default' => 1,
@@ -672,8 +729,8 @@ $related_orderby = array
     ),
 );
 
-authorship_editor_heading( __( "Related Posts", 'molongui-authorship' ) );
-authorship_editor_select( 'author_box_related_show', __( "Show related posts", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
+Author_Box_Editor::render_heading( __( "Related Posts", 'molongui-authorship' ) );
+Author_Box_Editor::render_select( 'author_box_show_related_posts', __( "Show related posts", 'molongui-authorship' ), array( '1' => __( 'Show' ), '0' => __( 'Hide' ) ), array
     (
         'default'     => '1',
         'info-title'  => __( "Related posts", 'molongui-authorship' ),
@@ -682,7 +739,7 @@ authorship_editor_select( 'author_box_related_show', __( "Show related posts", '
         'info-more'   => '',
     )
 );
-authorship_editor_input( 'author_box_related_show_empty', __( "Show even if no related", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_show_empty', __( "Show even if no related", 'molongui-authorship' ), array
     (
         'type'        => 'checkbox',
         'default'     => 0,
@@ -693,7 +750,7 @@ authorship_editor_input( 'author_box_related_show_empty', __( "Show even if no r
         'parent'      => 'related',
     )
 );
-authorship_editor_input( 'author_box_related_none', __( "No more posts message", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_none', __( "No more posts message", 'molongui-authorship' ), array
     (
         'placeholder' => __( "This author does not have any more posts.", 'molongui-authorship' ),
         'default'     => __( "This author does not have any more posts.", 'molongui-authorship' ),
@@ -704,14 +761,14 @@ authorship_editor_input( 'author_box_related_none', __( "No more posts message",
         'parent'      => 'related',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_related_layout', __( "Template", 'molongui-authorship' ), $related_layouts, array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_related_layout', __( "Template", 'molongui-authorship' ), $related_layouts, array
     (
         'default' => 'layout-1',
         'parent'  => 'related',
     )
 );
-authorship_editor_input( 'author_box_related_columns', __( "Columns", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_columns', __( "Columns", 'molongui-authorship' ), array
     (
         'type'    => 'number',
         'min'     => 1,
@@ -719,7 +776,7 @@ authorship_editor_input( 'author_box_related_columns', __( "Columns", 'molongui-
         'parent'  => 'related',
     )
 );
-authorship_editor_input( 'author_box_related_columns_gap', __( "Columns gap (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_columns_gap', __( "Columns gap (px)", 'molongui-authorship' ), array
     (
         'type'    => 'number',
         'min'     => 0,
@@ -727,20 +784,20 @@ authorship_editor_input( 'author_box_related_columns_gap', __( "Columns gap (px)
         'parent'  => 'related',
     )
 );
-authorship_editor_separator();
-authorship_editor_select( 'author_box_related_orderby', __( "Order by", 'molongui-authorship' ), $related_orderby, array
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_select( 'author_box_related_orderby', __( "Order by", 'molongui-authorship' ), $related_orderby, array
     (
         'default' => 'date',
         'parent'  => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_order', __( "Order", 'molongui-authorship' ), authorship_query_order(), array
+Author_Box_Editor::render_select( 'author_box_related_order', __( "Order", 'molongui-authorship' ), Author_Box_Editor::query_order(), array
     (
         'default' => 'DESC',
         'parent'  => 'related',
     )
 );
-authorship_editor_input( 'author_box_related_count', __( "Posts to show", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_count', __( "Posts to show", 'molongui-authorship' ), array
     (
         'type'    => 'number',
         'min'     => 0,
@@ -748,16 +805,16 @@ authorship_editor_input( 'author_box_related_count', __( "Posts to show", 'molon
         'parent'  => 'related',
     )
 );
-authorship_editor_notice( 'related_post_types', sprintf( __( "Which post types to retrieve as related can be configured on the %splugin settings page%s", 'molongui-authorship' ), '<a href="'.authorship_options_url( 'author-box' ).'" target="_blank">', '</a>' ) );
-authorship_editor_separator();
-authorship_editor_input( 'author_box_related_font_size', __( "Size (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_notice( 'related_post_types', sprintf( __( "You can configure which post types to retrieve as related on the %splugin settings page%s", 'molongui-authorship' ), '<a href="'.Settings::url( 'reading' ).'" target="_blank">', '</a>' ) );
+Author_Box_Editor::render_separator();
+Author_Box_Editor::render_input( 'author_box_related_font_size', __( "Size (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
         'parent' => 'related',
     )
 );
-authorship_editor_input( 'author_box_related_line_height', __( "Line height (px)", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_line_height', __( "Line height (px)", 'molongui-authorship' ), array
     (
         'type'   => 'number',
         'min'    => 0,
@@ -765,32 +822,32 @@ authorship_editor_input( 'author_box_related_line_height', __( "Line height (px)
         'parent' => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_font_weight', __( "Weight", 'molongui-authorship' ), authorship_font_weight(), array
+Author_Box_Editor::render_select( 'author_box_related_font_weight', __( "Weight", 'molongui-authorship' ), Author_Box_Editor::font_weight(), array
     (
         'parent' => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_text_transform', __( "Transform", 'molongui-authorship' ), authorship_text_transform(), array
+Author_Box_Editor::render_select( 'author_box_related_text_transform', __( "Transform", 'molongui-authorship' ), Author_Box_Editor::text_transform(), array
     (
         'parent' => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_font_style', __( "Style", 'molongui-authorship' ), authorship_font_style(), array
+Author_Box_Editor::render_select( 'author_box_related_font_style', __( "Style", 'molongui-authorship' ), Author_Box_Editor::font_style(), array
     (
         'parent' => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_text_decoration', __( "Decoration", 'molongui-authorship' ), authorship_text_decoration(), array
+Author_Box_Editor::render_select( 'author_box_related_text_decoration', __( "Decoration", 'molongui-authorship' ), Author_Box_Editor::text_decoration(), array
     (
         'parent' => 'related',
     )
 );
-authorship_editor_select( 'author_box_related_text_align', __( "Alignment", 'molongui-authorship' ), authorship_text_align(), array
+Author_Box_Editor::render_select( 'author_box_related_text_align', __( "Alignment", 'molongui-authorship' ), Author_Box_Editor::text_align(), array
     (
         'parent' => 'related',
     )
 );
-authorship_editor_colorpicker( 'author_box_related_color', __( "Color", 'molongui-authorship' ), array
+Author_Box_Editor::render_colorpicker( 'author_box_related_color', __( "Color", 'molongui-authorship' ), array
     (
         'parent' => 'related',
     )

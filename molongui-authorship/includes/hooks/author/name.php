@@ -1,7 +1,8 @@
 <?php
 
 use Molongui\Authorship\Common\Utils\Helpers;
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 if ( !authorship_byline_takeover() ) return;
 function authorship_filter_author_name( $display_name )
 {
@@ -35,31 +36,57 @@ if ( apply_filters_ref_array( 'molongui_authorship_do_filter_name', array( false
     if ( is_author() or is_guest_author() ) return $display_name;
     return authorship_get_byline();
 }
-add_filter( 'the_author', 'authorship_filter_author_name', PHP_INT_MAX, 1 );
 function authorship_filter_author_display_name( $display_name, $user_id = null, $original_user_id = null )
 {
-    $original_display_name = $display_name;
-    $display_name = null;
-    $display_name = apply_filters( 'authorship/pre_get_the_author_display_name', $display_name, $original_display_name );
-    if ( null !== $display_name ) return $display_name;
-    $display_name = $original_display_name;
+    /*!
+     * FILTER HOOK
+     *
+     * Filters the $display_name before it is filtered by Molongui Authorship.
+     *
+     * Returning a non-null value will effectively short-circuit the function, returning that value instead.
+     *
+     * Allows escaping this function preventing Molongui Authorship to filter the 'get_the_author_{$field}'.
+     *
+     * @param string $_display_name    Null value. Do not escape this function by default.
+     * @param string $display_name     The user display name.
+     * @param int    $user_id          The user ID.
+     * @param int    $original_user_id The original user ID.
+     * @since 4.7.0
+     * @since 5.0.0 Renamed from 'authorship/pre_get_the_author_display_name'
+     */
+    $_display_name = apply_filters( 'authorship/pre_the_author_display_name', null, $display_name, $user_id, $original_user_id );
+    if ( null !== $_display_name )
+    {
+        return $_display_name;
+    }
     if ( ( !empty( $original_user_id ) or $original_user_id === 0 )
          and !apply_filters( 'molongui_authorship_bypass_original_user_id_if', false )
          and !Helpers::is_block_editor()
     ){
         return $display_name;
     }
-    if ( molongui_is_request( 'admin' ) and !molongui_is_request( 'editor' ) ) return $display_name;
+    if ( molongui_is_request( 'admin' ) and !molongui_is_request( 'editor' ) )
+    {
+        return $display_name;
+    }
     global $post;
-    if ( empty( $post ) or !$post->ID ) return $display_name;
+    if ( empty( $post ) or !$post->ID )
+    {
+        return $display_name;
+    }
     $post_id = apply_filters( 'molongui_authorship_filter_the_author_display_name_post_id', $post->ID, $post, $display_name );
 $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 100 );
 if ( empty( $dbt ) ) return $display_name;
-    if ( apply_filters( 'molongui_authorship_dont_filter_the_author_display_name', false, $display_name, $user_id, $original_user_id, $post, $dbt ) ) return $display_name;
-    if ( is_author() or is_guest_author() ) return $display_name;
+    if ( apply_filters( 'molongui_authorship_dont_filter_the_author_display_name', false, $display_name, $user_id, $original_user_id, $post, $dbt ) )
+    {
+        return $display_name;
+    }
+    if ( is_author() or is_guest_author() )
+    {
+        return $display_name;
+    }
     return authorship_get_byline( $post_id );
 }
-add_filter( 'get_the_author_display_name', 'authorship_filter_author_display_name', PHP_INT_MAX, 3 );
 function authorship_filter_archive_title( $title )
 {
     global $wp_query;
@@ -83,4 +110,4 @@ function authorship_filter_archive_title( $title )
     }
     return $title;
 }
-add_filter( 'get_the_archive_title', 'authorship_filter_archive_title', 999, 1 );
+//add_filter( 'get_the_archive_title', 'authorship_filter_archive_title', 999, 1 );

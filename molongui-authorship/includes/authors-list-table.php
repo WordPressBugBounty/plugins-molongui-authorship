@@ -1,7 +1,7 @@
 <?php
 
 namespace Molongui\Authorship;
-\defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) or exit;
 if ( class_exists( \Molongui\Authorship\Common\Libraries\WP_List_Table::class ) )
 {
     class DynamicParent extends \Molongui\Authorship\Common\Libraries\WP_List_Table {};
@@ -27,7 +27,7 @@ class Authors_List_Table extends DynamicParent
                 {
                     ?><a href="users.php" class="button"><?php _e( "Edit Users", 'molongui-authorship' ); ?></a>&ensp;<?php
                 }
-                if ( $options['guest_authors'] and current_user_can( 'edit_posts' ) )
+                if ( $options['guest_author_enabled'] and current_user_can( 'edit_posts' ) )
                 {
                     ?><a href="<?php echo admin_url( 'edit.php?post_type=guest_author' ); ?>" class="button"><?php _e( "Edit Guests", 'molongui-authorship' ); ?></a>&ensp;<?php
                 }
@@ -364,7 +364,7 @@ class Authors_List_Table extends DynamicParent
 
             case 'box':
 
-                switch ( $item['box'] )
+                switch ( $item['box_display'] )
                 {
                     case 'show':
                         $icon = 'visibility';

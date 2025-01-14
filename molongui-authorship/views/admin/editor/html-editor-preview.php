@@ -1,50 +1,52 @@
 <?php
 
+use Molongui\Authorship\Admin\Admin_Post;
 use Molongui\Authorship\Author;
+use Molongui\Authorship\Authors;
+use Molongui\Authorship\Author_Box;
 use Molongui\Authorship\Settings;
-defined( 'ABSPATH' ) or exit;
+
+defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $options = Settings::get();
-$authors = molongui_get_authors();
-$author  = new stdClass();
-
-add_filter( 'authorship/box/is_preview', '__return_true' );
+$profile = array();// new stdClass();
 
 if ( !empty( $_GET['author'] ) )
 {
-    $get = explode( '-', $_GET['author'] );
-    $author->id   = $get[1];
-    $author->type = $get[0];
-    $author->ref  = $_GET['author'];
+    $get           = explode( '-', sanitize_text_field( $_GET['author'] ) );
+    $author        = new Author( $get[1], $get[0] );
+    $profile[$get] = $author->get_data();
 }
 else
 {
     $current_user = wp_get_current_user();
-    if ( array_intersect( (array) $current_user->roles, explode(",", $options['user_roles'] ) ) )
+    if ( apply_filters( 'molongui_authorship/preview_dummy_data', true ) )
     {
-        $author->id   = $current_user->ID;
-        $author->type = 'user';
-        $author->ref  = $author->type . '-' . $author->id;
+        $profile['dummy-0'] = $this->get_dummy_data( $options );
+    }
+    elseif ( array_intersect( (array)$current_user->roles, explode(",", $options['user_roles'] ) ) )
+    {
+        $author = new Author( $current_user->ID, 'user' );
+        $profile['user-'.$current_user->ID] = $author->get_data();
     }
     else
     {
-        $author->id   = $authors[0]['id'];
-        $author->type = $authors[0]['type'];
-        $author->ref  = $authors[0]['ref'];
+        $random = Authors::get_random_author( 'author', $options['user_roles'] );
+        $type   = is_a( $random, 'WP_User' ) ? 'user' : 'guest';
+        $author = new Author( $random->ID, $type );
+        $profile[$type.'-'.$random->ID] = $author->get_data();
     }
 }
+
+add_filter( 'molongui_authorship/is_author_box_preview', '__return_true' );
 
 ?>
 
 <div id="m-editor-preview">
 
     <div id="m-editor-author-select">
-        <label for="active-author"><?php _e( "Pick an author to preview their author box:", 'molongui-authorship' ); ?></label>
-        <select id="active-author">
-            <?php foreach ( $authors as $option ) : ?>
-            <option value="<?php echo $option['ref']; ?>" <?php selected( $author->ref, $option['ref'] ); ?> ><?php echo $option['name']; ?></option>
-            <?php endforeach; ?>
-        </select>
+        <?php Admin_Post::author_selector( null, 'box-editor' ); ?>
+        <input type="hidden" id="active-author" value="">
     </div>
 
     <div id="m-editor-live-preview">
@@ -52,15 +54,16 @@ else
             <?php _e( "Preview", 'molongui-authorship' ); ?>
         </div>
         <div id="m-editor_preview__warning" class="m-editor-warning" data-pro-options="" style="display:none;">
-            <?php _e( "Premium options are only available in the Pro version of the plugin. You can preview them but they won't be saved and will be reverted to defaults.", 'molongui-authorship' ); ?>
+            <?php _e( "Your author box design uses premium features available only in the Pro version. You can preview them, but they won't be saved and will revert to defaults unless you upgrade.", 'molongui-authorship' ); ?>
         </div>
         <div id="m-editor-live-preview__box">
-            <?php echo authorship_box_markup( null, array( $author ), $options, false ); ?>
+            <?php echo Author_Box::markup( $profile ); ?>
         </div>
         <div id="m-editor-live-preview__loader"><div></div><div></div></div>
 
         <div id="m-editor-disclaimer">
-            <?php _e( "How the author box is actually displayed in your site's frontend might differ slightly from what is shown here.", 'molongui-authorship' ); ?>
+            <span class="dashicons dashicons-warning"></span>
+            <?php _e( "The way the author box is displayed on your site's frontend may differ slightly from what is shown here.", 'molongui-authorship' ); ?>
         </div>
     </div>
 
@@ -68,4 +71,4 @@ else
 
 <?php
 
-remove_filter( 'authorship/box/is_preview', '__return_true' );
+remove_filter( 'molongui_authorship/is_author_box_preview', '__return_true' );
