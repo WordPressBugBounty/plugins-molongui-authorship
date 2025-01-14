@@ -2,6 +2,11 @@
 
 == Changelog ==
 
+= 5.0.3 (2025-01-14) =
+
+* Fixed: Author box being displayed regardless of plugin configuration.
+* Fixed: Incorrect post count computed for authors.
+
 = 5.0.2 (2025-01-14) =
 
 * Fixed: Default settings are now initialized upon plugin activation.
@@ -35,10 +40,10 @@
 * Changed: Updated framework files to version 3.3.0.
 * Changed: Added compatibility with WordPress 6.7.
 * Removed: The option to hide HTML elements on the frontend. Use 'Custom CSS' instead.
-* Removed: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the 'authorship/assets/load_remote' filter.
+* Removed: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the `authorship/assets/load_remote` filter.
 * Dev: Major code refactor.
-* Dev: Removed 'get_byline' helper function.
-* Dev: Removed 'get_post_authors' helper function.
+* Dev: Removed `get_byline` helper function.
+* Dev: Removed `get_post_authors` helper function.
 
 = 4.9.7 (2024-08-29) =
 
@@ -65,7 +70,7 @@
 
 = 4.9.3 (2024-06-24) =
 
-* Fixed users with the 'contributor' user role not being selectable as post author
+* Fixed users with the `contributor` user role not being selectable as post author
 * Removed the 'edit_posts' capability requirement to be eligible as post author
 * Enhanced compatibility with the Molongui Post Contributors plugin
 

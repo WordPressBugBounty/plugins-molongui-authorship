@@ -38,6 +38,7 @@ class Author
     private $website = null;
     private $avatar = null;
     private $user_roles = null;
+    private $post_count = null;
     private $metas;
     private $data;
     private $has_data;
@@ -1100,8 +1101,6 @@ class Author
     }
     public function get_posts_count( $post_types = null )
     {
-        $count = array();
-
         if ( !isset( $post_types ) )
         {
             $post_types = Settings::enabled_post_types();
@@ -1110,6 +1109,17 @@ class Author
         {
             $post_types = array( $post_types );
         }
+        if ( isset( $this->post_count ) and is_array( $this->post_count ) )
+        {
+            $_post_types = array_keys( $this->post_count );
+
+            if ( Helpers::array_match( $post_types, $_post_types ) )
+            {
+                return apply_filters( 'molongui_authorship/get_author_display_name', $this->post_count, $post_types, $this->id, $this->type, $this );
+            }
+        }
+
+        $count = array();
         if ( !empty( $post_types ) )
         {
             foreach( $post_types as $post_type )
@@ -1129,7 +1139,22 @@ class Author
         {
             $count = apply_filters_deprecated( 'authorship/author/post_count', array( $count, $this->id, $this->type, $this->author, $post_types ), '5.0.0', 'molongui_authorship/get_author_posts_count' );
         }
-        return apply_filters( 'molongui_authorship/get_author_posts_count', $count, $post_types, $this->id, $this->type, $this );
+
+        /*!
+         * FILTER HOOK
+         * Allows filtering the fetched data before it is returned.
+         *
+         * @param array        $count      Array of 'published' and 'private' posts by author, indexed by post type.
+         * @param string|array $post_types Single post type or array of post types to count the number of posts for.
+         * @param int          $id         The author's ID.
+         * @param int          $type       The author's type, either 'user' or 'guest'.
+         * @param Author       $this       The current author instance.
+         * @since 5.0.0
+         */
+        $count = apply_filters( 'molongui_authorship/get_author_posts_count', $count, $post_types, $this->id, $this->type, $this );
+        $this->post_count = $count;
+
+        return $count;
     }
     public function count_posts( $post_type = 'post' )
     {
@@ -1315,9 +1340,10 @@ class Author
         {
             $post_types = array( $post_types );
         }
+        $post_count = $this->get_posts_count( $post_types );
         foreach ( $post_types as $post_type )
         {
-            if ( !empty( $this->author['post_count'][$post_type] ) )
+            if ( !empty( $post_count[$post_type] ) )
             {
                 $has_posts = true;
                 break;

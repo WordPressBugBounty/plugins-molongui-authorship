@@ -209,7 +209,7 @@ class Authors
 
                         if ( 1 === (int)$min_post_count )
                         {
-                            if ( !molongui_has_posts( $user, 'user', $post_types ) )
+                            if ( !$author->has_posts( $post_types ) )
                             {
                                 $skip = true;
                             }
@@ -270,7 +270,7 @@ class Authors
 
                         if ( 1 === (int)$min_post_count )
                         {
-                            if ( !molongui_has_posts( $guest, 'guest', $post_types ) )
+                            if ( !$author->has_posts( $post_types ) )
                             {
                                 $skip = true;
                             }
@@ -313,7 +313,6 @@ class Authors
 
         /*!
          * FILTER HOOK
-         *
          * Allows filtering the number of authors to be returned. Value 0 (all) is supported, but should be used with
          * caution on larger sites.
          *
@@ -327,7 +326,6 @@ class Authors
 
         /*!
          * FILTER HOOK
-         *
          * Allows preventing the list of authors to be further sorted.
          *
          * @param bool  By default, skip sorting if items are already ordered.
@@ -352,7 +350,7 @@ class Authors
 
                 usort( $authors, function ( $a, $b ) use ( $orderby, $post_types )
                 {
-                    return $a[$orderby][$post_types[0]] - $b[$orderby][$post_types[0]];
+                    return $a[$orderby] - $b[$orderby];
                 });
 
                 break;

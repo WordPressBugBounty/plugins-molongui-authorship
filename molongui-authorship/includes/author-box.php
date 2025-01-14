@@ -27,30 +27,30 @@ class Author_Box
     private $stylesheet_rtl = '/assets/css/author-box-rtl.cdb1.min.css';
     public function __construct()
     {
-        add_action( 'init', array( $this, 'init' ), 10 );
-        if ( !is_admin() )
-        {
-            add_action( 'wp', array( $this, 'maybe_add_to_the_content' ) );
-            add_filter( 'molongui_authorship/add_author_box_to_content', array( $this, 'prevent_autoadd' ), 9 );
-        }
-    }
-    public function init()
-    {
         if ( Settings::is_enabled( 'author-box' ) )
         {
-            $this->set_assets();
-            add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
-            add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-            add_filter( 'authorship/box_script_params', array( $this, 'box_script_params' ) );
-            add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
-            add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
-            add_filter( "authorship/box_extra_styles", array( $this, 'extra_styles' ) );
-            add_filter( '_authorship/box/styles_contents', array( $this, 'update_font_path' ) );
+            add_action( 'init', array( $this, 'init' ), 10 );
+            if ( !is_admin() )
+            {
+                add_action( 'wp', array( $this, 'maybe_add_to_the_content' ) );
+                add_filter( 'molongui_authorship/add_author_box_to_content', array( $this, 'prevent_autoadd' ), 9 );
+            }
         }
         else
         {
             Debug::console_log( null, "The Author Box feature is disabled in the plugin settings." );
         }
+    }
+    public function init()
+    {
+        $this->set_assets();
+        add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
+        add_filter( 'authorship/box_script_params', array( $this, 'box_script_params' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
+        add_filter( "authorship/box_extra_styles", array( $this, 'extra_styles' ) );
+        add_filter( '_authorship/box/styles_contents', array( $this, 'update_font_path' ) );
     }
     public function set_assets()
     {

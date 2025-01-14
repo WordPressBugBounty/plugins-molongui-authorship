@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-14 12:28+0100\n"
+"POT-Creation-Date: 2025-01-14 23:55+0100\n"
 "PO-Revision-Date: 2017-08-23 13:23+0100\n"
 "Last-Translator: Amitzy <molongui@amitzy.com>\n"
 "Language-Team: Amitzy <molongui@amitzy.com>\n"
@@ -1464,7 +1464,7 @@ msgstr "كاتب"
 msgid "guest"
 msgstr ""
 
-#: includes/admin/admin-post.php:556 includes/author.php:364
+#: includes/admin/admin-post.php:556 includes/author.php:373
 msgid "user"
 msgstr ""
 
@@ -1947,12 +1947,12 @@ msgctxt "Not displayed co-authors count"
 msgid "%d more"
 msgstr ""
 
-#: includes/author.php:364
+#: includes/author.php:373
 #, fuzzy
 msgid "guest author"
 msgstr "كاتب زائر"
 
-#: includes/author.php:1141
+#: includes/author.php:1150
 #, fuzzy
 msgctxt "User role"
 msgid "Guest Author"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: molongui-authorship 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-14 12:28+0100\n"
+"POT-Creation-Date: 2025-01-14 23:55+0100\n"
 "PO-Revision-Date: 2017-08-21 18:25+0200\n"
 "Last-Translator: <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
@@ -1367,7 +1367,7 @@ msgstr ""
 msgid "guest"
 msgstr ""
 
-#: includes/admin/admin-post.php:556 includes/author.php:364
+#: includes/admin/admin-post.php:556 includes/author.php:373
 msgid "user"
 msgstr ""
 
@@ -1819,11 +1819,11 @@ msgctxt "Not displayed co-authors count"
 msgid "%d more"
 msgstr ""
 
-#: includes/author.php:364
+#: includes/author.php:373
 msgid "guest author"
 msgstr ""
 
-#: includes/author.php:1141
+#: includes/author.php:1150
 msgctxt "User role"
 msgid "Guest Author"
 msgstr ""
