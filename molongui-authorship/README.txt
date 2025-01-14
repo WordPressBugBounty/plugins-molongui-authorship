@@ -197,6 +197,12 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.1 (2025-01-14) =
+
+* Fixed: PHP warning for undefined array key `author_box_avatar_fallback`
+* Fixed: PHP warning for undefined array key `guest_author_enabled`
+* Fixed: PHP warning for undefined array key `guest_pages`
+
 = 5.0.0 (2025-01-14) =
 
 * Added: Ability to customize the order of social profiles.

@@ -36,14 +36,13 @@ class Author_List_Table extends Base_Author_List_Table
     {
         if ( 'top' === $which )
         {
-            $options = Settings::get();
             ?><div class="alignleft actions"><?php
 
                 if ( current_user_can( 'list_users' ) )
                 {
                     ?><a href="users.php" class="button"><?php _e( "Edit Users", 'molongui-authorship' ); ?></a>&ensp;<?php
                 }
-                if ( $options['guest_author_enabled'] and current_user_can( 'edit_posts' ) )
+                if ( Settings::get( 'guest_author_enabled', true ) and current_user_can( 'edit_posts' ) )
                 {
                     ?><a href="<?php echo admin_url( 'edit.php?post_type=guest_author' ); ?>" class="button"><?php _e( "Edit Guests", 'molongui-authorship' ); ?></a>&ensp;<?php
                 }

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-13 09:44+0100\n"
+"POT-Creation-Date: 2025-01-14 11:51+0100\n"
 "PO-Revision-Date: 2020-10-21 22:40+0200\n"
 "Last-Translator: Molongui\n"
 "Language-Team: Amitzy <molongui@amitzy.com>\n"
@@ -480,7 +480,7 @@ msgid ""
 msgstr ""
 
 #: common/modules/settings/settings-page.php:424
-#: includes/admin/author-list-table.php:696 includes/settings.php:1601
+#: includes/admin/author-list-table.php:694 includes/settings.php:1601
 msgid "Delete"
 msgstr ""
 
@@ -1249,36 +1249,36 @@ msgid "Entries"
 msgstr "Entradas"
 
 #: includes/admin/admin-guest-author.php:833 includes/admin/admin-user.php:150
-#: includes/admin/author-list-table.php:171
+#: includes/admin/author-list-table.php:169
 msgid "ID"
 msgstr "ID"
 
 #: includes/admin/admin-guest-author.php:891 includes/admin/admin-post.php:583
 #: includes/admin/admin-post.php:610 includes/admin/admin-user.php:230
-#: includes/admin/author-list-table.php:602
+#: includes/admin/author-list-table.php:600
 msgid "Visible"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:896 includes/admin/admin-post.php:588
 #: includes/admin/admin-post.php:620 includes/admin/admin-user.php:235
-#: includes/admin/author-list-table.php:607
+#: includes/admin/author-list-table.php:605
 msgid "Hidden"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:901 includes/admin/admin-user.php:240
-#: includes/admin/author-list-table.php:612
+#: includes/admin/author-list-table.php:610
 msgid "Visibility depends on global plugin settings"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:938 includes/admin/admin-user.php:218
-#: includes/admin/author-list-table.php:569
+#: includes/admin/author-list-table.php:567
 #: views/admin/editor/parts/html-editor-tab-content.php:183
 #: views/admin/editor/parts/html-editor-tab-layout.php:237
 msgid "None"
 msgstr "Ninguna"
 
 #: includes/admin/admin-guest-author.php:977
-#: includes/admin/author-list-table.php:625
+#: includes/admin/author-list-table.php:623
 #, fuzzy
 msgid "Archived author"
 msgstr "Acerca del autor"
@@ -1374,7 +1374,7 @@ msgid "Drag this author to reorder"
 msgstr ""
 
 #: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1023
-#: includes/admin/author-list-table.php:700 includes/settings.php:5102
+#: includes/admin/author-list-table.php:698 includes/settings.php:5102
 #: views/admin/html-post-author-selector.php:177
 #: views/admin/html-social-profile-selector.php:45
 #: views/user/html-admin-avatar-field.php:52
@@ -1580,8 +1580,8 @@ msgid ""
 "if you wish to remove your name as the post author."
 msgstr ""
 
-#: includes/admin/admin-user.php:1024 includes/admin/author-list-table.php:691
-#: includes/admin/author-list-table.php:731
+#: includes/admin/admin-user.php:1024 includes/admin/author-list-table.php:689
+#: includes/admin/author-list-table.php:729
 #: views/user/html-admin-avatar-field.php:53
 msgid "Edit"
 msgstr "Editar"
@@ -1646,142 +1646,142 @@ msgstr "Alfabético ascendente"
 msgid "Descending"
 msgstr "Alfabético descendente"
 
-#: includes/admin/author-list-table.php:102
+#: includes/admin/author-list-table.php:100
 msgid "Edit Users"
 msgstr ""
 
-#: includes/admin/author-list-table.php:106
+#: includes/admin/author-list-table.php:104
 #, fuzzy
 msgid "Edit Guests"
 msgstr "Editar autor invitado"
 
-#: includes/admin/author-list-table.php:127
+#: includes/admin/author-list-table.php:125
 #, fuzzy
 msgctxt "Screen reader hint"
 msgid "Filter authors by type"
 msgstr "Estilos de la caja de autor"
 
-#: includes/admin/author-list-table.php:129
+#: includes/admin/author-list-table.php:127
 msgctxt "Filter option"
 msgid "All types"
 msgstr ""
 
-#: includes/admin/author-list-table.php:130
+#: includes/admin/author-list-table.php:128
 #, fuzzy
 msgctxt "Filter option"
 msgid "Registered WP User"
 msgstr "Usuarios registrados"
 
-#: includes/admin/author-list-table.php:131
-#: includes/admin/author-list-table.php:139
+#: includes/admin/author-list-table.php:129
+#: includes/admin/author-list-table.php:137
 #, fuzzy
 msgctxt "Filter option"
 msgid "Guest Author"
 msgstr "Autor Invitado"
 
-#: includes/admin/author-list-table.php:135
+#: includes/admin/author-list-table.php:133
 #, fuzzy
 msgctxt "Screen reader hint"
 msgid "Filter authors by role"
 msgstr "Deshabilitar la caja de autor"
 
-#: includes/admin/author-list-table.php:137
+#: includes/admin/author-list-table.php:135
 msgctxt "Filter option"
 msgid "All roles"
 msgstr ""
 
-#: includes/admin/author-list-table.php:142
+#: includes/admin/author-list-table.php:140
 msgid "Filter"
 msgstr ""
 
-#: includes/admin/author-list-table.php:161
+#: includes/admin/author-list-table.php:159
 #, fuzzy
 msgctxt "column name"
 msgid "Avatar"
 msgstr "Avatar"
 
-#: includes/admin/author-list-table.php:162
+#: includes/admin/author-list-table.php:160
 #, fuzzy
 msgctxt "column name"
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
-#: includes/admin/author-list-table.php:163
+#: includes/admin/author-list-table.php:161
 msgctxt "column name"
 msgid "Type"
 msgstr ""
 
-#: includes/admin/author-list-table.php:164
+#: includes/admin/author-list-table.php:162
 #, fuzzy
 msgctxt "column name"
 msgid "Roles"
 msgstr "Usuarios"
 
-#: includes/admin/author-list-table.php:165
+#: includes/admin/author-list-table.php:163
 #, fuzzy
 msgctxt "column name"
 msgid "Entries"
 msgstr "Entradas"
 
-#: includes/admin/author-list-table.php:166
+#: includes/admin/author-list-table.php:164
 #, fuzzy
 msgctxt "column name"
 msgid "Email"
 msgstr "Email"
 
-#: includes/admin/author-list-table.php:167
+#: includes/admin/author-list-table.php:165
 #, fuzzy
 msgctxt "column name"
 msgid "Bio"
 msgstr "Biografía"
 
-#: includes/admin/author-list-table.php:168
+#: includes/admin/author-list-table.php:166
 #, fuzzy
 msgctxt "column name"
 msgid "Social"
 msgstr "Redes Sociales"
 
-#: includes/admin/author-list-table.php:169
+#: includes/admin/author-list-table.php:167
 #, fuzzy
 msgctxt "column name"
 msgid "Author Box"
 msgstr "Caja de Autor"
 
-#: includes/admin/author-list-table.php:447
+#: includes/admin/author-list-table.php:445
 #, fuzzy
 msgid "No authors available."
 msgstr "No se encontraron autores."
 
-#: includes/admin/author-list-table.php:488
+#: includes/admin/author-list-table.php:486
 msgid "Super Admin"
 msgstr ""
 
-#: includes/admin/author-list-table.php:590
+#: includes/admin/author-list-table.php:588
 #, fuzzy
 msgid "Has social profiles defined"
 msgstr "Perfiles en redes sociales"
 
-#: includes/admin/author-list-table.php:711
+#: includes/admin/author-list-table.php:709
 #, php-format
 msgid "View posts by %s"
 msgstr ""
 
-#: includes/admin/author-list-table.php:712
-#: includes/admin/author-list-table.php:763
+#: includes/admin/author-list-table.php:710
+#: includes/admin/author-list-table.php:761
 msgid "View"
 msgstr ""
 
-#: includes/admin/author-list-table.php:741
+#: includes/admin/author-list-table.php:739
 #, php-format
 msgid "Move &#8220;%s&#8221; to the Trash"
 msgstr ""
 
-#: includes/admin/author-list-table.php:742
+#: includes/admin/author-list-table.php:740
 msgctxt "verb"
 msgid "Trash"
 msgstr ""
 
-#: includes/admin/author-list-table.php:762
+#: includes/admin/author-list-table.php:760
 #, php-format
 msgid "View &#8220;%s&#8221;"
 msgstr ""

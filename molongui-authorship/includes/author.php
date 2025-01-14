@@ -667,7 +667,13 @@ class Author
                 }
                 if ( empty( $this->avatar ) )
                 {
-                    switch ( empty( $default ) ? $options['author_box_avatar_fallback'] : $default )
+                    $avatar_fallback = $default;
+                    if ( empty( $avatar_fallback ) and !empty( $options['author_box_avatar_fallback'] ) )
+                    {
+                        $avatar_fallback = $options['author_box_avatar_fallback'];
+                    }
+
+                    switch ( $avatar_fallback )
                     {
                         case 'gravatar':
                             if ( $context === 'url' )

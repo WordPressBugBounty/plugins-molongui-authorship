@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
                     and
                     ( ( 'guest' === $profile['type'] and !Plugin::has_pro() )
                         or
-                      ( 'guest' === $profile['type'] and !$options['guest_pages'] )
+                      ( 'guest' === $profile['type'] and !$options['guest_archive_enabled'] )
                         or
                       ( 'user' === $profile['type'] and !$options['user_archive_enabled'] )
                     )
