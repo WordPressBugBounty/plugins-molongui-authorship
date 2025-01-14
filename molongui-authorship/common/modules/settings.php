@@ -63,7 +63,7 @@ class Settings
             'custom_css'          => '',
             'custom_php'          => '',
             'custom_php_in_admin' => false,
-            'uninstall_enabled'   => true,
+            'uninstall_enabled'   => false,
             'uninstall'           => 'files',
         );
 

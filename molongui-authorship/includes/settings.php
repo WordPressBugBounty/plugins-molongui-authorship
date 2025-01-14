@@ -49,7 +49,7 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
     {
         add_filter( 'authorship/common_settings_section_id', array( $this, 'define_common_settings_section_id' ) );
         add_filter( 'authorship/common_settings_section_name', array( $this, 'define_common_settings_section_name' ) );
-        add_filter( 'authorship/default_options', array( $this, 'set_defaults' ) );
+        add_filter( 'authorship/default_options', array( __CLASS__, 'set_defaults' ) );
         add_action( 'authorship/options', 'authorship_add_defaults' );
         add_filter( 'authorship/plugin_settings', array( $this, 'define_plugin_settings' ) );
         add_filter( 'authorship/validate_options', array( $this, 'validate_freemium' ), 10, 2 );
@@ -77,7 +77,7 @@ public function define_common_settings_section_name()
 {
     return __( "General", 'molongui-common-framework' );
 }
-    public function set_defaults( $fw_options )
+    public static function set_defaults( $fw_options )
     {
         return array_merge( $fw_options, array
         (

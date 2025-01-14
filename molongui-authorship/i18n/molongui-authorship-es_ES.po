@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-14 11:51+0100\n"
+"POT-Creation-Date: 2025-01-14 12:28+0100\n"
 "PO-Revision-Date: 2020-10-21 22:40+0200\n"
 "Last-Translator: Molongui\n"
 "Language-Team: Amitzy <molongui@amitzy.com>\n"
@@ -225,7 +225,7 @@ msgid "System Report"
 msgstr "Enviar informe a Molongui"
 
 #: common/modules/settings.php:539 common/modules/settings/options.php:264
-#: includes/settings.php:1509
+#: includes/settings.php:1510
 #, fuzzy
 msgid "Plugin Settings"
 msgstr "Plugins"
@@ -271,7 +271,7 @@ msgstr ""
 
 #: common/modules/settings/control.php:539
 #: common/modules/settings/control.php:741
-#: common/modules/settings/control.php:802 includes/settings.php:5171
+#: common/modules/settings/control.php:802 includes/settings.php:5172
 msgid "PRO"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: common/modules/settings/options.php:77 includes/settings.php:1518
+#: common/modules/settings/options.php:77 includes/settings.php:1519
 #: views/admin/editor/parts/html-editor-tab-advanced.php:21
 #: views/admin/editor/parts/html-editor-tab-advanced.php:22
 msgid "Custom CSS"
@@ -306,7 +306,7 @@ msgstr ""
 msgid "Submit help request"
 msgstr ""
 
-#: common/modules/settings/options.php:123 includes/settings.php:1525
+#: common/modules/settings/options.php:123 includes/settings.php:1526
 msgid "Custom PHP"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr ""
 "Permite mantener toda la información de los autores invitados aunque el "
 "plugin se desinstale."
 
-#: common/modules/settings/options.php:253 includes/settings.php:972
+#: common/modules/settings/options.php:253 includes/settings.php:973
 msgid "Tools"
 msgstr ""
 
@@ -424,7 +424,7 @@ msgstr "Actualizar"
 msgid "Reset plugin settings to their defaults"
 msgstr ""
 
-#: common/modules/settings/options.php:349 includes/settings.php:994
+#: common/modules/settings/options.php:349 includes/settings.php:995
 msgid "Help"
 msgstr ""
 
@@ -480,7 +480,7 @@ msgid ""
 msgstr ""
 
 #: common/modules/settings/settings-page.php:424
-#: includes/admin/author-list-table.php:694 includes/settings.php:1601
+#: includes/admin/author-list-table.php:694 includes/settings.php:1602
 msgid "Delete"
 msgstr ""
 
@@ -514,13 +514,13 @@ msgstr ""
 #: common/modules/settings/settings-page.php:433
 #: includes/admin/author-box-editor.php:1292
 #: includes/migration/co-authors-plus.php:235
-#: includes/migration/one-user-avatar.php:236 includes/settings.php:5072
-#: includes/settings.php:5084 views/post/html-admin-author-metabox.php:48
+#: includes/migration/one-user-avatar.php:236 includes/settings.php:5073
+#: includes/settings.php:5085 views/post/html-admin-author-metabox.php:48
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: common/modules/settings/settings-page.php:434 includes/settings.php:5073
-#: includes/settings.php:5085
+#: common/modules/settings/settings-page.php:434 includes/settings.php:5074
+#: includes/settings.php:5086
 msgid "OK"
 msgstr ""
 
@@ -544,8 +544,8 @@ msgstr ""
 #: includes/migration/one-user-avatar.php:282
 #: includes/migration/one-user-avatar.php:297
 #: includes/migration/one-user-avatar.php:328
-#: includes/migration/one-user-avatar.php:353 includes/settings.php:5076
-#: includes/settings.php:5086 views/admin/html-page-editor.php:102
+#: includes/migration/one-user-avatar.php:353 includes/settings.php:5077
+#: includes/settings.php:5087 views/admin/html-page-editor.php:102
 msgid "Error"
 msgstr ""
 
@@ -586,8 +586,8 @@ msgid ""
 "again."
 msgstr ""
 
-#: common/modules/settings/settings-page.php:446 includes/settings.php:5078
-#: includes/settings.php:5091
+#: common/modules/settings/settings-page.php:446 includes/settings.php:5079
+#: includes/settings.php:5092
 msgid ""
 "Something went wrong and couldn't connect to the server. Please, try again."
 msgstr ""
@@ -906,9 +906,9 @@ msgstr ""
 msgid "Learn more about custom PHP snippets"
 msgstr ""
 
-#: common/modules/settings/settings-page.php:879 includes/settings.php:1561
-#: includes/settings.php:1566 includes/settings.php:1624
-#: includes/settings.php:1629
+#: common/modules/settings/settings-page.php:879 includes/settings.php:1562
+#: includes/settings.php:1567 includes/settings.php:1625
+#: includes/settings.php:1630
 #, fuzzy
 msgid "Export"
 msgstr "Ayuda"
@@ -921,9 +921,9 @@ msgid ""
 msgstr "Desactivar la licencia para poder utilizarla en otra instalación."
 
 #: common/modules/settings/settings-page.php:897
-#: common/modules/settings/settings-page.php:902 includes/settings.php:1579
-#: includes/settings.php:1584 includes/settings.php:1641
-#: includes/settings.php:1646
+#: common/modules/settings/settings-page.php:902 includes/settings.php:1580
+#: includes/settings.php:1585 includes/settings.php:1642
+#: includes/settings.php:1647
 #, fuzzy
 msgid "Import"
 msgstr "Ayuda"
@@ -933,7 +933,7 @@ msgid "Restore the plugin settings from a previously exported backup file."
 msgstr ""
 
 #: common/modules/settings/settings-page.php:915
-#: common/modules/settings/settings-page.php:920 includes/settings.php:1663
+#: common/modules/settings/settings-page.php:920 includes/settings.php:1664
 msgid "Reset"
 msgstr ""
 
@@ -980,8 +980,8 @@ msgstr ""
 msgid "Pro Only"
 msgstr "Sólo Premium"
 
-#: common/modules/settings/ui.php:1307 includes/settings.php:1448
-#: includes/settings.php:2532 includes/settings.php:3867
+#: common/modules/settings/ui.php:1307 includes/settings.php:1449
+#: includes/settings.php:2533 includes/settings.php:3868
 #, fuzzy
 msgid "Upgrade Now"
 msgstr "Actualizar ahora"
@@ -1286,7 +1286,7 @@ msgstr "Acerca del autor"
 #: includes/admin/admin-guest-author.php:1125
 #: includes/admin/admin-guest-author.php:1468 includes/admin/admin-post.php:494
 #: includes/admin/admin-post.php:937 includes/admin/admin-user.php:146
-#: includes/settings.php:679
+#: includes/settings.php:680
 #: views/admin/editor/parts/html-editor-tab-layout.php:84
 msgid "Author Box"
 msgstr "Caja de Autor"
@@ -1374,20 +1374,20 @@ msgid "Drag this author to reorder"
 msgstr ""
 
 #: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1023
-#: includes/admin/author-list-table.php:698 includes/settings.php:5102
+#: includes/admin/author-list-table.php:698 includes/settings.php:5103
 #: views/admin/html-post-author-selector.php:177
 #: views/admin/html-social-profile-selector.php:45
 #: views/user/html-admin-avatar-field.php:52
 msgid "Remove"
 msgstr "Borrar"
 
-#: includes/admin/admin-post.php:277 includes/settings.php:5103
+#: includes/admin/admin-post.php:277 includes/settings.php:5104
 #: views/admin/html-post-author-selector.php:178
 #: views/admin/html-social-profile-selector.php:46
 msgid "Move up"
 msgstr ""
 
-#: includes/admin/admin-post.php:278 includes/settings.php:5104
+#: includes/admin/admin-post.php:278 includes/settings.php:5105
 #: views/admin/html-post-author-selector.php:179
 #: views/admin/html-social-profile-selector.php:47
 msgid "Move down"
@@ -1434,7 +1434,7 @@ msgid "ERROR: Connection to the backend failed. The author has not be added."
 msgstr ""
 
 #: includes/admin/admin-post.php:489 includes/admin/admin-post.php:876
-#: includes/admin/admin-post.php:1672 includes/settings.php:2344
+#: includes/admin/admin-post.php:1672 includes/settings.php:2345
 #: views/admin/html-page-authors.php:19
 msgid "Authors"
 msgstr "Autores"
@@ -1465,7 +1465,7 @@ msgstr "Listar todos"
 msgid "All guest authors"
 msgstr "Listar todos"
 
-#: includes/admin/admin-post.php:901 includes/settings.php:2351
+#: includes/admin/admin-post.php:901 includes/settings.php:2352
 msgid "Contributors"
 msgstr "Colaboradores"
 
@@ -1485,8 +1485,8 @@ msgstr ""
 msgid "Install it now, it's %sfree%s!"
 msgstr ""
 
-#: includes/admin/admin-post.php:992 includes/settings.php:1982
-#: includes/settings.php:5616
+#: includes/admin/admin-post.php:992 includes/settings.php:1983
+#: includes/settings.php:5617
 msgid "Install Now"
 msgstr ""
 
@@ -1499,7 +1499,7 @@ msgstr ""
 msgid "Know More"
 msgstr ""
 
-#: includes/admin/admin-post.php:1048 includes/settings.php:5139
+#: includes/admin/admin-post.php:1048 includes/settings.php:5140
 msgid ""
 "<span class=\"ac_error\" style=\"color:white\"><strong>ERROR</strong>: "
 "Invalid nonce. Reload the page.</span>"
@@ -1619,7 +1619,7 @@ msgstr "Caja de Autor"
 msgid "This author does not have any more posts."
 msgstr "Este autor no ha escrito más artículos."
 
-#: includes/admin/author-box-editor.php:1293 includes/settings.php:1708
+#: includes/admin/author-box-editor.php:1293 includes/settings.php:1709
 msgid "Clear"
 msgstr ""
 
@@ -1636,12 +1636,12 @@ msgstr "Borde"
 msgid "Padding"
 msgstr "Títulos"
 
-#: includes/admin/author-box-editor.php:1609 includes/settings.php:2890
+#: includes/admin/author-box-editor.php:1609 includes/settings.php:2891
 #, fuzzy
 msgid "Ascending"
 msgstr "Alfabético ascendente"
 
-#: includes/admin/author-box-editor.php:1610 includes/settings.php:2896
+#: includes/admin/author-box-editor.php:1610 includes/settings.php:2897
 #, fuzzy
 msgid "Descending"
 msgstr "Alfabético descendente"
@@ -1837,7 +1837,7 @@ msgstr ""
 
 #: includes/admin/pointers.php:235 includes/guest-author.php:90
 #: includes/guest-author.php:92 includes/pointers.php:229
-#: includes/settings.php:1552
+#: includes/settings.php:1553
 msgid "Guest Authors"
 msgstr "Autores Invitados"
 
@@ -2344,7 +2344,7 @@ msgid ""
 msgstr ""
 
 #: includes/migration/co-authors-plus.php:311
-#: includes/migration/one-user-avatar.php:312 includes/settings.php:5089
+#: includes/migration/one-user-avatar.php:312 includes/settings.php:5090
 msgid "Running..."
 msgstr ""
 
@@ -2368,7 +2368,7 @@ msgstr ""
 #: includes/migration/co-authors-plus.php:663
 #: includes/migration/co-authors-plus.php:673
 #: includes/migration/one-user-avatar.php:628
-#: includes/migration/one-user-avatar.php:638 includes/settings.php:1495
+#: includes/migration/one-user-avatar.php:638 includes/settings.php:1496
 #, fuzzy
 msgid "Data Migration"
 msgstr "Desactivación"
@@ -2442,18 +2442,18 @@ msgstr ""
 msgid "%s %d more"
 msgstr ""
 
-#: includes/settings.php:157 includes/settings.php:571
+#: includes/settings.php:157 includes/settings.php:572
 msgid "General"
 msgstr ""
 
-#: includes/settings.php:388
+#: includes/settings.php:389
 #: views/admin/editor/parts/html-editor-tab-content.php:557
 #: views/admin/editor/parts/html-editor-tab-content.php:558
 #: views/admin/html-page-editor.php:63 views/author-box/parts/html-meta.php:98
 msgid "at"
 msgstr "en"
 
-#: includes/settings.php:389
+#: includes/settings.php:390
 #: views/admin/editor/parts/html-editor-tab-content.php:568
 #: views/admin/editor/parts/html-editor-tab-content.php:569
 #: views/author-box/parts/html-meta.php:58
@@ -2461,33 +2461,33 @@ msgstr "en"
 msgid "Website"
 msgstr "Web"
 
-#: includes/settings.php:390
+#: includes/settings.php:391
 #: views/admin/editor/parts/html-editor-tab-content.php:579
 #: views/admin/editor/parts/html-editor-tab-content.php:580
 #: views/admin/html-page-editor.php:65 views/author-box/parts/html-meta.php:66
 msgid "+ posts"
 msgstr "+ posts"
 
-#: includes/settings.php:391
+#: includes/settings.php:392
 #: views/admin/editor/parts/html-editor-tab-content.php:590
 #: views/admin/editor/parts/html-editor-tab-content.php:591
 #: views/admin/html-page-editor.php:66 views/author-box/parts/html-meta.php:70
 msgid "Bio ⮌"
 msgstr ""
 
-#: includes/settings.php:415
+#: includes/settings.php:416
 #, fuzzy
 msgid "This author does not have any more posts"
 msgstr "Este autor no ha escrito más artículos."
 
-#: includes/settings.php:452
+#: includes/settings.php:453
 #: views/admin/editor/parts/html-editor-tab-layout.php:124
 #: views/admin/html-page-editor.php:67
 #, fuzzy
 msgid "Author Profile"
 msgstr "Perfil del autor"
 
-#: includes/settings.php:453
+#: includes/settings.php:454
 #: views/admin/editor/parts/html-editor-tab-content.php:784
 #: views/admin/editor/parts/html-editor-tab-layout.php:133
 #: views/admin/html-page-editor.php:68
@@ -2495,17 +2495,17 @@ msgstr "Perfil del autor"
 msgid "Related Posts"
 msgstr "Posts relacionados"
 
-#: includes/settings.php:514
+#: includes/settings.php:515
 #, fuzzy
 msgid "Getting Started"
 msgstr "Configuración"
 
-#: includes/settings.php:530
+#: includes/settings.php:531
 #, fuzzy
 msgid "First Steps"
 msgstr "Nombre"
 
-#: includes/settings.php:544
+#: includes/settings.php:545
 #, php-format
 msgid ""
 "%sGo edit a post%sFind the panel labeled as %sContributors%s%sStart typing "
@@ -2515,32 +2515,32 @@ msgid ""
 "click %s."
 msgstr ""
 
-#: includes/settings.php:552
+#: includes/settings.php:553
 msgid "Posts"
 msgstr "Entradas"
 
-#: includes/settings.php:553
+#: includes/settings.php:554
 msgid "View All Posts"
 msgstr ""
 
-#: includes/settings.php:593
+#: includes/settings.php:594
 msgid "Writing"
 msgstr ""
 
-#: includes/settings.php:615
+#: includes/settings.php:616
 #, fuzzy
 msgid "Reading"
 msgstr "Títulos"
 
-#: includes/settings.php:637
+#: includes/settings.php:638
 msgid "Integrations"
 msgstr ""
 
-#: includes/settings.php:659
+#: includes/settings.php:660
 msgid "Shortcodes"
 msgstr "Shortcodes"
 
-#: includes/settings.php:695
+#: includes/settings.php:696
 #, php-format
 msgid ""
 "Displays an author box anywhere you want. You can customize which author "
@@ -2549,12 +2549,12 @@ msgid ""
 "%s"
 msgstr ""
 
-#: includes/settings.php:710
+#: includes/settings.php:711
 #, fuzzy
 msgid "Post Byline"
 msgstr "Tipos de post"
 
-#: includes/settings.php:726
+#: includes/settings.php:727
 #, php-format
 msgid ""
 "Displays the post's byline. Most themes display the byline just below the "
@@ -2563,38 +2563,38 @@ msgid ""
 "more →%s"
 msgstr ""
 
-#: includes/settings.php:743
+#: includes/settings.php:744
 #, php-format
 msgid ""
 "This shortcode allows you to show the avatars of all the authors of a post. "
 "You can place it anywhere you want using this shortcode. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:758
+#: includes/settings.php:759
 #, fuzzy
 msgid "Author Lists"
 msgstr "Autores"
 
-#: includes/settings.php:774
+#: includes/settings.php:775
 #, php-format
 msgid ""
 "Displays a list of (all) authors in your site anywhere you want. %sLearn "
 "more →%s"
 msgstr ""
 
-#: includes/settings.php:791
+#: includes/settings.php:792
 #, php-format
 msgid ""
 "Displays a dropdown select listing (all the) authors from your blog. This "
 "shortcode is intended for developers only. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:806
+#: includes/settings.php:807
 #, fuzzy
 msgid "Author Posts"
 msgstr "Autores"
 
-#: includes/settings.php:822
+#: includes/settings.php:823
 #, php-format
 msgid ""
 "Displays a list showing (all the) posts from any given author anywhere you "
@@ -2602,12 +2602,12 @@ msgid ""
 "this shortcode can take. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:837
+#: includes/settings.php:838
 #, fuzzy
 msgid "Author Data"
 msgstr "Molongui Authorship"
 
-#: includes/settings.php:853
+#: includes/settings.php:854
 #, php-format
 msgid ""
 "Displays the name of the current post author(s) if no attributes are "
@@ -2615,7 +2615,7 @@ msgid ""
 "author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:870
+#: includes/settings.php:871
 #, php-format
 msgid ""
 "Displays the slug of the current post author(s) if no attributes are "
@@ -2623,7 +2623,7 @@ msgid ""
 "author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:887
+#: includes/settings.php:888
 #, php-format
 msgid ""
 "Displays the url to the archive page of the current post author(s) if no "
@@ -2631,7 +2631,7 @@ msgid ""
 "you provide the author ID and author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:904
+#: includes/settings.php:905
 #, php-format
 msgid ""
 "Displays the bio of the current post author(s) if no attributes are provided "
@@ -2639,7 +2639,7 @@ msgid ""
 "%sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:921
+#: includes/settings.php:922
 #, php-format
 msgid ""
 "Displays the email address of the current post author(s) if no attributes "
@@ -2647,7 +2647,7 @@ msgid ""
 "author ID and author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:938
+#: includes/settings.php:939
 #, php-format
 msgid ""
 "Displays the any author meta data of the current post author(s) if no "
@@ -2655,7 +2655,7 @@ msgid ""
 "provide the author ID and author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:955
+#: includes/settings.php:956
 #, php-format
 msgid ""
 "Displays the avatar of the current post author(s) if no attributes are "
@@ -2663,12 +2663,12 @@ msgid ""
 "author type. %sLearn more →%s"
 msgstr ""
 
-#: includes/settings.php:1019
+#: includes/settings.php:1020
 #, fuzzy
 msgid "Enable Author Box"
 msgstr "Deshabilitar la caja de autor"
 
-#: includes/settings.php:1023
+#: includes/settings.php:1024
 msgid ""
 "An author box is a great way to credit authors by displaying their "
 "information on posts. Customize its appearance and choose specific post "
@@ -2676,12 +2676,12 @@ msgid ""
 "want to show any author boxes."
 msgstr ""
 
-#: includes/settings.php:1035
+#: includes/settings.php:1036
 #, fuzzy
 msgid "Enable Guest Authors"
 msgstr "Autores Invitados"
 
-#: includes/settings.php:1039
+#: includes/settings.php:1040
 msgid ""
 "Allow guest authors to be credited on your site without needing a user "
 "account. Enabling this setting lets you add profiles for guest authors, "
@@ -2691,12 +2691,12 @@ msgid ""
 "disabled, guest author profiles will not be available.."
 msgstr ""
 
-#: includes/settings.php:1051
+#: includes/settings.php:1052
 #, fuzzy
 msgid "Enable Co-Authors"
 msgstr "Autores Invitados"
 
-#: includes/settings.php:1055
+#: includes/settings.php:1056
 msgid ""
 "Enable the option to credit multiple authors on a single post, making it "
 "easy to recognize collaborative work. When enabled, you can configure which "
@@ -2705,12 +2705,12 @@ msgid ""
 "each post."
 msgstr ""
 
-#: includes/settings.php:1067
+#: includes/settings.php:1068
 #, fuzzy
 msgid "Enable Custom Author Avatars"
 msgstr "Habilitar archivo de invitados"
 
-#: includes/settings.php:1071
+#: includes/settings.php:1072
 msgid ""
 "Allow custom profile images for authors, offering a personalized look that "
 "isn’t tied to Gravatar. Enabling this option lets you upload unique images "
@@ -2719,12 +2719,12 @@ msgid ""
 "on Gravatar images."
 msgstr ""
 
-#: includes/settings.php:1079
+#: includes/settings.php:1080
 #, fuzzy
 msgid "Enable Enhanced Author Profile"
 msgstr "Habilitar archivo de invitados"
 
-#: includes/settings.php:1083
+#: includes/settings.php:1084
 msgid ""
 "Add more fields to author profiles to display detailed information like "
 "telephone, job position, company, and social network links. This option "
@@ -2734,11 +2734,11 @@ msgid ""
 "information will be displayed."
 msgstr ""
 
-#: includes/settings.php:1108
+#: includes/settings.php:1109
 msgid "Change Default Author"
 msgstr ""
 
-#: includes/settings.php:1112
+#: includes/settings.php:1113
 msgid ""
 "Set one or more default authors for new posts, ideal for sites where posts "
 "are commonly attributed to specific authors or teams. When enabled, a search "
@@ -2747,12 +2747,12 @@ msgid ""
 "the current user as the author on new posts."
 msgstr ""
 
-#: includes/settings.php:1124
+#: includes/settings.php:1125
 #, fuzzy
 msgid "Manage User Roles"
 msgstr "Usuarios"
 
-#: includes/settings.php:1128
+#: includes/settings.php:1129
 msgid ""
 "Control which User Roles can be assigned as authors for posts, providing "
 "flexibility in post attribution. This setting is especially useful for sites "
@@ -2760,12 +2760,12 @@ msgid ""
 "authoring capabilities beyond standard roles."
 msgstr ""
 
-#: includes/settings.php:1140
+#: includes/settings.php:1141
 #, fuzzy
 msgid "Enable Post Contributors"
 msgstr "Colaboradores"
 
-#: includes/settings.php:1144
+#: includes/settings.php:1145
 msgid ""
 "Recognize and showcase the talents behind your content! Add custom "
 "attributions—reviewers, fact-checkers, editors, photographers, and more—and "
@@ -2773,22 +2773,22 @@ msgid ""
 "where it's due."
 msgstr ""
 
-#: includes/settings.php:1159
+#: includes/settings.php:1160
 msgid "Enable Posting as Other Authors"
 msgstr ""
 
-#: includes/settings.php:1160
+#: includes/settings.php:1161
 msgid ""
 "Allow users without specific permissions to publish content on behalf of "
 "other authors. This setting is useful for collaborative sites where roles "
 "outside of editors or admins may need to assign posts to designated authors."
 msgstr ""
 
-#: includes/settings.php:1171
+#: includes/settings.php:1172
 msgid "Hide Posts From Other Authors"
 msgstr ""
 
-#: includes/settings.php:1172
+#: includes/settings.php:1173
 msgid ""
 "Limit selected user roles to viewing only their own posts in the Dashboard, "
 "helping authors focus on their content and keeping their post lists concise "
@@ -2797,23 +2797,23 @@ msgid ""
 "posts from other authors."
 msgstr ""
 
-#: includes/settings.php:1199
+#: includes/settings.php:1200
 #, fuzzy
 msgid "Customize Post Byline"
 msgstr "Estilos de la caja de autor"
 
-#: includes/settings.php:1205
+#: includes/settings.php:1206
 msgid ""
 "The byline on a post gives the name of the people who contributed to write "
 "it."
 msgstr ""
 
-#: includes/settings.php:1220
+#: includes/settings.php:1221
 #, fuzzy
 msgid "Customize Author Box Display"
 msgstr "Estilos de la caja de autor"
 
-#: includes/settings.php:1226
+#: includes/settings.php:1227
 msgid ""
 "Enable this option to access and adjust the author box display settings for "
 "posts across your site. Please note that some of these display settings "
@@ -2821,12 +2821,12 @@ msgid ""
 "author level."
 msgstr ""
 
-#: includes/settings.php:1241
+#: includes/settings.php:1242
 #, fuzzy
 msgid "Enable Author Pages"
 msgstr "Autores"
 
-#: includes/settings.php:1247
+#: includes/settings.php:1248
 msgid ""
 "Enable this option to access and adjust the author box display settings for "
 "posts across your site. Please note that these display settings might be "
@@ -2834,621 +2834,621 @@ msgid ""
 "level."
 msgstr ""
 
-#: includes/settings.php:1262
+#: includes/settings.php:1263
 msgid "Enable Enhanced Search Functionality"
 msgstr ""
 
-#: includes/settings.php:1268
+#: includes/settings.php:1269
 msgid ""
 "Enable this option to activate advanced search options, including searching "
 "content by author name and displaying guest author archives in search "
 "results."
 msgstr ""
 
-#: includes/settings.php:1283
+#: includes/settings.php:1284
 msgid "Encode Sensitive Author Information"
 msgstr ""
 
-#: includes/settings.php:1289
+#: includes/settings.php:1290
 msgid ""
 "Enable this option to encode sensitive information to make it unreadable to "
 "SPAM bots."
 msgstr ""
 
-#: includes/settings.php:1319
+#: includes/settings.php:1320
 #, fuzzy
 msgid "Enable Social Profiles"
 msgstr "Perfiles en redes sociales"
 
-#: includes/settings.php:1325
+#: includes/settings.php:1326
 msgid ""
 "Enable to configure social profiles for authors and select which social "
 "networks to include."
 msgstr ""
 
-#: includes/settings.php:1339
+#: includes/settings.php:1340
 #, fuzzy
 msgid "Enable SEO Settings"
 msgstr "Configuración"
 
-#: includes/settings.php:1345
+#: includes/settings.php:1346
 msgid ""
 "Enable to access settings for managing schema markup and meta tags to "
 "enhance SEO."
 msgstr ""
 
-#: includes/settings.php:1360
+#: includes/settings.php:1361
 msgid "Enable REST API Integration"
 msgstr ""
 
-#: includes/settings.php:1366
+#: includes/settings.php:1367
 msgid ""
 "Expose author data through the WordPress REST API, allowing seamless "
 "integration with external applications and tools."
 msgstr ""
 
-#: includes/settings.php:1381
+#: includes/settings.php:1382
 #, fuzzy
 msgid "Enable Compatibility Mode"
 msgstr "Compatibilidad"
 
-#: includes/settings.php:1387
+#: includes/settings.php:1388
 msgid "Enable to access settings for compatibility with themes and plugins."
 msgstr ""
 
-#: includes/settings.php:1402
+#: includes/settings.php:1403
 msgid "Customize Dashboard Integration"
 msgstr ""
 
-#: includes/settings.php:1408
+#: includes/settings.php:1409
 msgid ""
 "Enable to access settings for customizing how the plugin integrates with the "
 "WordPress Dashboard, including menu placement and action link behavior."
 msgstr ""
 
-#: includes/settings.php:1441
+#: includes/settings.php:1442
 msgid "<b>Need to display author info anywhere?</b>"
 msgstr ""
 
-#: includes/settings.php:1444
+#: includes/settings.php:1445
 msgid ""
 "Upgrade to Pro for shortcode access—perfect for page builders like "
 "Elementor, Divi, Beaver, or Visual Composer!"
 msgstr ""
 
-#: includes/settings.php:1478
+#: includes/settings.php:1479
 msgid "<b>Getting Started?</b>"
 msgstr ""
 
-#: includes/settings.php:1481
+#: includes/settings.php:1482
 #, php-format
 msgid ""
 "We'll guide you through each step needed to get %s fully set up on your site."
 msgstr ""
 
-#: includes/settings.php:1486
+#: includes/settings.php:1487
 msgid "Launch Setup"
 msgstr ""
 
-#: includes/settings.php:1537
+#: includes/settings.php:1538
 msgid "<b>Facing issues applying customizations?</b>"
 msgstr ""
 
-#: includes/settings.php:1540 includes/settings.php:4231
+#: includes/settings.php:1541 includes/settings.php:4232
 msgid ""
 "Open a support ticket, and our team will assist you promptly. We're here to "
 "help!"
 msgstr ""
 
-#: includes/settings.php:1545
+#: includes/settings.php:1546
 msgid "Request Help"
 msgstr ""
 
-#: includes/settings.php:1562
+#: includes/settings.php:1563
 msgid "Download a backup of guest authors profiles."
 msgstr ""
 
-#: includes/settings.php:1580
+#: includes/settings.php:1581
 msgid "Import a backup of guest authors profiles."
 msgstr ""
 
-#: includes/settings.php:1596
+#: includes/settings.php:1597
 msgid "Delete All"
 msgstr ""
 
-#: includes/settings.php:1597
+#: includes/settings.php:1598
 msgid "Delete all guest authors <code>CAUTION!</code>"
 msgstr ""
 
-#: includes/settings.php:1615
+#: includes/settings.php:1616
 #, fuzzy
 msgid "Posts Authorship"
 msgstr "Authorship box"
 
-#: includes/settings.php:1625
+#: includes/settings.php:1626
 msgid "Download a backup of post authorship metadata."
 msgstr ""
 
-#: includes/settings.php:1642
+#: includes/settings.php:1643
 msgid "Import a backup of post authorship metadata."
 msgstr ""
 
-#: includes/settings.php:1658
+#: includes/settings.php:1659
 #, fuzzy
 msgid "Reset Authorship"
 msgstr "Authorship box"
 
-#: includes/settings.php:1659
+#: includes/settings.php:1660
 msgid "Delete all post authorship metadata <code>CAUTION!</code>"
 msgstr ""
 
-#: includes/settings.php:1675
+#: includes/settings.php:1676
 msgid "Update Post Count"
 msgstr ""
 
-#: includes/settings.php:1676
+#: includes/settings.php:1677
 msgid "Force a post count update."
 msgstr ""
 
-#: includes/settings.php:1680
+#: includes/settings.php:1681
 msgid "Update"
 msgstr ""
 
-#: includes/settings.php:1694
+#: includes/settings.php:1695
 #, fuzzy
 msgid "Additional Tools"
 msgstr "Autores"
 
-#: includes/settings.php:1703 includes/settings.php:5070
+#: includes/settings.php:1704 includes/settings.php:5071
 msgid "Clear Cache"
 msgstr ""
 
-#: includes/settings.php:1704
+#: includes/settings.php:1705
 msgid "Clear the object cache used by the plugin."
 msgstr ""
 
-#: includes/settings.php:1742
+#: includes/settings.php:1743
 msgid "Select Post Types for Author Box"
 msgstr ""
 
-#: includes/settings.php:1743 includes/settings.php:2717
+#: includes/settings.php:1744 includes/settings.php:2718
 msgid ""
 "Choose the post types where you want the author box to be displayed "
 "automatically. Once selected, the author box will appear on all posts within "
 "these types without needing additional settings on each post."
 msgstr ""
 
-#: includes/settings.php:1745
+#: includes/settings.php:1746
 msgid ""
 "The free version supports author boxes on Posts and Pages only. <span "
 "class='highlighted'>Upgrade to Pro</span> to enable them on any Post Type."
 msgstr ""
 
-#: includes/settings.php:1762
+#: includes/settings.php:1763
 msgid "<b>Want to display the author box beyond posts and pages?</b>"
 msgstr ""
 
-#: includes/settings.php:1765 includes/settings.php:2729
+#: includes/settings.php:1766 includes/settings.php:2730
 msgid "Upgrade now to enable it for additional Post Types."
 msgstr ""
 
-#: includes/settings.php:1781
+#: includes/settings.php:1782
 #, fuzzy
 msgid "<b>Customize Your Author Box!</b>"
 msgstr "Estilos de la caja de autor"
 
-#: includes/settings.php:1784
+#: includes/settings.php:1785
 msgid "Use the Author Box Editor to modify layout, colors, borders, and more."
 msgstr ""
 
-#: includes/settings.php:1788
+#: includes/settings.php:1789
 #, fuzzy
 msgid "Open Editor"
 msgstr "Abrir Personalizador"
 
-#: includes/settings.php:1813
+#: includes/settings.php:1814
 #, fuzzy
 msgid "Select Post Types for Guest Authors"
 msgstr "Búsqueda de autores invitados"
 
-#: includes/settings.php:1814
+#: includes/settings.php:1815
 msgid ""
 "Choose the post types where you want to display guest authors. Once "
 "selected, you'll be able to assign guest author profiles to individual posts "
 "within these types, showcasing their contributions directly on the post."
 msgstr ""
 
-#: includes/settings.php:1816
+#: includes/settings.php:1817
 msgid ""
 "The free version supports guest authors on Posts and Pages only. <span "
 "class='highlighted'>Upgrade to Pro</span> to enable them on any Post Type."
 msgstr ""
 
-#: includes/settings.php:1826
+#: includes/settings.php:1827
 msgid "<b>Looking to assign guest authors beyond posts and pages?</b>"
 msgstr ""
 
-#: includes/settings.php:1829
+#: includes/settings.php:1830
 msgid "Upgrade now to enable them for additional Post Types."
 msgstr ""
 
-#: includes/settings.php:1860
+#: includes/settings.php:1861
 msgid "Select Post Types for Co-Authors"
 msgstr ""
 
-#: includes/settings.php:1861
+#: includes/settings.php:1862
 msgid ""
 "Choose the post types where you want to allow multiple authors. Posts within "
 "these types can feature multiple author profiles, highlighting collaborative "
 "efforts and showcasing each contributor's role."
 msgstr ""
 
-#: includes/settings.php:1863
+#: includes/settings.php:1864
 msgid ""
 "The free version supports co-authors on Posts and Pages only. <span "
 "class='highlighted'>Upgrade to Pro</span> to enable them on any Post Type."
 msgstr ""
 
-#: includes/settings.php:1873
+#: includes/settings.php:1874
 msgid "<b>Need to add multiple authors beyond posts and pages?</b>"
 msgstr ""
 
-#: includes/settings.php:1876
+#: includes/settings.php:1877
 msgid "Upgrade now to enable Co-Authors on additional Post Types."
 msgstr ""
 
-#: includes/settings.php:1901
+#: includes/settings.php:1902
 msgid "Select Default Authors for New Posts"
 msgstr ""
 
-#: includes/settings.php:1902
+#: includes/settings.php:1903
 msgid ""
 "Choose one or more authors to be automatically assigned to new posts. This "
 "ensures consistent author attribution, streamlining the post creation "
 "process for teams or shared accounts."
 msgstr ""
 
-#: includes/settings.php:1928
+#: includes/settings.php:1929
 msgid "Select User Roles Eligible for Authoring Posts"
 msgstr ""
 
-#: includes/settings.php:1929
+#: includes/settings.php:1930
 msgid ""
 "Choose the user roles you want to assign as authors on posts. Expanding "
 "eligible roles provides flexibility in content management, making it easier "
 "to assign appropriate authorship across different types of contributors."
 msgstr ""
 
-#: includes/settings.php:1931 includes/settings.php:2011
+#: includes/settings.php:1932 includes/settings.php:2012
 msgid ""
 "Limited in Free Version. <span class='highlighted'>Upgrade to Pro</span> to "
 "customize User Role settings."
 msgstr ""
 
-#: includes/settings.php:1941
+#: includes/settings.php:1942
 msgid "<b>Selecting eligible User Roles is a premium feature</b>"
 msgstr ""
 
-#: includes/settings.php:1944
+#: includes/settings.php:1945
 msgid "Upgrade now to choose which User Roles can be assigned as post authors."
 msgstr ""
 
-#: includes/settings.php:1975
+#: includes/settings.php:1976
 msgid ""
 "<b>Custom attributions requires the Molongui Post Contributors plugin</b>"
 msgstr ""
 
-#: includes/settings.php:1978
+#: includes/settings.php:1979
 msgid "Install it <u>free</u> to start adding contributors to your posts."
 msgstr ""
 
-#: includes/settings.php:2008
+#: includes/settings.php:2009
 msgid "Select User Roles with Restricted Post Views"
 msgstr ""
 
-#: includes/settings.php:2009
+#: includes/settings.php:2010
 msgid ""
 "Choose the user roles that will see only their own posts in the Dashboard. "
 "This restriction helps streamline content management by displaying only "
 "relevant posts to selected users."
 msgstr ""
 
-#: includes/settings.php:2021
+#: includes/settings.php:2022
 msgid "<b>Restricting post view by User Role is a premium feature</b>"
 msgstr ""
 
-#: includes/settings.php:2024
+#: includes/settings.php:2025
 msgid ""
 "Upgrade now to control which User Roles can see only their own posts in the "
 "Dashboard."
 msgstr ""
 
-#: includes/settings.php:2052
+#: includes/settings.php:2053
 #, fuzzy
 msgid "Display co-authors in the post byline"
 msgstr "¿Mostrar la caja de autor en este post?"
 
-#: includes/settings.php:2057
+#: includes/settings.php:2058
 msgid ""
 "When a post is written by one single person, that person's name is the one "
 "displayed on the post byline. However, on co-authored posts you have the "
 "option to choose how author names are displayed."
 msgstr ""
 
-#: includes/settings.php:2073
+#: includes/settings.php:2074
 msgid "Define custom separators between co-authors"
 msgstr ""
 
-#: includes/settings.php:2078
+#: includes/settings.php:2079
 msgid ""
 "Leave unchecked to separate co-author names with commas and use 'and' before "
 "the final co-author."
 msgstr ""
 
-#: includes/settings.php:2093
+#: includes/settings.php:2094
 #, fuzzy
 msgid "Make author name link to their author page"
 msgstr ""
 "Plantilla que usar para mostrar el archivo de entradas de un autor invitado."
 
-#: includes/settings.php:2098
+#: includes/settings.php:2099
 msgid ""
 "By default, author names in bylines link to their archive pages. Uncheck "
 "this option to disable these links and display names as plain text."
 msgstr ""
 
-#: includes/settings.php:2110
+#: includes/settings.php:2111
 msgid "Define custom prefix and suffix"
 msgstr ""
 
-#: includes/settings.php:2115
+#: includes/settings.php:2116
 msgid ""
 "Customize your post byline adding custom text before and after the post "
 "byline."
 msgstr ""
 
-#: includes/settings.php:2130
+#: includes/settings.php:2131
 msgid "Display additional post information"
 msgstr ""
 
-#: includes/settings.php:2135
+#: includes/settings.php:2136
 msgid ""
 "Bylines usually provide additional information about when content was "
 "written or updated, categories or comments count."
 msgstr ""
 
-#: includes/settings.php:2170
+#: includes/settings.php:2171
 msgid "Show All Co-Authors"
 msgstr ""
 
-#: includes/settings.php:2171
+#: includes/settings.php:2172
 msgid "John Doe, Emma Johnson, Isabella Brown, James Carter and Liam Thompson"
 msgstr ""
 
-#: includes/settings.php:2177
+#: includes/settings.php:2178
 msgid "Show Primary Author + Others Count"
 msgstr ""
 
-#: includes/settings.php:2178
+#: includes/settings.php:2179
 msgid "John Doe and 4 more"
 msgstr ""
 
-#: includes/settings.php:2184
+#: includes/settings.php:2185
 msgid "Show Primary Author, 1 Co-Author + Others"
 msgstr ""
 
-#: includes/settings.php:2185
+#: includes/settings.php:2186
 msgid "John Doe, Emma Johnson and 3 more"
 msgstr ""
 
-#: includes/settings.php:2191
+#: includes/settings.php:2192
 msgid "Show Primary Author, 2 Co-Authors + Others"
 msgstr ""
 
-#: includes/settings.php:2192
+#: includes/settings.php:2193
 msgid "John Doe, Emma Johnson, Isabella Brown and 2 more"
 msgstr ""
 
-#: includes/settings.php:2198
+#: includes/settings.php:2199
 msgid "Choose how multiple authors are displayed in the post byline:"
 msgstr ""
 
-#: includes/settings.php:2224
+#: includes/settings.php:2225
 msgid "Separator"
 msgstr "Separador"
 
-#: includes/settings.php:2225 includes/settings.php:2237
+#: includes/settings.php:2226 includes/settings.php:2238
 msgid ""
 "You can use any word, string or symbol except <code>?</code>, <code>/</code> "
 "and <code>*</code>. These characters will be removed if included."
 msgstr ""
 
-#: includes/settings.php:2226 includes/settings.php:2238
+#: includes/settings.php:2227 includes/settings.php:2239
 msgid ""
 "Setting not available in Free Version. <b>Upgrade</b> to Pro to customize co-"
 "author separators."
 msgstr ""
 
-#: includes/settings.php:2236
+#: includes/settings.php:2237
 #, fuzzy
 msgid "Last Separator"
 msgstr "Separador"
 
-#: includes/settings.php:2259
+#: includes/settings.php:2260
 msgid ""
 "Upgrade today to gain access to these options and take full control of your "
 "post bylines"
 msgstr ""
 
-#: includes/settings.php:2278
+#: includes/settings.php:2279
 #, fuzzy
 msgid "Byline Prefix"
 msgstr "Enlace al blog"
 
-#: includes/settings.php:2279 includes/settings.php:2291
+#: includes/settings.php:2280 includes/settings.php:2292
 msgid ""
 "You can enter any text. HTML markup is accepted, so you can add your own "
 "styles and custom elements."
 msgstr ""
 
-#: includes/settings.php:2280 includes/settings.php:2292
-#: includes/settings.php:2825 includes/settings.php:2878
-#: includes/settings.php:2909
+#: includes/settings.php:2281 includes/settings.php:2293
+#: includes/settings.php:2826 includes/settings.php:2879
+#: includes/settings.php:2910
 msgid ""
 "Setting not available in Free Version. <b>Upgrade</b> to Pro to add a custom "
 "text at the beginning of your post byline."
 msgstr ""
 
-#: includes/settings.php:2290
+#: includes/settings.php:2291
 #, fuzzy
 msgid "Byline Suffix"
 msgstr "Enlace al blog"
 
-#: includes/settings.php:2322
+#: includes/settings.php:2323
 msgid ""
 "Install Free the Molongui Post Contributors plugin and customize your post "
 "bylines further"
 msgstr ""
 
-#: includes/settings.php:2323
+#: includes/settings.php:2324
 #, fuzzy
 msgid "Install"
 msgstr "Desinstalación"
 
-#: includes/settings.php:2345
+#: includes/settings.php:2346
 msgid "<b>Molongui Post Contributors</b> allows you to hide the post author."
 msgstr ""
 
-#: includes/settings.php:2352
+#: includes/settings.php:2353
 msgid ""
 "<b>Molongui Post Contributors</b> allows you to add and display reviewers, "
 "fact-checkers and other contributors to your posts."
 msgstr ""
 
-#: includes/settings.php:2358
+#: includes/settings.php:2359
 #, fuzzy
 msgid "Avatars"
 msgstr "Avatar"
 
-#: includes/settings.php:2359
+#: includes/settings.php:2360
 msgid ""
 "Want to display avatars in your post byline? Install <b>Molongui Post "
 "Contributors</b>. It's free!"
 msgstr ""
 
-#: includes/settings.php:2365
+#: includes/settings.php:2366
 msgid "Publish Date"
 msgstr ""
 
-#: includes/settings.php:2366
+#: includes/settings.php:2367
 #, fuzzy
 msgid "Choose whether to display the date in which the post was published."
 msgstr ""
 "Mostrar la caja de este autor independientemente de otras configuraciones"
 
-#: includes/settings.php:2372
+#: includes/settings.php:2373
 msgid "Update Date"
 msgstr ""
 
-#: includes/settings.php:2373
+#: includes/settings.php:2374
 #, fuzzy
 msgid "Choose whether to display the date in which the post was last updated."
 msgstr ""
 "Mostrar la caja de este autor independientemente de otras configuraciones"
 
-#: includes/settings.php:2379
+#: includes/settings.php:2380
 msgid "Categories"
 msgstr ""
 
-#: includes/settings.php:2386
+#: includes/settings.php:2387
 msgid "Tags"
 msgstr ""
 
-#: includes/settings.php:2393
+#: includes/settings.php:2394
 #, fuzzy
 msgid "Comment Count"
 msgstr "Número de comentarios"
 
-#: includes/settings.php:2400
+#: includes/settings.php:2401
 msgid "Choose what post information to display in the post byline:"
 msgstr ""
 
-#: includes/settings.php:2401
+#: includes/settings.php:2402
 msgid ""
 "<b>Molongui Post Contributors</b> allows you to add contributors to your "
 "posts and display additional post information in your post byline."
 msgstr ""
 
-#: includes/settings.php:2474 includes/settings.php:2666
+#: includes/settings.php:2475 includes/settings.php:2667
 #, fuzzy
 msgid "Above post content"
 msgstr "Sobre el contenido"
 
-#: includes/settings.php:2480 includes/settings.php:2672
+#: includes/settings.php:2481 includes/settings.php:2673
 msgid "Below post content"
 msgstr "Bajo el post"
 
-#: includes/settings.php:2486 includes/settings.php:2678
+#: includes/settings.php:2487 includes/settings.php:2679
 #, fuzzy
 msgid "Above and below post content"
 msgstr "Antes y después del contenido"
 
-#: includes/settings.php:2490 includes/settings.php:2682
+#: includes/settings.php:2491 includes/settings.php:2683
 #, fuzzy
 msgid "Author Box Position"
 msgstr "Configuración de la caja de autor"
 
-#: includes/settings.php:2508
+#: includes/settings.php:2509
 msgid "<b>Author Box Displayed Below Other Widgets?</b>"
 msgstr ""
 
-#: includes/settings.php:2511
+#: includes/settings.php:2512
 msgid ""
 "Use the <code>'molongui_authorship/author_box_hook_priority'</code> filter "
 "to adjust its placement."
 msgstr ""
 
-#: includes/settings.php:2515
+#: includes/settings.php:2516
 msgid "Learn More"
 msgstr ""
 
-#: includes/settings.php:2525
+#: includes/settings.php:2526
 msgid "<b>Want to display the author box in a different spot?</b>"
 msgstr ""
 
-#: includes/settings.php:2528
+#: includes/settings.php:2529
 msgid ""
 "Upgrade to Pro and use the <code>[molongui_author_box]</code> shortcode."
 msgstr ""
 
-#: includes/settings.php:2540
+#: includes/settings.php:2541
 #, fuzzy
 msgid "Automatically Show the Author Box on Enabled Post Types"
 msgstr "Dónde mostrar la caja de autor"
 
-#: includes/settings.php:2543
+#: includes/settings.php:2544
 msgid ""
 "Uncheck this option to manually select the post types where the author box "
 "will be displayed automatically. Leave it checked to display the author box "
 "on all enabled post types by default."
 msgstr ""
 
-#: includes/settings.php:2556
+#: includes/settings.php:2557
 msgid "Hide Author Box When Bio Is Empty"
 msgstr ""
 
-#: includes/settings.php:2561
+#: includes/settings.php:2562
 msgid ""
 "Enable this option to hide the author box when the author's description is "
 "empty. This helps maintain a clean appearance on posts where author "
 "information hasn't been provided."
 msgstr ""
 
-#: includes/settings.php:2572
+#: includes/settings.php:2573
 msgid "Hide Author Box For Selected Post Categories"
 msgstr ""
 
-#: includes/settings.php:2577 includes/settings.php:2613
+#: includes/settings.php:2578 includes/settings.php:2614
 msgid ""
 "Enable this option to hide the author box on posts in specific categories. "
 "Once selected, you'll be able to choose which categories should suppress the "
@@ -3456,11 +3456,11 @@ msgid ""
 "not be necessary."
 msgstr ""
 
-#: includes/settings.php:2592
+#: includes/settings.php:2593
 msgid "Show Each Author in a Separate Box for Multi-Author Posts"
 msgstr ""
 
-#: includes/settings.php:2597
+#: includes/settings.php:2598
 msgid ""
 "By default, all authors are displayed in a single author box on multi-"
 "authored posts. If you check this option, each author will have a separate "
@@ -3469,214 +3469,214 @@ msgid ""
 "a post with multiple authors."
 msgstr ""
 
-#: includes/settings.php:2608
+#: includes/settings.php:2609
 #, fuzzy
 msgid "Display Related Posts From The Same Author in The Author Box"
 msgstr "Número de artículos relacionados que mostrar."
 
-#: includes/settings.php:2645
+#: includes/settings.php:2646
 #, fuzzy
 msgid "Display the author box on both above and below post content"
 msgstr "¿Mostrar la caja de autor en este post?"
 
-#: includes/settings.php:2716
+#: includes/settings.php:2717
 msgid "Select Post Types for Automatic Display"
 msgstr ""
 
-#: includes/settings.php:2726
+#: includes/settings.php:2727
 #, fuzzy
 msgid ""
 "<b>Looking to automatically display the author box beyond posts and pages?</"
 "b>"
 msgstr "Dónde mostrar la caja de autor"
 
-#: includes/settings.php:2756
+#: includes/settings.php:2757
 msgid ""
 "Upgrade today to gain access to this option and take full control of your "
 "author box"
 msgstr ""
 
-#: includes/settings.php:2775
+#: includes/settings.php:2776
 #, fuzzy
 msgid "Select Post Categories to Hide the Author Box"
 msgstr "Ancho del borde que añadir a la author box."
 
-#: includes/settings.php:2778
+#: includes/settings.php:2779
 msgid ""
 "<b>Upgrade</b> to unlock this premium setting and hide the author box on a "
 "post category basis."
 msgstr ""
 
-#: includes/settings.php:2806
+#: includes/settings.php:2807
 msgid ""
 "Upgrade to customize default values and enhance your control over these "
 "settings"
 msgstr ""
 
-#: includes/settings.php:2828
+#: includes/settings.php:2829
 #, fuzzy
 msgid "Posts To Display"
 msgstr "Visualización"
 
-#: includes/settings.php:2841
+#: includes/settings.php:2842
 #, fuzzy
 msgid "Post Title"
 msgstr "Cargo"
 
-#: includes/settings.php:2847
+#: includes/settings.php:2848
 msgid "Post Publish Date"
 msgstr ""
 
-#: includes/settings.php:2853
+#: includes/settings.php:2854
 msgid "Post Update Date"
 msgstr ""
 
-#: includes/settings.php:2859
+#: includes/settings.php:2860
 #, fuzzy
 msgid "Post Comment Count"
 msgstr "Número de comentarios"
 
-#: includes/settings.php:2865
+#: includes/settings.php:2866
 #, fuzzy
 msgid "Random Order"
 msgstr "Orden aleatorio"
 
-#: includes/settings.php:2872
+#: includes/settings.php:2873
 #, fuzzy
 msgid "Order By"
 msgstr "Criterio de selección"
 
-#: includes/settings.php:2875
+#: includes/settings.php:2876
 #, fuzzy
 msgid "Select the criteria to sort related entries by."
 msgstr ""
 "El criterio utilizado para ordenar los artículos relacionados a mostrar."
 
-#: includes/settings.php:2903
+#: includes/settings.php:2904
 #: views/admin/editor/parts/html-editor-tab-content.php:846
 msgid "Order"
 msgstr "Criterio de ordenación"
 
-#: includes/settings.php:2906
+#: includes/settings.php:2907
 #, fuzzy
 msgid "Select the order by which to list related entries."
 msgstr "El orden utilizado para mostrar los artículos relacionados."
 
-#: includes/settings.php:2920
+#: includes/settings.php:2921
 #, fuzzy
 msgid "Post Types"
 msgstr "Tipos de post"
 
-#: includes/settings.php:2967
+#: includes/settings.php:2968
 msgid "Enable Author Pages for WordPress Users"
 msgstr ""
 
-#: includes/settings.php:2972
+#: includes/settings.php:2973
 msgid ""
 "Toggle author pages for WordPress users. Enable to customize author pages or "
 "disable to configure redirection settings."
 msgstr ""
 
-#: includes/settings.php:2987
+#: includes/settings.php:2988
 #, fuzzy
 msgid "Enable Author Pages for Guest Authors"
 msgstr "Habilitar los archivos de autor"
 
-#: includes/settings.php:2992
+#: includes/settings.php:2993
 msgid ""
 "Enable to activate author pages for guest authors, with settings to "
 "customize their archives. Disable to turn off guest author pages."
 msgstr ""
 
-#: includes/settings.php:3021
+#: includes/settings.php:3022
 msgid ""
 "Disabling author pages is a premium feature. Upgrade to unlock this "
 "functionality"
 msgstr ""
 
-#: includes/settings.php:3040
+#: includes/settings.php:3041
 msgid "Redirect To"
 msgstr ""
 
-#: includes/settings.php:3043
+#: includes/settings.php:3044
 msgid "Select the page to redirect users when trying to access an author page."
 msgstr ""
 
-#: includes/settings.php:3056
+#: includes/settings.php:3057
 msgid "Status Code"
 msgstr ""
 
-#: includes/settings.php:3059
+#: includes/settings.php:3060
 msgid "The HTML status code to return upon redirection."
 msgstr ""
 
-#: includes/settings.php:3067
+#: includes/settings.php:3068
 msgid "301 - Moved Permanently"
 msgstr ""
 
-#: includes/settings.php:3073
+#: includes/settings.php:3074
 msgid "307 - Temporary Redirect"
 msgstr ""
 
-#: includes/settings.php:3079
+#: includes/settings.php:3080
 msgid "308 - Permanent Redirect"
 msgstr ""
 
-#: includes/settings.php:3085
+#: includes/settings.php:3086
 msgid "403 - Forbidden"
 msgstr ""
 
-#: includes/settings.php:3091
+#: includes/settings.php:3092
 msgid "404 - Not Found"
 msgstr ""
 
-#: includes/settings.php:3122
+#: includes/settings.php:3123
 msgid "Upgrade today to unlock access to these premium features"
 msgstr ""
 
-#: includes/settings.php:3138 includes/settings.php:3403
+#: includes/settings.php:3139 includes/settings.php:3404
 #, fuzzy
 msgid "Include Pages In The Author Archive"
 msgstr "Incluir páginas en la página de archivo"
 
-#: includes/settings.php:3144 includes/settings.php:3409
+#: includes/settings.php:3145 includes/settings.php:3410
 msgid ""
 "By default, only posts authored by the displayed author are listed. Enable "
 "this option to list pages too."
 msgstr ""
 
-#: includes/settings.php:3155 includes/settings.php:3420
+#: includes/settings.php:3156 includes/settings.php:3421
 #, fuzzy
 msgid "Include Custom Post Types In The Author Archive"
 msgstr "Incluir páginas en la página de archivo"
 
-#: includes/settings.php:3161 includes/settings.php:3426
+#: includes/settings.php:3162 includes/settings.php:3427
 msgid ""
 "Enable this option to make the author page list Post Types where the Co-"
 "Authors feature has been enabled."
 msgstr ""
 
-#: includes/settings.php:3172
+#: includes/settings.php:3173
 msgid "Change Permalink Base For Author Pages"
 msgstr ""
 
-#: includes/settings.php:3178 includes/settings.php:3465
+#: includes/settings.php:3179 includes/settings.php:3466
 #, php-format
 msgid "By default, author archive pages are accessible at: %s."
 msgstr ""
 
-#: includes/settings.php:3179 includes/settings.php:3466
+#: includes/settings.php:3180 includes/settings.php:3467
 msgid ""
 "Use this setting to easily change that <code>author</code> part to whatever "
 "you like."
 msgstr ""
 
-#: includes/settings.php:3194
+#: includes/settings.php:3195
 msgid ""
 "Use The Author Display Name Instead of The Username in Author Permalinks"
 msgstr ""
 
-#: includes/settings.php:3200
+#: includes/settings.php:3201
 msgid ""
 "Enable this option to control author permalinks using the "
 "<code>display_name</code> instead of the <code>username</code>. User display "
@@ -3684,142 +3684,142 @@ msgid ""
 "usernames in permalinks helps to improve the security of your site."
 msgstr ""
 
-#: includes/settings.php:3213
+#: includes/settings.php:3214
 msgid "Prevent Author Pages To Be Indexed By Search Engines"
 msgstr ""
 
-#: includes/settings.php:3219
+#: includes/settings.php:3220
 msgid ""
 "This option adds a <code>noindex</code> robots tag to your user pages. If "
 "you have a SEO plugin, you might want to use it for this instead."
 msgstr ""
 
-#: includes/settings.php:3231
+#: includes/settings.php:3232
 msgid "Change Template For Author Pages"
 msgstr ""
 
-#: includes/settings.php:3237 includes/settings.php:3507
+#: includes/settings.php:3238 includes/settings.php:3508
 msgid ""
 "By default, WordPress loads the <code>author.php</code>, <code>archive.php</"
 "code> or <code>index.php</code> template to display author archives. "
 "Overrule that providing an existing alternative template to use instead."
 msgstr ""
 
-#: includes/settings.php:3252
+#: includes/settings.php:3253
 #, fuzzy
 msgid "Customize Page Title For Author Pages"
 msgstr "Configura las opciones de los posts relacionados."
 
-#: includes/settings.php:3258 includes/settings.php:3528
+#: includes/settings.php:3259 includes/settings.php:3529
 msgid ""
 "This option allows you to prepend and append custom strings to the page "
 "title. Might not work for all themes."
 msgstr ""
 
-#: includes/settings.php:3299 includes/settings.php:3596
+#: includes/settings.php:3300 includes/settings.php:3597
 #, fuzzy
 msgid "Custom Permalink Base"
 msgstr "Permalink"
 
-#: includes/settings.php:3326 includes/settings.php:3623
+#: includes/settings.php:3327 includes/settings.php:3624
 #, fuzzy
 msgid "Custom Template Path"
 msgstr "Plantilla 1"
 
-#: includes/settings.php:3353
+#: includes/settings.php:3354
 msgid "Author Page Title Prefix"
 msgstr ""
 
-#: includes/settings.php:3354 includes/settings.php:3651
+#: includes/settings.php:3355 includes/settings.php:3652
 msgid "Content to add inline before the page title."
 msgstr ""
 
-#: includes/settings.php:3365
+#: includes/settings.php:3366
 msgid "Author Page Title Suffix"
 msgstr ""
 
-#: includes/settings.php:3366 includes/settings.php:3663
+#: includes/settings.php:3367 includes/settings.php:3664
 msgid "Content to add inline after the page title."
 msgstr ""
 
-#: includes/settings.php:3387
+#: includes/settings.php:3388
 msgid ""
 "Guest author pages are a premium feature. Upgrade to unlock this "
 "functionality"
 msgstr ""
 
-#: includes/settings.php:3437
+#: includes/settings.php:3438
 msgid "Add Extra Component to Permalink Structure"
 msgstr ""
 
-#: includes/settings.php:3443
+#: includes/settings.php:3444
 msgid ""
 "Easily change the permalink structure for guest author archives pages by "
 "adding a custom path before the permalink base."
 msgstr ""
 
-#: includes/settings.php:3444
+#: includes/settings.php:3445
 #, php-format
 msgid "Something like %s"
 msgstr ""
 
-#: includes/settings.php:3459
+#: includes/settings.php:3460
 msgid "Change Permalink Base For Guest Author Pages"
 msgstr ""
 
-#: includes/settings.php:3486
+#: includes/settings.php:3487
 msgid "Prevent Guest Author Pages To Be Indexed By Search Engines"
 msgstr ""
 
-#: includes/settings.php:3489
+#: includes/settings.php:3490
 msgid ""
 "This option adds a <code>noindex</code> robots tag to your guest author "
 "pages preventing search engines to index them. If you have a SEO plugin, you "
 "might want to use it for this instead."
 msgstr ""
 
-#: includes/settings.php:3501
+#: includes/settings.php:3502
 msgid "Change Template For Guest Author Pages"
 msgstr ""
 
-#: includes/settings.php:3522
+#: includes/settings.php:3523
 #, fuzzy
 msgid "Customize Page Title For Guest Author Pages"
 msgstr "Configura las opciones de los posts relacionados."
 
-#: includes/settings.php:3569
+#: includes/settings.php:3570
 msgid "Additional Permastruct"
 msgstr ""
 
-#: includes/settings.php:3570
+#: includes/settings.php:3571
 msgid "Make sure not to overlap any existing URL on your site."
 msgstr ""
 
-#: includes/settings.php:3622
+#: includes/settings.php:3623
 msgid ""
 "Setting not available in Free Version. <b>Upgrade</b> to Pro to customize "
 "your author pages."
 msgstr ""
 
-#: includes/settings.php:3650
+#: includes/settings.php:3651
 msgid "Guest Page Title Prefix"
 msgstr ""
 
-#: includes/settings.php:3662
+#: includes/settings.php:3663
 msgid "Guest Page Title Suffix"
 msgstr ""
 
-#: includes/settings.php:3684
+#: includes/settings.php:3685
 msgid ""
 "Upgrade today to gain access to these options and enhance your visitors "
 "experience"
 msgstr ""
 
-#: includes/settings.php:3700
+#: includes/settings.php:3701
 msgid "Allow Searching Content In Your Site By Author Name"
 msgstr ""
 
-#: includes/settings.php:3706
+#: includes/settings.php:3707
 msgid ""
 "Enable this setting to enhance user experience by allowing visitors to "
 "search content by author name. By default, WordPress search only examines "
@@ -3827,49 +3827,49 @@ msgid ""
 "will return content authored by that individual."
 msgstr ""
 
-#: includes/settings.php:3710
+#: includes/settings.php:3711
 msgid ""
 "Upgrade to Pro to allow your visitors to search content in your site by "
 "typing the author name in the search box."
 msgstr ""
 
-#: includes/settings.php:3718
+#: includes/settings.php:3719
 msgid "Show Guest Auhtor Archives in Search Results"
 msgstr ""
 
-#: includes/settings.php:3724
+#: includes/settings.php:3725
 msgid ""
 "When enabled, searching for a guest author's name will include their author "
 "archive page in the search results."
 msgstr ""
 
-#: includes/settings.php:3728
+#: includes/settings.php:3729
 msgid ""
 "Upgrade to Pro to increase the visibility of your guest authors by including "
 "their archive pages in search results."
 msgstr ""
 
-#: includes/settings.php:3757
+#: includes/settings.php:3758
 msgid ""
 "Upgrade today to gain access to these options and protect sensitive "
 "information"
 msgstr ""
 
-#: includes/settings.php:3773
+#: includes/settings.php:3774
 msgid "Encode e-mail addresses to prevent them getting spammed"
 msgstr ""
 
-#: includes/settings.php:3790
+#: includes/settings.php:3791
 msgid ""
 "Encode phone numbers to prevent them getting annoying scam calls and texts"
 msgstr ""
 
-#: includes/settings.php:3827
+#: includes/settings.php:3828
 #, fuzzy
 msgid "Select Social Profiles"
 msgstr "Perfiles en redes sociales"
 
-#: includes/settings.php:3829
+#: includes/settings.php:3830
 msgid ""
 "There are a ton of social profiles. To avoid clutter, select those you want "
 "to enable. You can select as many as you wish. And you can filter displayed "
@@ -3877,15 +3877,15 @@ msgid ""
 "one missing, you can request us to include it."
 msgstr ""
 
-#: includes/settings.php:3831
+#: includes/settings.php:3832
 msgid "Complete List of Available Social Profiles →"
 msgstr ""
 
-#: includes/settings.php:3841
+#: includes/settings.php:3842
 msgid "Add <code>nofollow</code> attribute to social profile links"
 msgstr ""
 
-#: includes/settings.php:3846
+#: includes/settings.php:3847
 msgid ""
 "The <code>nofollow</code> attribute instructs search engines not to pass "
 "link equity (ranking value) to the linked social network profiles. Adding "
@@ -3896,19 +3896,19 @@ msgid ""
 "links."
 msgstr ""
 
-#: includes/settings.php:3860
+#: includes/settings.php:3861
 msgid "<b>Want to enable disabled profiles?</b>"
 msgstr ""
 
-#: includes/settings.php:3863
+#: includes/settings.php:3864
 msgid "Upgrade to Pro and activate them all instantly!"
 msgstr ""
 
-#: includes/settings.php:3890
+#: includes/settings.php:3891
 msgid "Add schema.org structured data to plugin content"
 msgstr ""
 
-#: includes/settings.php:3895
+#: includes/settings.php:3896
 msgid ""
 "Enable this setting to automatically add structured data (schema.org markup) "
 "to the content generated by the plugin. Structured data helps search engines "
@@ -3920,11 +3920,11 @@ msgid ""
 "rates and boost your SEO performance."
 msgstr ""
 
-#: includes/settings.php:3906
+#: includes/settings.php:3907
 msgid "Add <code>name='author'</code> meta tag"
 msgstr ""
 
-#: includes/settings.php:3911
+#: includes/settings.php:3912
 msgid ""
 "The Author meta tag specifies the author of the content, providing a clear "
 "attribution signal for search engines and other platforms. Including this "
@@ -3934,20 +3934,20 @@ msgid ""
 "effective way to reinforce author metadata for better web presence."
 msgstr ""
 
-#: includes/settings.php:3914 includes/settings.php:3933
-#: includes/settings.php:3952 includes/settings.php:3971
+#: includes/settings.php:3915 includes/settings.php:3934
+#: includes/settings.php:3953 includes/settings.php:3972
 msgid ""
 "<b>Enabling this setting might not be necessary if you are already using a "
 "dedicated SEO or schema plugin that handles author metadata. Be sure to "
 "check your existing setup to avoid redundancy.</b>"
 msgstr ""
 
-#: includes/settings.php:3925
+#: includes/settings.php:3926
 #, fuzzy
 msgid "Add Opengraph meta tags"
 msgstr "Añadir Open Graph"
 
-#: includes/settings.php:3930
+#: includes/settings.php:3931
 msgid ""
 "OpenGraph tags are essential for optimizing how your content appears when "
 "shared on social media platforms like Facebook, Twitter, LinkedIn, and "
@@ -3958,11 +3958,11 @@ msgid ""
 "and improve the reach and performance of your content on social media."
 msgstr ""
 
-#: includes/settings.php:3944
+#: includes/settings.php:3945
 msgid "Add <code>property='article:author'</code> meta tag for Facebook"
 msgstr ""
 
-#: includes/settings.php:3949
+#: includes/settings.php:3950
 msgid ""
 "This tag helps associate your articles with the author's Facebook profile, "
 "providing a direct connection between the content and its creator. This can "
@@ -3972,11 +3972,11 @@ msgid ""
 "the author directly."
 msgstr ""
 
-#: includes/settings.php:3963
+#: includes/settings.php:3964
 msgid "Add <code>name='twitter:creator'</code> meta tag for X"
 msgstr ""
 
-#: includes/settings.php:3968
+#: includes/settings.php:3969
 msgid ""
 "This tag associates your content with the author's handle in X (formerly "
 "Twitter), ensuring proper attribution when your posts are shared on the "
@@ -3986,41 +3986,41 @@ msgid ""
 "interactions with your posts."
 msgstr ""
 
-#: includes/settings.php:3987
+#: includes/settings.php:3988
 msgid "Add one author meta tag for each co-author"
 msgstr ""
 
-#: includes/settings.php:3993
+#: includes/settings.php:3994
 msgid "Add one single author meta tag with co-authors information"
 msgstr ""
 
-#: includes/settings.php:3999
+#: includes/settings.php:4000
 msgid "Add author meta tag for the primary author only"
 msgstr ""
 
-#: includes/settings.php:4003
+#: includes/settings.php:4004
 #, fuzzy
 msgid "Co-Authored Posts"
 msgstr "Autores"
 
-#: includes/settings.php:4009
+#: includes/settings.php:4010
 msgid ""
 "On co-authored posts, choose whether to include grouped author information "
 "in a single author meta tag or add individual author meta tags for each co-"
 "author."
 msgstr ""
 
-#: includes/settings.php:4033
+#: includes/settings.php:4034
 msgid ""
 "REST API integration is a PRO feature. Upgrade now to unlock and access "
 "these settings"
 msgstr ""
 
-#: includes/settings.php:4049
+#: includes/settings.php:4050
 msgid "Make the Guest Author object available through the WordPress REST API"
 msgstr ""
 
-#: includes/settings.php:4055
+#: includes/settings.php:4056
 msgid ""
 "The Guest Author object, a custom post type designed to store guest author "
 "profile information, will be available for retrieval and interaction by "
@@ -4028,19 +4028,19 @@ msgid ""
 "applications and tools."
 msgstr ""
 
-#: includes/settings.php:4058 includes/settings.php:4076
+#: includes/settings.php:4059 includes/settings.php:4077
 #, fuzzy
 msgid "This setting is available in the Pro version. <a href='"
 msgstr ""
 "Esta opción está disponible solamente en la %sversión PRO%s del plugin."
 
-#: includes/settings.php:4067
+#: includes/settings.php:4068
 msgid ""
 "Add co-authors information to the post object returned by the WordPress REST "
 "API"
 msgstr ""
 
-#: includes/settings.php:4073
+#: includes/settings.php:4074
 msgid ""
 "When active, an <code>authors</code> field will be added to the "
 "<code>WP_Post</code> object, providing details about all authors (including "
@@ -4048,12 +4048,12 @@ msgid ""
 "tools to access comprehensive author data directly from the API."
 msgstr ""
 
-#: includes/settings.php:4125
+#: includes/settings.php:4126
 #, fuzzy
 msgid "Enable Theme Compatibility"
 msgstr "Compatibilidad"
 
-#: includes/settings.php:4130
+#: includes/settings.php:4131
 msgid ""
 "Some themes require tailored functions to ensure full compatibility with the "
 "plugin's features. Enabling this option ensures that additional "
@@ -4062,7 +4062,7 @@ msgid ""
 "enabled unless you are certain your theme does not require it."
 msgstr ""
 
-#: includes/settings.php:4133
+#: includes/settings.php:4134
 msgid ""
 "If you experience issues with the information displayed on your post bylines "
 "or anything related to author information, make sure this setting is "
@@ -4070,23 +4070,23 @@ msgid ""
 "ticket with us so we can assist."
 msgstr ""
 
-#: includes/settings.php:4136
+#: includes/settings.php:4137
 msgid ""
 "In case of doubt, it's recommended to leave this setting active for the best "
 "experience."
 msgstr ""
 
-#: includes/settings.php:4139 includes/settings.php:4163
-#: includes/settings.php:4344
+#: includes/settings.php:4140 includes/settings.php:4164
+#: includes/settings.php:4345
 msgid "Learn more →"
 msgstr ""
 
-#: includes/settings.php:4149
+#: includes/settings.php:4150
 #, fuzzy
 msgid "Enable Plugin Compatibility"
 msgstr "Compatibilidad"
 
-#: includes/settings.php:4154
+#: includes/settings.php:4155
 msgid ""
 "Some third-party plugins require tailored functions to ensure full "
 "compatibility with the plugin's features. Enabling this option ensures that "
@@ -4094,7 +4094,7 @@ msgid ""
 "unexpected behavior."
 msgstr ""
 
-#: includes/settings.php:4157
+#: includes/settings.php:4158
 msgid ""
 "If you experience issues with author-related information or functionality "
 "when using other plugins, make sure this setting is enabled. If it already "
@@ -4102,21 +4102,21 @@ msgid ""
 "assist."
 msgstr ""
 
-#: includes/settings.php:4160 includes/settings.php:4214
+#: includes/settings.php:4161 includes/settings.php:4215
 msgid "When in doubt, it's recommended to keep this setting enabled."
 msgstr ""
 
-#: includes/settings.php:4177
+#: includes/settings.php:4178
 #, fuzzy
 msgid "Enable Old Browser Compatibility"
 msgstr "Compatibilidad"
 
-#: includes/settings.php:4182 includes/settings.php:4297
-#: includes/settings.php:4338
+#: includes/settings.php:4183 includes/settings.php:4298
+#: includes/settings.php:4339
 msgid "<b>Enable this setting only if you are experiencing issues!</b>"
 msgstr ""
 
-#: includes/settings.php:4185
+#: includes/settings.php:4186
 msgid ""
 "Enable this setting to ensure compatibility with older browsers that may not "
 "fully support modern web standards. This option helps your content display "
@@ -4124,22 +4124,22 @@ msgid ""
 "and user experience across a wider audience."
 msgstr ""
 
-#: includes/settings.php:4200
+#: includes/settings.php:4201
 msgid "Use WordPress Object Cache"
 msgstr ""
 
-#: includes/settings.php:4205
+#: includes/settings.php:4206
 msgid "<b>Disable this setting only if you are experiencing issues!</b>"
 msgstr ""
 
-#: includes/settings.php:4208
+#: includes/settings.php:4209
 msgid ""
 "The WordPress Object Cache is used to save on trips to the database. Having "
 "this setting enabled can reduce query time up to 94%. So sit is really "
 "advised to have it ON."
 msgstr ""
 
-#: includes/settings.php:4211
+#: includes/settings.php:4212
 msgid ""
 "By default, the object cache is non-persistent. This means that data stored "
 "in the cache resides in memory only and only for the duration of the "
@@ -4147,40 +4147,40 @@ msgid ""
 "unless you install a persistent caching plugin."
 msgstr ""
 
-#: includes/settings.php:4228
+#: includes/settings.php:4229
 msgid "<b>Still facing issues after applying compatibility fixes?</b>"
 msgstr ""
 
-#: includes/settings.php:4236
+#: includes/settings.php:4237
 #, fuzzy
 msgid "Open Ticket"
 msgstr "La más gruesa"
 
-#: includes/settings.php:4258
+#: includes/settings.php:4259
 msgid "Enable Polylang support for guest author languages and translations"
 msgstr ""
 
-#: includes/settings.php:4263
+#: includes/settings.php:4264
 msgid ""
 "By default, Guest Author profiles can be translated the same way as posts, "
 "allowing you to create a separate version of a guest author profile for each "
 "language."
 msgstr ""
 
-#: includes/settings.php:4266
+#: includes/settings.php:4267
 msgid ""
 "However, if you prefer to have a single version of each guest author profile "
 "shared across all languages, you can disable this feature by turning off "
 "this option."
 msgstr ""
 
-#: includes/settings.php:4292
+#: includes/settings.php:4293
 msgid ""
 "Use a JavaScript-based solution to make the author box responsive "
 "<code>Enable only if experiencing issues</code>"
 msgstr ""
 
-#: includes/settings.php:4300
+#: includes/settings.php:4301
 msgid ""
 "Enable this setting to use a JavaScript-based solution for making the author "
 "box responsive. This ensures that the author box adapts to different screen "
@@ -4188,346 +4188,346 @@ msgid ""
 "modern CSS features."
 msgstr ""
 
-#: includes/settings.php:4303
+#: includes/settings.php:4304
 msgid ""
 "<b>Enabling this setting applies to all visitors, meaning users with modern "
 "browsers may experience slightly slower performance due to additional files "
 "being loaded. Consider this trade-off before enabling.</b>"
 msgstr ""
 
-#: includes/settings.php:4333
+#: includes/settings.php:4334
 msgid ""
 "Enable CDN compatibility to fix author box layout and make it display nicely"
 msgstr ""
 
-#: includes/settings.php:4341
+#: includes/settings.php:4342
 msgid ""
 "Is your author box layout messed up while using a CDN? When serving "
 "stylesheet files through a CDN, the author box layout may appear broken. "
 "Enabling this setting should resolve the issue."
 msgstr ""
 
-#: includes/settings.php:4369
+#: includes/settings.php:4370
 msgid "Add an <code>Authors</code> menu to the WordPress Dashboard"
 msgstr ""
 
-#: includes/settings.php:4374
+#: includes/settings.php:4375
 msgid ""
 "When enabled, an <code>Authors</code> menu item will appear in the left-hand "
 "menu of your WordPress Dashboard. Changes will take effect after refreshing "
 "the page."
 msgstr ""
 
-#: includes/settings.php:4389
+#: includes/settings.php:4390
 msgid "Add a <code>Guest Authors</code> menu to the WordPress Dashboard"
 msgstr ""
 
-#: includes/settings.php:4394
+#: includes/settings.php:4395
 msgid ""
 "When enabled, a <code>Guest Authors</code> menu item will appear in the left-"
 "hand menu of your WordPress Dashboard. Changes will take effect after "
 "refreshing the page."
 msgstr ""
 
-#: includes/settings.php:4429
+#: includes/settings.php:4430
 msgid "Add an <code>Authors</code> quick link to the <code>Posts</code> menu"
 msgstr ""
 
-#: includes/settings.php:4434
+#: includes/settings.php:4435
 msgid ""
 "When enabled, an <code>Authors</code> submenu item will be added to the "
 "<code>Posts</code> menu. Changes will take effect after refreshing the page."
 msgstr ""
 
-#: includes/settings.php:4449
+#: includes/settings.php:4450
 msgid ""
 "Add an <code>Author Box</code> quick link to the <code>Appearance</code> menu"
 msgstr ""
 
-#: includes/settings.php:4454
+#: includes/settings.php:4455
 msgid ""
 "When enabled, an <code>Author Box</code> submenu item will be added to the "
 "<code>Appearance</code> menu. Changes will take effect after refreshing the "
 "page."
 msgstr ""
 
-#: includes/settings.php:4469
+#: includes/settings.php:4470
 msgid ""
 "Add <code>Author Box</code>, and <code>Authors</code> quick links to the "
 "<code>Settings</code> menu"
 msgstr ""
 
-#: includes/settings.php:4474
+#: includes/settings.php:4475
 msgid ""
 "When enabled, <code>Author Box</code>, and <code>Authors</code> quick links "
 "submenu items will be added to the <code>Settings</code> menu. Changes will "
 "take effect after refreshing the page."
 msgstr ""
 
-#: includes/settings.php:4494
+#: includes/settings.php:4495
 msgid "the posts screen filtered by author"
 msgstr ""
 
-#: includes/settings.php:4500
+#: includes/settings.php:4501
 msgid "the author-edit screen"
 msgstr ""
 
-#: includes/settings.php:4504
+#: includes/settings.php:4505
 #, fuzzy
 msgid "Author Name Links To"
 msgstr "Nombre del autor"
 
-#: includes/settings.php:4510
+#: includes/settings.php:4511
 msgid ""
 "On admin screens listing posts, you have a column labeled <code>Authors</"
 "code>. This setting allows you to configure what action to take when "
 "clicking on the author name displayed on that column."
 msgstr ""
 
-#: includes/settings.php:4513
+#: includes/settings.php:4514
 msgid ""
 "You can choose between keeping WordPress default behavior, which is to show "
 "a list of posts authored by that author or get redirected to the author edit "
 "screen."
 msgstr ""
 
-#: includes/settings.php:4543
+#: includes/settings.php:4544
 msgid "At the top of the menu"
 msgstr ""
 
-#: includes/settings.php:4549
+#: includes/settings.php:4550
 msgid "Below the 'Dashboard' menu item"
 msgstr ""
 
-#: includes/settings.php:4555
+#: includes/settings.php:4556
 msgid "Below the 'Posts' menu item"
 msgstr ""
 
-#: includes/settings.php:4561
+#: includes/settings.php:4562
 msgid "Below the 'Media' menu item"
 msgstr ""
 
-#: includes/settings.php:4567
+#: includes/settings.php:4568
 msgid "Below the 'Pages' menu item"
 msgstr ""
 
-#: includes/settings.php:4573
+#: includes/settings.php:4574
 msgid "Below the 'Comments' menu item"
 msgstr ""
 
-#: includes/settings.php:4579
+#: includes/settings.php:4580
 msgid "Below the 'Appearance' menu item"
 msgstr ""
 
-#: includes/settings.php:4585
+#: includes/settings.php:4586
 msgid "Below the 'Plugins' menu item"
 msgstr ""
 
-#: includes/settings.php:4591
+#: includes/settings.php:4592
 msgid "Below the 'Users' menu item"
 msgstr ""
 
-#: includes/settings.php:4597
+#: includes/settings.php:4598
 msgid "Below the 'Tools' menu item"
 msgstr ""
 
-#: includes/settings.php:4603
+#: includes/settings.php:4604
 msgid "Below the 'Settings' menu item"
 msgstr ""
 
-#: includes/settings.php:4609
+#: includes/settings.php:4610
 msgid "At the bottom of the menu"
 msgstr ""
 
-#: includes/settings.php:4613
+#: includes/settings.php:4614
 #, fuzzy
 msgid "Menu Position"
 msgstr "Posición"
 
-#: includes/settings.php:4619 includes/settings.php:4721
+#: includes/settings.php:4620 includes/settings.php:4722
 msgid "Changes will take effect after refreshing the page."
 msgstr ""
 
-#: includes/settings.php:4633
+#: includes/settings.php:4634
 msgid "Pencil"
 msgstr ""
 
-#: includes/settings.php:4639
+#: includes/settings.php:4640
 msgid "Letter 'A' for Authors"
 msgstr ""
 
-#: includes/settings.php:4645
+#: includes/settings.php:4646
 msgid "People"
 msgstr ""
 
-#: includes/settings.php:4651
+#: includes/settings.php:4652
 msgid "Business Person"
 msgstr ""
 
-#: includes/settings.php:4657
+#: includes/settings.php:4658
 msgid "Business Man"
 msgstr ""
 
-#: includes/settings.php:4663
+#: includes/settings.php:4664
 msgid "Business Woman"
 msgstr ""
 
-#: includes/settings.php:4669
+#: includes/settings.php:4670
 msgid "Card ID"
 msgstr ""
 
-#: includes/settings.php:4675
+#: includes/settings.php:4676
 msgid "Card ID (alt)"
 msgstr ""
 
-#: includes/settings.php:4681
+#: includes/settings.php:4682
 msgid "Book"
 msgstr ""
 
-#: includes/settings.php:4687
+#: includes/settings.php:4688
 msgid "Book (alt)"
 msgstr ""
 
-#: includes/settings.php:4693
+#: includes/settings.php:4694
 msgid "Microphone"
 msgstr ""
 
-#: includes/settings.php:4699
+#: includes/settings.php:4700
 msgid "Check"
 msgstr ""
 
-#: includes/settings.php:4705
+#: includes/settings.php:4706
 #, fuzzy
 msgid "Circled Check"
 msgstr "Redonda"
 
-#: includes/settings.php:4711
+#: includes/settings.php:4712
 msgid "Ellipsis"
 msgstr ""
 
-#: includes/settings.php:4715
+#: includes/settings.php:4716
 msgid "Menu Icon"
 msgstr ""
 
-#: includes/settings.php:4750
+#: includes/settings.php:4751
 msgid "New top level menu"
 msgstr ""
 
-#: includes/settings.php:4756
+#: includes/settings.php:4757
 msgid "Under the Users menu"
 msgstr ""
 
-#: includes/settings.php:4762
+#: includes/settings.php:4763
 msgid "Under the Posts menu"
 msgstr ""
 
-#: includes/settings.php:4768
+#: includes/settings.php:4769
 msgid "Under the Pages menu"
 msgstr ""
 
-#: includes/settings.php:4772
+#: includes/settings.php:4773
 msgid "Menu Location"
 msgstr ""
 
-#: includes/settings.php:5063
+#: includes/settings.php:5064
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/settings.php:5064
+#: includes/settings.php:5065
 msgid ""
 "Disabling author box styles requires you to provide your own CSS rules. If "
 "you are not an skilled developer, we strongly advise you not to proceed."
 msgstr ""
 
-#: includes/settings.php:5065
+#: includes/settings.php:5066
 msgid "Disabled"
 msgstr ""
 
-#: includes/settings.php:5066
+#: includes/settings.php:5067
 msgid ""
 "Remember to provide your own styles. To do so you can use the 'Additional "
 "CSS' setting available on the WordPress Customizer or a child theme."
 msgstr ""
 
-#: includes/settings.php:5071
+#: includes/settings.php:5072
 msgid ""
 "WordPress object cache is used to speed things up. Please confirm you want "
 "to go ahead and clear it."
 msgstr ""
 
-#: includes/settings.php:5074
+#: includes/settings.php:5075
 msgid "Cleared!"
 msgstr ""
 
-#: includes/settings.php:5075
+#: includes/settings.php:5076
 msgid "Object cache used by Molongui Authorship has been cleared successfully"
 msgstr ""
 
-#: includes/settings.php:5077
+#: includes/settings.php:5078
 msgid ""
 "Something went wrong and cache clean up failed. Please refresh this page and "
 "try again."
 msgstr ""
 
-#: includes/settings.php:5082
+#: includes/settings.php:5083
 msgid "Count Update"
 msgstr ""
 
-#: includes/settings.php:5083
+#: includes/settings.php:5084
 msgid ""
 "Forcing an update on post counters is a task that runs in the background and "
 "might take a (long) while to complete. Please confirm you want to go ahead."
 msgstr ""
 
-#: includes/settings.php:5087
+#: includes/settings.php:5088
 msgid ""
 "You have the WP_Cron disabled, so counters update failed. Please enable the "
 "WP_Cron in your wp-config.php file."
 msgstr ""
 
-#: includes/settings.php:5088
+#: includes/settings.php:5089
 msgid ""
 "Something went wrong and counters update failed. Please refresh this page "
 "and try again."
 msgstr ""
 
-#: includes/settings.php:5090
+#: includes/settings.php:5091
 msgid ""
 "The post count update is running in the background. You will receive a "
 "notice about the update status. You can close this window now."
 msgstr ""
 
-#: includes/settings.php:5095
+#: includes/settings.php:5096
 msgid "Doing it wrong!"
 msgstr ""
 
-#: includes/settings.php:5096
+#: includes/settings.php:5097
 msgid ""
 "You cannot disable both 'Authors' and 'Molongui' menus. One of them must be "
 "displayed so you have access to the plugin settings page."
 msgstr ""
 
-#: includes/settings.php:5099
+#: includes/settings.php:5100
 msgid ""
 "Selected profile is exclusive to premium users. Upgrade to Pro to enable it."
 msgstr ""
 
-#: includes/settings.php:5100
+#: includes/settings.php:5101
 msgid "Are you sure you want to disable this social profile?"
 msgstr ""
 
-#: includes/settings.php:5101
+#: includes/settings.php:5102
 msgid "Drag this social profile to reorder"
 msgstr ""
 
-#: includes/settings.php:5106
+#: includes/settings.php:5107
 msgid ""
 "No matching social network found. <b><a href='https://www.molongui.com/help/"
 "support/' target='_blank' style='text-decoration:underline;color:"
 "inherit'>Let us know</a>, and we'll work on adding it for you!</b></b>"
 msgstr ""
 
-#: includes/settings.php:5613
+#: includes/settings.php:5614
 #, php-format
 msgid ""
 "Need to add custom attributions to your posts? The %sMolongui Post "
@@ -4536,18 +4536,18 @@ msgid ""
 "photographers, whatever you need to acknowledge."
 msgstr ""
 
-#: includes/settings.php:5614
+#: includes/settings.php:5615
 msgid ""
 "Install now to acknowledge every contribution and take your articles to the "
 "next level."
 msgstr ""
 
-#: includes/settings.php:5615
+#: includes/settings.php:5616
 #, php-format
 msgid "It's %sfree%s!"
 msgstr ""
 
-#: includes/settings.php:5712
+#: includes/settings.php:5713
 msgid "&mdash; No role &mdash;"
 msgstr ""
 

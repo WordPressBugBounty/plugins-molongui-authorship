@@ -68,6 +68,7 @@ class Activator
 	}
     public static function add_default_options()
     {
+        add_filter( 'authorship/default_options', array( '\Molongui\Authorship\Settings', 'set_defaults' ) );
         Settings::add_defaults();
     }
     public static function run_background_tasks()

@@ -2,11 +2,15 @@
 
 == Changelog ==
 
+= 5.0.2 (2025-01-14) =
+
+* Fixed: Default settings are now initialized upon plugin activation.
+
 = 5.0.1 (2025-01-14) =
 
-* Fixed: PHP warning for undefined array key `author_box_avatar_fallback`
-* Fixed: PHP warning for undefined array key `guest_author_enabled`
-* Fixed: PHP warning for undefined array key `guest_pages`
+* Fixed: PHP warning for undefined array key `author_box_avatar_fallback`.
+* Fixed: PHP warning for undefined array key `guest_author_enabled`.
+* Fixed: PHP warning for undefined array key `guest_pages`.
 
 = 5.0.0 (2025-01-14) =
 
