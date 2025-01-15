@@ -7,7 +7,7 @@ class Extra
 {
     public function __construct()
     {
-        add_filter( 'molongui_authorship/add_author_box_to_content', array( $this, 'add_author_box_on_templates' ) );
+        add_filter( 'molongui_authorship/add_author_box_to_content_outside_the_loop', array( $this, 'add_author_box_on_templates' ) );
         add_filter( 'authorship/pre_author_link', array( $this, 'filter_the_author_link' ), 10, 4 );
     }
     public function add_author_box_on_templates( $add )

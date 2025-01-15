@@ -141,10 +141,12 @@ if ( !function_exists( 'molongui_is_bool' ) )
 }
 if ( !function_exists( 'molongui_parse_array_attribute' ) )
 {
-    function molongui_parse_array_attribute($string)
+    function molongui_parse_array_attribute( $string )
     {
-        $no_whitespaces = preg_replace('/\s*,\s*/', ',', filter_var($string, FILTER_SANITIZE_STRING));
-        $array = explode(',', $no_whitespaces);
+        $sanitized_string = strip_tags( $string );
+        $sanitized_string = htmlspecialchars( $sanitized_string, ENT_QUOTES, 'UTF-8' );
+        $no_whitespaces = preg_replace( '/\s*,\s*/', ',', $sanitized_string );
+        $array = explode( ',', $no_whitespaces );
         return $array;
     }
 }

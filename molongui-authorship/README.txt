@@ -197,6 +197,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.4 (2025-01-15) =
+
+* Fixed: Author box not displaying on custom post templates by the Divi Builder.
+
 = 5.0.3 (2025-01-14) =
 
 * Fixed: Author box being displayed regardless of plugin configuration.

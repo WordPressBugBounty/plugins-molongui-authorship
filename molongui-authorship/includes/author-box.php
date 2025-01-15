@@ -472,6 +472,11 @@ class Author_Box
     }
     public function add_to_the_content( $the_content )
     {
+        $post_id = Post::get_id();
+        if ( empty( $post_id ) )
+        {
+            return $the_content;
+        }
         if ( !in_the_loop() )
         {
             $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
@@ -479,15 +484,27 @@ class Author_Box
 
             if ( !array_search( $fn, array_column( $dbt, 'function' ) ) )
             {
-                Debug::console_log(null, "Author box not displayed: Running outside the loop." );
-                return $the_content;
+                /*!
+                 * FILTER HOOK
+                 * Allows adding the author box to the post content when running outside the loop.
+                 *
+                 * @param bool  False by default.
+                 * @since 5.0.4
+                 */
+                if ( !apply_filters( 'molongui_authorship/add_author_box_to_content_outside_the_loop', false ) )
+                {
+                    Debug::console_log(null, "Author box not added to the_content: Running outside the loop." );
+                    return $the_content;
+                }
+                else
+                {
+                    Debug::console_log(null, "Running outside the loop. Author box forced to be added by the provided filter." );
+                }
             }
-        }
-
-        $post_id = Post::get_id();
-        if ( empty( $post_id ) )
-        {
-            return $the_content;
+            else
+            {
+                Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
+            }
         }
 
         global $multipage, $page, $numpages;
@@ -496,6 +513,15 @@ class Author_Box
         {
             $position = Settings::get( 'author_box_position', 'below' );
         }
+
+        /*!
+         * FILTER HOOK
+         * Allows overriding the configured author box position.
+         *
+         * @param string $position Configured position to display the author box on.
+         * @param int    $post_id  The post ID.
+         * @since 5.0.0
+         */
         $position = apply_filters( 'molongui_authorship/author_box_position', $position, $post_id );
         switch ( $position )
         {
