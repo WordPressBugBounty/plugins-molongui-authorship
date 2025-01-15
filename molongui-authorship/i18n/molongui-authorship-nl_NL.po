@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-14 23:55+0100\n"
+"POT-Creation-Date: 2025-01-15 21:58+0100\n"
 "PO-Revision-Date: 2016-09-12 12:31+0100\n"
 "Last-Translator: Amitzy <molongui@amitzy.com>\n"
 "Language-Team: Amitzy\n"
@@ -769,7 +769,7 @@ msgid "All fields are mandatory"
 msgstr ""
 
 #: common/modules/settings/settings-page.php:690
-#: includes/admin/admin-guest-author.php:821
+#: includes/admin/admin-guest-author.php:823
 msgid "Name"
 msgstr "Naam"
 
@@ -778,7 +778,7 @@ msgid "Your name here"
 msgstr ""
 
 #: common/modules/settings/settings-page.php:694
-#: includes/admin/admin-guest-author.php:824
+#: includes/admin/admin-guest-author.php:826
 #: views/admin/html-page-author-new.php:570
 msgid "Email"
 msgstr "E-mail"
@@ -1179,106 +1179,106 @@ msgstr "Gast auteurs"
 msgid "Guest author draft updated."
 msgstr "Gast auteurs"
 
-#: includes/admin/admin-guest-author.php:559
+#: includes/admin/admin-guest-author.php:561
 msgid ""
 "There is a registered WordPress user with the same display name. You might "
 "want to address that."
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:563
+#: includes/admin/admin-guest-author.php:565
 msgid ""
 "There is another guest author with the same display name. You might want to "
 "address that."
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:567
+#: includes/admin/admin-guest-author.php:569
 msgid ""
 "There is a registered WordPress user and another guest author with the same "
 "display name. You might want to address that."
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:820
+#: includes/admin/admin-guest-author.php:822
 msgid "Photo"
 msgstr "Foto"
 
-#: includes/admin/admin-guest-author.php:822
+#: includes/admin/admin-guest-author.php:824
 #, fuzzy
 msgid "Box"
 msgstr "Boxed"
 
-#: includes/admin/admin-guest-author.php:823
+#: includes/admin/admin-guest-author.php:825
 msgid "Bio"
 msgstr "Bio"
 
-#: includes/admin/admin-guest-author.php:825
+#: includes/admin/admin-guest-author.php:827
 #: views/guest-author/html-admin-profile-metabox.php:84
 #: views/user/html-admin-plugin-fields.php:60
 msgid "Phone"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:826
+#: includes/admin/admin-guest-author.php:828
 msgid "URL"
 msgstr "URL"
 
-#: includes/admin/admin-guest-author.php:827
+#: includes/admin/admin-guest-author.php:829
 msgid "Job"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:828
+#: includes/admin/admin-guest-author.php:830
 msgid "Co."
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:829
+#: includes/admin/admin-guest-author.php:831
 msgid "Co. URL"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:830
+#: includes/admin/admin-guest-author.php:832
 #: views/user/html-admin-plugin-fields.php:88
 #, fuzzy
 msgid "Social Profiles"
 msgstr "Spotify profile"
 
-#: includes/admin/admin-guest-author.php:831 includes/admin/admin-user.php:141
+#: includes/admin/admin-guest-author.php:833 includes/admin/admin-user.php:141
 msgid "Entries"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:833 includes/admin/admin-user.php:150
+#: includes/admin/admin-guest-author.php:835 includes/admin/admin-user.php:150
 #: includes/admin/author-list-table.php:169
 msgid "ID"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:891 includes/admin/admin-post.php:583
+#: includes/admin/admin-guest-author.php:893 includes/admin/admin-post.php:583
 #: includes/admin/admin-post.php:610 includes/admin/admin-user.php:230
 #: includes/admin/author-list-table.php:600
 msgid "Visible"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:896 includes/admin/admin-post.php:588
+#: includes/admin/admin-guest-author.php:898 includes/admin/admin-post.php:588
 #: includes/admin/admin-post.php:620 includes/admin/admin-user.php:235
 #: includes/admin/author-list-table.php:605
 msgid "Hidden"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:901 includes/admin/admin-user.php:240
+#: includes/admin/admin-guest-author.php:903 includes/admin/admin-user.php:240
 #: includes/admin/author-list-table.php:610
 msgid "Visibility depends on global plugin settings"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:938 includes/admin/admin-user.php:218
+#: includes/admin/admin-guest-author.php:940 includes/admin/admin-user.php:218
 #: includes/admin/author-list-table.php:567
 #: views/admin/editor/parts/html-editor-tab-content.php:183
 #: views/admin/editor/parts/html-editor-tab-layout.php:237
 msgid "None"
 msgstr "Geen"
 
-#: includes/admin/admin-guest-author.php:977
+#: includes/admin/admin-guest-author.php:979
 #: includes/admin/author-list-table.php:623
 #, fuzzy
 msgid "Archived author"
 msgstr "Over de auteur"
 
-#: includes/admin/admin-guest-author.php:1125
-#: includes/admin/admin-guest-author.php:1468 includes/admin/admin-post.php:494
+#: includes/admin/admin-guest-author.php:1127
+#: includes/admin/admin-guest-author.php:1470 includes/admin/admin-post.php:494
 #: includes/admin/admin-post.php:937 includes/admin/admin-user.php:146
 #: includes/settings.php:680
 #: views/admin/editor/parts/html-editor-tab-layout.php:84
@@ -1286,7 +1286,7 @@ msgstr "Over de auteur"
 msgid "Author Box"
 msgstr "auteurschap doos"
 
-#: includes/admin/admin-guest-author.php:1127
+#: includes/admin/admin-guest-author.php:1129
 #: includes/admin/admin-post.php:1692
 #: views/admin/editor/parts/html-editor-tab-content.php:686
 #: views/admin/editor/parts/html-editor-tab-presets.php:29
@@ -1297,7 +1297,7 @@ msgstr "auteurschap doos"
 msgid "Default"
 msgstr "Standaard"
 
-#: includes/admin/admin-guest-author.php:1128
+#: includes/admin/admin-guest-author.php:1130
 #: includes/admin/admin-post.php:1693
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
@@ -1312,7 +1312,7 @@ msgstr "Standaard"
 msgid "Show"
 msgstr "Toon"
 
-#: includes/admin/admin-guest-author.php:1129
+#: includes/admin/admin-guest-author.php:1131
 #: includes/admin/admin-post.php:1694
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
@@ -1327,36 +1327,36 @@ msgstr "Toon"
 msgid "Hide"
 msgstr "Verberg"
 
-#: includes/admin/admin-guest-author.php:1400
+#: includes/admin/admin-guest-author.php:1402
 #, fuzzy
 msgid "Profile"
 msgstr "Vk profile"
 
-#: includes/admin/admin-guest-author.php:1410
+#: includes/admin/admin-guest-author.php:1412
 #, fuzzy
 msgid "Biography"
 msgstr "Biografische informatie"
 
-#: includes/admin/admin-guest-author.php:1422
+#: includes/admin/admin-guest-author.php:1424
 #, fuzzy
 msgid "Short Biography"
 msgstr "Biografische informatie"
 
-#: includes/admin/admin-guest-author.php:1433
+#: includes/admin/admin-guest-author.php:1435
 msgid "Social Media"
 msgstr "Social Media"
 
-#: includes/admin/admin-guest-author.php:1445
+#: includes/admin/admin-guest-author.php:1447
 #, fuzzy
 msgid "Profile Image"
 msgstr "Profielfoto "
 
-#: includes/admin/admin-guest-author.php:1456
+#: includes/admin/admin-guest-author.php:1458
 #, fuzzy
 msgid "Archive"
 msgstr "Auteur link"
 
-#: includes/admin/admin-guest-author.php:1481
+#: includes/admin/admin-guest-author.php:1483
 msgid "Role"
 msgstr ""
 
@@ -1935,7 +1935,7 @@ msgctxt "User role"
 msgid "Guest Author"
 msgstr "Gast auteur"
 
-#: includes/compat/plugins/hootkit.php:60 includes/post.php:1466
+#: includes/compat/plugins/hootkit.php:60 includes/post.php:1465
 #, fuzzy
 msgid "and"
 msgstr "Branded"
@@ -2444,7 +2444,7 @@ msgid ""
 "They are hidden to avoid cluttering the page."
 msgstr ""
 
-#: includes/post.php:1418
+#: includes/post.php:1417
 #, php-format
 msgid "%s %d more"
 msgstr ""

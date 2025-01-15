@@ -197,6 +197,14 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.5 (2025-01-15) =
+
+* Fixed: Non-static method `is_display_name_available()` called statically.
+* Fixed: Unsupported operand types in `increment_counter`.
+* Fixed: Unsupported operand types in `decrement_counter`.
+* Fixed: Cannot use object of type stdClass as array in `increment_counter`.
+* Fixed: Cannot use object of type stdClass as array in `decrement_counter`.
+
 = 5.0.4 (2025-01-15) =
 
 * Fixed: Author box not displaying on custom post templates by the Divi Builder.

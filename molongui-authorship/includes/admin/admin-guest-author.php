@@ -246,7 +246,9 @@ class Admin_Guest_Author
     {
         remove_filter( 'redirect_post_location', array( $this, 'add_notice_query_var' ), 99 );
 
-        $name_exists = Author::is_display_name_available( $post_id, 'guest' );
+        $author = new Author( $post_id, 'guest' );
+        $name_exists = $author->is_display_name_available();
+
         if ( $name_exists )
         {
             switch ( $name_exists )
@@ -459,7 +461,7 @@ class Admin_Guest_Author
         elseif ( 'guestAuthorEntries' == $column )
         {
             $html   = '';
-            $values = $author->get_posts_count();
+            $values = $author->get_post_counts();
             foreach ( Settings::enabled_post_types( 'guest-author', 'object' ) as $post_type )
             {
                 $link = admin_url( 'edit.php?post_type='.$post_type['id'].'&guest='.$ID );

@@ -331,7 +331,7 @@ class Post_Count_Updater extends WP_Background_Process
 
         if ( !isset( $count ) )
         {
-            $count = $_author->count_posts( $post_type );
+            $count = $_author->get_post_count( $post_type );
         }
         $_author->update_post_type_count( $count, $post_type );
     }
@@ -350,16 +350,16 @@ class Post_Count_Updater extends WP_Background_Process
                 return;
             }
 
-            $post_authors = array();
-            $post_authors[0]['id']   = $parts[1];
-            $post_authors[0]['type'] = $parts[0];
+            $post_authors       = new \stdClass();
+            $post_authors->id   = $parts[1];
+            $post_authors->type = $parts[0];
         }
 
         foreach ( $post_authors as $post_author )
         {
-            $author   = new Author( $post_author['id'], $post_author['type'] );
-            $counters = $author->get_posts_count( $post_type );
-            self::update_author_post_counter( array( 'id' => $post_author['id'], 'type' => $post_author['type'] ), $post_type, $counters[$post_type] + 1 );
+            $author = new Author( $post_author->id, $post_author->type );
+            $count  = $author->get_post_count( $post_type );
+            self::update_author_post_counter( array( 'id' => $post_author->id, 'type' => $post_author->type ), $post_type, $count + 1 );
         }
     }
     public static function decrement_counter( $post_type, $post_authors )
@@ -377,16 +377,16 @@ class Post_Count_Updater extends WP_Background_Process
                 return;
             }
 
-            $post_authors = array();
-            $post_authors[0]['id']   = $parts[1];
-            $post_authors[0]['type'] = $parts[0];
+            $post_authors       = new \stdClass();
+            $post_authors->id   = $parts[1];
+            $post_authors->type = $parts[0];
         }
 
         foreach ( $post_authors as $post_author )
         {
-            $author   = new Author( $post_author['id'], $post_author['type'] );
-            $counters = $author->get_posts_count( $post_type );
-            self::update_author_post_counter( array( 'id' => $post_author['id'], 'type' => $post_author['type'] ), $post_type, $counters[$post_type] - 1 );
+            $author = new Author( $post_author->id, $post_author->type );
+            $count  = $author->get_post_count( $post_type );
+            self::update_author_post_counter( array( 'id' => $post_author->id, 'type' => $post_author->type ), $post_type, $count - 1 );
         }
     }
 

@@ -1099,7 +1099,7 @@ class Author
 
         return ( !empty( $posts ) ? $posts : array() );
     }
-    public function get_posts_count( $post_types = null )
+    public function get_post_counts( $post_types = null )
     {
         if ( !isset( $post_types ) )
         {
@@ -1156,7 +1156,7 @@ class Author
 
         return $count;
     }
-    public function count_posts( $post_type = 'post' )
+    public function get_post_count( $post_type = 'post' )
     {
         $post_statuses_to_count = Admin_Post::get_countable_post_statuses();
 
@@ -1340,7 +1340,7 @@ class Author
         {
             $post_types = array( $post_types );
         }
-        $post_count = $this->get_posts_count( $post_types );
+        $post_count = $this->get_post_counts( $post_types );
         foreach ( $post_types as $post_type )
         {
             if ( !empty( $post_count[$post_type] ) )
@@ -1356,22 +1356,21 @@ class Author
     {
         return !empty( $this->get_meta( 'archived' ) );
     }
-    public function is_display_name_available( $id, $type )
+    public function is_display_name_available()
     {
         global $wpdb;
         $user_displayname_check  = false;
         $guest_displayname_check = false;
-        $author = new Author( $id, $type );
-        $name   = $author->get_name();
-        if ( $type == 'user' )
+        $name = $this->get_display_name();
+        if ( 'user' === $this->type )
         {
-            $user_displayname_check  = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->users WHERE display_name = %s AND ID != '{$id}' LIMIT 1", $name ) );
+            $user_displayname_check  = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->users WHERE display_name = %s AND ID != '{$this->id}' LIMIT 1", $name ) );
             $guest_displayname_check = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = '".MOLONGUI_AUTHORSHIP_CPT."' LIMIT 1", $name ) );
         }
         else
         {
             $user_displayname_check  = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->users WHERE display_name = %s LIMIT 1", $name ) );
-            $guest_displayname_check = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = '".MOLONGUI_AUTHORSHIP_CPT."' AND ID != '{$id}' LIMIT 1", $name ) );
+            $guest_displayname_check = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = '".MOLONGUI_AUTHORSHIP_CPT."' AND ID != '{$this->id}' LIMIT 1", $name ) );
         }
         if ( !$user_displayname_check and !$guest_displayname_check ) return false;
         if (  $user_displayname_check and !$guest_displayname_check ) return 'user';

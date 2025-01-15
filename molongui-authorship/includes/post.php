@@ -92,7 +92,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          */
         list( $author_id, $author_type ) = apply_filters( '_authorship/post_count/author', array( $author_id, $author_type ), $count, $userid, $post_type, $public_only );
         $author      = new Author( $author_id, $author_type );
-        $post_counts = $author->get_posts_count( $post_type );
+        $post_counts = $author->get_post_counts( $post_type );
         $post_count  = array_sum( array_filter( $post_counts, 'is_numeric' ) );
         return apply_filters( 'authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
     }
@@ -505,7 +505,6 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             {
                 $data[] = $main_author;
             }
-
             else
             {
                 $authors = get_post_meta( $post_id, '_molongui_author', false );
