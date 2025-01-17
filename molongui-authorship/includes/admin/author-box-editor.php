@@ -23,7 +23,7 @@ use Molongui\Authorship\Settings;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author_Box_Editor
 {
-    static  $javascript     = '/assets/js/editor.caef.min.js';
+    static  $javascript     = '/assets/js/editor.462c.min.js';
     static  $stylesheet     = '';
     private $stylesheet_ltr = '/assets/css/editor.d0a2.min.css';
     private $stylesheet_rtl = '/assets/css/editor-rtl.6bf1.min.css';

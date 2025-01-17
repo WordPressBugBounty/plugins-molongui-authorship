@@ -197,6 +197,11 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.6 (2025-01-17) =
+
+* Fixed: Author search box not displaying all matching results.
+* Changed: Optimized retrieval of post counts.
+
 = 5.0.5 (2025-01-15) =
 
 * Fixed: Non-static method `is_display_name_available()` called statically.

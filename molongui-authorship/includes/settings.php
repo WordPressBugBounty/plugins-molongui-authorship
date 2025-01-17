@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Settings extends \Molongui\Authorship\Common\Modules\Settings
 {
     private $stylesheet = '/assets/js/options.xxxx.min.css';
-    private $javascript = 'assets/js/options.6c78.min.js';
+    private $javascript = 'assets/js/options.cb9c.min.js';
     private $screen_id;
     use Singleton;
     public function __construct()
@@ -4157,14 +4157,16 @@ public function get_author_pages_section()
             311 => 'molongui_authorship_update_post_count',
             400 => __( "Doing it wrong!", 'molongui-authorship' ),
             401 => __( "You cannot disable both 'Authors' and 'Molongui' menus. One of them must be displayed so you have access to the plugin settings page.", 'molongui-authorship' ),
-            'premium_profile_warning'  => esc_html__( "Selected profile is exclusive to premium users. Upgrade to Pro to enable it.", 'molongui-authorship' ),
-            'confirm_profile_deletion' => esc_html__( "Are you sure you want to disable this social profile?", 'molongui-authorship' ),
-            'drag_to_reorder'          => esc_html__( "Drag this social profile to reorder", 'molongui-authorship' ),
-            'delete_profile'           => esc_html__( "Remove", 'molongui-authorship' ),
-            'move_profile_up'          => esc_html__( "Move up", 'molongui-authorship' ),
-            'move_profile_down'        => esc_html__( "Move down", 'molongui-authorship' ),
-            'ajax_suggest_link'        => $ajax_suggest_link,
-            'no_suggestions_found'     => wp_kses_post( apply_filters( 'molongui_authorship/no_matching_profiles_message', __( "No matching social network found. <b><a href='https://www.molongui.com/help/support/' target='_blank' style='text-decoration:underline;color:inherit'>Let us know</a>, and we'll work on adding it for you!</b></b>", 'molongui-authorship' ) ) ),
+            'premium_profile_warning'     => esc_html__( "Selected profile is exclusive to premium users. Upgrade to Pro to enable it.", 'molongui-authorship' ),
+            'confirm_profile_deletion'    => esc_html__( "Are you sure you want to disable this social profile?", 'molongui-authorship' ),
+            'drag_to_reorder'             => esc_html__( "Drag this social profile to reorder", 'molongui-authorship' ),
+            'delete_profile'              => esc_html__( "Remove", 'molongui-authorship' ),
+            'move_profile_up'             => esc_html__( "Move up", 'molongui-authorship' ),
+            'move_profile_down'           => esc_html__( "Move down", 'molongui-authorship' ),
+            'ajax_suggest_link'           => $ajax_suggest_link,
+            'social_search_min_length'    => apply_filters( 'molongui_authorship/social_search_min_length', 2 ),
+            'social_search_results_limit' => apply_filters( 'molongui_authorship/social_search_results_limit', 60 ),
+            'no_suggestions_found'        => wp_kses_post( apply_filters( 'molongui_authorship/social_search_no_results_message', __( "No matching social network found. <b><a href='https://www.molongui.com/help/support/' target='_blank' style='text-decoration:underline;color:inherit'>Let us know</a>, and we'll work on adding it for you!</b></b>", 'molongui-authorship' ) ) ),
         ));
 
         return $fw_params + $params;

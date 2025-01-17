@@ -32,7 +32,7 @@ use Molongui\Authorship\User;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 {
-    private $javascript           = '/assets/js/edit-post.7d41.min.js';
+    private $javascript           = '/assets/js/edit-post.2c2e.min.js';
     private $javascript_gutenberg = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-gutenberg.72e5.min.js';
     private $stylesheet           = '';
     private $stylesheet_ltr       = '';
@@ -122,28 +122,29 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 
         $params = array
         (
-            'guest_enabled'            => Settings::is_guest_author_enabled(),
-            'coauthors_enabled'        => Settings::is_co_authors_enabled(),
-            'remove_author_tip'        => esc_html__( "Remove author from selection", 'molongui-authorship' ),
+            'guest_enabled'               => Settings::is_guest_author_enabled(),
+            'coauthors_enabled'           => Settings::is_co_authors_enabled(),
+            'remove_author_tip'           => esc_html__( "Remove author from selection", 'molongui-authorship' ),
 
-            'tag_title'                => esc_html__( "Drag this author to reorder", 'molongui-authorship' ),
-            'delete_label'             => esc_html__( "Remove", 'molongui-authorship' ),
-            'up_label'                 => esc_html__( "Move up", 'molongui-authorship' ),
-            'down_label'               => esc_html__( "Move down", 'molongui-authorship' ),
-            'confirm_delete'           => esc_html__( "Are you sure you want to remove this author?", 'molongui-authorship' ),
-            'one_author_required'      => esc_html__( "Every post must have at least one author. You can remove the current author, but if you don't add a new one before saving, you will be assigned as the post author. Are you sure you want to proceed?", 'molongui-authorship' ),
-            'ajax_suggest_link'        => $ajax_suggest_link,
-            'author_search_min_length' => apply_filters( 'molongui_authorship/author_search_min_length', 2 ),
-            'no_suggestions_found'     => esc_html( apply_filters( 'molongui_authorship/no_matching_authors_message', __( "No matching authors found.", 'molongui-authorship' ) ) ),
+            'tag_title'                   => esc_html__( "Drag this author to reorder", 'molongui-authorship' ),
+            'delete_label'                => esc_html__( "Remove", 'molongui-authorship' ),
+            'up_label'                    => esc_html__( "Move up", 'molongui-authorship' ),
+            'down_label'                  => esc_html__( "Move down", 'molongui-authorship' ),
+            'confirm_delete'              => esc_html__( "Are you sure you want to remove this author?", 'molongui-authorship' ),
+            'one_author_required'         => esc_html__( "Every post must have at least one author. You can remove the current author, but if you don't add a new one before saving, you will be assigned as the post author. Are you sure you want to proceed?", 'molongui-authorship' ),
+            'ajax_suggest_link'           => $ajax_suggest_link,
+            'author_search_min_length'    => apply_filters( 'molongui_authorship/author_search_min_length', 2 ),
+            'author_search_results_limit' => apply_filters( 'molongui_authorship/author_search_results_limit', 400 ),
+            'no_suggestions_found'        => esc_html( apply_filters( 'molongui_authorship/no_matching_authors_message', __( "No matching authors found.", 'molongui-authorship' ) ) ),
 
-            'new_author_required'      => esc_html__( "Please fill in all required fields to proceed.", 'molongui-authorship' ),
-            'new_author_wrong_email'   => esc_html__( "Invalid email. Please enter a valid email address.", 'molongui-authorship' ),
-            'new_author_confirm'       => esc_html__( "Are you sure you want to add this new author? To add an existing author, use the search box instead.", 'molongui-authorship' ),
-            'new_author_added'         => esc_html__( "New author created and added to this post. You can complete their profile in the Authors > View All screen.", 'molongui-authorship' ),
+            'new_author_required'         => esc_html__( "Please fill in all required fields to proceed.", 'molongui-authorship' ),
+            'new_author_wrong_email'      => esc_html__( "Invalid email. Please enter a valid email address.", 'molongui-authorship' ),
+            'new_author_confirm'          => esc_html__( "Are you sure you want to add this new author? To add an existing author, use the search box instead.", 'molongui-authorship' ),
+            'new_author_added'            => esc_html__( "New author created and added to this post. You can complete their profile in the Authors > View All screen.", 'molongui-authorship' ),
 
-            'new_author_ajax_error'    => esc_html__( "ERROR: Connection to the backend failed. The author has not be added.", 'molongui-authorship' ),
+            'new_author_ajax_error'       => esc_html__( "ERROR: Connection to the backend failed. The author has not be added.", 'molongui-authorship' ),
 
-            'debug_mode'               => Debug::is_enabled(),
+            'debug_mode'                  => Debug::is_enabled(),
         );
         return apply_filters( 'authorship/edit_post/script_params', $params );
     }

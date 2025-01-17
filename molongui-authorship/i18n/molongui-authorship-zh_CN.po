@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: molongui-authorship 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-15 21:58+0100\n"
+"POT-Creation-Date: 2025-01-17 09:43+0100\n"
 "PO-Revision-Date: 2017-08-21 18:25+0200\n"
 "Last-Translator: <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -255,7 +255,7 @@ msgstr ""
 
 #: common/modules/settings/control.php:539
 #: common/modules/settings/control.php:741
-#: common/modules/settings/control.php:802 includes/settings.php:5172
+#: common/modules/settings/control.php:802 includes/settings.php:5174
 msgid "PRO"
 msgstr ""
 
@@ -1081,8 +1081,8 @@ msgstr ""
 msgid "Sorry, you are not allowed to create users."
 msgstr ""
 
-#: includes/admin/admin-author.php:506 includes/admin/admin-post.php:489
-#: includes/admin/admin-post.php:1672
+#: includes/admin/admin-author.php:506 includes/admin/admin-post.php:490
+#: includes/admin/admin-post.php:1673
 msgid "Author"
 msgstr ""
 
@@ -1181,14 +1181,14 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:893 includes/admin/admin-post.php:583
-#: includes/admin/admin-post.php:610 includes/admin/admin-user.php:230
+#: includes/admin/admin-guest-author.php:893 includes/admin/admin-post.php:584
+#: includes/admin/admin-post.php:611 includes/admin/admin-user.php:230
 #: includes/admin/author-list-table.php:600
 msgid "Visible"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:898 includes/admin/admin-post.php:588
-#: includes/admin/admin-post.php:620 includes/admin/admin-user.php:235
+#: includes/admin/admin-guest-author.php:898 includes/admin/admin-post.php:589
+#: includes/admin/admin-post.php:621 includes/admin/admin-user.php:235
 #: includes/admin/author-list-table.php:605
 msgid "Hidden"
 msgstr ""
@@ -1211,15 +1211,15 @@ msgid "Archived author"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:1127
-#: includes/admin/admin-guest-author.php:1470 includes/admin/admin-post.php:494
-#: includes/admin/admin-post.php:937 includes/admin/admin-user.php:146
+#: includes/admin/admin-guest-author.php:1470 includes/admin/admin-post.php:495
+#: includes/admin/admin-post.php:938 includes/admin/admin-user.php:146
 #: includes/settings.php:680
 #: views/admin/editor/parts/html-editor-tab-layout.php:84
 msgid "Author Box"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:1129
-#: includes/admin/admin-post.php:1692
+#: includes/admin/admin-post.php:1693
 #: views/admin/editor/parts/html-editor-tab-content.php:686
 #: views/admin/editor/parts/html-editor-tab-presets.php:29
 #: views/guest-author/html-admin-box-metabox.php:38
@@ -1230,7 +1230,7 @@ msgid "Default"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:1130
-#: includes/admin/admin-post.php:1693
+#: includes/admin/admin-post.php:1694
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1245,7 +1245,7 @@ msgid "Show"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:1131
-#: includes/admin/admin-post.php:1694
+#: includes/admin/admin-post.php:1695
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1328,145 +1328,145 @@ msgid ""
 "post author. Are you sure you want to proceed?"
 msgstr ""
 
-#: includes/admin/admin-post.php:283
+#: includes/admin/admin-post.php:284
 msgid "No matching authors found."
 msgstr ""
 
-#: includes/admin/admin-post.php:285
+#: includes/admin/admin-post.php:286
 msgid "Please fill in all required fields to proceed."
 msgstr ""
 
-#: includes/admin/admin-post.php:286
+#: includes/admin/admin-post.php:287
 msgid "Invalid email. Please enter a valid email address."
 msgstr ""
 
-#: includes/admin/admin-post.php:287
+#: includes/admin/admin-post.php:288
 msgid ""
 "Are you sure you want to add this new author? To add an existing author, use "
 "the search box instead."
 msgstr ""
 
-#: includes/admin/admin-post.php:288
+#: includes/admin/admin-post.php:289
 msgid ""
 "New author created and added to this post. You can complete their profile in "
 "the Authors > View All screen."
 msgstr ""
 
-#: includes/admin/admin-post.php:290
+#: includes/admin/admin-post.php:291
 msgid "ERROR: Connection to the backend failed. The author has not be added."
 msgstr ""
 
-#: includes/admin/admin-post.php:489 includes/admin/admin-post.php:876
-#: includes/admin/admin-post.php:1672 includes/settings.php:2345
+#: includes/admin/admin-post.php:490 includes/admin/admin-post.php:877
+#: includes/admin/admin-post.php:1673 includes/settings.php:2345
 #: views/admin/html-page-authors.php:19
 msgid "Authors"
 msgstr ""
 
-#: includes/admin/admin-post.php:551
+#: includes/admin/admin-post.php:552
 msgid "guest"
 msgstr ""
 
-#: includes/admin/admin-post.php:556 includes/author.php:373
+#: includes/admin/admin-post.php:557 includes/author.php:373
 msgid "user"
 msgstr ""
 
-#: includes/admin/admin-post.php:615
+#: includes/admin/admin-post.php:616
 msgid "Hidden because no post configuration provided"
 msgstr ""
 
-#: includes/admin/admin-post.php:626
+#: includes/admin/admin-post.php:627
 msgid "Cannot determine visibility for this post type"
 msgstr ""
 
-#: includes/admin/admin-post.php:678
+#: includes/admin/admin-post.php:679
 msgid "All authors"
 msgstr ""
 
-#: includes/admin/admin-post.php:783
+#: includes/admin/admin-post.php:784
 msgid "All guest authors"
 msgstr ""
 
-#: includes/admin/admin-post.php:901 includes/settings.php:2352
+#: includes/admin/admin-post.php:902 includes/settings.php:2352
 msgid "Contributors"
 msgstr ""
 
-#: includes/admin/admin-post.php:988
+#: includes/admin/admin-post.php:989
 msgid "Reviewers? Fact-checkers?"
 msgstr ""
 
-#: includes/admin/admin-post.php:989
+#: includes/admin/admin-post.php:990
 #, php-format
 msgid ""
 "The %sMolongui Post Contributors%s plugin allows you to add contributors to "
 "your posts and display them towards the post author."
 msgstr ""
 
-#: includes/admin/admin-post.php:991
+#: includes/admin/admin-post.php:992
 #, php-format
 msgid "Install it now, it's %sfree%s!"
 msgstr ""
 
-#: includes/admin/admin-post.php:992 includes/settings.php:1983
-#: includes/settings.php:5617
+#: includes/admin/admin-post.php:993 includes/settings.php:1983
+#: includes/settings.php:5619
 msgid "Install Now"
 msgstr ""
 
-#: includes/admin/admin-post.php:994
+#: includes/admin/admin-post.php:995
 #, php-format
 msgid "Ask the site administrator to install it, it's %sfree%s!"
 msgstr ""
 
-#: includes/admin/admin-post.php:995
+#: includes/admin/admin-post.php:996
 msgid "Know More"
 msgstr ""
 
-#: includes/admin/admin-post.php:1048 includes/settings.php:5140
+#: includes/admin/admin-post.php:1049 includes/settings.php:5142
 msgid ""
 "<span class=\"ac_error\" style=\"color:white\"><strong>ERROR</strong>: "
 "Invalid nonce. Reload the page.</span>"
 msgstr ""
 
-#: includes/admin/admin-post.php:1343
+#: includes/admin/admin-post.php:1344
 msgid "Missing or invalid nonce."
 msgstr ""
 
-#: includes/admin/admin-post.php:1350
+#: includes/admin/admin-post.php:1351
 msgid "Missing required author information."
 msgstr ""
 
-#: includes/admin/admin-post.php:1357
+#: includes/admin/admin-post.php:1358
 msgid "Sorry, you are not allowed to add users to this site."
 msgstr ""
 
-#: includes/admin/admin-post.php:1396
+#: includes/admin/admin-post.php:1397
 #, php-format
 msgid ""
 "New user (%s) created and added to this post. You can complete their profile "
 "in the Authors > View All screen."
 msgstr ""
 
-#: includes/admin/admin-post.php:1436
+#: includes/admin/admin-post.php:1437
 #, php-format
 msgid ""
 "New guest author (%s) created and added to this post. You can complete their "
 "profile in the Authors > View All screen."
 msgstr ""
 
-#: includes/admin/admin-post.php:1609
+#: includes/admin/admin-post.php:1610
 msgid ""
 "The author selector has been replaced. Find the new control further down in "
 "this sidebar."
 msgstr ""
 
-#: includes/admin/admin-post.php:1669
+#: includes/admin/admin-post.php:1670
 msgid "Authorship data"
 msgstr ""
 
-#: includes/admin/admin-post.php:1690
+#: includes/admin/admin-post.php:1691
 msgid "Author box"
 msgstr ""
 
-#: includes/admin/admin-post.php:2411
+#: includes/admin/admin-post.php:2412
 msgctxt "Error message displayed on the WP Block Editor"
 msgid ""
 "You are not permitted to post on behalf of others. If you wish to remove "
@@ -1827,7 +1827,7 @@ msgctxt "User role"
 msgid "Guest Author"
 msgstr ""
 
-#: includes/compat/plugins/hootkit.php:60 includes/post.php:1465
+#: includes/compat/plugins/hootkit.php:60 includes/post.php:1464
 msgid "and"
 msgstr ""
 
@@ -2309,7 +2309,7 @@ msgid ""
 "They are hidden to avoid cluttering the page."
 msgstr ""
 
-#: includes/post.php:1417
+#: includes/post.php:1416
 #, php-format
 msgid "%s %d more"
 msgstr ""
@@ -4314,14 +4314,14 @@ msgstr ""
 msgid "Drag this social profile to reorder"
 msgstr ""
 
-#: includes/settings.php:5107
+#: includes/settings.php:5109
 msgid ""
 "No matching social network found. <b><a href='https://www.molongui.com/help/"
 "support/' target='_blank' style='text-decoration:underline;color:"
 "inherit'>Let us know</a>, and we'll work on adding it for you!</b></b>"
 msgstr ""
 
-#: includes/settings.php:5614
+#: includes/settings.php:5616
 #, php-format
 msgid ""
 "Need to add custom attributions to your posts? The %sMolongui Post "
@@ -4330,18 +4330,18 @@ msgid ""
 "photographers, whatever you need to acknowledge."
 msgstr ""
 
-#: includes/settings.php:5615
+#: includes/settings.php:5617
 msgid ""
 "Install now to acknowledge every contribution and take your articles to the "
 "next level."
 msgstr ""
 
-#: includes/settings.php:5616
+#: includes/settings.php:5618
 #, php-format
 msgid "It's %sfree%s!"
 msgstr ""
 
-#: includes/settings.php:5713
+#: includes/settings.php:5715
 msgid "&mdash; No role &mdash;"
 msgstr ""
 

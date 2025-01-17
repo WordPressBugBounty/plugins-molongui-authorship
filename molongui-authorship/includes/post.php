@@ -91,9 +91,8 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          * If you choose to use it, you do so at your own risk, as it may cause code issues.
          */
         list( $author_id, $author_type ) = apply_filters( '_authorship/post_count/author', array( $author_id, $author_type ), $count, $userid, $post_type, $public_only );
-        $author      = new Author( $author_id, $author_type );
-        $post_counts = $author->get_post_counts( $post_type );
-        $post_count  = array_sum( array_filter( $post_counts, 'is_numeric' ) );
+        $author     = new Author( $author_id, $author_type );
+        $post_count = $author->get_post_count( $post_type, true );
         return apply_filters( 'authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
     }
     public function filter_user_posts( $wp_query )

@@ -924,17 +924,16 @@ class Author
         {
             case 'all':
                 $parsed_args['post_type'] = Post::get_post_types();
-            break;
+                break;
 
             case 'selected':
                 $parsed_args['post_type'] = Settings::enabled_post_types();
-            break;
+                break;
 
             case 'related':
                 $options                       = Settings::get();
                 $parsed_args['post_type']      = explode( ",", $options['author_box_related_post_types'] );
-
-            break;
+                break;
         }
         $parsed_args = apply_filters( 'authorship/author/get_posts/args', $parsed_args, $original_args, $this->id, $this->type, $this->author );
         $posts = apply_filters( 'authorship/author/pre_get_posts', null, $this->id, $this->type, $this->author, $parsed_args, $args );
@@ -1099,6 +1098,41 @@ class Author
 
         return ( !empty( $posts ) ? $posts : array() );
     }
+    public function get_post_count( $post_type = null, $use_meta = true )
+    {
+        $count = 0;
+
+        if ( !isset( $post_type ) )
+        {
+            $post_type = Settings::enabled_post_types();
+        }
+        elseif ( !is_array( $post_type ) )
+        {
+            $post_type = array( $post_type );
+        }
+
+        if ( $use_meta )
+        {
+            $count = $this->get_post_count_via_meta( $post_type );
+        }
+        else
+        {
+            $count = $this->get_post_count_via_query( $post_type );
+        }
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.0
+         * @deprecated 5.0.0
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        {
+            $count = apply_filters_deprecated( 'authorship/author/posts_count', array( $count, $this->id, $this->type, $post_type ), '5.0.0', 'molongui_authorship/count_author_posts' );
+        }
+        return apply_filters( 'molongui_authorship/get_author_post_count', $count, $post_type, $this->id, $this->type, $this );
+    }
     public function get_post_counts( $post_types = null )
     {
         if ( !isset( $post_types ) )
@@ -1156,7 +1190,13 @@ class Author
 
         return $count;
     }
-    public function get_post_count( $post_type = 'post' )
+    public function get_post_count_via_meta( $post_type = 'post' )
+    {
+        $post_counts = $this->get_post_counts( $post_type );
+
+        return array_sum( array_filter( $post_counts, 'is_numeric' ) );
+    }
+    public function get_post_count_via_query( $post_type = 'post' )
     {
         $post_statuses_to_count = Admin_Post::get_countable_post_statuses();
 
@@ -1167,20 +1207,7 @@ class Author
             'post_status' => $post_statuses_to_count,
         );
 
-        $count = count( $this->get_posts( $args ) );
-
-        /*!
-         * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
-         *
-         * @since      4.2.0
-         * @deprecated 5.0.0
-         */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
-        {
-            $count = apply_filters_deprecated( 'authorship/author/posts_count', array( $count, $this->id, $this->type, $post_type ), '5.0.0', 'molongui_authorship/count_author_posts' );
-        }
-        return apply_filters( 'molongui_authorship/count_author_posts', $count, $post_type, $this->id, $this->type, $this );
+        return count( $this->get_posts( $args ) );
     }
     public function update_post_type_count( $value, $post_type = 'post' )
     {
