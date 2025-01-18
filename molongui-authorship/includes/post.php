@@ -832,6 +832,10 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         }
         return false;
     }
+    public static function has_author_box( $post = null )
+    {
+        return true;
+    }
     public static function has_guest_author( $post_id = null )
     {
         if ( empty( $post_id ) )

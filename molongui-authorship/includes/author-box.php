@@ -17,6 +17,7 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Debug;
+use Molongui\Authorship\Common\Utils\WP;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author_Box
@@ -49,6 +50,7 @@ class Author_Box
         add_filter( 'authorship/box_script_params', array( $this, 'box_script_params' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
+add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_styles' ) );
         add_filter( "authorship/box_extra_styles", array( $this, 'extra_styles' ) );
         add_filter( '_authorship/box/styles_contents', array( $this, 'update_font_path' ) );
     }
@@ -79,6 +81,16 @@ class Author_Box
         $deps = array();
 
         Assets::register_style( self::$stylesheet, 'box', $deps );
+    }
+    public static function maybe_enqueue_styles()
+    {
+        if ( WP::is_block_theme() )
+        {
+            if ( Post::has_author_box() )
+            {
+                self::enqueue_styles();
+            }
+        }
     }
     public static function enqueue_styles()
     {

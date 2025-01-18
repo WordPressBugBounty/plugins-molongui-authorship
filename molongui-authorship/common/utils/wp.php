@@ -170,5 +170,9 @@ class WP
 
         return false;
     }
+    public static function is_block_theme()
+    {
+        return current_theme_supports( 'block-templates' );
+    }
 
 } // class

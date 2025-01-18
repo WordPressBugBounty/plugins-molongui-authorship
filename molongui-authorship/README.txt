@@ -9,7 +9,7 @@ Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
-All-in-One Authorship Solution: Seamless Author Boxes, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement and SEO.
+All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
 
 == Description ==
 
@@ -196,6 +196,10 @@ In order to run, Molongui Authorship requires:
 == Changelog ==
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
+
+= 5.0.7 (2025-01-18) =
+
+* Fixed: Author box styling now appears correctly when using block themes.
 
 = 5.0.6 (2025-01-17) =
 
