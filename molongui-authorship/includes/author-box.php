@@ -50,7 +50,7 @@ class Author_Box
         add_filter( 'authorship/box_script_params', array( $this, 'box_script_params' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
-add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_styles' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_styles' ) );
         add_filter( "authorship/box_extra_styles", array( $this, 'extra_styles' ) );
         add_filter( '_authorship/box/styles_contents', array( $this, 'update_font_path' ) );
     }
@@ -689,6 +689,7 @@ add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_styles' ) );
                         'fields'         => 'ids',
                         'post__not_in'   => array( $post_id ),
                         'post_type'      => Settings::get( 'author_box_related_posts_post_type', 'post' ),
+                        'post_status'    => 'publish',
                         'posts_per_page' => Settings::get( 'author_box_related_posts_count', 4 ),
                         'order'          => Settings::get( 'author_box_related_posts_order', 'DESC' ),
                         'orderby'        => Settings::get( 'author_box_related_posts_orderby', 'date' ),

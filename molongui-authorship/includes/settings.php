@@ -4412,6 +4412,23 @@ public function get_author_pages_section()
 
         return $screens;
     }
+    public static function enabled_user_roles()
+    {
+        $user_roles = array( 'administrator', 'editor', 'author', 'contributor' );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @deprecated 5.0.8
+         */
+        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        {
+            $user_roles = apply_filters_deprecated( 'authorship/user/roles', array( $user_roles ), '5.0.8' );
+        }
+
+        return $user_roles;
+    }
     public static function is_enabled( $feature = null )
     {
         if ( empty( $feature ) )

@@ -138,7 +138,7 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
                     return;
                 }
             }
-            $match = array_intersect( $user->roles, apply_filters( 'authorship/user/roles', array( 'administrator', 'editor', 'author', 'contributor' ) ) );
+            $match = array_intersect( $user->roles, Settings::enabled_user_roles() );
             if ( empty( $match ) )
             {
                 return;
@@ -392,7 +392,7 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
     }
     public static function update_user_count()
     {
-        $user_roles = apply_filters( 'authorship/user/roles', array( 'administrator', 'editor', 'author', 'contributor' ) );
+        $user_roles = Settings::enabled_user_roles();
 
         /*!
          * FILTER HOOK
@@ -404,13 +404,11 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
          *
          * Some empirical numbers:
          *
-         *   Number of users    Approach        Execution time
-         *   5,000              custom SQL      ~0.30 seconds
-         *   50,000             custom SQL      ~0.30 seconds
-         *   100,000            custom SQL      ~0.30 seconds
-         *   5,000              WP_User_Query   ~0.30 seconds
-         *   50,000             WP_User_Query   ~0.50 seconds
-         *   100,000            WP_User_Query   ~0.77 seconds
+         *   Number of Users    Custom SQL    WP_User_Query
+         *   -----------------------------------------------
+         *   5,000              ~0.30 s       ~0.30 s
+         *   50,000             ~0.30 s       ~0.50 s
+         *   100,000            ~0.30 s       ~0.77 s
          */
         if ( apply_filters( 'molongui_authorship/user_count_custom_sql_query', true ) )
         {

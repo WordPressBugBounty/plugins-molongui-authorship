@@ -350,7 +350,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                 (
                     'name'            => 'author',                                   // this is the "name" attribute for filter <select>
                     'show_option_all' => __( "All authors", 'molongui-authorship' ), // label for all authors (display posts without filter)
-                    'role__in'        => apply_filters( 'authorship/user/roles', array( 'administrator', 'editor', 'author', 'contributor' ) ),
+                    'role__in'        => Settings::enabled_user_roles(),
                 );
                 if ( isset( $_GET['author'] ) )
                 {

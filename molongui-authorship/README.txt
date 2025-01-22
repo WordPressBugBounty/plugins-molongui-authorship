@@ -197,6 +197,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.8 (2025-01-21) =
+
+* Fixed: Author box no longer shows draft posts as related posts.
+
 = 5.0.7 (2025-01-18) =
 
 * Fixed: Author box styling now appears correctly when using block themes.

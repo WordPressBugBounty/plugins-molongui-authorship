@@ -5,6 +5,18 @@ namespace Molongui\Authorship\Common\Utils;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Helpers
 {
+    public static function sanitize_boolean_attr( $value )
+    {
+        if ( is_string( $value ) )
+        {
+            $value = strtolower( $value );
+            if ( in_array( $value, array( 'false', '0', 'no', 'off', 'disabled' ), true ) )
+            {
+                $value = false;
+            }
+        }
+        return (bool) $value;
+    }
     public static function array_sort( $array = array(), $order = 'ASC', $orderby = 'key' )
     {
         if ( empty( $array ) )

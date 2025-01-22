@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-17 09:43+0100\n"
+"POT-Creation-Date: 2025-01-22 00:25+0100\n"
 "PO-Revision-Date: 2020-10-21 22:40+0200\n"
 "Last-Translator: Molongui\n"
 "Language-Team: Amitzy <molongui@amitzy.com>\n"
@@ -1373,7 +1373,7 @@ msgstr "Quitar este autor de la selección"
 msgid "Drag this author to reorder"
 msgstr ""
 
-#: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1023
+#: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1021
 #: includes/admin/author-list-table.php:698 includes/settings.php:5103
 #: views/admin/html-post-author-selector.php:177
 #: views/admin/html-social-profile-selector.php:45
@@ -1486,7 +1486,7 @@ msgid "Install it now, it's %sfree%s!"
 msgstr ""
 
 #: includes/admin/admin-post.php:993 includes/settings.php:1983
-#: includes/settings.php:5619
+#: includes/settings.php:5648
 msgid "Install Now"
 msgstr ""
 
@@ -1580,13 +1580,13 @@ msgid ""
 "if you wish to remove your name as the post author."
 msgstr ""
 
-#: includes/admin/admin-user.php:1024 includes/admin/author-list-table.php:689
+#: includes/admin/admin-user.php:1022 includes/admin/author-list-table.php:689
 #: includes/admin/author-list-table.php:729
 #: views/user/html-admin-avatar-field.php:53
 msgid "Edit"
 msgstr "Editar"
 
-#: includes/admin/admin-user.php:1025 views/user/html-admin-avatar-field.php:65
+#: includes/admin/admin-user.php:1023 views/user/html-admin-avatar-field.php:65
 #, fuzzy
 msgid "Upload Avatar"
 msgstr "Subir una imagen nueva"
@@ -4527,7 +4527,7 @@ msgid ""
 "inherit'>Let us know</a>, and we'll work on adding it for you!</b></b>"
 msgstr ""
 
-#: includes/settings.php:5616
+#: includes/settings.php:5645
 #, php-format
 msgid ""
 "Need to add custom attributions to your posts? The %sMolongui Post "
@@ -4536,18 +4536,18 @@ msgid ""
 "photographers, whatever you need to acknowledge."
 msgstr ""
 
-#: includes/settings.php:5617
+#: includes/settings.php:5646
 msgid ""
 "Install now to acknowledge every contribution and take your articles to the "
 "next level."
 msgstr ""
 
-#: includes/settings.php:5618
+#: includes/settings.php:5647
 #, php-format
 msgid "It's %sfree%s!"
 msgstr ""
 
-#: includes/settings.php:5715
+#: includes/settings.php:5744
 msgid "&mdash; No role &mdash;"
 msgstr ""
 

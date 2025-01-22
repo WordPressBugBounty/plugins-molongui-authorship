@@ -74,7 +74,7 @@ class Authors
     {
         $defaults = array
         (
-            'role__in' => apply_filters( 'authorship/user/roles', array( 'administrator', 'editor', 'author', 'contributor' ) ),
+            'role__in' => Settings::enabled_user_roles(),
             'include'  => apply_filters( 'authorship/user/include', '' ),
             'exclude'  => apply_filters( 'authorship/user/exclude', '' ),
             'order'    => apply_filters( 'authorship/user/order', 'ASC' ),

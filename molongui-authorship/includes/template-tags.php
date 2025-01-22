@@ -99,8 +99,8 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
      * @since 5.0.0
      */
     $suffix = apply_filters( 'molongui_authorship/byline_suffix', $suffix );
-    $linked = apply_filters( 'molongui_authorship/byline_linked', false );
-    $linked = apply_filters_deprecated( 'molongui_author_byline_linked', array( $linked ), '5.0.0', 'molongui_authorship/byline_linked' );
+    $linked = apply_filters( 'molongui_authorship/link_names_in_post_byline', false );
+    $linked = apply_filters_deprecated( 'molongui_author_byline_linked', array( $linked ), '5.0.0', 'molongui_authorship/link_names_in_post_byline' );
     $byline = Post::get_byline( $pid, $separator, $last_separator, $linked );
     return $prefix . $byline . $suffix;
 }
@@ -110,9 +110,9 @@ function molongui_the_author_posts_link( $pid = null, $separator = null, $last_s
 }
 function molongui_get_the_author_posts_link( $pid = null, $separator = null, $last_separator = null, $before = '', $after = '' )
 {
-    add_filter( 'molongui_authorship/byline_linked', '__return_true' );
+    add_filter( 'molongui_authorship/link_names_in_post_byline', '__return_true' );
     $byline = molongui_get_the_author( $pid, $separator, $last_separator, $before, $after );
-    remove_filter( 'molongui_authorship/byline_linked', '__return_true' );
+    remove_filter( 'molongui_authorship/link_names_in_post_byline', '__return_true' );
 
     return $byline;
 }
