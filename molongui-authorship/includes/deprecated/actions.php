@@ -43,8 +43,6 @@ if ( version_compare( get_bloginfo( 'version' ),'4.6.0', '<' ) )
         }
     }
 }
-add_action( 'authorship/author/guest/before_get_data', 'authorship_deprecated_action_get_data_1', 0, 1 );
-add_action( 'authorship/author/guest/after_get_data' , 'authorship_deprecated_action_get_data_2', 0, 1 );
 
 function authorship_deprecated_action_get_data_1( $author_id )
 {
@@ -54,4 +52,3 @@ function authorship_deprecated_action_get_data_2( $author_id )
 {
     do_action_deprecated( 'molongui_authorship_after_get_guest_author_data', array( $author_id ), '4.2.0', 'authorship/author/guest/after_get_data' );
 }
-

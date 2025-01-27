@@ -832,6 +832,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             , MOLONGUI_AUTHORSHIP_VERSION
         );
         global $current_user;
+        $user = Admin_User::instance();
         wp_localize_script( 'molongui-authorship-block-editor-script', 'molongui_authorship_block_editor_data', array
         (
             'root'   => esc_url_raw( rest_url() ),
@@ -843,7 +844,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                 'ref'                => 'user-'.$current_user->ID,
                 'label'              => $current_user->display_name,
                 'avatar'             => esc_url( get_avatar_url( $current_user->ID ) ),
-                'can_post_as_others' => Admin_User::can_post_as_others( $current_user->ID ),
+                'can_post_as_others' => $user->can_post_as_others( $current_user->ID ),
             ),
 
             'selector_notice' =>  esc_html__( "The author selector has been replaced. Find the new control further down in this sidebar.", 'molongui-authorship' ),
@@ -1031,7 +1032,8 @@ public function quick_edit_save_fields( $post_id, $post )
         }
         if ( !Settings::get( 'post_as_others', false ) )
         {
-            if ( !Admin_User::can_post_as_others() )
+            $user = Admin_User::instance();
+            if ( !$user->can_post_as_others() )
             {
                 return $data;
             }
@@ -1211,7 +1213,8 @@ public function quick_edit_save_fields( $post_id, $post )
             }
             if ( !Settings::get( 'post_as_others', false ) )
             {
-                if ( !Admin_User::can_post_as_others() )
+                $user = Admin_User::instance();
+                if ( !$user->can_post_as_others() )
                 {
                     $current_user = wp_get_current_user();
                     $first_author = explode( '-', $new_post_authors[0] );

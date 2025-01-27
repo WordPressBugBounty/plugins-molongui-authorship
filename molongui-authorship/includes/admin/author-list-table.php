@@ -223,7 +223,7 @@ class Author_List_Table extends Base_Author_List_Table
             'archive_url',
             'avatar',
             'description',
-            'post_count',
+            'post_counts',
             'user_roles',
             'user_login',
             'box_display',
@@ -354,9 +354,9 @@ class Author_List_Table extends Base_Author_List_Table
                 {
                     $type = 'user' === $item['type'] ? 'author' : 'guest';
                     $link = admin_url( 'edit.php?post_type='.$post_type['id'].'&'.$type.'='.$author_id );
-                    if ( isset( $item[$column_name][$post_type['id']] ) and $item[$column_name][$post_type['id']] > 0 )
+                    if ( isset( $item['post_counts'][$post_type['id']] ) and $item['post_counts'][$post_type['id']] > 0 )
                     {
-                        $result .= '<div><a href="'.$link.'">'.$item[$column_name][$post_type['id']].' '.$post_type['label'].'</a></div>';
+                        $result .= '<div><a href="'.$link.'">'.$item['post_counts'][$post_type['id']].' '.$post_type['label'].'</a></div>';
                     }
                 }
                 if ( !$result )

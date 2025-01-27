@@ -146,7 +146,7 @@ class Author
          * @since      3.2.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/get' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->author = apply_filters_deprecated( 'authorship/author/get', array( $this->author, $this->id, $this->type ), '5.0.0' );
         }
@@ -210,7 +210,7 @@ class Author
          * @since      4.2.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/name' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->display_name = apply_filters_deprecated( 'authorship/author/name', array( $this->display_name, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_data' );
         }
@@ -280,7 +280,7 @@ class Author
          * @since      3.1.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/mail' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->email = apply_filters_deprecated( 'authorship/author/mail', array( $this->email, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_email' );
         }
@@ -310,7 +310,7 @@ class Author
          * @since      3.1.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/slug' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->slug = apply_filters_deprecated( 'authorship/author/slug', array( $this->slug, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_slug' );
         }
@@ -350,7 +350,7 @@ class Author
          * @since      3.1.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/url' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->archive_url = apply_filters_deprecated( 'authorship/author/url', array( $this->archive_url, $this->id, $this->type, $this->author, array() ), '5.0.0', 'molongui_authorship/get_author_archive_url' );
         }
@@ -378,7 +378,7 @@ class Author
          * @since      3.2.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/link' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->link = apply_filters_deprecated( 'authorship/author/link', array( $this->link, $name, $url, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_link' );
         }
@@ -414,7 +414,7 @@ class Author
          * @since      3.1.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/bio' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->description = apply_filters_deprecated( 'authorship/author/bio', array( $this->description, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_description' );
         }
@@ -482,7 +482,7 @@ class Author
          * @since      3.1.8
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/meta' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->metas[$key] = apply_filters_deprecated( 'authorship/author/meta', array( $this->metas[$key], $this->id, $this->type, $this->author, $key ), '5.0.0', 'molongui_authorship/get_author_meta_{$key}' );
         }
@@ -532,7 +532,7 @@ class Author
          * @since      4.5.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/user_roles' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->user_roles = apply_filters_deprecated( 'authorship/author/user_roles', array( $this->user_roles, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_user_roles' );
         }
@@ -563,7 +563,7 @@ class Author
          * @since      4.5.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/user_login' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->user_login = apply_filters_deprecated( 'authorship/author/user_login', array( $this->user_login, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_user_login' );
         }
@@ -715,7 +715,7 @@ class Author
          * @since      4.3.3
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/get_avatar' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->avatar = apply_filters_deprecated( 'authorship/author/get_avatar', array( $this->avatar, $this->id, $this->type, $this->author, $size, $context ), '5.0.0', 'molongui_authorship/get_author_avatar' );
         }
@@ -822,7 +822,7 @@ class Author
 
         /*!
          * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0.
+         * This action hook is scheduled for removal in version 5.2.0.
          *
          * @param      int   $this->id  Author ID.
          * @since      2.0.0
@@ -831,7 +831,10 @@ class Author
          */
         if ( 'guest' === $this->type )
         {
-            do_action_deprecated( 'authorship/author/guest/before_get_data', array( $this->id ), '5.0.0' );
+            if ( has_action( 'authorship/author/guest/before_get_data' ) )
+            {
+                do_action_deprecated( 'authorship/author/guest/before_get_data', array( $this->id ), '5.0.0' );
+            }
         }
         if ( !empty( $fields ) )
         {
@@ -860,7 +863,7 @@ class Author
 
         /*!
          * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0.
+         * This action hook is scheduled for removal in version 5.2.0.
          *
          * @param      int   $this->id Author ID.
          * @since      2.0.0
@@ -869,7 +872,10 @@ class Author
          */
         if ( 'guest' === $this->type )
         {
-            do_action_deprecated( 'authorship/author/guest/after_get_data', array( $this->id ), '5.0.0' );
+            if ( has_action( 'authorship/author/guest/after_get_data' ) )
+            {
+                do_action_deprecated( 'authorship/author/guest/after_get_data', array( $this->id ), '5.0.0' );
+            }
         }
 
         /*!
@@ -879,7 +885,7 @@ class Author
          * @since      4.2.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/data' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $this->data = apply_filters_deprecated( 'authorship/author/data', array( $this->data, $this->id, $this->type, $this->author ), '5.0.0', 'molongui_authorship/get_author_data' );
         }
@@ -932,10 +938,22 @@ class Author
 
             case 'related':
                 $options                       = Settings::get();
-                $parsed_args['post_type']      = explode( ",", $options['author_box_related_post_types'] );
+                $parsed_args['post_type']      = explode( ",", $options['author_box_related_posts_post_types'] );
                 break;
         }
-        $parsed_args = apply_filters( 'authorship/author/get_posts/args', $parsed_args, $original_args, $this->id, $this->type, $this->author );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         *
+         * @since      4.2.17
+         * @deprecated 5.0.9
+         */
+        if ( has_filter( 'authorship/author/get_posts/args' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        {
+            $parsed_args = apply_filters_deprecated( 'authorship/author/get_posts/args', array( $parsed_args, $original_args, $this->id, $this->type, $this->author ), '5.0.9', 'molongui_authorship/get_posts_args' );
+        }
+        $parsed_args = apply_filters( 'molongui_authorship/get_posts_args', $parsed_args, $original_args, $this->id, $this->type, $this->author );
         $posts = apply_filters( 'authorship/author/pre_get_posts', null, $this->id, $this->type, $this->author, $parsed_args, $args );
         if ( null !== $posts )
         {
@@ -1090,7 +1108,7 @@ class Author
          * @since      4.2.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/posts' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $posts = apply_filters_deprecated( 'authorship/author/posts', array( $posts, $this->id, $this->type, $this->author, $parsed_args ), '5.0.0', 'molongui_authorship/get_author_posts' );
         }
@@ -1127,7 +1145,7 @@ class Author
          * @since      4.2.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/posts_count' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $count = apply_filters_deprecated( 'authorship/author/posts_count', array( $count, $this->id, $this->type, $post_type ), '5.0.0', 'molongui_authorship/count_author_posts' );
         }
@@ -1169,7 +1187,7 @@ class Author
          * @since      4.0.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
+        if ( has_filter( 'authorship/author/post_count' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', false ) )
         {
             $count = apply_filters_deprecated( 'authorship/author/post_count', array( $count, $this->id, $this->type, $this->author, $post_types ), '5.0.0', 'molongui_authorship/get_author_posts_count' );
         }
@@ -1378,6 +1396,19 @@ class Author
         }
 
         return $has_posts;
+    }
+    public function is_coauthor_for( $post_id = null )
+    {
+        if ( !isset( $post_id ) )
+        {
+            $post_id = Post::get_id();
+            if ( empty( $post_id ) )
+            {
+                return false;
+            }
+        }
+        $post_authors = Post::get_authors( $post_id, 'id' );
+        return ( is_array( $post_authors ) and in_array( $this->id, $post_authors ) );
     }
     public function is_archived()
     {

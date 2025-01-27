@@ -247,21 +247,21 @@ public function define_common_settings_section_name()
             'author_box_social_font_size' => 20,
             'author_box_social_color'     => '#999999',
             'author_box_social_target'    => '_blank',
-            'author_box_related_layout'          => 'layout-1',
-            'author_box_related_show_empty'      => true,
-            'author_box_related_none'            => ( doing_action( 'init' ) or did_action( 'init' ) ) ? __( "This author does not have any more posts", 'molongui-authorship' ) : "This author does not have any more posts",
-            'author_box_related_orderby'         => 'date',
-            'author_box_related_order'           => 'DESC',
-            'author_box_related_count'           => 4,
-            'author_box_related_post_types'      => "post", // Data stored as a string with comma-separated items. No array!
-            'author_box_related_font_size'       => 14,
-            'author_box_related_line_height'     => '', // inherit
-            'author_box_related_font_weight'     => '', // default = inherit
-            'author_box_related_text_transform'  => '', // default = inherit
-            'author_box_related_font_style'      => '', // default = inherit
-            'author_box_related_text_decoration' => '', // default = inherit
-            'author_box_related_text_align'      => '', // default = inherit
-            'author_box_related_color'           => '', // inherit
+            'author_box_related_layout'           => 'layout-1',
+            'author_box_related_show_empty'       => true,
+            'author_box_related_none'             => ( doing_action( 'init' ) or did_action( 'init' ) ) ? __( "This author does not have any more posts", 'molongui-authorship' ) : "This author does not have any more posts",
+            'author_box_related_orderby'          => 'date',
+            'author_box_related_order'            => 'DESC',
+            'author_box_related_count'            => 4,
+            'author_box_related_posts_post_types' => "post", // Data stored as a string with comma-separated items. No array!
+            'author_box_related_font_size'        => 14,
+            'author_box_related_line_height'      => '', // inherit
+            'author_box_related_font_weight'      => '', // default = inherit
+            'author_box_related_text_transform'   => '', // default = inherit
+            'author_box_related_font_style'       => '', // default = inherit
+            'author_box_related_text_decoration'  => '', // default = inherit
+            'author_box_related_text_align'       => '', // default = inherit
+            'author_box_related_color'            => '', // inherit
             'author_box_margin_top'    => '20px',
             'author_box_margin_right'  => '0',
             'author_box_margin_bottom' => '20px',
@@ -4422,7 +4422,7 @@ public function get_author_pages_section()
          *
          * @deprecated 5.0.8
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        if ( has_filter( 'authorship/user/roles' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
         {
             $user_roles = apply_filters_deprecated( 'authorship/user/roles', array( $user_roles ), '5.0.8' );
         }

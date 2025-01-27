@@ -12,7 +12,7 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.0.8
+ * Version:           5.0.9
  * Requires at least: 5.2
  * Tested up to:      6.7
  * Requires PHP:      5.6.20
@@ -43,7 +43,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 require_once __DIR__ . '/common/utils/singleton.php';
 final class MolonguiAuthorship
 {
-    const VERSION = '5.0.8';
+    const VERSION = '5.0.9';
     use Singleton;
     function __construct()
     {
@@ -235,8 +235,6 @@ final class MolonguiAuthorship
             MOLONGUI_AUTHORSHIP_DIR . 'dropins/',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/helpers/',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/hooks/',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/deprecated/',
-
             MOLONGUI_AUTHORSHIP_DIR . 'includes/author-box.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/author-filters.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/authors.php',
@@ -250,25 +248,17 @@ final class MolonguiAuthorship
             MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
 
             MOLONGUI_AUTHORSHIP_DIR . 'common/hooks.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
+
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-guest-author.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-post.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/author-box-editor.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/dashboard.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
         );
-
-        if ( is_admin() or ( defined( 'WP_CLI' ) and WP_CLI ) )
-        {
-            $admin_paths = array
-            (
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
-
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-guest-author.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-post.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/author-box-editor.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/dashboard.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
-                MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
-            );
-            $paths = array_merge( $paths, $admin_paths );
-        }
         foreach ( $paths as $path )
         {
             self::require_file( $path );

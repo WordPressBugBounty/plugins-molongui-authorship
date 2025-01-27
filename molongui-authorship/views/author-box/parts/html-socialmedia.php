@@ -80,7 +80,7 @@ if ( !empty( $options['author_box_social_show'] ) )
                      * @since      4.6.19
                      * @deprecated 5.0.0
                      */
-                    if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+                    if ( has_filter( 'authorship/twitter_icon' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
                     {
                         $id = apply_filters_deprecated( 'authorship/twitter_icon', array( $id ), '5.0.0', 'molongui_authorship/twitter_icon' );
                     }

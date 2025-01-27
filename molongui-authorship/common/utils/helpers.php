@@ -9,8 +9,9 @@ class Helpers
     {
         if ( is_string( $value ) )
         {
-            $value = strtolower( $value );
-            if ( in_array( $value, array( 'false', '0', 'no', 'off', 'disabled' ), true ) )
+            $false_values = array( 'false', '0', 'no', 'off', 'disabled', 'hide' );
+
+            if ( in_array( strtolower( $value ), $false_values, true ) )
             {
                 $value = false;
             }

@@ -1,13 +1,18 @@
 <?php
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
+add_filter( 'molongui_authorship/display_author_box', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
-    if ( in_the_loop() and isset( $dbt[7]['function'] ) and $dbt[7]['function'] == "publisher_inject_location" )
+    $fn  = 'publisher_inject_location';
+    if ( in_the_loop() )
     {
-        return false;
+        if ( array_search( $fn, array_column( $dbt, 'function' ) ) )
+        {
+            return false;
+        }
     }
+
     return $default;
 }, 10, 1 );
 add_filter( 'authorship/pre_author_link', function( $link, $original_link, $author_id, $author_nicename )

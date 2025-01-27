@@ -350,9 +350,10 @@ class Post_Count_Updater extends WP_Background_Process
                 return;
             }
 
-            $post_authors       = new \stdClass();
-            $post_authors->id   = $parts[1];
-            $post_authors->type = $parts[0];
+            $post_authors          = array();
+            $post_authors[0]       = new \stdClass();
+            $post_authors[0]->id   = $parts[1];
+            $post_authors[0]->type = $parts[0];
         }
 
         foreach ( $post_authors as $post_author )
@@ -377,9 +378,10 @@ class Post_Count_Updater extends WP_Background_Process
                 return;
             }
 
-            $post_authors       = new \stdClass();
-            $post_authors->id   = $parts[1];
-            $post_authors->type = $parts[0];
+            $post_authors          = array();
+            $post_authors[0]       = new \stdClass();
+            $post_authors[0]->id   = $parts[1];
+            $post_authors[0]->type = $parts[0];
         }
 
         foreach ( $post_authors as $post_author )

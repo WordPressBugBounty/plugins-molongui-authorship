@@ -929,7 +929,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
          * @since      4.2.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        if ( has_filter( 'authorship/social_networks/order' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
         {
             $order = apply_filters_deprecated( 'authorship/social_networks/order', array( $order, array_keys( $sn ) ), '5.0.0', 'molongui_authorship/social_profiles_order' );
         }

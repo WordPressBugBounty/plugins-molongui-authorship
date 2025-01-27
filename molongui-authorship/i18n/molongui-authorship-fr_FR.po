@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: molongui-authorship 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-22 00:25+0100\n"
+"POT-Creation-Date: 2025-01-27 13:40+0100\n"
 "PO-Revision-Date: 2018-04-14 17:28+0200\n"
 "Last-Translator: EMAIL@ADDRESS\n"
 "Language-Team: French\n"
@@ -1009,6 +1009,11 @@ msgstr ""
 msgid "Close and exit the Setup Wizard"
 msgstr ""
 
+#: common/modules/shortcode.php:166
+#, php-format
+msgid "Learn more %1$shere%2$s."
+msgstr ""
+
 #: common/utils/debug.php:226
 msgid "The Block Editor has been hidden so debug information can be seen."
 msgstr ""
@@ -1116,7 +1121,7 @@ msgid "Sorry, you are not allowed to create users."
 msgstr ""
 
 #: includes/admin/admin-author.php:506 includes/admin/admin-post.php:490
-#: includes/admin/admin-post.php:1673
+#: includes/admin/admin-post.php:1674
 #, fuzzy
 msgid "Author"
 msgstr "Auteurs"
@@ -1216,33 +1221,33 @@ msgstr ""
 msgid "Social Profiles"
 msgstr "Taille des icônes des réseaux sociaux"
 
-#: includes/admin/admin-guest-author.php:833 includes/admin/admin-user.php:141
+#: includes/admin/admin-guest-author.php:833 includes/admin/admin-user.php:149
 msgid "Entries"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:835 includes/admin/admin-user.php:150
+#: includes/admin/admin-guest-author.php:835 includes/admin/admin-user.php:158
 #: includes/admin/author-list-table.php:169
 msgid "ID"
 msgstr "ID"
 
 #: includes/admin/admin-guest-author.php:893 includes/admin/admin-post.php:584
-#: includes/admin/admin-post.php:611 includes/admin/admin-user.php:230
+#: includes/admin/admin-post.php:611 includes/admin/admin-user.php:238
 #: includes/admin/author-list-table.php:600
 msgid "Visible"
 msgstr ""
 
 #: includes/admin/admin-guest-author.php:898 includes/admin/admin-post.php:589
-#: includes/admin/admin-post.php:621 includes/admin/admin-user.php:235
+#: includes/admin/admin-post.php:621 includes/admin/admin-user.php:243
 #: includes/admin/author-list-table.php:605
 msgid "Hidden"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:903 includes/admin/admin-user.php:240
+#: includes/admin/admin-guest-author.php:903 includes/admin/admin-user.php:248
 #: includes/admin/author-list-table.php:610
 msgid "Visibility depends on global plugin settings"
 msgstr ""
 
-#: includes/admin/admin-guest-author.php:940 includes/admin/admin-user.php:218
+#: includes/admin/admin-guest-author.php:940 includes/admin/admin-user.php:226
 #: includes/admin/author-list-table.php:567
 #: views/admin/editor/parts/html-editor-tab-content.php:183
 #: views/admin/editor/parts/html-editor-tab-layout.php:237
@@ -1257,7 +1262,7 @@ msgstr "A propos de l'auteur"
 
 #: includes/admin/admin-guest-author.php:1127
 #: includes/admin/admin-guest-author.php:1470 includes/admin/admin-post.php:495
-#: includes/admin/admin-post.php:938 includes/admin/admin-user.php:146
+#: includes/admin/admin-post.php:938 includes/admin/admin-user.php:154
 #: includes/settings.php:680
 #: views/admin/editor/parts/html-editor-tab-layout.php:84
 #, fuzzy
@@ -1265,7 +1270,7 @@ msgid "Author Box"
 msgstr "Boite d'auteur"
 
 #: includes/admin/admin-guest-author.php:1129
-#: includes/admin/admin-post.php:1693
+#: includes/admin/admin-post.php:1694
 #: views/admin/editor/parts/html-editor-tab-content.php:686
 #: views/admin/editor/parts/html-editor-tab-presets.php:29
 #: views/guest-author/html-admin-box-metabox.php:38
@@ -1276,7 +1281,7 @@ msgid "Default"
 msgstr "Défaut"
 
 #: includes/admin/admin-guest-author.php:1130
-#: includes/admin/admin-post.php:1694
+#: includes/admin/admin-post.php:1695
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1291,7 +1296,7 @@ msgid "Show"
 msgstr "Afficher"
 
 #: includes/admin/admin-guest-author.php:1131
-#: includes/admin/admin-post.php:1695
+#: includes/admin/admin-post.php:1696
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1348,7 +1353,7 @@ msgstr "Supprimer l’auteur sélectionné"
 msgid "Drag this author to reorder"
 msgstr ""
 
-#: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1021
+#: includes/admin/admin-post.php:276 includes/admin/admin-user.php:1028
 #: includes/admin/author-list-table.php:698 includes/settings.php:5103
 #: views/admin/html-post-author-selector.php:177
 #: views/admin/html-social-profile-selector.php:45
@@ -1409,7 +1414,7 @@ msgid "ERROR: Connection to the backend failed. The author has not be added."
 msgstr ""
 
 #: includes/admin/admin-post.php:490 includes/admin/admin-post.php:877
-#: includes/admin/admin-post.php:1673 includes/settings.php:2345
+#: includes/admin/admin-post.php:1674 includes/settings.php:2345
 #: views/admin/html-page-authors.php:19
 msgid "Authors"
 msgstr "Auteurs"
@@ -1506,22 +1511,22 @@ msgid ""
 "profile in the Authors > View All screen."
 msgstr ""
 
-#: includes/admin/admin-post.php:1610
+#: includes/admin/admin-post.php:1611
 msgid ""
 "The author selector has been replaced. Find the new control further down in "
 "this sidebar."
 msgstr ""
 
-#: includes/admin/admin-post.php:1670
+#: includes/admin/admin-post.php:1671
 #, fuzzy
 msgid "Authorship data"
 msgstr "Boite de l'auteur"
 
-#: includes/admin/admin-post.php:1691
+#: includes/admin/admin-post.php:1692
 msgid "Author box"
 msgstr "Boite d'auteur"
 
-#: includes/admin/admin-post.php:2412
+#: includes/admin/admin-post.php:2415
 msgctxt "Error message displayed on the WP Block Editor"
 msgid ""
 "You are not permitted to post on behalf of others. If you wish to remove "
@@ -1529,26 +1534,26 @@ msgid ""
 "enable that option for you."
 msgstr ""
 
-#: includes/admin/admin-user.php:367
+#: includes/admin/admin-user.php:375
 #, php-format
 msgid ""
 "Or you can upload a custom profile picture using %sMolongui Authorship field"
 "%s."
 msgstr ""
 
-#: includes/admin/admin-user.php:371
+#: includes/admin/admin-user.php:379
 msgid ""
 "Or you can upload a custom profile using the \"Local Avatar\" field below."
 msgstr ""
 
-#: includes/admin/admin-user.php:375
+#: includes/admin/admin-user.php:383
 #, php-format
 msgid ""
 "Or you can upload a custom profile picture enabling Molongui Authorship "
 "\"Local Avatar\" feature %shere%s."
 msgstr ""
 
-#: includes/admin/admin-user.php:602
+#: includes/admin/admin-user.php:610
 #, php-format
 msgid ""
 "You are not allowed to post on behalf of others. Ask your administrator to "
@@ -1556,13 +1561,13 @@ msgid ""
 "if you wish to remove your name as the post author."
 msgstr ""
 
-#: includes/admin/admin-user.php:1022 includes/admin/author-list-table.php:689
+#: includes/admin/admin-user.php:1029 includes/admin/author-list-table.php:689
 #: includes/admin/author-list-table.php:729
 #: views/user/html-admin-avatar-field.php:53
 msgid "Edit"
 msgstr "Editer"
 
-#: includes/admin/admin-user.php:1023 views/user/html-admin-avatar-field.php:65
+#: includes/admin/admin-user.php:1030 views/user/html-admin-avatar-field.php:65
 #, fuzzy
 msgid "Upload Avatar"
 msgstr "Télécharger une nouvelle image"

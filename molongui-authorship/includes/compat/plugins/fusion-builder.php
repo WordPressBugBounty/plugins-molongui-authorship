@@ -7,22 +7,27 @@ class AvadaBuilder
 {
     public function __construct()
     {
-        add_filter( 'molongui_authorship/add_author_box_to_content', array( $this, 'hide_author_box' ), 10, 4 );
+        add_filter( 'molongui_authorship/display_author_box', array( $this, 'hide_author_box' ) );
     }
     public function hide_author_box( $default )
     {
+        if ( !$default )
+        {
+            return $default;
+        }
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
         $class = 'Fusion_Template_Builder';
         $fn    = 'render_content';
         if ( in_the_loop() )
         {
             if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
-                and
-                isset( $dbt[$i]['class'] ) and ( $dbt[$i]['class'] === $class ) )
+                 and
+                 isset( $dbt[$i]['class'] ) and ( $dbt[$i]['class'] === $class ) )
             {
                 return false;
             }
         }
+
         return $default;
     }
 

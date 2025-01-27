@@ -59,7 +59,7 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
      * @since      2.0.0
      * @deprecated 5.0.0
      */
-    if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+    if ( has_filter( 'molongui_byline_prefix' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
     {
         $prefix = apply_filters_deprecated( 'molongui_byline_prefix', array( $prefix ), '5.0.0', 'molongui_authorship/byline_prefix' );
     }
@@ -87,7 +87,7 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
      * @since      2.0.0
      * @deprecated 5.0.0
      */
-    if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+    if ( has_filter( 'molongui_byline_suffix' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
     {
         $suffix = apply_filters_deprecated( 'molongui_byline_suffix', array( $suffix ), '5.0.0', 'molongui_authorship/byline_suffix' );
     }

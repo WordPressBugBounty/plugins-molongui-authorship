@@ -17,6 +17,7 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Admin\Post_Count_Updater;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Cache;
+use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Common\Utils\WP;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
@@ -24,8 +25,14 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
 {
     const EDIT_USER_SCRIPT   = MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/edit-user.xxxx.min.js';
     const EDIT_AVATAR_SCRIPT = MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/edit-avatar.a05b.min.js';
+    use Singleton;
     public function __construct()
     {
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_user_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_user_scripts' ) );
+        add_filter( 'authorship/edit_user_script_params', array( $this, 'edit_user_script_params' ), 1 );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_avatar_scripts' ) );
+        add_filter( 'authorship/edit_avatar_script_params', array( $this, 'edit_avatar_script_params' ), 1 );
         add_filter( 'manage_users_columns', array( $this, 'edit_admin_columns' ) );
         add_action( 'manage_users_custom_column', array( $this, 'fill_admin_columns' ), 10, 3 );
         add_filter( 'user_profile_picture_description', array( $this, 'picture_description' ), 10, 2 );
@@ -34,24 +41,19 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         add_action( 'profile_update', array( $this, 'save_custom_fields' ) );
         add_action( 'delete_user', array( $this, 'save_user_posts_id' ), 10, 2 );
         add_action( 'deleted_user', array( $this, 'remove_custom_fields' ), 10, 2 );
-        add_action( 'user_register' , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a new user is registered.
-        add_action( 'profile_update', array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after an existing user is updated.
-        add_action( 'deleted_user'  , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a user is deleted from the database.
         add_action( 'user_register' , array( __CLASS__, 'update_user_count' ) ); // Fires immediately after a new user is registered.
         add_action( 'profile_update', array( __CLASS__, 'update_user_count' ) ); // Fires immediately after an existing user is updated.
         add_action( 'deleted_user'  , array( __CLASS__, 'update_user_count' ) ); // Fires immediately after a user is deleted from the database.
         add_action( 'set_user_role' , array( __CLASS__, 'update_user_count' ) ); // Fires after the user's role has changed using the "Change role to..." quick setting
         add_action( 'admin_notices', array( __CLASS__, 'post_as_others_admin_notice' ) );
+        add_action( 'user_register' , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a new user is registered.
+        add_action( 'profile_update', array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after an existing user is updated.
+        add_action( 'deleted_user'  , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a user is deleted from the database.
         if ( Settings::is_enabled( 'co-authors' ) )
         {
-            add_filter( 'user_has_cap', array( __CLASS__, 'edit_others_posts' ), PHP_INT_MAX, 4 );
-            add_filter( 'map_meta_cap', array( __CLASS__, 'map_meta_cap' ), 10, 4 );
+            add_filter( 'user_has_cap', array( $this, 'edit_others_posts' ), PHP_INT_MAX, 4 );
+            add_filter( 'map_meta_cap', array( __CLASS__, 'map_meta_cap' ), PHP_INT_MAX, 4 );
         }
-        add_action( 'admin_enqueue_scripts', array( $this, 'register_user_scripts' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_user_scripts' ) );
-        add_filter( 'authorship/edit_user_script_params', array( $this, 'edit_user_script_params' ), 1 );
-        add_action( 'admin_enqueue_scripts', array( $this, 'register_avatar_scripts' ) );
-        add_filter( 'authorship/edit_avatar_script_params', array( $this, 'edit_avatar_script_params' ), 1 );
     }
     public function edit_admin_columns( $column_headers )
     {
@@ -307,18 +309,19 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
             </div>
         <?php endif;
     }
-    public static function edit_others_posts( $allcaps, $caps, $args, $user )
+    public function edit_others_posts( $allcaps, $caps, $args, $user )
     {
+        if ( !is_user_logged_in() )
+        {
+            return $allcaps;
+        }
         $cap     = $args[0];                         // The capability being checked
+        $user_id = $args[1];                         // The user ID being checked
         $post_id = isset( $args[2] ) ? $args[2] : 0; // The post ID being checked, if available
 
         $postType = empty( $post_id ) ? Post::get_post_type() : Post::get_post_type( $post_id );
         $obj      = get_post_type_object( $postType );
-        if ( !$obj or 'revision' == $obj->name )
-        {
-            return $allcaps;
-        }
-        if ( !is_user_logged_in() )
+        if ( !$obj or 'revision' === $obj->name )
         {
             return $allcaps;
         }
@@ -342,18 +345,17 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         {
             return $allcaps;
         }
-        $post_authors = Post::get_authors( $post_id, 'id' );
-        $allowEdit    = is_array( $post_authors ) ? in_array( $user->ID, $post_authors ) : false;
 
-        if ( $allowEdit )
+        $author = new Author( $user_id );
+        if ( $author->is_coauthor_for( $post_id ) )
         {
             $post_status = get_post_status( $post_id );
 
-            if ( 'publish' == $post_status and isset( $obj->cap->edit_published_posts ) and !empty( $user->allcaps[$obj->cap->edit_published_posts] ) )
+            if ( 'publish' === $post_status and isset( $obj->cap->edit_published_posts ) and !empty( $user->allcaps[$obj->cap->edit_published_posts] ) )
             {
                 $allcaps[$obj->cap->edit_published_posts] = true;
             }
-            elseif ( 'private' == $post_status and isset( $obj->cap->edit_private_posts ) and !empty( $user->allcaps[$obj->cap->edit_private_posts] ) )
+            elseif ( 'private' === $post_status and isset( $obj->cap->edit_private_posts ) and !empty( $user->allcaps[$obj->cap->edit_private_posts] ) )
             {
                 $allcaps[$obj->cap->edit_private_posts] = true;
             }
@@ -495,7 +497,7 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         Cache::clear( 'posts' );
         Cache::clear( 'users' );
     }
-    public static function can_post_as_others( $user = 0 )
+    public function can_post_as_others( $user = 0 )
     {
         $post_as_others = false;
 
@@ -503,12 +505,12 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
 
         if ( $user instanceof \WP_User )
         {
-            remove_filter( 'user_has_cap', array( __CLASS__, 'edit_others_posts' ), PHP_INT_MAX );
+            remove_filter( 'user_has_cap', array( $this, 'edit_others_posts' ), PHP_INT_MAX );
             if ( user_can( $user, 'edit_others_posts' ) )
             {
                 $post_as_others = true;
             }
-            add_filter( 'user_has_cap', array( __CLASS__, 'edit_others_posts' ), PHP_INT_MAX, 4 );
+            add_filter( 'user_has_cap', array( $this, 'edit_others_posts' ), PHP_INT_MAX, 4 );
         }
 
         /*!
@@ -518,7 +520,7 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
          * @since      4.8.0
          * @deprecated 5.0.0
          */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        if ( has_filter( 'authorship/can_post_as_others' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
         {
             $post_as_others = apply_filters_deprecated( 'authorship/can_post_as_others', array( $post_as_others ), '5.0.0', 'molongui_authorship/can_post_as_others' );
         }
@@ -537,4 +539,4 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
     }
 
 } // class
-new Admin_User();
+Admin_User::instance();

@@ -16,13 +16,14 @@ add_filter( 'molongui_authorship_do_filter_name', function( $leave, &$args )
     }
     return false;
 }, 10, 2 );
-add_filter( 'molongui_authorship/add_author_box_to_content', function( $render )
+add_filter( 'molongui_authorship/display_author_box', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
-    if ( array_search( 'flatsome_video', array_column( $dbt, 'function' ) ) )
+    $fn  = 'flatsome_video';
+    if ( array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
-        $render = false;
+        return false;
     }
 
-    return $render;
+    return $default;
 }, 10, 1 );

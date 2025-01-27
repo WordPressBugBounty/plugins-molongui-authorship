@@ -197,6 +197,16 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.9 (2025-01-27) =
+
+* Fixed: Error when updating post counters after changing a post's author.
+* Fixed: Backend author list now displays post counts correctly.
+* Fixed: Co-authors can now edit posts they are assigned to when using the Block Editor.
+* Fixed: Author box no longer displays twice on certain themes.
+* Fixed: Replaced deprecated filters with new equivalents to prevent warning messages.
+* Deprecated: The `authorship/author/get_posts/args` filter. Scheduled for removal in version 5.2.0.
+* Removed: Long-deprecated functions, actions, and filters.
+
 = 5.0.8 (2025-01-21) =
 
 * Fixed: Author box no longer shows draft posts as related posts.

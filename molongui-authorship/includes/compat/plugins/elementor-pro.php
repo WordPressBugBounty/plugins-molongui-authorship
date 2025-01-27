@@ -16,5 +16,5 @@ add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value
     }
     return $aim;
 }, 10, 4 );
-add_filter( 'authorship/byline_separator'     , array( Helpers::class, 'space_to_nbsp' ) );
-add_filter( 'authorship/byline_last_separator', array( Helpers::class, 'space_to_nbsp' ) );
+add_filter( 'molongui_authorship/co_authors_separator'     , array( Helpers::class, 'space_to_nbsp' ) );
+add_filter( 'molongui_authorship/co_authors_last_separator', array( Helpers::class, 'space_to_nbsp' ) );

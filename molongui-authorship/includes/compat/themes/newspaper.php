@@ -72,17 +72,12 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
     }
     return $author;
 }, 10, 3 );
-add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
+add_filter( 'molongui_authorship/display_author_box', function( $default )
 {
     if ( doing_action( 'tdc_footer' ) )
     {
         return false;
     }
+
     return $default;
 });
-/*
-add_filter( '_authorship/filter/count/author_type', function( $type )
-{
-    if ( molongui_is_guest_author() ) return 'guest';
-    return $type;
-});*/

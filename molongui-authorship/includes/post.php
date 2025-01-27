@@ -567,7 +567,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 break;
 
             case 'related':
-                $entries = explode( ",", $options['author_box_related_post_types'] );
+                $entries = explode( ",", $options['author_box_related_posts_post_types'] );
                 break;
 
             default:
@@ -724,7 +724,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          * @deprecated 5.0.0
          * @use        molongui_authorship/byline_separator_space
          */
-        if ( !apply_filters_deprecated( 'authorship/byline_separator_autospace', array( true ), '5.0.0', 'authorship/byline_separator_space' ) )
+        if ( has_filter( 'authorship/byline_separator_autospace' ) and !apply_filters_deprecated( 'authorship/byline_separator_autospace', array( true ), '5.0.0', 'authorship/byline_separator_space' ) )
         {
             $space = '';
         }
@@ -740,8 +740,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          * authors to display in the byline. This doesn't apply to automatic byline replacement ("Magic Bylines"), as
          * $count is not provided.
          *
-         * @since 4.6.19
-         * @since 5.0.0  Renamed from 'authorship/byline_separator' and 'authorship/byline_last_separator'.
+         * @since 5.0.0
          */
         $separator      = apply_filters( 'molongui_authorship/co_authors_separator', $separator, $count );
         $last_separator = apply_filters( 'molongui_authorship/co_authors_last_separator', $last_separator, $count );

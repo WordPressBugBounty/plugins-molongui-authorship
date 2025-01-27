@@ -173,7 +173,7 @@ add_filter( 'authorship/get_avatar_data/skip', function( $default, $args, $dbt )
     }
     return $default;
 }, 10, 3 );
-add_filter( 'molongui_authorship/add_author_box_to_content', function( $default )
+add_filter( 'molongui_authorship/display_author_box', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     if ( empty( $dbt ) )
