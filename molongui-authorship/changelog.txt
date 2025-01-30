@@ -2,6 +2,11 @@
 
 == Changelog ==
 
+= 5.0.10 (2025-01-30) =
+
+* Fixed: Author box now displayed when using custom Divi Builder templates for posts.
+* Fixed: Co-authored posts are now listed on the author page when using Elementor's Loop Grid widget.
+
 = 5.0.9 (2025-01-27) =
 
 * Fixed: Error when updating post counters after changing a post's author.

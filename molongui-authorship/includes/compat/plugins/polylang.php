@@ -1,4 +1,18 @@
 <?php
+/*!
+ * Compatibility module for seamless integration with Polylang.
+ *
+ *   Package : Plugin
+ *   Name    : Polylang
+ *   Author  : WP SYNTEX
+ *   URI     : https://polylang.pro
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes/compat/plugins
+ * @since      4.4.0
+ * @version    5.0.0
+ */
 
 namespace Molongui\Authorship;
 

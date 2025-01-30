@@ -7,7 +7,7 @@ class Divi
 {
     public function __construct()
     {
-        add_filter( 'molongui_authorship/add_author_box_to_content_outside_the_loop', array( $this, 'add_author_box_on_templates' ) );
+        add_filter( 'molongui_authorship/add_author_box', array( $this, 'add_author_box_on_templates' ) );
         add_filter( 'molongui_authorship_do_filter_name', array( $this, 'filter_the_author_name' ), 10, 2 );
         add_filter( 'molongui_edit_main_query_only', array( $this, 'filter_archive_query' ), 10, 2 );
     }

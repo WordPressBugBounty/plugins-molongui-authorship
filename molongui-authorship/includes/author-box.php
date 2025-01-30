@@ -27,9 +27,6 @@ class Author_Box
     static  $stylesheet     = '';
     private $stylesheet_ltr = '/assets/css/author-box.29d2.min.css';
     private $stylesheet_rtl = '/assets/css/author-box-rtl.cdb1.min.css';
-
-private $post;
-private $author;
     use Singleton;
     public function __construct()
     {
@@ -565,11 +562,10 @@ private $author;
                 else
                 {
                     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
-                    $fn  = 'get_the_block_template_html';
-
-                    if ( array_search( $fn, array_column( $dbt, 'function' ) ) )
+                    if ( array_search( 'get_the_block_template_html', array_column( $dbt, 'function' ) ) )
                     {
                         $add = true;
+                        Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
                     }
                     else
                     {
@@ -790,9 +786,11 @@ private $author;
         if ( !in_the_loop() )
         {
             $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
-            $fn  = 'get_the_block_template_html';
-
-            if ( !array_search( $fn, array_column( $dbt, 'function' ) ) )
+            if ( array_search( 'get_the_block_template_html', array_column( $dbt, 'function' ) ) )
+            {
+                Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
+            }
+            else
             {
                 /*!
                  * FILTER HOOK
@@ -801,19 +799,15 @@ private $author;
                  * @param bool  False by default.
                  * @since 5.0.4
                  */
-                if ( !apply_filters( 'molongui_authorship/add_author_box_to_content_outside_the_loop', false ) )
+                if ( apply_filters( 'molongui_authorship/add_author_box_to_content_outside_the_loop', false ) )
+                {
+                    Debug::console_log(null, "Running outside the loop. Author box forced to be added by the provided filter." );
+                }
+                else
                 {
                     Debug::console_log(null, "Author box not added to the_content: Running outside the loop." );
                     return $the_content;
                 }
-                else
-                {
-                    Debug::console_log(null, "Running outside the loop. Author box forced to be added by the provided filter." );
-                }
-            }
-            else
-            {
-                Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
             }
         }
 

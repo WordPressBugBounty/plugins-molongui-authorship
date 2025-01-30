@@ -184,6 +184,15 @@ class Authors
         if ( $min_post_count )
         {
             $get_data = true;
+
+            if ( $min_post_count > 1 )
+            {
+                add_filter( 'molongui_authorship/get_author_data_fields', function( $fields )
+                {
+                    $fields[] = 'post_counts';
+                    return $fields;
+                });
+            }
         }
         if ( $type == 'authors' or $type == 'users' )
         {
@@ -219,7 +228,7 @@ class Authors
                             $total_post_count = 0;
                             foreach ( $post_types as $post_type )
                             {
-                                $total_post_count = $total_post_count + (int)$authors[$key]['post_count'][$post_type];
+                                $total_post_count = $total_post_count + (int)$authors[$key]['post_counts'][$post_type];
                             }
 
                             if ( $total_post_count < (int)$min_post_count )
@@ -280,7 +289,7 @@ class Authors
                             $total_post_count = 0;
                             foreach ( $post_types as $post_type )
                             {
-                                $total_post_count = $total_post_count + (int)$authors[$key]['post_count'][$post_type];
+                                $total_post_count = $total_post_count + (int)$authors[$key]['post_counts'][$post_type];
                             }
 
                             if ( $total_post_count < (int)$min_post_count )
