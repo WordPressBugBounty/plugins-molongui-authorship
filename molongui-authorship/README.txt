@@ -197,6 +197,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.11 (2025-02-04) =
+
+* Fixed: Post byline now shows additional co-authors count.
+
 = 5.0.10 (2025-01-30) =
 
 * Fixed: Author box now displayed when using custom Divi Builder templates for posts.

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: molongui-authorship 5.0.10\n"
+"Project-Id-Version: molongui-authorship 5.0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 09:03+0100\n"
+"POT-Creation-Date: 2025-02-04 18:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2317,7 +2317,7 @@ msgstr ""
 
 #: includes/post.php:1416
 #, php-format
-msgid "%s %d more"
+msgid "%d more"
 msgstr ""
 
 #: includes/settings.php:157 includes/settings.php:572

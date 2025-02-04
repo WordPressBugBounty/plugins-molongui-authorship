@@ -46,6 +46,16 @@ class User
     {
         return in_array( $role, (array) self::get_roles( $user ) );
     }
+    public static function has_multiple_roles( $user = null )
+    {
+        $user = self::get( $user );
+        if ( !$user or !$user->exists() )
+        {
+            return false;
+        }
+        $roles = $user->roles;
+        return count( $roles ) > 1;
+    }
     public static function get_browser_data()
     {
         $browser = new Browser();

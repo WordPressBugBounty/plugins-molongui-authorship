@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-27 13:40+0100\n"
+"POT-Creation-Date: 2025-02-04 18:21+0100\n"
 "PO-Revision-Date: 2020-10-21 22:40+0200\n"
 "Last-Translator: Molongui\n"
 "Language-Team: Amitzy <molongui@amitzy.com>\n"
@@ -2444,7 +2444,7 @@ msgstr ""
 
 #: includes/post.php:1416
 #, php-format
-msgid "%s %d more"
+msgid "%d more"
 msgstr ""
 
 #: includes/settings.php:157 includes/settings.php:572

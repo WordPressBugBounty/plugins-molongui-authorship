@@ -678,9 +678,9 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             $byline .= $item;
             ++$i;
         }
-        if ( $show_remaining and $count < $names_to_display )
+        if ( $show_remaining and $count > $names_to_display )
         {
-            $byline .= ' ' . sprintf( __( '%s %d more', 'molongui-authorship' ), $last_separator, $count - $names_to_display );
+            $byline .= $last_separator . sprintf( __( '%d more', 'molongui-authorship' ), $count - $names_to_display );
         }
         Debug::console_log( array( 'post_id' => $post_id, 'post_authors' => $post_authors, 'names_to_display' => $names_to_display, 'byline_authors' => $byline_authors, 'separator' => $separator, 'last_separator' => $last_separator, 'byline' => $byline ), "Byline information" );
         return apply_filters( 'authorship/post_byline', $byline, $post_id, $post_authors );

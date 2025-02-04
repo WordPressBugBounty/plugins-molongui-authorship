@@ -2,6 +2,10 @@
 
 == Changelog ==
 
+= 5.0.11 (2025-02-04) =
+
+* Fixed: Post byline now shows additional co-authors count.
+
 = 5.0.10 (2025-01-30) =
 
 * Fixed: Author box now displayed when using custom Divi Builder templates for posts.
