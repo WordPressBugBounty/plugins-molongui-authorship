@@ -10,9 +10,9 @@ if ( !empty( $options['author_box_social_show'] ) )
 {
 	$networks  = Social::get( 'enabled' );
     $_networks = array();
-    if ( $profile['show_icon_web'] )   $networks['web']   = array ( 'name' => 'Website', 'url' => 'https://www.example.com/', 'color' => '#333', 'premium' => false );
-	if ( $profile['show_icon_mail'] )  $networks['mail']  = array ( 'name' => 'E-mail',  'url' => 'your_name@example.com',    'color' => '#333', 'premium' => false );
-	if ( $profile['show_icon_phone'] ) $networks['phone'] = array ( 'name' => 'Phone',   'url' => '123456789',                'color' => '#333', 'premium' => false );
+    if ( $profile['show_icon_web'] )   $networks['web']   = array( 'name' => 'Website', 'url' => 'https://www.example.com/', 'color' => '#333', 'premium' => false );
+	if ( $profile['show_icon_mail'] )  $networks['mail']  = array( 'name' => 'E-mail',  'url' => 'your_name@example.com',    'color' => '#333', 'premium' => false );
+	if ( $profile['show_icon_phone'] ) $networks['phone'] = array( 'name' => 'Phone',   'url' => '123456789',                'color' => '#333', 'premium' => false );
     foreach ( $networks as $id => $network )
     {
         if ( !empty( $profile[$id] ) )

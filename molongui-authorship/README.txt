@@ -197,6 +197,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.12 (2025-02-06) =
+
+* Fixed: Incorrect author meta information displayed in the author box when profile fields are missing.
+
 = 5.0.11 (2025-02-04) =
 
 * Fixed: Post byline now shows additional co-authors count.

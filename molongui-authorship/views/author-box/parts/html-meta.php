@@ -10,6 +10,8 @@ if ( empty( $options['author_box_meta_show'] ) )
 $meta      = '';
 $nofollow  = ( $options['social_profiles_nofollow'] ? 'rel="nofollow"' : '' );
 $separator = sprintf( '&nbsp;%s&nbsp;', '<span class="m-a-box-meta-divider">'.$options['author_box_meta_divider'].'</span>' );
+
+$author_job = $author_company = $author_phone = $author_email = $author_web = $author_meta = '';
 if ( !empty( $profile['job'] ) )
 {
     $author_job = '<span ' . ( $add_microdata ? 'itemprop="jobTitle"' : '' ) . '>' . esc_html( $profile['job'] ) . '</span>';
@@ -65,6 +67,8 @@ if ( 'slim' === $options['author_box_layout'] and $options['author_box_show_rela
 
     <?php $author_more = ob_get_clean();
 }
+
+$showing_job = $showing_company = $showing_phone = $showing_email = $showing_web = $showing_more = false;
 if ( !empty( $author_job ) )
 {
     $showing_job = true;

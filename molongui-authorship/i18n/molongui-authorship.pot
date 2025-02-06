@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: molongui-authorship 5.0.11\n"
+"Project-Id-Version: molongui-authorship 5.0.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 18:21+0100\n"
+"POT-Creation-Date: 2025-02-06 20:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2327,14 +2327,14 @@ msgstr ""
 #: includes/settings.php:389
 #: views/admin/editor/parts/html-editor-tab-content.php:557
 #: views/admin/editor/parts/html-editor-tab-content.php:558
-#: views/admin/html-page-editor.php:63 views/author-box/parts/html-meta.php:98
+#: views/admin/html-page-editor.php:63 views/author-box/parts/html-meta.php:101
 msgid "at"
 msgstr ""
 
 #: includes/settings.php:390
 #: views/admin/editor/parts/html-editor-tab-content.php:568
 #: views/admin/editor/parts/html-editor-tab-content.php:569
-#: views/author-box/parts/html-meta.php:58
+#: views/author-box/parts/html-meta.php:60
 #: views/guest-author/html-admin-profile-metabox.php:74
 msgid "Website"
 msgstr ""
@@ -2342,14 +2342,14 @@ msgstr ""
 #: includes/settings.php:391
 #: views/admin/editor/parts/html-editor-tab-content.php:579
 #: views/admin/editor/parts/html-editor-tab-content.php:580
-#: views/admin/html-page-editor.php:65 views/author-box/parts/html-meta.php:66
+#: views/admin/html-page-editor.php:65 views/author-box/parts/html-meta.php:67
 msgid "+ posts"
 msgstr ""
 
 #: includes/settings.php:392
 #: views/admin/editor/parts/html-editor-tab-content.php:590
 #: views/admin/editor/parts/html-editor-tab-content.php:591
-#: views/admin/html-page-editor.php:66 views/author-box/parts/html-meta.php:70
+#: views/admin/html-page-editor.php:66 views/author-box/parts/html-meta.php:71
 msgid "Bio ⮌"
 msgstr ""
 

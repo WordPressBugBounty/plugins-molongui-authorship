@@ -580,6 +580,45 @@ class Author_Box
         }
         return apply_filters( 'molongui_authorship/add_author_box', $add );
     }
+    private function should_display()
+    {
+        $display   = true;
+        $post      = Post::get();
+        $post_type = Post::retrieve_post_type( $post );
+        if ( !in_array( $post_type, Settings::get_post_types_with_author_box() ) )
+        {
+            $display = false;
+            Debug::console_log( null, sprintf(
+                "Author box not displayed: current post type (%s) doesn't support the author box feature.",
+                $post_type
+            ));
+        }
+        elseif ( 'hide' === get_post_meta( $post->ID, '_molongui_author_box_display', true ) )
+        {
+            $display = false;
+            Debug::console_log( null, sprintf(
+                "Author box not displayed: current post (#%s) is configured to not display the author box.",
+                $post->ID
+            ));
+        }
+        elseif ( 'default' === get_post_meta( $post->ID, '_molongui_author_box_display', true )  )
+        {
+            if ( in_array( $post_type, Settings::get_post_types_with_author_box( 'manual' ) ) )
+            {
+                if ( !Settings::get( 'author_box_auto_display_override', true )
+                    and !in_array( $post_type, Settings::get_post_types_with_author_box( 'auto' ) ) )
+                {
+                    $display = false;
+                    Debug::console_log( null, sprintf(
+                        "Author box not displayed: current post type (%s) is configured to display the author box only if the post (#%s) has the display setting set to 'Show'.",
+                        $post_type,
+                        $post->ID
+                    ));
+                }
+            }
+        }
+        return apply_filters( 'molongui_authorship/display_author_box', $display );
+    }
     public function get_markup()
     {
         if ( !$this->should_display() )
@@ -704,45 +743,6 @@ class Author_Box
          * @since  5.0.0
          */
         return apply_filters( 'molongui_authorship/author_box_markup', ob_get_clean(), $profiles );
-    }
-    private function should_display()
-    {
-        $display   = true;
-        $post      = Post::get();
-        $post_type = Post::retrieve_post_type( $post );
-        if ( !in_array( $post_type, Settings::get_post_types_with_author_box() ) )
-        {
-            $display = false;
-            Debug::console_log( null, sprintf(
-                "Author box not displayed: current post type (%s) doesn't support the author box feature.",
-                $post_type
-            ));
-        }
-        elseif ( 'hide' === get_post_meta( $post->ID, '_molongui_author_box_display', true ) )
-        {
-            $display = false;
-            Debug::console_log( null, sprintf(
-                "Author box not displayed: current post (#%s) is configured to not display the author box.",
-                $post->ID
-            ));
-        }
-        elseif ( 'default' === get_post_meta( $post->ID, '_molongui_author_box_display', true )  )
-        {
-            if ( in_array( $post_type, Settings::get_post_types_with_author_box( 'manual' ) ) )
-            {
-                if ( !Settings::get( 'author_box_auto_display_override', true )
-                     and !in_array( $post_type, Settings::get_post_types_with_author_box( 'auto' ) ) )
-                {
-                    $display = false;
-                    Debug::console_log( null, sprintf(
-                        "Author box not displayed: current post type (%s) is configured to display the author box only if the post (#%s) has the display setting set to 'Show'.",
-                        $post_type,
-                        $post->ID
-                    ));
-                }
-            }
-        }
-        return apply_filters( 'molongui_authorship/display_author_box', $display );
     }
     public function render()
     {
