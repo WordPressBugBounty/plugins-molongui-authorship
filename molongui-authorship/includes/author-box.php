@@ -25,8 +25,8 @@ class Author_Box
 {
     static  $javascript     = '';
     static  $stylesheet     = '';
-    private $stylesheet_ltr = '/assets/css/author-box.29d2.min.css';
-    private $stylesheet_rtl = '/assets/css/author-box-rtl.cdb1.min.css';
+    private $stylesheet_ltr = '/assets/css/author-box.3aec.min.css';
+    private $stylesheet_rtl = '/assets/css/author-box-rtl.1e72.min.css';
     use Singleton;
     public function __construct()
     {

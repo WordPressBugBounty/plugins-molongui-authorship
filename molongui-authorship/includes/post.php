@@ -656,7 +656,11 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         if ( $names_to_display < $count )
         {
             $byline_authors = array_slice( $post_authors, 0, $names_to_display );
-            $show_remaining = true;
+
+            if ( !empty( Settings::get( 'co_authors_in_byline', true ) ) )
+            {
+                $show_remaining = true;
+            }
         }
         list( $separator, $last_separator ) = self::get_byline_separators( $separator, $last_separator, $names_to_display );
 

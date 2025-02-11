@@ -826,6 +826,12 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
     }
     public function enqueue_block_editor_scripts()
     {
+        $current_screen = get_current_screen();
+        if ( !isset( $current_screen ) or $current_screen->base !== 'post' )
+        {
+            return;
+        }
+
         wp_enqueue_script( 'molongui-authorship-block-editor-script'
             , $this->javascript_gutenberg
             , array( 'wp-data', 'wp-plugins', 'wp-edit-post', 'wp-element' )

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Molongui Authorship\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 20:41+0100\n"
+"POT-Creation-Date: 2025-02-11 13:49+0100\n"
 "PO-Revision-Date: 2016-09-12 12:31+0100\n"
 "Last-Translator: Amitzy <molongui@amitzy.com>\n"
 "Language-Team: Amitzy\n"
@@ -1144,7 +1144,7 @@ msgid "Sorry, you are not allowed to create users."
 msgstr ""
 
 #: includes/admin/admin-author.php:506 includes/admin/admin-post.php:490
-#: includes/admin/admin-post.php:1674
+#: includes/admin/admin-post.php:1682
 #, fuzzy
 msgid "Author"
 msgstr "Auteur"
@@ -1292,7 +1292,7 @@ msgid "Author Box"
 msgstr "auteurschap doos"
 
 #: includes/admin/admin-guest-author.php:1129
-#: includes/admin/admin-post.php:1694
+#: includes/admin/admin-post.php:1702
 #: views/admin/editor/parts/html-editor-tab-content.php:686
 #: views/admin/editor/parts/html-editor-tab-presets.php:29
 #: views/guest-author/html-admin-box-metabox.php:38
@@ -1303,7 +1303,7 @@ msgid "Default"
 msgstr "Standaard"
 
 #: includes/admin/admin-guest-author.php:1130
-#: includes/admin/admin-post.php:1695
+#: includes/admin/admin-post.php:1703
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1318,7 +1318,7 @@ msgid "Show"
 msgstr "Toon"
 
 #: includes/admin/admin-guest-author.php:1131
-#: includes/admin/admin-post.php:1696
+#: includes/admin/admin-post.php:1704
 #: views/admin/editor/parts/html-editor-tab-content.php:205
 #: views/admin/editor/parts/html-editor-tab-content.php:343
 #: views/admin/editor/parts/html-editor-tab-content.php:459
@@ -1436,7 +1436,7 @@ msgid "ERROR: Connection to the backend failed. The author has not be added."
 msgstr ""
 
 #: includes/admin/admin-post.php:490 includes/admin/admin-post.php:877
-#: includes/admin/admin-post.php:1674 includes/settings.php:2345
+#: includes/admin/admin-post.php:1682 includes/settings.php:2345
 #: views/admin/html-page-authors.php:19
 #, fuzzy
 msgid "Authors"
@@ -1534,23 +1534,23 @@ msgid ""
 "profile in the Authors > View All screen."
 msgstr ""
 
-#: includes/admin/admin-post.php:1611
+#: includes/admin/admin-post.php:1619
 msgid ""
 "The author selector has been replaced. Find the new control further down in "
 "this sidebar."
 msgstr ""
 
-#: includes/admin/admin-post.php:1671
+#: includes/admin/admin-post.php:1679
 #, fuzzy
 msgid "Authorship data"
 msgstr "auteurschap doos"
 
-#: includes/admin/admin-post.php:1692
+#: includes/admin/admin-post.php:1700
 #, fuzzy
 msgid "Author box"
 msgstr "auteurschap doos"
 
-#: includes/admin/admin-post.php:2415
+#: includes/admin/admin-post.php:2423
 msgctxt "Error message displayed on the WP Block Editor"
 msgid ""
 "You are not permitted to post on behalf of others. If you wish to remove "
@@ -1940,7 +1940,7 @@ msgctxt "User role"
 msgid "Guest Author"
 msgstr "Gast auteur"
 
-#: includes/compat/plugins/hootkit.php:60 includes/post.php:1464
+#: includes/compat/plugins/hootkit.php:60 includes/post.php:1468
 #, fuzzy
 msgid "and"
 msgstr "Branded"
@@ -2449,7 +2449,7 @@ msgid ""
 "They are hidden to avoid cluttering the page."
 msgstr ""
 
-#: includes/post.php:1416
+#: includes/post.php:1420
 #, php-format
 msgid "%d more"
 msgstr ""

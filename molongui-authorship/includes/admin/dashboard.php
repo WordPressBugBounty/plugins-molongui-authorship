@@ -11,8 +11,8 @@ class Dashboard
 {
     private $javascript     = '';
     private $stylesheet     = '';
-    private $stylesheet_ltr = '/assets/css/admin.04d7.min.css';
-    private $stylesheet_rtl = '/assets/css/admin-rtl.f493.min.css';
+    private $stylesheet_ltr = '/assets/css/admin.eaaa.min.css';
+    private $stylesheet_rtl = '/assets/css/admin-rtl.4bc5.min.css';
     public function __construct()
     {
         $this->set_assets();

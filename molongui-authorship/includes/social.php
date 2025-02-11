@@ -871,15 +871,71 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'uhive' => array
             (
                 'name'     => 'Uhive',
-                'url'      => 'https://uhive.com/z/userid/',
+                'url'      => 'https://uhive.com/z/user_id/',
                 'color'    => '#2081e2',
                 'premium'  => true,
             ),
             'wechat' => array
             (
                 'name'     => 'WeChat',
-                'url'      => 'weixin://dl/chat?{userid}',
+                'url'      => 'weixin://dl/chat?{user_id}',
                 'color'    => '#09B83E',
+                'premium'  => false,
+            ),
+            'bluesky' => array
+            (
+                'name'     => 'Bluesky',
+                'url'      => 'https://bsky.app/profile/user_id.bsky.social',
+                'color'    => '#1185fe',
+                'premium'  => false,
+            ),
+            'strava' => array
+            (
+                'name'     => 'Strava',
+                'url'      => 'https://www.strava.com/athletes/user_id',
+                'color'    => '#fc5200',
+                'premium'  => false,
+            ),
+            'imdb' => array
+            (
+                'name'     => 'IMDb',
+                'url'      => 'https://www.imdb.com/name/user_id',
+                'color'    => '#f5c518',
+                'premium'  => false,
+            ),
+            'threads' => array
+            (
+                'name'     => 'Threads',
+                'url'      => 'https://www.threads.net/@username',
+                'color'    => '#000000',
+                'premium'  => false,
+            ),
+            'qq' => array
+            (
+                'name'     => 'QQ',
+                'url'      => '',
+                'color'    => '#000000',
+                'premium'  => false,
+            ),
+            'messenger' => array
+            (
+                'name'     => 'Messenger',
+                'url'      => 'https://m.me/username',
+                'color'    => '#168aff',
+                'premium'  => false,
+            ),
+            'muck-rack' => array
+            (
+                'name'     => 'Muck Rack',
+                'url'      => 'https://muckrack.com/handle',
+                'color'    => '#1c456d',
+                'premium'  => true,
+            ),
+            'flipboard' => array
+            (
+                'name'     => 'Flipboard',
+                'url'      => 'https://flipboard.com/@username',
+                'color'    => '#e12828',
                 'premium'  => false,
             ),
         );

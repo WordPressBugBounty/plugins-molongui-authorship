@@ -2,6 +2,18 @@
 
 == Changelog ==
 
+= 5.0.13 (2025-02-11) =
+
+* Added: Threads as author social profile option.
+* Added: Bluesky as author social profile option.
+* Added: Strava as author social profile option.
+* Added: Facebook Messenger as author social profile option.
+* Added: Flipboard Messenger as author social profile option.
+* Added: QQ as author social profile option.
+* Added: IMDb as author social profile option.
+* Fixed: Post byline now omits the co-authors count when configured not to display co-authors.
+* Fixed: Required Block Editor scripts are now loaded exclusively on the edit post screen.
+
 = 5.0.12 (2025-02-06) =
 
 * Fixed: Incorrect author meta information displayed in the author box when profile fields are missing.
