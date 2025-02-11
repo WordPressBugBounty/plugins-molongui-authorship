@@ -197,6 +197,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.14 (2025-02-11) =
+
+* Added: Filter to customize attributes for the author avatar `<img>` element.
+
 = 5.0.13 (2025-02-11) =
 
 * Added: Threads as author social profile option.

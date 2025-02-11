@@ -2,6 +2,10 @@
 
 == Changelog ==
 
+= 5.0.14 (2025-02-11) =
+
+* Added: Filter to customize attributes for the author avatar `<img>` element.
+
 = 5.0.13 (2025-02-11) =
 
 * Added: Threads as author social profile option.

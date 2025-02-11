@@ -607,12 +607,36 @@ class Author
                 $attr = array_merge( $attr, array( 'itemprop' => 'image' ) );
             }
 		}
+
+        /*!
+         * FILTER HOOK
+         * Allows filtering the attributes for the returned <img> HTML tag.
+         *
+         * add_filter( 'molongui_authorship/author_avatar_attr', function( $attr )
+         * {
+         *    //$attr = array_merge( $attr, array( 'extra_attr' => 'style="border-radius:100%;"' ) ); // This doesn't work!
+         *      $attr = array_merge( $attr, array( 'style' => 'border-radius:100%;' ) );
+         *
+         *      $attr = array_merge( $attr, array( 'class' => 'myCustomClass' ) );
+         *
+         *      return $attr;
+         * }
+         *
+         * @param array  $attr    HTML attributes to insert in the IMG element. Is not sanitized.
+         * @param int    $id      The author's id.
+         * @param int    $type    The author's type, either 'user' or 'guest'.
+         * @param string $size    The size for the image {thumbnail | medium | medium_large | large | full | "array(x,y)"}.
+         * @param string $context Usage context {screen | box | url}.
+         * @param Author $this    The current author instance.
+         * @since 5.0.14
+         */
+        $attr = apply_filters( 'molongui_authorship/author_avatar_attr', array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $this->id, $this->type, $size, $context, $this );
         switch ( !empty( $source ) ? $source : ( !empty( $options['author_box_avatar_source'] ) ? $options['author_box_avatar_source'] : '' ) )
         {
             case 'gravatar':
                 if ( $context != 'url' )
                 {
-                    $this->avatar = $this->get_gravatar( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                    $this->avatar = $this->get_gravatar( $attr, $options );
                 }
                 else
                 {
@@ -623,7 +647,7 @@ class Author
             case 'acronym':
                 if ( $context != 'url' )
                 {
-                    $this->avatar = $this->get_acronym( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                    $this->avatar = $this->get_acronym( $attr, $options );
                 }
                 else
                 {
@@ -683,14 +707,14 @@ class Author
                             }
                             else
                             {
-                                $this->avatar = $this->get_gravatar( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                                $this->avatar = $this->get_gravatar( $attr, $options );
                             }
                             break;
 
                         case 'acronym':
                             if ( $context !== 'url' )
                             {
-                                $this->avatar = $this->get_acronym( array_merge( $attr, array( 'width' => $width, 'height' => $height ) ), $options );
+                                $this->avatar = $this->get_acronym( $attr, $options );
                             }
                             break;
 

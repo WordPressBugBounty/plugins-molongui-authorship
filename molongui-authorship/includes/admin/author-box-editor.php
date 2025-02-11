@@ -413,7 +413,7 @@ class Author_Box_Editor
         }
         wp_die();
     }
-    public function validate_spacing_options( $options, $current )
+    public function validate_spacing_options( $options, $current = null )
     {
         $size = array
         (
