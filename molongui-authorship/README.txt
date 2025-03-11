@@ -197,6 +197,11 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.0.15 (2025-03-11) =
+
+* Fixed: Co-authored posts are now listed when using Elementor's Posts widget with the author filter.
+* Fixed: Fatal error caused by missing quotes when the Jetpack plugin was active.
+
 = 5.0.14 (2025-02-11) =
 
 * Added: Filter to customize attributes for the author avatar `<img>` element.
