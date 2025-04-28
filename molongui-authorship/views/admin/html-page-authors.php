@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 <div class="wrap">
 
     <h1 class="wp-heading-inline"><?php _e( "Authors", 'molongui-authorship' ); ?></h1>
-    <a href="<?php echo admin_url( 'admin.php?page=author-new' ); ?>" class="page-title-action"><?php _e( 'Add New' ); ?></a>
+    <a href="<?php echo admin_url( 'admin.php?page=author-new' ); ?>" class="page-title-action"><?php _e( 'Add Author' ); ?></a>
     <hr class="wp-header-end">
 
     <div id="nds-wp-list-table-demo" class="molongui-authors">

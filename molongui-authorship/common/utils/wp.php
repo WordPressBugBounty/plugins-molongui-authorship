@@ -174,5 +174,16 @@ class WP
     {
         return current_theme_supports( 'block-templates' );
     }
+    public static function is_plugin_installed( $plugin_file )
+    {
+        if ( !function_exists( 'get_plugins' ) )
+        {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        $all_plugins = get_plugins();
+
+        return isset( $all_plugins[ $plugin_file ] );
+    }
 
 } // class

@@ -8,6 +8,8 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Setup_Wizard
 {
     private $slug;
+    protected $settings_slug = 'options-general.php?page=molongui-authorship';
+    private $settings_page;
     private $css;
     private $markup;
     private $steps;
@@ -17,7 +19,9 @@ class Setup_Wizard
         $this->markup = apply_filters( 'authorship/wizard_markup', MOLONGUI_AUTHORSHIP_DIR . 'views/admin/html-setup-wizard.php' );
         $this->steps  = apply_filters( 'authorship/wizard_steps', 0 );
 
-        $this->css    = is_rtl() ? 'common/modules/wizard/assets/css/styles-rtl.adb4.min.css' : 'common/modules/wizard/assets/css/styles.eff3.min.css';
+        $this->css = is_rtl() ? 'common/modules/wizard/assets/css/styles-rtl.adb4.min.css' : 'common/modules/wizard/assets/css/styles.eff3.min.css';
+
+        $this->settings_page = admin_url( $this->settings_slug );
 
         add_action( 'admin_init', array( $this, 'maybe_load_wizard' ) );
         add_action( 'admin_init', array( $this, 'maybe_redirect_after_activation' ), PHP_INT_MAX );
@@ -270,9 +274,6 @@ class Setup_Wizard
                 display: flex;
                 align-items: center;
                 margin: 1em 0 0;
-                border: 1px dotted #b5b5b5;
-                border-left: 0;
-                border-right: 0;
             }
             .toggle:first-of-type
             {
@@ -293,6 +294,7 @@ class Setup_Wizard
                 width: 74px;
                 height: 36px;
                 overflow: hidden;
+                box-shadow: 0 0 2px #bdbcbc;
             }
 
             .toggle .button.r, .toggle .button.r .layer
@@ -364,9 +366,15 @@ class Setup_Wizard
             .toggle__label
             {
                 margin-left: 10px;
-                font-family: monospace;
                 font-size: 14px;
+                font-weight: 600;
                 color: #777;
+            }
+            .toggle__label--description
+            {
+                font-weight: normal;
+                font-size: 0.9em;
+                color: #b7b7b7;
             }
 
             .upgrade
@@ -462,8 +470,8 @@ class Setup_Wizard
 
                 <footer class="molongui-setup-wizard__footer">
                     <p class="molongui-exit-link">
-                        <a id="molongui-exit-link--back"  href="<?php echo esc_url( admin_url( 'options-general.php?page=molongui-authorship' ) ); ?>"><?php esc_html_e( "Go back to the Dashboard", 'molongui-authorship' ); ?></a>
-                        <a id="molongui-exit-link--close" href="<?php echo esc_url( admin_url( 'options-general.php?page=molongui-authorship' ) ); ?>" style="display:none;"><?php esc_html_e( "Close and exit the Setup Wizard", 'molongui-authorship' ); ?></a>
+                        <a id="molongui-exit-link--back"  href="<?php echo esc_url( $this->settings_page ); ?>"><?php esc_html_e( "Go back to the Dashboard", 'molongui-authorship' ); ?></a>
+                        <a id="molongui-exit-link--close" href="<?php echo esc_url( $this->settings_page ); ?>" style="display:none;"><?php esc_html_e( "Close and exit the Setup Wizard", 'molongui-authorship' ); ?></a>
                     </p>
                 </footer>
 

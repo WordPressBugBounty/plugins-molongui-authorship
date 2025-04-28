@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/amitzy/
 Tags: author box, author bio, guest author, co-authors, multiple authors
 Requires PHP: 5.6.20
 Requires at least: 5.2
-Tested up to: 6.7
+Tested up to: 6.8
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -13,63 +13,109 @@ All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Autho
 
 == Description ==
 
-**Molongui Authorship** provides you with all the tools that WordPress is missing when it comes to giving credit to your content creators. Molongui Authorship helps you to properly credit your authors and one-time contributors for their work. Quick, easy and hassle-free.
+**Properly credit authors & contributors—quickly, easily, and hassle-free.**
+_The all-in-one authorship plugin for WordPress: show bios, add co-authors, credit guests, and boost SEO._
 
-✅ **Author Box**. Author bio section displayed at the end of your posts
+Tired of jumping through hoops to properly attribute authors? **Molongui Authorship** makes it **effortless** to showcase contributors—whether they're registered users, guests, or co-authors.
 
-✅ **Guest Author**. Post without creating an account for the author
+✅ **Author Box** – Beautiful, customizable bios with social links
+✅ **Guest Authors** – Credit guest writers **without creating user accounts**
+✅ **Co-Authors** – Add **multiple authors** to a single post with seamless byline integration
 
-✅ **Co-Authors**. Add multiple authors to a single post
+🚀 **Switching from another plugin?** Import data in 1 click from _Co-Authors Plus_, _PublishPress Authors_, and _One User Avatar_.
 
-= Main Features =
+✔️ Add author boxes with bios and social links
+✔️ Credit guest authors without user accounts
+✔️ Add co-authors to any post or page
+✔️ Boost author credibility and SEO
+✔️ Seamless 1-click migration from other plugins
 
-- Fully customizable author box: styles, content, placement, and display
-- Nice looking author box on desktop, laptop, tablet or mobile phones
-- 90+ author social icons
-- Showcase related author posts
+= Key Features =
 
-- Post content from guest contributors
-- Just pick the guest author from the dropdown list
-- Each guest author has a profile but not an account
-- The post byline automatically displays the guest author name
+🛠 **Author Box – Your Authors, Elevated**
+Transform how authors are presented with the most customizable, engagement-boosting author box for WordPress.
 
-- Credit everyone adding multiple authors to a single post
-- Just pick the authors from the dropdown list in the edit post screen
-- The post byline automatically displays all authors name
-- Each name on the post byline link to their author page
+> ✨ **Pixel-Perfect Customization**
+> - Multiple pre-designed templates
+> - Different layouts (boxed, minimalist, tabbed, inline)
+> - Live preview editor with real-time styling
+> - Mobile-optimized responsive design
+> - Custom CSS panel for unlimited tweaks
 
-= Premium Features =
+> ✨ **Author Profiles That Engage**
+> - 90+ social icons (including emerging platforms)
+> - "Related Posts" section to boost engagement
+> - Guest and co-author compatibility
 
-> ✨ Premium features **only available in [Molongui Authorship Pro](https://www.molongui.com/wordpress-plugin-post-authors "Click to explore all features")**
->
-> - Custom Post Type support
-> - Additional author box layouts, styling options and display settings
-> - Support for HTML tags and third party shortcodes and embeds in the author bio
-> - Handy shortcodes to display the author box, the post byline and any author information anywhere. Know more [here](https://www.molongui.com/help/molongui-authorship-available-shortcodes/ "Click to see available shortcodes")
-> - Author archive page for guest authors
-> - Author list. 4 different layouts, user role filter and [more](https://www.molongui.com/wordpress-plugin-post-authors/author-list/ "Know more")
-> - List of posts by author. 5 different layouts, pagination and [more](https://www.molongui.com/help/molongui_author_posts/ "Know more")
-> - 1-click user to guest conversion and vice versa
-> - Allow visitors to search content by author name. Know [more](https://www.molongui.com/wordpress-plugin-post-authors/search-by-author-name/ "Know more")
-> - Disable author pages for registered WordPress users
-> - Add a post byline anywhere via shortcode. Useful if your theme does not show a byline for your posts
-> - Byline modifiers so you can prepend and append any string to them (i.e. By)
-> - Retrieve author information via shortcode. Very useful to use with page builders
-> - Guest author and co-authored post information available for third-party applications via REST API
+> ✨ **Context-Smart Display**
+> - Automatic placement before/after content
+> - Customizable headings ("About the Author", "Meet the Expert", etc.)
+> - Schema markup for Google rich snippets and improved Google E-E-A-T
+> - AMP/RTL support for broader compatibility
 
-[Read more](https://www.molongui.com/wordpress-plugin-post-authors "Explore all premium features") about the Molongui Authorship advanced features.
+> ⚡ **Premium Advantages**
+> - Additional premium layouts
+> - Dynamic bios with rich text, media, HTML tags, and third party shortcodes support
+> - 30+ extra niche social icons
+> - Advanced conditional logic (user roles, tags, etc.)
+> - Custom post type support
+> - Shortcode to display the author box wherever
 
-= More Info =
+👥 **Guest Authors – Credit Contributors Without the Clutter**
+Give proper attribution without creating unnecessary user accounts—ideal for one-time contributors, interviewees, or guest bloggers.
 
-🆚 **Why go Pro?** Check [here](https://www.molongui.com/#free-vs-pro "Features comparison") a Free VS Pro feature comparison
+> ✨ **Native WordPress Integration**
+> - Add guest authors as easily as regular users—no technical hassle
+> - Dropdown selection in the post editor—just pick a name and go
+> - Full profiles with bios, avatars, and social links (no Gravatar required)
+> - Custom fields for job titles, affiliations, or custom links
 
-🔝 **Want to try the Pro version?** Click [here](https://demos.molongui.com/test-drive-molongui-authorship-pro/ "Click to try the Molongui Authorship Pro")
+> ✨ **Seamless Frontend Display**
+> - Auto-display in post bylines with linked names
+> - Author box compatibility—show guest bios alongside regular authors
+> - SEO-optimized: Updates `author` meta tags for accurate attribution
 
-🤨 **Need help?** Click [here](https://www.molongui.com/help/authorship/ "Click to read the plugin documentation")
+> ⚡ **Premium Advantages**
+> - Guest author archive pages (boost credibility with dedicated profiles)
+> - 1-click user-to-guest conversion: Clean up unused accounts while preserving authorship
+> - Bulk edit & clone: Save time reusing guest profiles
+> - REST API support: Integrate guest data with third-party tools
+> - Import/Export tool for easy migrations
 
-✉ **Need support** Click [here](https://www.molongui.com/help/support/ "Click to open a support ticket with us")
+👨‍👩‍👧‍👦 **Co-Authors – Flawless Multi-Author Attribution**
+Credit every contributor fairly—whether it's joint articles, team projects, or collaborative content.
 
-👋 **Want to chat with us?** Click [here](https://www.tidiochat.com/chat/foioudbu7xqepgvwseufnvhcz6wkp7am "Click to live chat with us")
+> ✨ **Effortless Collaboration**
+> - Add unlimited co-authors via simple dropdown in the post editor
+> - Works seamlessly with both regular users and guest authors
+> - Drag-and-drop author ordering (control name display sequence)
+> - No taxonomy conflicts—cleaner than legacy plugins
+
+> ✨ **Automatic Frontend Display**
+> - Smart bylines auto-update with all author names (e.g., "By John, Lisa & Max")
+> - Each name links to author pages (guest authors included)
+> - Schema.org markup for proper multi-author SEO
+
+> ⚡ **Premium Advantages**
+> - Byline modifiers (add prefixes like "By" or suffixes like "et al.")
+> - REST API support for headless WordPress setups
+> - Shortcodes to display co-author lists anywhere
+
+🔍 **Additional Premium Features**
+Only available in [Molongui Authorship Pro](https://www.molongui.com/wordpress-plugin-post-authors "Click to explore all features")
+
+  - Author list. 4 different layouts, user role filter and [more](https://www.molongui.com/wordpress-plugin-post-authors/author-list/ "Learn more")
+  - List of posts by author. 5 different layouts, pagination and [more](https://www.molongui.com/help/molongui_author_posts/ "Learn more")
+  - Allow visitors to search content by author name. Learn [more](https://www.molongui.com/wordpress-plugin-post-authors/search-by-author-name/ "Learn more")
+  - Disable author pages for registered WordPress users
+  - Add a post byline anywhere via shortcode. Useful if your theme does not show a byline for your posts
+  - Retrieve author information via shortcode. Very useful to use with page builders. Learn more [here](https://www.molongui.com/help/molongui-authorship-available-shortcodes/ "Click to see available shortcodes")
+
+💡 **Ready to enhance your authorship experience?**
+Compare [Free vs Pro](https://www.molongui.com/#free-vs-pro "Features comparison") | [Try Pro](https://demos.molongui.com/test-drive-molongui-authorship-pro/ "Click to try the Molongui Authorship Pro") | [Get Support](https://www.molongui.com/help/support/ "Click to open a support ticket with us") | [Live Chat](https://www.tidiochat.com/chat/foioudbu7xqepgvwseufnvhcz6wkp7am "Click to live chat with us")
+
+= 🚀 1-Click Migration Tool – Switch Without Losing Data =
+Switching from _Co-Authors Plus_, _PublishPress Authors_, or _One User Avatar_? **Import your existing author data with 1 click**! No manual work needed.
 
 This plugin uses a third-party service to enable live chat communication with our support team, exclusively for administrators in the backend. You can disable this service via the plugin settings page. For more information about the live chat [service provider](https://www.tidio.com/) review their [privacy policy](https://www.tidio.com/privacy-policy/) and [terms](https://www.tidio.com/terms/).
 
@@ -196,6 +242,23 @@ In order to run, Molongui Authorship requires:
 == Changelog ==
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
+
+= 5.1.0 (2025-04-28) =
+
+* **Added**: Setup wizard to guide users through initial configuration.
+* **Added**: UI migration tool for transferring authors and authorship data from the Co-Authors Plus plugin.
+* **Added**: UI migration tool for transferring authors and authorship data from the PublishPress Authors plugin.
+* **Added**: UI migration tool for importing user avatars from the One User Avatar plugin.
+* **Added**: WP-CLI command to migrate authors and authorship data from the Co-Authors Plus plugin.
+* **Added**: WP-CLI command to migrate authors and authorship data from the PublishPress Authors plugin.
+* **Added**: WP-CLI command to migrate user avatars from the One User Avatar plugin.
+* **Added**: Filters to exclude registered users and guest authors from post author search results.
+* **Fixed**: Post count updater now updates post counts correctly.
+* **Changed**: Replaced `Add New` wording with `Add {Item}` in line with WordPress standards.
+* **Changed**: Replaced `View All` wording with `View {Items}` in line with WordPress standards.
+* **Changed**: Updated framework files to v3.4.0.
+* **Changed**: Added compatibility with WordPress 6.8.
+* **Changed**: Updated plugin description in `readme.txt`.
 
 = 5.0.15 (2025-03-11) =
 
@@ -397,85 +460,6 @@ In order to run, Molongui Authorship requires:
 * Updated framework files to version 3.0.0
 * Raised min PHP supported version to 5.6.20... come on
 * Added WordPress 6.5 compatibility
-
-= 4.7.10 (2024-02-28) =
-
-* Added hook to allow non-privileged users (user account without administrative privileges) to publish content on behalf of others
-* Fixed missing JS variables
-* Fixed localized JS variables loaded twice
-* Fixed PHP error caused by wrong function name
-
-= 4.7.9 (2024-02-26) =
-
-* Fixed guest post bylines showing weird data with some themes
-
-= 4.7.8 (2024-02-26) =
-
-* Added option to add custom PHP snippets
-* Added option to add custom CSS rules
-* Fixed author box shadow
-* Fixed IDOR vulnerability reported by Patchstack
-* Fixed XSS vulnerability reported by Patchstack
-* Improved compatibility with the tagDiv Cloud Library plugin
-* Updated framework files to version 2.5.0
-
-= 4.7.7 (2024-01-26) =
-
-* Improved compatibility with the Astra theme
-* Fixed PHP fatal error when displaying a page where the author box is not displayed
-* Fixed some PHP warnings
-
-= 4.7.6 (2024-01-25) =
-
-* Improved compatibility with the tagDiv Composer plugin
-* Improved compatibility with the Impreza theme
-* Added some new debug messages (only visible when debug mode is enabled)
-* Fixed social media schema not being added to the page markup
-* Fixed options export not working
-
-= 4.7.5 (2024-01-09) =
-
-* Fixed information exposure issue reported by Wordfence
-* Fixed some non-blocking PHP warnings
-* Deprecated Stitcher social network
-
-= 4.7.4 (2023-12-02) =
-
-* Fixed wrong Twitter meta tag for creator
-* Fixed missing font-display descriptor
-* Fixed BAC vulnerability reported by Patchstack
-* Added WordPress 6.4 compatibility
-
-= 4.7.3 (2023-10-18) =
-
-* Fixed extra spacing displayed at the bottom of the author bio in the author box
-* Fixed author box live preview not working for the author name and meta colors
-* Added compatibility with block themes
-* Improved compatibility with the Elementor Pro plugin
-* Improved compatibility with the Rank Math SEO plugin
-* Improved compatibility with the Mailster plugin
-* Updated readme file
-
-= 4.7.2 (2023-09-14) =
-
-* Fixed missing separators in multi-authored posts' byline
-* Fixed wrong avatar displayed on guest authors posts
-* Fixed byline not linking properly on co-authored posts when first author is a guest
-* Fixed posts list displaying post authors twice after a quick edit
-* Improved compatibility with the Polylang plugin
-
-= 4.7.1 (2023-09-07) =
-
-* Fixed PHP error thrown by method_exists checking on null
-
-= 4.7.0 (2023-09-07) =
-
-* Fixed weird URLs on page schema that led to 404 errors. Know more [here](https://www.molongui.com/help/byline-issues-and-how-to-fix-them/).
-* Fixed weird behavior on co-authored post bylines when author name contained the same string used as names separator. Know more [here](https://www.molongui.com/help/byline-issues-and-how-to-fix-them/).
-* Fixed user local avatar not being saved when additional profile fields disabled
-* Improved compatibility with the Uncode Core plugin for the Uncode theme.
-* Deprecated 'authorship/filter_author_link' filter. Use 'authorship/pre_author_link' instead.
-* Deprecated '_authorship/filter/get_user_by' filter. Use 'authorship/pre_get_user_by' instead.
 
 See changelog for all versions [here](https://www.molongui.com/help/molongui-authorship-changelog/ "Full changelog").
 

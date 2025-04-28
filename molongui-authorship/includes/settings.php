@@ -358,7 +358,7 @@ $options[] = array
         'href'     => admin_url( 'edit.php' ),
         'id'       => 'edit_posts',
         'label'    => __( "Posts", 'molongui-authorship' ),
-        'title'    => __( "View All Posts", 'molongui-authorship' ),
+        'title'    => __( "View Posts", 'molongui-authorship' ),
         'class'    => 'same-width',
         'disabled' => false,
     ),
@@ -1292,7 +1292,7 @@ if ( apply_filters( 'molongui_authorship/show_help_options', true ) )
 
         UI::heading( array
         (
-            'title' => __( "Posts Authorship", 'molongui-authorship' ),
+            'title' => __( "Post Authorship", 'molongui-authorship' ),
         ));
 
         echo '<div class="molongui-ui-cards">';
@@ -4439,19 +4439,20 @@ public function get_author_pages_section()
         $options  = self::get();
         $features = array
         (
-            'author-box'    => 'author_box_enabled',
-            'co-authors'    => 'co_authors_enabled',
-            'guest-author'  => 'guest_author_enabled',
-            'local-avatar'  => 'local_avatar_enabled',
-            'user-profile'  => 'user_extra_data_enabled',
-            'author-search' => 'search_by_author_enabled',
-            'guest-search'  => 'guests_in_search_enabled',
-            'cache'         => 'object_cache_enabled',
-            'microdata'     => 'schema_markup_enabled',
-            'theme-compat'  => 'compatibility_mode_themes',
-            'plugin-compat' => 'compatibility_mode_plugins',
-            'author-in-api' => 'rest_api_add_post_authors',
-            'guest-in-api'  => 'rest_api_add_guests_authors',
+            'author-box'           => 'author_box_enabled',
+            'co-authors'           => 'co_authors_enabled',
+            'guest-author'         => 'guest_author_enabled',
+            'local-avatar'         => 'local_avatar_enabled',
+            'user-profile'         => 'user_extra_data_enabled',
+            'author-search'        => 'search_by_author_enabled',
+            'guest-search'         => 'guests_in_search_enabled',
+            'cache'                => 'object_cache_enabled',
+            'microdata'            => 'schema_markup_enabled',
+            'theme-compat'         => 'compatibility_mode_themes',
+            'plugin-compat'        => 'compatibility_mode_plugins',
+            'rest-api-integration' => 'rest_api_integration_enabled',
+            'author-in-api'        => 'rest_api_add_post_authors',
+            'guest-in-api'         => 'rest_api_add_guests_authors',
         );
 
         return !empty( $options[$features[$feature]] );

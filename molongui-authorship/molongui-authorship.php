@@ -12,9 +12,9 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.0.15
+ * Version:           5.1.0
  * Requires at least: 5.2
- * Tested up to:      6.7
+ * Tested up to:      6.8
  * Requires PHP:      5.6.20
  * Author:            Molongui
  * Author URI:        https://www.molongui.com
@@ -43,7 +43,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 require_once __DIR__ . '/common/utils/singleton.php';
 final class MolonguiAuthorship
 {
-    const VERSION = '5.0.15';
+    const VERSION = '5.1.0';
     use Singleton;
     function __construct()
     {
@@ -248,6 +248,7 @@ final class MolonguiAuthorship
             MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
 
             MOLONGUI_AUTHORSHIP_DIR . 'common/hooks.php',
+            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/wizard.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
 
             MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
@@ -258,10 +259,17 @@ final class MolonguiAuthorship
             MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
+            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/co-authors-plus.php',
+            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/publishpress-authors.php',
+            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/one-user-avatar.php',
         );
         foreach ( $paths as $path )
         {
             self::require_file( $path );
+        }
+        if ( defined( 'WP_CLI' ) && WP_CLI )
+        {
+            self::require_file( MOLONGUI_AUTHORSHIP_DIR . 'includes/integrations/wp-cli.php' );
         }
         Debug::console_log( null, sprintf( "%s %s", MOLONGUI_AUTHORSHIP_TITLE, MOLONGUI_AUTHORSHIP_VERSION ) );
         do_action( 'authorship/init' );

@@ -2,9 +2,8 @@
 /*!
  * WP-CLI integration for Molongui Authorship.
  *
- * This file registers a custom command for WP-CLI to interact with the Molongui Authorship plugin, allowing for tasks
- * such as migrating authorship data from other plugins, updating post counters, and adding default settings via the
- * command line.
+ * Registers custom WP-CLI commands to interact with the Molongui Authorship plugin, enabling tasks like migrating
+ * authorship data, updating post counters, and adding default authorship settings via the command line.
  *
  * @author     Molongui
  * @package    Authorship
@@ -26,16 +25,28 @@ class MolonguiAuthorship_CLI extends \WP_CLI_Command
     }
     public function migrate_coauthors_plus( $args, $assoc_args )
     {
-        $migrator = new \Molongui\Authorship\Migration\Co_Authors_Plus();
-        $migrator->run();
-        \WP_CLI::success( 'Co-Authors Plus data migration completed.' );
+        if ( apply_filters( 'molongui_authorship/migrate_coauthors_plus', false ) )
+        {
+            new \Molongui\Authorship\Migration\Co_Authors_Plus\Cli();
+        }
     }
     public function migrate_publishpress_authors( $args, $assoc_args )
     {
+        if ( apply_filters( 'molongui_authorship/migrate_publishpress_authors', false ) )
+        {
+            new \Molongui\Authorship\Migration\Publishpress_Authors\Cli();
+        }
+    }
+    public function migrate_one_user_avatar( $args, $assoc_args )
+    {
+        if ( apply_filters( 'molongui_authorship/migrate_one_user_avatar', false ) )
+        {
+            new \Molongui\Authorship\Migration\One_User_Avatar\Cli();
+        }
     }
 
 }
 add_action( 'cli_init', function()
 {
-    \WP_CLI::add_command( 'molongui-authorship', 'MolonguiAuthorship_CLI' );
+    \WP_CLI::add_command( 'molongui-authorship', __NAMESPACE__ . '\\MolonguiAuthorship_CLI' );
 });

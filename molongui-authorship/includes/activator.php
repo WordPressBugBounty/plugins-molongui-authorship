@@ -46,6 +46,7 @@ class Activator
 		self::save_installation_data();
 		self::add_default_options();
 		self::run_background_tasks();
+        self::maybe_redirect();
 	}
 	public static function activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta )
 	{
@@ -84,6 +85,10 @@ class Activator
             add_option( 'molongui_authorship_update_post_authors', true, '', true );
             add_option( 'molongui_authorship_update_post_counters', true, '', true );
         }
+    }
+    public static function maybe_redirect()
+    {
+        set_transient( MOLONGUI_AUTHORSHIP_NAME.'-activation-redirect', true, 30 );
     }
 
 } // class

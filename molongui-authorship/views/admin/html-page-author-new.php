@@ -424,7 +424,7 @@ $current_color = WP::get_admin_color();
 </style>
 <div class="wrap">
 
-    <h1 class="wp-heading-inline"><?php _e( "Add New Author", 'molongui-authorship' ); ?></h1>
+    <h1 class="wp-heading-inline"><?php _e( "Add Author", 'molongui-authorship' ); ?></h1>
     <hr class="wp-header-end">
 
     <div class="molongui-new-author__container">
@@ -433,7 +433,7 @@ $current_color = WP::get_admin_color();
 
             <div class="molongui-new-author__header">
 
-                <h2><?php _e( "Add New Author", 'molongui-authorship' ); ?></h2>
+                <h2><?php _e( "Add Author", 'molongui-authorship' ); ?></h2>
                 <p><?php _e( "Fill out the form below. Author details can be added on the next screen", 'molongui-authorship' ); ?></p>
 
             </div>

@@ -356,14 +356,19 @@ class Helpers
     }
     public static function get_attachment_edit_url( $attachment_id )
     {
-        return add_query_arg
-        (
+        $edit_link = get_edit_post_link( $attachment_id, 'edit' );
+        if ( empty( $edit_link ) )
+        {
+            $edit_link = admin_url( sprintf( 'post.php?post=%d', $attachment_id ) );
+        }
+
+        return add_query_arg(
             array
             (
                 'action'       => 'edit',
                 'image-editor' => '1',
             ),
-            get_edit_post_link( $attachment_id, 'edit' )
+            $edit_link
         );
     }
     public static function get_base64_svg( $svg, $base64 = true )

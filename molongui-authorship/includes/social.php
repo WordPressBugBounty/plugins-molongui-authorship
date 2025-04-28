@@ -29,7 +29,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             ),
             'twitter' => array
             (
-                'name'     => 'X (formerly Twitter)',
+                'name'     => 'X (Twitter)',
                 'url'      => 'https://www.twitter.com/your_username',
                 'color'    => '#1DA1F2',
                 'premium'  => false,

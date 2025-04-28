@@ -66,7 +66,7 @@ class Admin_Author
         (
             'authors',
             _x( "Authors", "Page title", 'molongui-authorship' ),
-            _x( "View All", "Authors submenu title", 'molongui-authorship' ),
+            _x( "View Authors", "Authors submenu title", 'molongui-authorship' ),
             'edit_others_posts',
             'authors',
             array( $this, 'render_view_all_screen' )
@@ -78,8 +78,8 @@ class Admin_Author
             add_submenu_page
             (
                 'authors',
-                _x( "Add New Author", "Page title", 'molongui-authorship' ),
-                _x( "Add New", "Authors submenu title", 'molongui-authorship' ),
+                _x( "Add Author", "Page title", 'molongui-authorship' ),
+                _x( "Add Author", "Authors submenu title", 'molongui-authorship' ),
                 'edit_others_posts',
                 'author-new',
                 array( $this, 'render_add_new_screen' ),

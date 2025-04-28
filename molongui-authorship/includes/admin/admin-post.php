@@ -140,7 +140,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             'new_author_required'         => esc_html__( "Please fill in all required fields to proceed.", 'molongui-authorship' ),
             'new_author_wrong_email'      => esc_html__( "Invalid email. Please enter a valid email address.", 'molongui-authorship' ),
             'new_author_confirm'          => esc_html__( "Are you sure you want to add this new author? To add an existing author, use the search box instead.", 'molongui-authorship' ),
-            'new_author_added'            => esc_html__( "New author created and added to this post. You can complete their profile in the Authors > View All screen.", 'molongui-authorship' ),
+            'new_author_added'            => esc_html__( "New author created and added to this post. You can complete their profile in the Authors > View Authors screen.", 'molongui-authorship' ),
 
             'new_author_ajax_error'       => esc_html__( "ERROR: Connection to the backend failed. The author has not be added.", 'molongui-authorship' ),
 
@@ -599,53 +599,70 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
         }
         if ( !isset( $type ) or 'user' === $type )
         {
-            $args = array
-            (
-                'count_total'    => false,
-                'fields'         => 'all',
-                'search'         => sprintf( '*%s*', $search ),
-                'search_columns' => array
-                (
-                    'display_name',
-                    'user_email',
-                    'user_login',
-                ),
-                'capability'     => apply_filters( 'molongui_authorship/users_cap', array() ),
-                'exclude'        => $ignored_users,
-                'meta_key'       => 'molongui_author_archived',
-                'meta_compare'   => 'NOT EXISTS',//'!=',
-            );
-            $found_users = Authors::get_users( $args ); //get_users( $args );
-
-            if ( !empty( $found_users ) )
+            /*!
+             * FILTER HOOK
+             * Allows registered users to be excluded from the search results.
+             *
+             * @since 5.0.16
+             */
+            if ( apply_filters( 'molongui_authorship/search_registered_users', true ) )
             {
-                foreach ( $found_users as $user )
+                $args = array
+                (
+                    'count_total'    => false,
+                    'fields'         => 'all',
+                    'search'         => sprintf( '*%s*', $search ),
+                    'search_columns' => array
+                    (
+                        'display_name',
+                        'user_email',
+                        'user_login',
+                    ),
+                    'capability'     => apply_filters( 'molongui_authorship/users_cap', array() ),
+                    'exclude'        => $ignored_users,
+                    'meta_key'       => 'molongui_author_archived',
+                    'meta_compare'   => 'NOT EXISTS',//'!=',
+                );
+                $found_users = Authors::get_users( $args ); //get_users( $args );
+
+                if ( !empty( $found_users ) )
                 {
-                    $found_authors[$user->user_login]         = $user;
-                    $found_authors[$user->user_login]->type   = 'WP User';
-                    $found_authors[$user->user_login]->avatar = get_avatar_url( $user->ID, array( 'size' => array( 20, 20 ) ) );
+                    foreach ( $found_users as $user )
+                    {
+                        $found_authors[$user->user_login]         = $user;
+                        $found_authors[$user->user_login]->type   = 'WP User';
+                        $found_authors[$user->user_login]->avatar = get_avatar_url( $user->ID, array( 'size' => array( 20, 20 ) ) );
+                    }
                 }
             }
         }
         if ( !isset( $type ) or 'guest' === $type )
         {
-            if ( Settings::is_guest_author_enabled_on_post_type()
-                 or
-                 Settings::is_enabled( 'guest-author' ) and is_null( Post::get_post_type() )
-                 or
-                 apply_filters( 'molongui_authorship/force_search_guest_authors', false ) )
+            /*!
+             * FILTER HOOK
+             * Allows guest authors to be excluded from the search results.
+             *
+             * @since 5.0.16
+             */
+            if ( apply_filters( 'molongui_authorship/search_guest_authors', true ) )
             {
-                global $wpdb;
-                $like_keyword = '%' . $wpdb->esc_like( $search ) . '%';
-                if ( !empty( $ignored_guests ) and is_array( $ignored_guests ) )
+                if ( Settings::is_guest_author_enabled_on_post_type()
+                     or
+                     Settings::is_enabled( 'guest-author' ) and is_null( Post::get_post_type() )
+                     or
+                     apply_filters( 'molongui_authorship/force_search_guest_authors', false ) )
                 {
-                    $ignored_guests_placeholder = implode( ',', array_map( 'absint', $ignored_guests ) );
-                }
-                else
-                {
-                    $ignored_guests_placeholder = '0';
-                }
-                $sql = $wpdb->prepare( "
+                    global $wpdb;
+                    $like_keyword = '%' . $wpdb->esc_like( $search ) . '%';
+                    if ( !empty( $ignored_guests ) and is_array( $ignored_guests ) )
+                    {
+                        $ignored_guests_placeholder = implode( ',', array_map( 'absint', $ignored_guests ) );
+                    }
+                    else
+                    {
+                        $ignored_guests_placeholder = '0';
+                    }
+                    $sql = $wpdb->prepare( "
                     SELECT DISTINCT ID 
                     FROM {$wpdb->posts} 
                     LEFT JOIN {$wpdb->postmeta} pm1 ON {$wpdb->posts}.ID = pm1.post_id AND pm1.meta_key = %s
@@ -660,27 +677,28 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                             pm2.meta_value LIKE %s
                         )
                 ", 'first_name', 'last_name', MOLONGUI_AUTHORSHIP_CPT, $like_keyword, $like_keyword, $like_keyword );
-                $found_guests = $wpdb->get_col( $sql );
+                    $found_guests = $wpdb->get_col( $sql );
 
-                if ( !empty( $found_guests ) )
-                {
-                    foreach ( $found_guests as $found_guest )
+                    if ( !empty( $found_guests ) )
                     {
-                        $guest = new Author( $found_guest, 'guest' );
-                        $_author                = new \stdClass();
-                        $_author->ID            = $found_guest;
-                        $_author->user_login    = $guest->get_slug();
-                        $_author->display_name  = $guest->get_display_name();
-                        $_author->first_name    = $guest->get_first_name();
-                        $_author->last_name     = $guest->get_last_name();
-                        $_author->type          = 'Guest author';
-                        $_author->user_email    = $guest->get_email();
-                        $_author->website       = $guest->get_website();
-                        $_author->description   = $guest->get_description();
-                        $_author->user_nicename = sanitize_title( $_author->user_login );
-                        $_author->avatar        = $guest->get_avatar( array( 20, 20 ), 'url' );
+                        foreach ( $found_guests as $found_guest )
+                        {
+                            $guest = new Author( $found_guest, 'guest' );
+                            $_author                = new \stdClass();
+                            $_author->ID            = $found_guest;
+                            $_author->user_login    = $guest->get_slug();
+                            $_author->display_name  = $guest->get_display_name();
+                            $_author->first_name    = $guest->get_first_name();
+                            $_author->last_name     = $guest->get_last_name();
+                            $_author->type          = 'Guest author';
+                            $_author->user_email    = $guest->get_email();
+                            $_author->website       = $guest->get_website();
+                            $_author->description   = $guest->get_description();
+                            $_author->user_nicename = sanitize_title( $_author->user_login );
+                            $_author->avatar        = $guest->get_avatar( array( 20, 20 ), 'url' );
 
-                        $found_authors[$_author->user_login] = $_author;
+                            $found_authors[$_author->user_login] = $_author;
+                        }
                     }
                 }
             }
@@ -740,7 +758,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             {
                 Admin_User::clear_object_cache();
 
-                $message = sprintf( wp_kses_post( __( "New user (%s) created and added to this post. You can complete their profile in the Authors > View All screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
+                $message = sprintf( wp_kses_post( __( "New user (%s) created and added to this post. You can complete their profile in the Authors > View Authors screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
                 echo wp_json_encode( array( 'result' => 'success', 'message' => $message, 'author_id' => $user_id, 'author_type' => 'user', 'author_ref' => 'user-'.$user_id, 'author_name' => $author_name ) );
                 wp_die();
             }
@@ -776,7 +794,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             {
                 self::clear_object_cache();
 
-                $message = sprintf( wp_kses_post( __( "New guest author (%s) created and added to this post. You can complete their profile in the Authors > View All screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
+                $message = sprintf( wp_kses_post( __( "New guest author (%s) created and added to this post. You can complete their profile in the Authors > View Authors screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
                 echo wp_json_encode( array( 'result' => 'success', 'message' => $message, 'author_id' => $guest_id, 'author_type' => 'guest', 'author_ref' => 'guest-'.$guest_id, 'author_name' => $author_name ) );
                 wp_die();
             }

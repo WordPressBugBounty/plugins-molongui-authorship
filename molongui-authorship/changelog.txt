@@ -2,117 +2,134 @@
 
 == Changelog ==
 
+= 5.1.0 (2025-04-28) =
+
+* **Added**: Setup wizard to guide users through initial configuration.
+* **Added**: UI migration tool for transferring authors and authorship data from the Co-Authors Plus plugin.
+* **Added**: UI migration tool for transferring authors and authorship data from the PublishPress Authors plugin.
+* **Added**: UI migration tool for importing user avatars from the One User Avatar plugin.
+* **Added**: WP-CLI command to migrate authors and authorship data from the Co-Authors Plus plugin.
+* **Added**: WP-CLI command to migrate authors and authorship data from the PublishPress Authors plugin.
+* **Added**: WP-CLI command to migrate user avatars from the One User Avatar plugin.
+* **Added**: Filters to exclude registered users and guest authors from post author search results.
+* **Fixed**: Post count updater now updates post counts correctly.
+* **Changed**: Replaced `Add New` wording with `Add {Item}` in line with WordPress standards.
+* **Changed**: Replaced `View All` wording with `View {Items}` in line with WordPress standards.
+* **Changed**: Updated framework files to v3.4.0.
+* **Changed**: Added compatibility with WordPress 6.8.
+* **Changed**: Updated plugin description in `readme.txt`.
+
 = 5.0.15 (2025-03-11) =
 
-* Fixed: Co-authored posts are now listed when using Elementor's Posts widget with the author filter.
-* Fixed: Fatal error caused by missing quotes when the Jetpack plugin was active.
+* **Fixed**: Co-authored posts are now listed when using Elementor's Posts widget with the author filter.
+* **Fixed**: Fatal error caused by missing quotes when the Jetpack plugin was active.
 
 = 5.0.14 (2025-02-11) =
 
-* Added: Filter to customize attributes for the author avatar `<img>` element.
+* **Added**: Filter to customize attributes for the author avatar `<img>` element.
 
 = 5.0.13 (2025-02-11) =
 
-* Added: Threads as author social profile option.
-* Added: Bluesky as author social profile option.
-* Added: Strava as author social profile option.
-* Added: Facebook Messenger as author social profile option.
-* Added: Flipboard Messenger as author social profile option.
-* Added: QQ as author social profile option.
-* Added: IMDb as author social profile option.
-* Fixed: Post byline now omits the co-authors count when configured not to display co-authors.
-* Fixed: Required Block Editor scripts are now loaded exclusively on the edit post screen.
+* **Added**: Threads as author social profile option.
+* **Added**: Bluesky as author social profile option.
+* **Added**: Strava as author social profile option.
+* **Added**: Facebook Messenger as author social profile option.
+* **Added**: Flipboard Messenger as author social profile option.
+* **Added**: QQ as author social profile option.
+* **Added**: IMDb as author social profile option.
+* **Fixed**: Post byline now omits the co-authors count when configured not to display co-authors.
+* **Fixed**: Required Block Editor scripts are now loaded exclusively on the edit post screen.
 
 = 5.0.12 (2025-02-06) =
 
-* Fixed: Incorrect author meta information displayed in the author box when profile fields are missing.
+* **Fixed**: Incorrect author meta information displayed in the author box when profile fields are missing.
 
 = 5.0.11 (2025-02-04) =
 
-* Fixed: Post byline now shows additional co-authors count.
+* **Fixed**: Post byline now shows additional co-authors count.
 
 = 5.0.10 (2025-01-30) =
 
-* Fixed: Author box now displayed when using custom Divi Builder templates for posts.
-* Fixed: Co-authored posts are now listed on the author page when using Elementor's Loop Grid widget.
+* **Fixed**: Author box now displayed when using custom Divi Builder templates for posts.
+* **Fixed**: Co-authored posts are now listed on the author page when using Elementor's Loop Grid widget.
 
 = 5.0.9 (2025-01-27) =
 
-* Fixed: Error when updating post counters after changing a post's author.
-* Fixed: Backend author list now displays post counts correctly.
-* Fixed: Co-authors can now edit posts they are assigned to when using the Block Editor.
-* Fixed: Author box no longer displays twice on certain themes.
-* Fixed: Replaced deprecated filters with new equivalents to prevent warning messages.
-* Deprecated: The `authorship/author/get_posts/args` filter. Scheduled for removal in version 5.2.0.
-* Removed: Long-deprecated functions, actions, and filters.
+* **Fixed**: Error when updating post counters after changing a post's author.
+* **Fixed**: Backend author list now displays post counts correctly.
+* **Fixed**: Co-authors can now edit posts they are assigned to when using the Block Editor.
+* **Fixed**: Author box no longer displays twice on certain themes.
+* **Fixed**: Replaced deprecated filters with new equivalents to prevent warning messages.
+* **Deprecated**: The `authorship/author/get_posts/args` filter. Scheduled for removal in version 5.2.0.
+* **Removed**: Long-deprecated functions, actions, and filters.
 
 = 5.0.8 (2025-01-21) =
 
-* Fixed: Author box no longer shows draft posts as related posts.
+* **Fixed**: Author box no longer shows draft posts as related posts.
 
 = 5.0.7 (2025-01-18) =
 
-* Fixed: Author box styling now appears correctly when using block themes.
+* **Fixed**: Author box styling now appears correctly when using block themes.
 
 = 5.0.6 (2025-01-17) =
 
-* Fixed: Author search box not displaying all matching results.
-* Changed: Optimized retrieval of post counts.
+* **Fixed**: Author search box not displaying all matching results.
+* **Changed**: Optimized retrieval of post counts.
 
 = 5.0.5 (2025-01-15) =
 
-* Fixed: Non-static method `is_display_name_available()` called statically.
-* Fixed: Unsupported operand types in `increment_counter`.
-* Fixed: Unsupported operand types in `decrement_counter`.
-* Fixed: Cannot use object of type stdClass as array in `increment_counter`.
-* Fixed: Cannot use object of type stdClass as array in `decrement_counter`.
+* **Fixed**: Non-static method `is_display_name_available()` called statically.
+* **Fixed**: Unsupported operand types in `increment_counter`.
+* **Fixed**: Unsupported operand types in `decrement_counter`.
+* **Fixed**: Cannot use object of type stdClass as array in `increment_counter`.
+* **Fixed**: Cannot use object of type stdClass as array in `decrement_counter`.
 
 = 5.0.4 (2025-01-15) =
 
-* Fixed: Author box not displaying on custom post templates created with the Divi Builder.
+* **Fixed**: Author box not displaying on custom post templates created with the Divi Builder.
 
 = 5.0.3 (2025-01-14) =
 
-* Fixed: Author box being displayed regardless of plugin configuration.
-* Fixed: Incorrect post count computed for authors.
+* **Fixed**: Author box being displayed regardless of plugin configuration.
+* **Fixed**: Incorrect post count computed for authors.
 
 = 5.0.2 (2025-01-14) =
 
-* Fixed: Default settings are now initialized upon plugin activation.
+* **Fixed**: Default settings are now initialized upon plugin activation.
 
 = 5.0.1 (2025-01-14) =
 
-* Fixed: PHP warning for undefined array key `author_box_avatar_fallback`.
-* Fixed: PHP warning for undefined array key `guest_author_enabled`.
-* Fixed: PHP warning for undefined array key `guest_pages`.
+* **Fixed**: PHP warning for undefined array key `author_box_avatar_fallback`.
+* **Fixed**: PHP warning for undefined array key `guest_author_enabled`.
+* **Fixed**: PHP warning for undefined array key `guest_pages`.
 
 = 5.0.0 (2025-01-14) =
 
-* Added: Ability to customize the order of social profiles.
-* Added: Ready-to-use templates for the author box.
-* Added: Dummy author data for author box preview.
-* Added: Row action to update posts counts for users and guest authors.
-* Added: Bulk action to update posts counts for selected users and guest authors.
-* Added: Option to hide the author name on the author box.
-* Added: Option to run custom PHP on the Dashboard.
-* Added: Ability to customize the position and icon of the 'Authors' menu.
-* Enhanced: Compatibility with the Newspaper theme.
-* Enhanced: Compatibility with the Reusable Content Blocks plugin.
-* Fixed: Custom CSS styles not loading correctly.
-* Fixed: Incorrect query argument value.
-* Fixed: Author search box could not find authors containing dots or spaces in their names.
-* Fixed: Acronym author box avatars not displaying letters centered correctly.
-* Changed: Redesigned plugin settings page.
-* Changed: Replaced the author dropdown with a search-as-you-type input in the Author Box Editor.
-* Changed: Switched the JavaScript library used for search-as-you-type suggestions.
-* Changed: Improved responsiveness by using native CSS properties, removing JavaScript-based solutions.
-* Changed: Updated framework files to version 3.3.0.
-* Changed: Added compatibility with WordPress 6.7.
-* Removed: The option to hide HTML elements on the frontend. Use 'Custom CSS' instead.
-* Removed: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the `authorship/assets/load_remote` filter.
-* Dev: Major code refactor.
-* Dev: Removed `get_byline` helper function.
-* Dev: Removed `get_post_authors` helper function.
+* **Added**: Ability to customize the order of social profiles.
+* **Added**: Ready-to-use templates for the author box.
+* **Added**: Dummy author data for author box preview.
+* **Added**: Row action to update posts counts for users and guest authors.
+* **Added**: Bulk action to update posts counts for selected users and guest authors.
+* **Added**: Option to hide the author name on the author box.
+* **Added**: Option to run custom PHP on the Dashboard.
+* **Added**: Ability to customize the position and icon of the 'Authors' menu.
+* **Enhanced**: Compatibility with the Newspaper theme.
+* **Enhanced**: Compatibility with the Reusable Content Blocks plugin.
+* **Fixed**: Custom CSS styles not loading correctly.
+* **Fixed**: Incorrect query argument value.
+* **Fixed**: Author search box could not find authors containing dots or spaces in their names.
+* **Fixed**: Acronym author box avatars not displaying letters centered correctly.
+* **Changed**: Redesigned plugin settings page.
+* **Changed**: Replaced the author dropdown with a search-as-you-type input in the Author Box Editor.
+* **Changed**: Switched the JavaScript library used for search-as-you-type suggestions.
+* **Changed**: Improved responsiveness by using native CSS properties, removing JavaScript-based solutions.
+* **Changed**: Updated framework files to version 3.3.0.
+* **Changed**: Added compatibility with WordPress 6.7.
+* **Removed**: The option to hide HTML elements on the frontend. Use 'Custom CSS' instead.
+* **Removed**: The option to load plugin vendor assets from a remote CDN. To enable remote loading, use the `authorship/assets/load_remote` filter.
+* **Dev**: Major code refactor.
+* **Dev**: Removed `get_byline` helper function.
+* **Dev**: Removed `get_post_authors` helper function.
 
 = 4.9.7 (2024-08-29) =
 

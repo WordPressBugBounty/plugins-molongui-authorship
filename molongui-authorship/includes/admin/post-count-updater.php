@@ -331,7 +331,7 @@ class Post_Count_Updater extends WP_Background_Process
 
         if ( !isset( $count ) )
         {
-            $count = $_author->get_post_count( $post_type );
+            $count = $_author->get_post_count( $post_type, false );
         }
         $_author->update_post_type_count( $count, $post_type );
     }
