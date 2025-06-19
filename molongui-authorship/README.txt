@@ -35,87 +35,97 @@ Tired of jumping through hoops to properly attribute authors? **Molongui Authors
 🛠 **Author Box – Your Authors, Elevated**
 Transform how authors are presented with the most customizable, engagement-boosting author box for WordPress.
 
-> ✨ **Pixel-Perfect Customization**
-> - Multiple pre-designed templates
-> - Different layouts (boxed, minimalist, tabbed, inline)
-> - Live preview editor with real-time styling
-> - Mobile-optimized responsive design
-> - Custom CSS panel for unlimited tweaks
+  > ✨ **Pixel-Perfect Customization**
 
-> ✨ **Author Profiles That Engage**
-> - 90+ social icons (including emerging platforms)
-> - "Related Posts" section to boost engagement
-> - Guest and co-author compatibility
+  > - Multiple pre-designed templates
+  > - Different layouts (boxed, minimalist, tabbed, inline)
+  > - Live preview editor with real-time styling
+  > - Mobile-optimized responsive design
+  > - Custom CSS panel for unlimited tweaks
 
-> ✨ **Context-Smart Display**
-> - Automatic placement before/after content
-> - Customizable headings ("About the Author", "Meet the Expert", etc.)
-> - Schema markup for Google rich snippets and improved Google E-E-A-T
-> - AMP/RTL support for broader compatibility
+  > ✨ **Author Profiles That Engage**
 
-> ⚡ **Premium Advantages**
-> - Additional premium layouts
-> - Dynamic bios with rich text, media, HTML tags, and third party shortcodes support
-> - 30+ extra niche social icons
-> - Advanced conditional logic (user roles, tags, etc.)
-> - Custom post type support
-> - Shortcode to display the author box wherever
+  > - 90+ social icons (including emerging platforms)
+  > - "Related Posts" section to boost engagement
+  > - Guest and co-author compatibility
+
+  > ✨ **Context-Smart Display**
+
+  > - Automatic placement before/after content
+  > - Customizable headings ("About the Author", "Meet the Expert", etc.)
+  > - Schema markup for Google rich snippets and improved Google E-E-A-T
+  > - AMP/RTL support for broader compatibility
+
+  > ⚡ **Premium Advantages**
+
+  > - Additional premium layouts
+  > - Dynamic bios with rich text, media, HTML tags, and third party shortcodes support
+  > - 30+ extra niche social icons
+  > - Advanced conditional logic (user roles, tags, etc.)
+  > - Custom post type support
+  > - Shortcode to display the author box wherever
 
 👥 **Guest Authors – Credit Contributors Without the Clutter**
 Give proper attribution without creating unnecessary user accounts—ideal for one-time contributors, interviewees, or guest bloggers.
 
-> ✨ **Native WordPress Integration**
-> - Add guest authors as easily as regular users—no technical hassle
-> - Dropdown selection in the post editor—just pick a name and go
-> - Full profiles with bios, avatars, and social links (no Gravatar required)
-> - Custom fields for job titles, affiliations, or custom links
+  > ✨ **Native WordPress Integration**
 
-> ✨ **Seamless Frontend Display**
-> - Auto-display in post bylines with linked names
-> - Author box compatibility—show guest bios alongside regular authors
-> - SEO-optimized: Updates `author` meta tags for accurate attribution
+  > - Add guest authors as easily as regular users—no technical hassle
+  > - Dropdown selection in the post editor—just pick a name and go
+  > - Full profiles with bios, avatars, and social links (no Gravatar required)
+  > - Custom fields for job titles, affiliations, or custom links
 
-> ⚡ **Premium Advantages**
-> - Guest author archive pages (boost credibility with dedicated profiles)
-> - 1-click user-to-guest conversion: Clean up unused accounts while preserving authorship
-> - Bulk edit & clone: Save time reusing guest profiles
-> - REST API support: Integrate guest data with third-party tools
-> - Import/Export tool for easy migrations
+  > ✨ **Seamless Frontend Display**
+
+  > - Auto-display in post bylines with linked names
+  > - Author box compatibility—show guest bios alongside regular authors
+  > - SEO-optimized: Updates `author` meta tags for accurate attribution
+
+  > ⚡ **Premium Advantages**
+
+  > - Guest author archive pages (boost credibility with dedicated profiles)
+  > - 1-click user-to-guest conversion: Clean up unused accounts while preserving authorship
+  > - Bulk edit & clone: Save time reusing guest profiles
+  > - REST API support: Integrate guest data with third-party tools
+  > - Import/Export tool for easy migrations
 
 👨‍👩‍👧‍👦 **Co-Authors – Flawless Multi-Author Attribution**
 Credit every contributor fairly—whether it's joint articles, team projects, or collaborative content.
 
-> ✨ **Effortless Collaboration**
-> - Add unlimited co-authors via simple dropdown in the post editor
-> - Works seamlessly with both regular users and guest authors
-> - Drag-and-drop author ordering (control name display sequence)
-> - No taxonomy conflicts—cleaner than legacy plugins
+  > ✨ **Effortless Collaboration**
 
-> ✨ **Automatic Frontend Display**
-> - Smart bylines auto-update with all author names (e.g., "By John, Lisa & Max")
-> - Each name links to author pages (guest authors included)
-> - Schema.org markup for proper multi-author SEO
+  > - Add unlimited co-authors via simple dropdown in the post editor
+  > - Works seamlessly with both regular users and guest authors
+  > - Drag-and-drop author ordering (control name display sequence)
+  > - No taxonomy conflicts—cleaner than legacy plugins
 
-> ⚡ **Premium Advantages**
-> - Byline modifiers (add prefixes like "By" or suffixes like "et al.")
-> - REST API support for headless WordPress setups
-> - Shortcodes to display co-author lists anywhere
+  > ✨ **Automatic Frontend Display**
+
+  > - Smart bylines auto-update with all author names (e.g., "By John, Lisa & Max")
+  > - Each name links to author pages (guest authors included)
+  > - Schema.org markup for proper multi-author SEO
+
+  > ⚡ **Premium Advantages**
+
+  > - Byline modifiers (add prefixes like "By" or suffixes like "et al.")
+  > - REST API support for headless WordPress setups
+  > - Shortcodes to display co-author lists anywhere
+
+🚀 **1-Click Migration Tool – Switch Without Losing Data**
+Switching from _Co-Authors Plus_, _PublishPress Authors_, or _One User Avatar_? **Import your existing author data with 1 click**! No manual work needed.
 
 🔍 **Additional Premium Features**
-Only available in [Molongui Authorship Pro](https://www.molongui.com/wordpress-plugin-post-authors "Click to explore all features")
+Only available in [Molongui Authorship Pro](https://www.molongui.com/wordpress-plugin-post-authors "Click to explore all features").
 
-  - Author list. 4 different layouts, user role filter and [more](https://www.molongui.com/wordpress-plugin-post-authors/author-list/ "Learn more")
-  - List of posts by author. 5 different layouts, pagination and [more](https://www.molongui.com/help/molongui_author_posts/ "Learn more")
-  - Allow visitors to search content by author name. Learn [more](https://www.molongui.com/wordpress-plugin-post-authors/search-by-author-name/ "Learn more")
-  - Disable author pages for registered WordPress users
-  - Add a post byline anywhere via shortcode. Useful if your theme does not show a byline for your posts
-  - Retrieve author information via shortcode. Very useful to use with page builders. Learn more [here](https://www.molongui.com/help/molongui-authorship-available-shortcodes/ "Click to see available shortcodes")
+  > - Author list. 4 different layouts, user role filter and [more](https://www.molongui.com/wordpress-plugin-post-authors/author-list/ "Learn more")
+  > - List of posts by author. 5 different layouts, pagination and [more](https://www.molongui.com/help/molongui_author_posts/ "Learn more")
+  > - Allow visitors to search content by author name. Learn [more](https://www.molongui.com/wordpress-plugin-post-authors/search-by-author-name/ "Learn more")
+  > - Disable author pages for registered WordPress users
+  > - Add a post byline anywhere via shortcode. Useful if your theme does not show a byline for your posts
+  > - Retrieve author information via shortcode. Very useful to use with page builders. Learn more [here](https://www.molongui.com/help/molongui-authorship-available-shortcodes/ "Click to see available shortcodes")
 
 💡 **Ready to enhance your authorship experience?**
 Compare [Free vs Pro](https://www.molongui.com/#free-vs-pro "Features comparison") | [Try Pro](https://demos.molongui.com/test-drive-molongui-authorship-pro/ "Click to try the Molongui Authorship Pro") | [Get Support](https://www.molongui.com/help/support/ "Click to open a support ticket with us") | [Live Chat](https://www.tidiochat.com/chat/foioudbu7xqepgvwseufnvhcz6wkp7am "Click to live chat with us")
-
-= 🚀 1-Click Migration Tool – Switch Without Losing Data =
-Switching from _Co-Authors Plus_, _PublishPress Authors_, or _One User Avatar_? **Import your existing author data with 1 click**! No manual work needed.
 
 This plugin uses a third-party service to enable live chat communication with our support team, exclusively for administrators in the backend. You can disable this service via the plugin settings page. For more information about the live chat [service provider](https://www.tidio.com/) review their [privacy policy](https://www.tidio.com/privacy-policy/) and [terms](https://www.tidio.com/terms/).
 
