@@ -40,7 +40,7 @@ add_filter( 'the_seo_framework_title_from_generation', function ( $generated, $a
         if ( 'Untitled' === $generated )
         {
             $author = new Molongui\Authorship\Author( $wp_query->guest_author_id, 'guest' );
-            $display_name = $author->get_name();
+            $display_name = $author->get_display_name();
 
             $prefix = __( 'Author:' );
             $prefix = apply_filters_ref_array( 'the_seo_framework_generated_archive_title_prefix', array( $prefix, get_queried_object() ) );

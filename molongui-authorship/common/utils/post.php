@@ -281,5 +281,184 @@ class Post
             }
         }
     }
+    public static function sanitize_post_status_arg( $post_status, $fallback = 'publish' )
+    {
+        $valid_statuses = array_keys( get_post_stati() );
+
+        /*!
+         * FILTER HOOK
+         * Filters the default fallback value used when sanitizing a "post_status" query argument.
+         *
+         * The fallback is used only when the incoming post_status value is empty/invalid and a safe default must be
+         * applied. The default fallback is an empty string, which causes WP_Query to apply its own context-aware
+         * defaults:
+         *
+         * - On the front end, the default status is "publish".
+         * - When the user is logged in, "private" may also be included (subject to capabilities and post type).
+         * - Public custom post statuses may be included by default.
+         * - In admin/AJAX contexts, protected statuses may be added as well (by default: "future", "draft", "pending").
+         *
+         * Return a string status (e.g. "publish"), "any", an array of statuses, or an empty string to defer
+         * to WordPress defaults.
+         *
+         * @param  string|array $fallback Default fallback value. Empty string defers to WordPress defaults.
+         * @return string|array           Filtered fallback value.
+         */
+        $fallback = apply_filters( 'authorship/post_status_fallback', '' );
+        if ( is_string( $post_status ) )
+        {
+            $raw = trim( $post_status );
+
+            if ( $raw === '' )
+            {
+                return $fallback;
+            }
+
+            if ( strtolower( $raw ) === 'any' )
+            {
+                return 'any';
+            }
+
+            if ( is_numeric( $raw ) )
+            {
+                return $fallback;
+            }
+
+            $key = sanitize_key( $raw );
+            return ( $key !== '' && in_array( $key, $valid_statuses, true ) )
+                ? array( $key )
+                : $fallback;
+        }
+        if ( is_array( $post_status ) )
+        {
+            $out = array();
+
+            foreach ( $post_status as $st )
+            {
+                if ( ! is_string( $st ) )
+                {
+                    continue;
+                }
+
+                $raw = trim( $st );
+                if ( $raw === '' || is_numeric( $raw ) )
+                {
+                    continue;
+                }
+
+                $key = sanitize_key( $raw );
+                if ( $key !== '' && in_array( $key, $valid_statuses, true ) )
+                {
+                    $out[] = $key;
+                }
+            }
+
+            $out = array_values( array_unique( $out ) );
+            return ! empty( $out ) ? $out : $fallback;
+        }
+        return $fallback;
+    }
+    public static function sanitize_cat_query_args( $cat, $options = array() )
+    {
+        $mode = isset( $options['mode'] ) ? strtolower( trim( (string) $options['mode'] ) ) : 'in';
+        if ( $mode !== 'and' )
+        {
+            $mode = 'in';
+        }
+
+        $include = array();
+        $exclude = array();
+        if ( $cat === '' || $cat === null || $cat === false )
+        {
+            return array();
+        }
+        $tokens = array();
+
+        if ( is_array( $cat ) )
+        {
+            $tokens = $cat;
+        }
+        elseif ( is_string( $cat ) )
+        {
+            $cat = trim( $cat );
+
+            if ( $cat === '' )
+            {
+                return array();
+            }
+            $tokens = ( strpos( $cat, ',' ) !== false ) ? explode( ',', $cat ) : array( $cat );
+        }
+        elseif ( is_int( $cat ) || is_float( $cat ) )
+        {
+            $tokens = array( $cat );
+        }
+        else
+        {
+            return array();
+        }
+        foreach ( $tokens as $token )
+        {
+            if ( is_int( $token ) || is_float( $token ) )
+            {
+                $n = (int) $token;
+            }
+            elseif ( is_string( $token ) )
+            {
+                $token = trim( $token );
+
+                if ( $token === '' || ! is_numeric( $token ) )
+                {
+                    continue;
+                }
+
+                $n = (int) $token;
+            }
+            else
+            {
+                continue;
+            }
+            if ( $n === 0 )
+            {
+                continue;
+            }
+            if ( $n < 0 )
+            {
+                $exclude[] = absint( $n );
+            }
+            else
+            {
+                $include[] = absint( $n );
+            }
+        }
+        $include = array_values( array_unique( array_filter( $include ) ) );
+        $exclude = array_values( array_unique( array_filter( $exclude ) ) );
+        if ( empty( $include ) && empty( $exclude ) )
+        {
+            return array();
+        }
+        if ( count( $include ) === 1 && empty( $exclude ) )
+        {
+            return array( 'cat' => (int) $include[0] );
+        }
+
+        if ( count( $exclude ) === 1 && empty( $include ) )
+        {
+            return array( 'cat' => -1 * (int) $exclude[0] );
+        }
+        $out = array();
+
+        if ( ! empty( $include ) )
+        {
+            $out_key = ( $mode === 'and' ) ? 'category__and' : 'category__in';
+            $out[ $out_key ] = $include;
+        }
+
+        if ( ! empty( $exclude ) )
+        {
+            $out['category__not_in'] = $exclude;
+        }
+
+        return $out;
+    }
 
 } // class

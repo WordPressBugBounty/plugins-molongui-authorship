@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
                     <ul>
                         <?php
-                        if ( !empty( $profile['posts'] ) )
+                        if ( $profile->has_posts() )
                         {
                             /*!
                              * FILTER HOOK

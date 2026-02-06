@@ -16,6 +16,16 @@ namespace Molongui\Authorship;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class DB_Update
 {
+    public function db_update_25()
+    {
+        delete_option( 'molongui_authorship_cache_users' );
+        delete_option( 'molongui_authorship_cache_guests' );
+        delete_option( 'molongui_authorship_cache_posts' );
+
+        $settings = get_option( 'molongui_authorship_options', array() );
+        unset( $settings['object_cache_enabled'] );
+        update_option( 'molongui_authorship_options', $settings, true );
+    }
     public function db_update_24()
     {
         $options = get_option( 'molongui_authorship_options', array() );

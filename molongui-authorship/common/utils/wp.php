@@ -170,6 +170,24 @@ class WP
 
         return false;
     }
+    public static function is_block_editor()
+    {
+        $edit_mode = false;
+        if ( function_exists( 'is_gutenberg_page' ) and is_gutenberg_page() )
+        {
+            $edit_mode = true;
+        }
+        if ( function_exists( 'get_current_screen' ) )
+        {
+            $current_screen = get_current_screen();
+            if ( $current_screen instanceof \WP_Screen and method_exists( $current_screen, 'is_block_editor' ) and $current_screen->is_block_editor() )
+            {
+                $edit_mode = true;
+            }
+        }
+
+        return apply_filters( 'authorship/is_block_editor', $edit_mode );
+    }
     public static function is_block_theme()
     {
         return current_theme_supports( 'block-templates' );
@@ -184,6 +202,64 @@ class WP
         $all_plugins = get_plugins();
 
         return isset( $all_plugins[ $plugin_file ] );
+    }
+    public static function deprecated_once( $type, $identifier, $since, $replacement = null, $message = '' )
+    {
+        static $seen = array();
+        $should_log = apply_filters( 'authorship/deprecated_once_should_log', true, $type, $identifier, $since, $replacement, $message );
+        if ( !$should_log )
+        {
+            return;
+        }
+        $enabled = apply_filters( 'authorship/deprecated_once_enabled', true, $type, $identifier, $since, $replacement, $message );
+        if ( $enabled )
+        {
+            $key = $type . '|' . $identifier;
+
+            if ( isset( $seen[$key] ) )
+            {
+                return; // Already logged this one in this request.
+            }
+            $seen[$key] = true;
+        }
+        switch ( $type )
+        {
+            case 'function':
+                if ( function_exists( '_deprecated_function' ) )
+                {
+                    _deprecated_function( $identifier, $since, $replacement );
+                }
+                break;
+
+            case 'argument':
+                if ( function_exists( '_deprecated_argument' ) )
+                {
+                    _deprecated_argument( $identifier, $since, $message ?: ($replacement ? "Use {$replacement} instead." : '') );
+                }
+                break;
+
+            case 'hook':
+                if ( function_exists( '_deprecated_hook' ) )
+                {
+                    _deprecated_hook( $identifier, $since, $replacement, $message );
+                }
+                break;
+
+            default:
+                _doing_it_wrong( __FUNCTION__, 'Unknown deprecation type.', $since );
+        }
+    }
+    public static function deprecated_function_once( $function, $since, $replacement = null )
+    {
+        self::deprecated_once( 'function', $function, $since, $replacement );
+    }
+    public static function deprecated_argument_once( $owner_function, $since, $replacement = null, $message = '' )
+    {
+        self::deprecated_once( 'argument', $owner_function, $since, $replacement, $message );
+    }
+    public static function deprecated_hook_once( $hook, $since, $replacement = null, $message = '' )
+    {
+        self::deprecated_once( 'hook', $hook, $since, $replacement, $message );
     }
 
 } // class

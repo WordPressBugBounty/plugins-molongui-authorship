@@ -11,9 +11,6 @@
 
 namespace Molongui\Authorship;
 
-use Molongui\Authorship\Admin\Post_Count_Updater;
-use Molongui\Authorship\Common\Utils\Assets;
-use Molongui\Authorship\Common\Utils\Cache;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Common\Utils\Plugin;
@@ -77,12 +74,12 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         if ( molongui_is_guest_author() and isset( $the_query->guest_author_id ) and !in_the_loop() )
         {
             $author_type = 'guest';
-            $author_id   = $the_query->guest_author_id;
+            $author_id   = absint( $the_query->guest_author_id );
         }
         else
         {
             $author_type = 'user';
-            $author_id   = $userid;
+            $author_id   = absint( $userid );
         }
 
         /*!
@@ -91,9 +88,37 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          * If you choose to use it, you do so at your own risk, as it may cause code issues.
          */
         list( $author_id, $author_type ) = apply_filters( '_authorship/post_count/author', array( $author_id, $author_type ), $count, $userid, $post_type, $public_only );
+        if ( empty( $author_id ) || absint( $author_id ) === 0 )
+        {
+            return apply_filters( 'molongui_authorship/post_count', $count, $count, $userid, $post_type, $public_only );
+        }
         $author     = new Author( $author_id, $author_type );
         $post_count = $author->get_post_count( $post_type, true );
-        return apply_filters( 'authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
+
+        /*!
+         * DEPRECATED
+         * This filter hook is scheduled for removal in version 5.4.0. Update any dependencies accordingly.
+         *
+         * @since      4.6.18
+         * @deprecated 5.2.7 Use 'molongui_authorship/post_count' instead
+         */
+        if ( has_filter( 'authorship/post_count' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true, __FUNCTION__ ) )
+        {
+            $post_count = apply_filters_deprecated( 'authorship/post_count', array( $post_count, $count, $userid, $post_type, $public_only ), '5.2.7', 'molongui_authorship/post_count' );
+        }
+
+        /*!
+         * FILTER HOOK
+         * Allows filtering the post count before it is returned.
+         *
+         * @param int          $post_count  The filtered user's post count.
+         * @param int          $count       The original user's post count.
+         * @param int          $userid      User ID.
+         * @param string|array $post_type   Single post type or array of post types to count the number of posts for.
+         * @param bool         $public_only Whether to limit counted posts to public posts.
+         * @since 5.2.7
+         */
+        return apply_filters( 'molongui_authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
     }
     public function filter_user_posts( $wp_query )
     {
@@ -237,7 +262,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             }
             if ( !empty( $html_meta ) )
             {
-                $meta .= '<meta name="author" content="' . esc_attr( $author->get_name() ) . '">'."\n";
+                $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
             }
             if ( !empty( $opengraph_meta ) )
             {
@@ -256,7 +281,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                     $author = new Author( $main_author->id, $main_author->type );
                     if ( !empty( $html_meta ) )
                     {
-                        $meta .= '<meta name="author" content="' . esc_attr( $author->get_name() ) . '">'."\n";
+                        $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
                     }
                     if ( !empty( $facebook_meta ) )
                     {
@@ -306,7 +331,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                         $author = new Author( $auth->id, $auth->type );
                         if ( !empty( $html_meta ) )
                         {
-                            $meta .= '<meta name="author" content="' . esc_attr( $author->get_name() ) . '">'."\n";
+                            $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
                         }
                         if ( !empty( $facebook_meta ) )
                         {
@@ -352,7 +377,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         $fb = $author->get_meta( 'facebook' );
         if ( filter_var( $fb, FILTER_VALIDATE_URL ) )
         {
-            $url = array( 'https://www.facebook.com/', 'https://facebook.com/', 'http://www.facebook.com/', 'http://facebook.com/', '//facebook.com/', 'facebook.com/' );
+            $url = array( 'https://www.facebook.com/', 'http://www.facebook.com/', 'https://facebook.com/', 'http://facebook.com/', '//facebook.com/', 'facebook.com/' );
             $fb  = rtrim( str_replace( $url, '', $fb ), '/' );
         }
         if ( !empty( $fb ) )
@@ -365,7 +390,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
     public function add_opengraph_author_meta( $author )
     {
         $meta = '';
-        $meta .= '<meta property="article:author" content="' . esc_attr( $author->get_name() ) . '" />' . "\n";
+        $meta .= '<meta property="article:author" content="' . esc_attr( $author->get_display_name() ) . '" />' . "\n";
 
         return $meta;
     }
@@ -393,7 +418,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             return;
         }
         $author = new Author( $author_id, $author_type );
-        $author_name   = $author->get_name();
+        $author_name   = $author->get_display_name();
         $author_first  = $author->get_first_name();
         $author_last   = $author->get_last_name();
         $author_bio    = esc_html( $author->get_description() );
@@ -480,7 +505,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             }
         }
 
-        $data = array();
+        $post_authors = array();
         if ( !in_array( self::get_post_type( $post_id ), Settings::enabled_post_types() ) )
         {
             $wp_author = self::get_wp_author( $post_id );
@@ -490,9 +515,8 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 return false;
             }
 
-            $data[] = $wp_author;
+            $post_authors[$wp_author->ref] = $wp_author;
         }
-
         else
         {
             $main_author = self::get_main_author( $post_id );
@@ -502,18 +526,18 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             }
             if ( !Settings::is_enabled( 'co-authors' ) )
             {
-                $data[] = $main_author;
+                $post_authors[$main_author->ref] = $main_author;
             }
             else
             {
                 $authors = get_post_meta( $post_id, '_molongui_author', false );
-                if ( !empty( $authors) )
+                if ( !empty( $authors ) )
                 {
                     $guest_enabled = Settings::is_enabled( 'guest-author' );
 
-                    foreach ( $authors as $author )
+                    foreach ( $authors as $author_ref )
                     {
-                        $split = explode( '-', $author );
+                        $split = explode( '-', $author_ref );
                         if ( empty( $split[1] ) )
                         {
                             continue;
@@ -526,20 +550,20 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                         {
                             continue;
                         }
-                        $data[] = (object) array( 'ID' => (int)$split[1], 'id' => (int)$split[1], 'type' => $split[0], 'ref' => $author );
+                        $post_authors[$author_ref] = (object) array( 'ID' => (int)$split[1], 'id' => (int)$split[1], 'type' => $split[0], 'ref' => $author_ref );
                     }
                 }
-                array_unshift( $data, $main_author );
+                array_unshift( $post_authors, $main_author );
             }
         }
         if ( !$key )
         {
-            return $data;
+            return $post_authors;
         }
-        if ( !empty( $data ) )
+        if ( !empty( $post_authors ) )
         {
             $values = array();
-            foreach ( $data as $author )
+            foreach ( $post_authors as $author )
             {
                 if ( is_object( $author ) and property_exists( $author, $key ) )
                 {
@@ -555,6 +579,15 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
     }
     public static function get_coauthored( $authors, $get_all = false, $exclude = array(), $entry = 'post', $meta_query = array() )
     {
+        if ( empty( $authors ) )
+        {
+            return array();
+        }
+        if ( ! is_array( $authors ) )
+        {
+            $authors = array( $authors );
+        }
+
         $options = Settings::get();
         switch ( $entry )
         {
@@ -567,47 +600,93 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 break;
 
             case 'related':
-                $entries = explode( ",", $options['author_box_related_posts_post_types'] );
+                $entries = ! empty( $options['author_box_related_posts_post_types'] )
+                    ? array_map( 'trim', explode( ',', $options['author_box_related_posts_post_types'] ) )
+                    : 'post';
                 break;
 
             default:
                 $entries = $entry;
                 break;
         }
+
+        $meta_query_authors = array();
+        $posts              = array();
         if ( count( $authors ) > 1 )
         {
-            $mq['authors']['relation'] = 'AND';
-            foreach( $authors as $author )
+            $meta_query_authors['relation'] = 'AND';
+            foreach ( $authors as $author )
             {
-                $mq['authors'][] = array( 'key' => '_molongui_author', 'value' => $author->ref, 'compare' => '=' );
+                $author_ref = ( is_object( $author ) && isset( $author->ref ) ) ? $author->ref : $author;
+
+                $meta_query_authors[] = array
+                (
+                    'key'     => '_molongui_author',
+                    'value'   => $author_ref,
+                    'compare' => '=',
+                );
             }
         }
         else
         {
-            $mq['authors'] = array( 'key' => '_molongui_author', 'value' => $authors, 'compare' => '=' );
-        }
-        if ( !empty( $meta_query ) )
-        {
-            $mq['authors']['relation'] = 'AND';
-            $mq['authors'] = array
+            $author     = reset( $authors );
+            $author_ref = ( is_object( $author ) && isset( $author->ref ) ) ? $author->ref : $author;
+
+            $meta_query_authors = array
             (
-                'key'   => $meta_query['key'],
-                'value' => $meta_query['value'],
+                'key'     => '_molongui_author',
+                'value'   => $author_ref,
+                'compare' => '='
+            );
+        }
+        $meta_query_final = array();
+
+        if ( ! empty( $meta_query_authors ) )
+        {
+            $meta_query_final[] = $meta_query_authors;
+        }
+
+        if ( ! empty( $meta_query ) )
+        {
+            $meta_query_final[] = $meta_query;
+        }
+
+        if ( 1 === count( $meta_query_final ) )
+        {
+            $meta_query_final = $meta_query_final[0];
+        }
+        elseif ( count( $meta_query_final ) > 1 )
+        {
+            $meta_query_final = array_merge(
+                array( 'relation' => 'AND' ),
+                $meta_query_final
             );
         }
         $args = array
         (
             'post_type'      => $entries,
-            'orderby'        => !empty( $options['author_box_related_orderby'] ) ? $options['author_box_related_orderby'] : 'date',
-            'order'          => !empty( $options['author_box_related_order'] )   ? $options['author_box_related_order']   : 'desc',
-            'posts_per_page' => $get_all ? '-1' : $options['author_box_related_count'],
-            'post__not_in'   => $exclude,
-            'meta_query'     => $mq,
-            'site_id'        => get_current_blog_id(),
-            'language'       => Helpers::get_language(),
+            'orderby'        => ! empty( $options['author_box_related_orderby'] ) ? $options['author_box_related_orderby'] : 'date',
+            'order'          => ! empty( $options['author_box_related_order'] )   ? $options['author_box_related_order']   : 'desc',
+            'posts_per_page' => $get_all
+                ? -1
+                : ( isset( $options['author_box_related_posts_count'] ) && is_numeric( $options['author_box_related_posts_count'] )
+                    ? (int) $options['author_box_related_posts_count']
+                    : 4
+                ),
+            'post__not_in'        => array_map( 'absint', (array) $exclude ),
+            'meta_query'          => $meta_query_final,
+            'no_found_rows'       => true,
+            'ignore_sticky_posts' => true,
+            'site_id'             => get_current_blog_id(),
+            'language'            => Helpers::get_language(),
         );
-        $data = Cache::query( $args, 'posts' );
-        if ( !empty( $data->posts ) ) foreach ( $data->posts as $post ) $posts[] = $post;
+        $args = apply_filters( 'molongui_authorship/post/get_coauthored_args', $args, $authors, $get_all, $exclude, $entry, $meta_query );
+        $data = new \WP_Query( $args );
+        if ( !empty( $data->posts ) )
+        {
+            $posts = $data->posts;
+        }
+
         return ( !empty( $posts ) ? $posts : array() );
     }
     public static function get_byline( $post_id = null, $separator = null, $last_separator = null, $linked = false )
@@ -676,7 +755,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             }
             else
             {
-                $item = esc_html( $author->get_name() );
+                $item = esc_html( $author->get_display_name() );
             }
             $item = apply_filters( 'authorship/byline_item', $divider.$item, $item, $divider, $i, $byline_author, $names_to_display );
             $byline .= $item;
@@ -720,19 +799,6 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          */
         $space = apply_filters( 'molongui_authorship/byline_separator_space', '&nbsp;' );
 
-        /*!
-         * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
-         *
-         * @since      4.6.18
-         * @deprecated 5.0.0
-         * @use        molongui_authorship/byline_separator_space
-         */
-        if ( has_filter( 'authorship/byline_separator_autospace' ) and !apply_filters_deprecated( 'authorship/byline_separator_autospace', array( true ), '5.0.0', 'authorship/byline_separator_space' ) )
-        {
-            $space = '';
-        }
-
         $separator      = $separator.$space;
         $last_separator = $space.$last_separator.$space;
 
@@ -748,21 +814,6 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          */
         $separator      = apply_filters( 'molongui_authorship/co_authors_separator', $separator, $count );
         $last_separator = apply_filters( 'molongui_authorship/co_authors_last_separator', $last_separator, $count );
-
-        /*!
-         * DEPRECATED
-         * This filter hooks are scheduled for removal in version 5.2.0. Update any dependencies accordingly.
-         *
-         * @since      4.6.19
-         * @deprecated 5.0.0
-         * @use        molongui_authorship/co_authors_separator
-         *             molongui_authorship/co_authors_last_separator
-         */
-        if ( apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
-        {
-            $separator      = apply_filters_deprecated( 'authorship/byline_separator', array( $separator, $count ), '5.0.0', 'molongui_authorship/co_authors_separator' );
-            $last_separator = apply_filters_deprecated( 'authorship/byline_last_separator', array( $last_separator, $count ), '5.0.0', 'molongui_authorship/co_authors_last_separator' );
-        }
 
         return array( $separator, $last_separator );
     }

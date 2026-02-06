@@ -10,7 +10,6 @@
 
 namespace Molongui\Authorship;
 
-use Molongui\Authorship\Common\Utils\Cache;
 use Molongui\Authorship\Common\Utils\WP;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
@@ -38,29 +37,9 @@ class Deactivator
 	private static function deactivate_single_blog()
 	{
         global $wpdb;
-        Cache::clear( 'posts' );
-        Cache::clear( 'users' );
-        Cache::clear( 'guests' );
 		delete_transient( MOLONGUI_AUTHORSHIP_NAME.'-activated' );
 		delete_transient( MOLONGUI_AUTHORSHIP_NAME.'-updated' );
-        delete_option( 'molongui_authorship_update_post_authors' );
-        delete_option( 'molongui_authorship_update_post_authorship_complete' );
-        delete_option( 'molongui_authorship_update_post_authorship_running' );
-        delete_option( 'molongui_authorship_update_post_counters' );
-        delete_option( 'molongui_authorship_update_posts_count_complete' );
-        delete_option( 'molongui_authorship_update_posts_count_running' );
-
-        $likes = array
-        (
-            'molongui_authorship_update_post_authors_batch_%',
-            'molongui_authorship_update_post_authorship_batch_%',
-            'molongui_authorship_add_author_error_%',
-            'molongui_authorship_add_author_input_%',
-        );
-        foreach( $likes as $like )
-        {
-            $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '{$like}';" );
-        }
+        Settings::delete_job_flags();
 	}
 
 } // class

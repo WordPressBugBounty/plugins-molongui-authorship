@@ -129,7 +129,7 @@ class Guest_Author
         }
         $user = new \WP_User();
         $user->guest_id         = $author->get_id();
-        $user->display_name     = ( !empty( $display_name ) ? $display_name : $author->get_name() );
+        $user->display_name     = ( !empty( $display_name ) ? $display_name : $author->get_display_name() );
         $user->user_url         = $author->get_website();
         $user->description      = $author->get_description();
         $user->user_description = $user->description;

@@ -16,14 +16,13 @@ namespace Molongui\Authorship\Admin;
 use Molongui\Authorship\Author;
 use Molongui\Authorship\Author_Box;
 use Molongui\Authorship\Common\Utils\Assets;
-use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Settings;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author_Box_Editor
 {
-    static  $javascript     = '/assets/js/editor.462c.min.js';
+    static  $javascript     = '/assets/js/editor.3189.min.js';
     static  $stylesheet     = '';
     private $stylesheet_ltr = '/assets/css/editor.4e0e.min.css';
     private $stylesheet_rtl = '/assets/css/editor-rtl.1979.min.css';
@@ -174,20 +173,27 @@ class Author_Box_Editor
         $profile = array();
         $saved   = Settings::get();
         $options = array_merge( $saved, $options );
-        add_filter( '_authorship/get_options', function() use ( $options )
+        add_filter( 'authorship/get_options', function() use ( $options )
         {
             return $options;
         });
 
         if ( empty( $pick ) )
         {
-            $profile['dummy-0'] = $this->get_dummy_data( $options );
+            if ( !empty( $options['author_box_bio_source'] ) and 'short' === $options['author_box_bio_source'] )
+            {
+                add_filter( 'molongui_authorship/author/dummy_defaults', function( $defaults )
+                {
+                    $defaults['meta']['description'] = $defaults['meta']['short_description'];
+                    return $defaults;
+                } );
+            }
+            $profile['dummy-0'] = new Author( 0, 'dummy' );
         }
         else
         {
             $_pick          = explode( '-', $pick );
-            $author         = new Author( $_pick[1], $_pick[0] );
-            $profile[$pick] = $author->get_data();
+            $profile[$pick] = new Author( $_pick[1], $_pick[0] );
         }
 
         $markup = Author_Box::markup( $profile, $options );
@@ -245,7 +251,7 @@ class Author_Box_Editor
                                 <div class="m-a-box-item m-a-box-related-entries" <?php echo ( $options['author_box_layout'] == 'slim' ? 'style="display: none;"' : '' ); ?>>
                                     <ul>
                                         <?php
-                                        if ( !empty( $profile['posts'] ) )
+                                        if ( !empty( $profile->has_posts() ) )
                                         {
                                             /*!
                                              * FILTER HOOK
@@ -318,15 +324,15 @@ class Author_Box_Editor
 
             case '3':
 
-                foreach( $profile['posts'] as $related )
+                foreach( $profile->get_posts( array( 'post_type' => 'related' ) ) as $related_id )
                 {
                     ?>
                     <li>
                         <div class="m-a-box-related-entry" itemscope itemtype="http://schema.org/CreativeWork">
 
                             <div class="molongui-display-none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                                <div itemprop="name"><?php echo $profile['name']; ?></div>
-                                <div itemprop="url"><?php echo esc_url( $profile['archive_url'] ); ?></div>
+                                <div itemprop="name"><?php echo $profile->get_display_name(); ?></div>
+                                <div itemprop="url"><?php echo esc_url( $profile->get_archive_url() ); ?></div>
                             </div>
 
                             <!-- Related entry thumb -->
@@ -369,7 +375,7 @@ class Author_Box_Editor
         $dummy  = $author->get_data();
         if ( !empty( $options['author_box_bio_source'] ) and 'short' === $options['author_box_bio_source'] )
         {
-            $dummy['bio'] = $dummy['short_bio'];
+            $dummy['description'] = $dummy['short_bio'];
         }
         if ( !empty( $options['author_box_avatar_source'] ) )
         {
@@ -447,9 +453,9 @@ class Author_Box_Editor
         $premium  = array
         (
             'author_box_bio_source' => array( 'full' ),
-            'author_box_related_layout'  => array( 'layout-1', 'layout-2' ),
-            'author_box_related_orderby' => array( 'date' ),
-            'author_box_related_count'   => array( 4 ),
+            'author_box_related_layout'      => array( 'layout-1', 'layout-2' ),
+            'author_box_related_orderby'     => array( 'date' ),
+            'author_box_related_posts_count' => array( 4 ),
             'author_box_profile_layout' => array( 'layout-1' ),
         );
         foreach ( $premium as $key => $accepted )

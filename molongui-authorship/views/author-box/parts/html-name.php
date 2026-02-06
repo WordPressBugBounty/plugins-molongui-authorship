@@ -13,28 +13,28 @@ $name_tag = Settings::get( 'author_box_name_tag', 'h5' );
 
 ?>
 
-<div class="m-a-box-name m-a-box-title">
+<div class="m-a-box-name">
 	<<?php echo $name_tag; ?> <?php echo ( $add_microdata ? 'itemprop="name"' : '' ); ?>>
         <?php
             if ( empty( $options['author_box_name_link'] ) or 'none' === $options['author_box_name_link']
                  or
-                 ( 'website' === $options['author_box_name_link'] and empty( $profile['web'] ) )
+                 ( 'website' === $options['author_box_name_link'] and empty( $profile->get_website() ) )
                  or
-                 ( 'custom' === $options['author_box_name_link'] and empty( $profile['custom_link'] ) )
+                 ( 'custom' === $options['author_box_name_link'] and empty( $profile->get_meta( 'custom_link' ) ) )
                  or
                  ( 'archive' === $options['author_box_name_link']
                     and
-                    ( ( 'guest' === $profile['type'] and !Plugin::has_pro() )
+                    ( ( 'guest' === $profile->get_type() and !Plugin::has_pro() )
                         or
-                      ( 'guest' === $profile['type'] and !Settings::get( 'guest_archive_enabled', false ) )
+                      ( 'guest' === $profile->get_type() and !Settings::get( 'guest_archive_enabled', false ) )
                         or
-                      ( 'user' === $profile['type'] and !Settings::get( 'user_archive_enabled', true )  )
+                      ( 'user' === $profile->get_type() and !Settings::get( 'user_archive_enabled', true )  )
                     )
                 )
             ){
 	            ?>
                 <span>
-			        <?php echo esc_html( $profile['name'] ); ?>
+			        <?php echo esc_html( $profile->get_display_name() ); ?>
                 </span>
 	            <?php
             }
@@ -42,13 +42,13 @@ $name_tag = Settings::get( 'author_box_name_tag', 'h5' );
             {
                 switch ( $options['author_box_name_link'] )
                 {
-                    case 'website': $url = $profile['web']; break;
-                    case 'custom' : $url = $profile['custom_link']; break;
-                    case 'archive': default: $url = $profile['archive_url']; break;
+                    case 'website': $url = $profile->get_website(); break;
+                    case 'custom' : $url = $profile->get_meta( 'custom_link' ); break;
+                    case 'archive': default: $url = $profile->get_archive_url(); break;
                 }
                 ?>
                 <a class="m-a-box-name-url <?php echo ( $options['author_box_name_underline'] == 'remove' ? 'molongui-remove-underline' : '' ); ?>" href="<?php echo esc_url( $url ); ?>" <?php echo ( $add_microdata ? 'itemprop="url"' : '' ); ?>>
-		            <?php echo esc_html( $profile['name'] ); ?>
+		            <?php echo esc_html( $profile->get_display_name() ); ?>
                 </a>
 	            <?php
             }

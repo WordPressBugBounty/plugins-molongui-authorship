@@ -125,7 +125,7 @@ class User extends \Molongui\Authorship\Common\Utils\User
                 if ( 'byline' === $aim )
                 {
                     $user->ID            = ( ( !empty( $post_main_author ) and isset( $post_main_author->id ) ) ? $post_main_author->id : $user->ID ); // We need to restore user ID that might have been altered above.
-                    $user->display_name  = ( !empty( $display_name ) ? $display_name : $author->get_name() );
+                    $user->display_name  = ( !empty( $display_name ) ? $display_name : $author->get_display_name() );
                     $user->user_nicename = $author->get_slug();
                     $user->nickname      = $user->display_name;
                 }

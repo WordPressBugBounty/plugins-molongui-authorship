@@ -428,7 +428,7 @@ class UI
                 <input class="molongui-ui-card__input" type="file" id="<?php echo esc_attr( !empty( $args['button']['id'] ) ? $args['button']['id'] : '' ); ?>" accept="<?php echo esc_attr( $args['button']['accept'] ); ?>" data-multiple-caption="{count} files selected" <?php echo ( !empty( $args['button']['multi'] ) ? 'multiple' : '' ); ?> />
                 <label class="molongui-ui-card__button" for="<?php echo esc_attr( !empty( $args['button']['id'] ) ? $args['button']['id'] : '' ); ?>"><?php echo esc_html( $args['button']['label'] ); ?></label>
             <?php elseif ( !empty( $args['button']['link'] ) ) : ?>
-                <a class="molongui-ui-card__button" id="<?php echo esc_attr( !empty( $args['button']['id'] ) ? $args['button']['id'] : '' ); ?>" href="<?php echo esc_attr( $args['button']['link'] ); ?>">
+                <a class="molongui-ui-card__button" id="<?php echo esc_attr( !empty( $args['button']['id'] ) ? $args['button']['id'] : '' ); ?>" href="<?php echo esc_attr( $args['button']['link'] ); ?>" target="<?php echo esc_attr( !empty( $args['button']['target'] ) ? $args['button']['target'] : '_self' ); ?>">
                     <?php echo esc_html( $args['button']['label'] ); ?>
                 </a>
             <?php else: ?>

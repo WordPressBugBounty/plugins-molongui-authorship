@@ -13,7 +13,9 @@
 
 namespace Molongui\Authorship\Admin;
 
+use Molongui\Authorship\Author;
 use Molongui\Authorship\Authors;
+use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Settings;
 use Molongui\Authorship\Social;
 
@@ -180,8 +182,18 @@ class Author_List_Table extends Base_Author_List_Table
             add_filter( 'molongui_authorship/get_author_data_fields', array( $this, 'author_fields' ) );
             add_filter( 'authorship/get_avatar/size', array( $this, 'avatar_size' ) );
             add_filter( 'authorship/get_avatar/context', array( $this, 'avatar_context' ) );
-
-            $data = Authors::get_authors( $type, array(), array(), array(), array(), $order, $orderby, true, 0, array( 'post' ) );
+            $args = array
+            (
+                'type'     => $type,
+                'order'    => $order,
+                'orderby'  => $orderby,
+                'prefetch' => array
+                (
+                    'core' => array( 'display_name', 'post_title' ),
+                    'meta' => array(),
+                ),
+            );
+            $data = Authors::get_authors( $args );
 
             if ( !in_array( $role_filter, array( 'all', 'guests' ) ) )
             {
@@ -194,6 +206,7 @@ class Author_List_Table extends Base_Author_List_Table
             (
                 'id',
                 'name',
+                'display_name',
                 'first_name',
                 'last_name',
                 'email',
@@ -241,27 +254,99 @@ class Author_List_Table extends Base_Author_List_Table
     }
     private function filter_table_data( $table_data, $search_key, $search_in )
     {
-        $filtered_table_data = array_values( array_filter( $table_data, function( $row ) use( $search_key, $search_in )
+        $search_key = trim( (string) $search_key );
+        if ( $search_key === '' || empty( $table_data ) || empty( $search_in ) )
         {
-            foreach ( $row as $key => $row_val )
+            return $table_data;
+        }
+        $needle = strtolower( $search_key );
+        $fields = array();
+        foreach ( (array) $search_in as $field )
+        {
+            $field = (string) $field;
+            if ( $field !== '' )
             {
-                if ( !in_array( $key, $search_in ) )
+                $fields[ $field ] = true;
+            }
+        }
+        if ( empty( $fields ) )
+        {
+            return $table_data;
+        }
+        $fields = array_keys( $fields );
+
+        $filtered = array();
+
+        foreach ( (array) $table_data as $row )
+        {
+            if ( $row instanceof Author )
+            {
+                foreach ( $fields as $field )
                 {
-                    continue;
-                }
-                if ( is_array( $row_val ) )
-                {
-                    $row_val = implode( ", ", $row_val );
+                    $value = '';
+
+                    switch ( $field )
+                    {
+                        case 'id':
+                            $value = (string) $row->get_id();
+                            break;
+
+                        case 'name':
+                        case 'display_name':
+                            $value = (string) $row->get_display_name();
+                            break;
+
+                        case 'first_name':
+                            $value = (string) $row->get_first_name();
+                            break;
+
+                        case 'last_name':
+                            $value = (string) $row->get_last_name();
+                            break;
+
+                        case 'email':
+                            $value = (string) $row->get_email();
+                            break;
+
+                        default:
+                            $value = (string) $row->get_meta( $field );
+                            break;
+                    }
+
+                    if ( $value !== '' && strpos( strtolower( $value ), $needle ) !== false )
+                    {
+                        $filtered[] = $row;
+                        break;
+                    }
                 }
 
-                if ( stripos( $row_val, $search_key ) !== false )
+                continue;
+            }
+            if ( is_array( $row ) )
+            {
+                foreach ( $fields as $field )
                 {
-                    return true;
+                    if ( ! isset( $row[ $field ] ) )
+                    {
+                        continue;
+                    }
+
+                    $val = $row[ $field ];
+                    if ( is_array( $val ) )
+                    {
+                        $val = implode( ', ', $val );
+                    }
+
+                    if ( $val !== '' && strpos( strtolower( (string) $val ), $needle ) !== false )
+                    {
+                        $filtered[] = $row;
+                        break;
+                    }
                 }
             }
-        } ) );
+        }
 
-        return $filtered_table_data;
+        return $filtered;
     }
     public function no_items()
     {
@@ -270,16 +355,16 @@ class Author_List_Table extends Base_Author_List_Table
     public function column_default( $item, $column_name )
     {
         $result    = '';
-        $author_id = absint( $item['id'] );
+        $author_id = absint( $item->get_id() );
 
         switch ( $column_name )
         {
             case 'avatar':
-                $result = $item['avatar'];
+                $result = $item->get_avatar();
                 break;
 
             case 'name':
-                switch ( $item['type'] )
+                switch ( $item->get_type() )
                 {
                     case 'user':
 
@@ -287,7 +372,7 @@ class Author_List_Table extends Base_Author_List_Table
 
                         if ( is_multisite() and current_user_can( 'manage_network_users' ) )
                         {
-                            if ( in_array( $item['user_login'], get_super_admins(), true ) )
+                            if ( in_array( $item->get_meta( 'user_login' ), get_super_admins(), true ) )
                             {
                                 $super_admin = ' &mdash; ' . __( 'Super Admin' );
                             }
@@ -297,17 +382,17 @@ class Author_List_Table extends Base_Author_List_Table
                             if ( current_user_can( 'edit_user', $author_id ) )
                             {
                                 $edit_link = esc_url( add_query_arg( 'wp_http_referer', urlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) ), get_edit_user_link( $author_id ) ) );
-                                $result    = "<strong><a href=\"{$edit_link}\">{$item['name']}</a>{$super_admin}</strong><br />";
+                                $result    = "<strong><a href=\"{$edit_link}\">{$item->get_display_name()}</a>{$super_admin}</strong><br />";
                             }
                             else
                             {
-                                $result = "<strong>{$item['name']}{$super_admin}</strong><br />";
+                                $result = "<strong>{$item->get_display_name()}{$super_admin}</strong><br />";
                             }
 
                         }
                         else
                         {
-                            $result = "<strong>{$item['name']}{$super_admin}</strong>";
+                            $result = "<strong>{$item->get_display_name()}{$super_admin}</strong>";
                         }
                         break;
 
@@ -316,24 +401,25 @@ class Author_List_Table extends Base_Author_List_Table
                         if ( current_user_can( 'edit_others_pages' ) or current_user_can( 'edit_others_posts' ) )
                         {
                             $edit_link = esc_url( add_query_arg( 'wp_http_referer', urlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) ), get_edit_post_link( $author_id ) ) );
-                            $result    = "<strong><a href=\"{$edit_link}\">{$item['name']}</a></strong><br />";
+                            $result    = "<strong><a href=\"{$edit_link}\">{$item->get_display_name()}</a></strong><br />";
                         }
                         else
                         {
-                            $result = "<strong>{$item['name']}</strong>";
+                            $result = "<strong>{$item->get_display_name()}</strong>";
                         }
                         break;
                 }
                 break;
 
             case 'type':
-                $result = ucfirst( $item['type'] );
+                $result = ucfirst( $item->get_type() );
                 break;
 
             case 'user_roles':
                 global $wp_roles;
+                $ur = $item->get_user_roles();
                 $user_roles = array();
-                foreach ( $item[$column_name] as $user_role )
+                foreach ( $ur as $user_role )
                 {
                     if ( 'Guest Author' === $user_role )
                     {
@@ -341,7 +427,7 @@ class Author_List_Table extends Base_Author_List_Table
                     }
                     else
                     {
-                        $user_roles[] = translate_user_role( $wp_roles->roles[ $user_role ]['name'] );
+                        $user_roles[] = translate_user_role( $wp_roles->roles[$user_role]['name'] );
                     }
                 }
                 $result = ucwords( implode( ", ", $user_roles ) );
@@ -352,11 +438,12 @@ class Author_List_Table extends Base_Author_List_Table
                 $result =  '';
                 foreach ( Settings::enabled_post_types( 'all', 'object' ) as $post_type )
                 {
-                    $type = 'user' === $item['type'] ? 'author' : 'guest';
+                    $type = 'user' === $item->get_type() ? 'author' : 'guest';
                     $link = admin_url( 'edit.php?post_type='.$post_type['id'].'&'.$type.'='.$author_id );
-                    if ( isset( $item['post_counts'][$post_type['id']] ) and $item['post_counts'][$post_type['id']] > 0 )
+                    $post_counts = $item->get_post_counts();
+                    if ( isset( $post_counts[$post_type['id']] ) and $post_counts[$post_type['id']] > 0 )
                     {
-                        $result .= '<div><a href="'.$link.'">'.$item['post_counts'][$post_type['id']].' '.$post_type['label'].'</a></div>';
+                        $result .= '<div><a href="'.$link.'">'.$post_counts[$post_type['id']].' '.$post_type['label'].'</a></div>';
                     }
                 }
                 if ( !$result )
@@ -366,11 +453,11 @@ class Author_List_Table extends Base_Author_List_Table
                 break;
 
             case 'description':
-                if ( !empty( $item[$column_name] ) )
+                if ( !empty( $item->get_description() ) )
                 {
                     $result  = '<div class="m-tooltip">';
                     $result .= '<span class="dashicons dashicons-yes"></span>';
-                    $result .= '<span class="m-tooltip__text m-tooltip__top m-tooltip__w400">'.esc_html( $item[$column_name] ).'</span>';
+                    $result .= '<span class="m-tooltip__text m-tooltip__top m-tooltip__w400">'.esc_html( $item->get_description() ).'</span>';
                     $result .= '</div>';
                 }
                 break;
@@ -378,7 +465,7 @@ class Author_List_Table extends Base_Author_List_Table
             case 'social_profiles':
                 foreach ( Social::get( 'enabled' ) as $network => $data )
                 {
-                    if ( !empty( $item[$network] ) )
+                    if ( !empty( $item->get_meta( $network ) ) )
                     {
                         $result  = '<div class="m-tooltip">';
                         $result .= '<span class="dashicons dashicons-yes"></span>';
@@ -390,7 +477,7 @@ class Author_List_Table extends Base_Author_List_Table
                 break;
 
             case 'box':
-                switch ( $item['box_display'] )
+                switch ( $item->get_meta( 'box_display' ) )
                 {
                     case 'show':
                         $icon = 'visibility';
@@ -415,7 +502,7 @@ class Author_List_Table extends Base_Author_List_Table
                 break;
 
             case 'archived':
-                if ( $item[$column_name] )
+                if ( $item->is_archived() )
                 {
                     $tip     = __( "Archived author", 'molongui-authorship' );
 
@@ -427,11 +514,11 @@ class Author_List_Table extends Base_Author_List_Table
                 break;
 
             case 'id':
-                $result = $item[$column_name] . '<br>' . '<span style="font-family: \'Courier New\', Courier, monospace; font-size: 81%; color: #a2a2a2;" >' . $item['type'] . '</span>';
+                $result = $item->get_id() . '<br>' . '<span style="font-family: \'Courier New\', Courier, monospace; font-size: 81%; color: #a2a2a2;" >' . $item->get_type() . '</span>';
                 break;
 
             default:
-                $result = $item[$column_name];
+                $result = $item->get_meta( $column_name );
                 break;
         }
 
@@ -445,9 +532,9 @@ class Author_List_Table extends Base_Author_List_Table
         }
 
         $actions   = array();
-        $author_id = absint( $item['id'] );
+        $author_id = absint( $item->get_id() );
 
-        switch ( $item['type'] )
+        switch ( $item->get_type() )
         {
             case 'user':
                 $url = 'users.php?';
@@ -474,7 +561,7 @@ class Author_List_Table extends Base_Author_List_Table
                         $actions['view'] = sprintf(
                             '<a href="%s" aria-label="%s">%s</a>',
                             esc_url( $author_posts_url ),
-                            esc_attr( sprintf( __( 'View posts by %s' ), $item['name'] ) ),
+                            esc_attr( sprintf( __( 'View posts by %s' ), $item->get_display_name() ) ),
                             __( 'View' )
                         );
                     }
@@ -495,17 +582,17 @@ class Author_List_Table extends Base_Author_List_Table
                     $actions['trash'] = sprintf(
                         '<a href="%s" class="submitdelete" aria-label="%s">%s</a>',
                         get_delete_post_link( $author_id ),
-                        esc_attr( sprintf( __( 'Move &#8220;%s&#8221; to the Trash' ), $item['name'] ) ),
+                        esc_attr( sprintf( __( 'Move &#8220;%s&#8221; to the Trash' ), $item->get_display_name() ) ),
                         _x( 'Trash', 'verb' )
                     );
                 }
 
-                if ( '#molongui-disabled-link' !== $item['archive_url'] )
+                if ( '#molongui-disabled-link' !== $item->get_meta( 'archive_url' ) )
                 {
                     $actions['view'] = sprintf(
                         '<a href="%s" rel="bookmark" aria-label="%s">%s</a>',
-                        $item['archive_url'],
-                        esc_attr( sprintf( __( 'View &#8220;%s&#8221;' ), $item['name'] ) ),
+                        $item->get_meta( 'archive_url' ),
+                        esc_attr( sprintf( __( 'View &#8220;%s&#8221;' ), $item->get_display_name() ) ),
                         __( 'View' )
                     );
                 }

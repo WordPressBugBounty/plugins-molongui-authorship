@@ -21,7 +21,7 @@ add_filter( 'schema_wp_author', function( $author )
         $author = array
         (
             '@type'	=> 'Person',
-            'name'	=> $author_class->get_name(),
+            'name'	=> $author_class->get_display_name(),
             'url'	=> $url
         );
 

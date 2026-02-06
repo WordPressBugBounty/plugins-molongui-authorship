@@ -9,32 +9,40 @@ use Molongui\Authorship\Settings;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $options = Settings::get();
-$profile = array();// new stdClass();
+$profile = array();
 
 if ( !empty( $_GET['author'] ) )
 {
-    $get           = explode( '-', sanitize_text_field( $_GET['author'] ) );
-    $author        = new Author( $get[1], $get[0] );
-    $profile[$get] = $author->get_data();
+    $get = explode( '-', sanitize_text_field( $_GET['author'] ) );
+    $profile[$get[0].'-'.$get[1]] = new Author( $get[1], $get[0] );
 }
 else
 {
     $current_user = wp_get_current_user();
     if ( apply_filters( 'molongui_authorship/preview_dummy_data', true ) )
     {
-        $profile['dummy-0'] = $this->get_dummy_data( $options );
+        if ( !empty( $options['author_box_bio_source'] ) and 'short' === $options['author_box_bio_source'] )
+        {
+            add_filter( 'molongui_authorship/author/dummy_defaults', function( $defaults )
+            {
+                $defaults['meta']['description'] = $defaults['meta']['short_description'];
+                return $defaults;
+            } );
+        }
+        echo '<style>.m-a-box-avatar img{width:'.$options['author_box_avatar_width'].'px; height:'.$options['author_box_avatar_height'].'px;}</style>';
+
+        $profile['dummy-0'] = new Author( 0, 'dummy' );
     }
     elseif ( array_intersect( (array)$current_user->roles, explode(",", $options['user_roles'] ) ) )
     {
         $author = new Author( $current_user->ID, 'user' );
-        $profile['user-'.$current_user->ID] = $author->get_data();
+        $profile['user-'.$current_user->ID] = $author;
     }
     else
     {
         $random = Authors::get_random_author( 'author', $options['user_roles'] );
-        $type   = is_a( $random, 'WP_User' ) ? 'user' : 'guest';
-        $author = new Author( $random->ID, $type );
-        $profile[$type.'-'.$random->ID] = $author->get_data();
+        $author = new Author( $random );
+        $profile[$author->get_type().'-'.$random->ID] = $author;
     }
 }
 

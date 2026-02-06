@@ -12,9 +12,9 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.1.0
+ * Version:           5.2.8
  * Requires at least: 5.2
- * Tested up to:      6.8
+ * Tested up to:      6.9
  * Requires PHP:      5.6.20
  * Author:            Molongui
  * Author URI:        https://www.molongui.com
@@ -43,7 +43,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 require_once __DIR__ . '/common/utils/singleton.php';
 final class MolonguiAuthorship
 {
-    const VERSION = '5.1.0';
+    const VERSION = '5.2.8';
     use Singleton;
     function __construct()
     {
@@ -134,7 +134,7 @@ final class MolonguiAuthorship
             'MOLONGUI_AUTHORSHIP_NAMESPACE'       => '\Molongui\Authorship',
             'MOLONGUI_AUTHORSHIP_PREFIX'          => 'molongui_authorship',
             'MOLONGUI_AUTHORSHIP_NAME'            => 'molongui-authorship',                // slug
-            'MOLONGUI_AUTHORSHIP_DB_SCHEMA'       => 24,
+            'MOLONGUI_AUTHORSHIP_DB_SCHEMA'       => 25,
             'MOLONGUI_AUTHORSHIP_DB_VERSION'      => 'molongui_authorship_db_version',     // Options key
             'MOLONGUI_AUTHORSHIP_INSTALL'         => 'molongui_authorship_install',        // Options key
             'MOLONGUI_AUTHORSHIP_NOTICES'         => 'molongui_authorship_notices',        // Options key
@@ -142,8 +142,8 @@ final class MolonguiAuthorship
             'MOLONGUI_AUTHORSHIP_TITLE'           => 'Molongui Authorship',
             'MOLONGUI_AUTHORSHIP_DEBUG'           => false,
             'MOLONGUI_AUTHORSHIP_HAS_PRO'         => true,
-            'MOLONGUI_AUTHORSHIP_MIN_PRO'         => '1.6.8',
-            'MOLONGUI_AUTHORSHIP_RECOMMENDED_PRO' => '1.7.0',
+            'MOLONGUI_AUTHORSHIP_MIN_PRO'         => '1.9.0',
+            'MOLONGUI_AUTHORSHIP_RECOMMENDED_PRO' => '1.9.0',
             'MOLONGUI_AUTHORSHIP_WEB'             => 'https://www.molongui.com/wordpress-plugin-post-authors',
             'MOLONGUI_AUTHORSHIP_DEMO'            => 'https://demos.molongui.com/test-drive-molongui-authorship-pro/',
             'MOLONGUI_AUTHORSHIP_TAG'             => 'Authorship',
@@ -233,8 +233,6 @@ final class MolonguiAuthorship
         $paths = array
         (
             MOLONGUI_AUTHORSHIP_DIR . 'dropins/',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/helpers/',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/hooks/',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/author-box.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/author-filters.php',
             MOLONGUI_AUTHORSHIP_DIR . 'includes/authors.php',

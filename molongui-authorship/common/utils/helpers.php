@@ -9,9 +9,10 @@ class Helpers
     {
         if ( is_string( $value ) )
         {
-            $false_values = array( 'false', '0', 'no', 'off', 'disabled', 'hide' );
+            $falsy_values = array( 'false', '0', 'off', 'no', 'n', 'none', 'disable', 'disabled', 'hide', 'exclude' );
+            $falsy_values = apply_filters( 'authorship/falsy_values', $falsy_values );
 
-            if ( in_array( strtolower( $value ), $false_values, true ) )
+            if ( in_array( strtolower( trim( $value ) ), $falsy_values, true ) )
             {
                 $value = false;
             }
@@ -102,8 +103,12 @@ class Helpers
     }
     public static function string_to_array( $string )
     {
-        $no_whitespaces = preg_replace( '/\s*,\s*/', ',', filter_var( $string, FILTER_SANITIZE_STRING ) );
-        $array = explode( ',', $no_whitespaces );
+        $string = (string) $string;
+        $string = trim( strip_tags( $string ) );
+        $string = preg_replace( '/\s*,\s*/', ',', $string );
+        $array = explode( ',', $string );
+        $array = array_filter( array_map( 'trim', $array ), 'strlen' );
+
         return $array;
     }
     public static function space_to_nbsp( $string )
@@ -113,6 +118,10 @@ class Helpers
     public static function is_bool( $var )
     {
         return ( '0' === $var or '1' === $var );
+    }
+    public static function is_valid_url( $url )
+    {
+        return filter_var( $url, FILTER_VALIDATE_URL ) !== false;
     }
     public static function rand( $length = 10 )
     {
@@ -427,25 +436,11 @@ class Helpers
     }
     public static function is_edit_mode()
     {
-        return apply_filters( 'authorship/is_edit_mode', self::is_block_editor() or self::is_elementor_editor() );
+        return apply_filters( 'authorship/is_edit_mode', WP::is_block_editor() or self::is_elementor_editor() );
     }
     public static function is_block_editor()
     {
-        $edit_mode = false;
-        if ( function_exists( 'is_gutenberg_page' ) and is_gutenberg_page() )
-        {
-            $edit_mode = true;
-        }
-        if ( function_exists( 'get_current_screen' ) )
-        {
-            $current_screen = get_current_screen();
-            if ( !is_null( $current_screen ) and method_exists( $current_screen, 'is_block_editor' ) and $current_screen->is_block_editor() )
-            {
-                $edit_mode = true;
-            }
-        }
-
-        return apply_filters( 'authorship/is_block_editor', $edit_mode );
+        return WP::is_block_editor();
     }
     public static function is_elementor_editor()
     {

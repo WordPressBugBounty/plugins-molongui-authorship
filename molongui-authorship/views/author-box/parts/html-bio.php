@@ -7,7 +7,7 @@ if ( 'none' === $options['author_box_bio_source'] ) return;
 
 <div class="m-a-box-bio" <?php echo ( $add_microdata ? 'itemprop="description"' : '' ); ?>>
     <?php
-    $bio = apply_filters( 'authorship/box/bio', $profile['bio'], $profile );
+    $bio = apply_filters( 'authorship/box/bio', $profile->get_description(), $profile );
     $bio = str_replace( array( "\n\r", "\r\n", "\n\n", "\r\r" ), "<br>", wpautop( str_replace( array( "<br>", "<br/>", "<br />" ), "", $bio ) ) );
 
     echo $bio;

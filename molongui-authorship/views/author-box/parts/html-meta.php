@@ -12,39 +12,39 @@ $nofollow  = ( $options['social_profiles_nofollow'] ? 'rel="nofollow"' : '' );
 $separator = sprintf( '&nbsp;%s&nbsp;', '<span class="m-a-box-meta-divider">'.$options['author_box_meta_divider'].'</span>' );
 
 $author_job = $author_company = $author_phone = $author_email = $author_web = $author_meta = '';
-if ( !empty( $profile['job'] ) )
+if ( !empty( $profile->get_meta( 'job' ) ) )
 {
-    $author_job = '<span ' . ( $add_microdata ? 'itemprop="jobTitle"' : '' ) . '>' . esc_html( $profile['job'] ) . '</span>';
+    $author_job = '<span ' . ( $add_microdata ? 'itemprop="jobTitle"' : '' ) . '>' . esc_html( $profile->get_meta( 'job' ) ) . '</span>';
 }
-if ( !empty( $profile['company'] ) )
+if ( !empty( $profile->get_meta( 'company' ) ) )
 {
     $author_company = sprintf(
         '%s%s%s%s%s'
         , '<span ' . ( $add_microdata ? 'itemprop="worksFor" itemscope itemtype="https://schema.org/Organization"' : '' ) . '>'
-        , $profile['company_link'] ? '<a href="' . esc_url( $profile['company_link'] ) . '" target="_blank" '.( $add_microdata ? 'itemprop="url"' : '' ). $nofollow . '>' : ''
-        , '<span ' . ( $add_microdata ? 'itemprop="name"' : '' ) . '>' . esc_html( $profile['company'] ) . '</span>'
-        , $profile['company_link'] ? '</a>' : ''
+        , $profile->get_meta( 'company_link' ) ? '<a href="' . esc_url( $profile->get_meta( 'company_link' ) ) . '" target="_blank" '.( $add_microdata ? 'itemprop="url"' : '' ). $nofollow . '>' : ''
+        , '<span ' . ( $add_microdata ? 'itemprop="name"' : '' ) . '>' . esc_html( $profile->get_meta( 'company' ) ) . '</span>'
+        , $profile->get_meta( 'company_link' ) ? '</a>' : ''
         , '</span>'
     );
 }
-if ( !empty( $profile['phone'] ) )
+if ( !empty( $profile->get_meta( 'phone' ) ) )
 {
-    $author_phone = '<a href="tel:'.esc_attr( $profile['phone'] ).'"'. ( $add_microdata ? ' itemprop="telephone"' : '' ) . ' content="'.esc_attr( $profile['phone'] ).'" '.$nofollow.'>' . esc_html( $profile['phone'] ) . '</a>';
-    $author_phone = apply_filters( 'authorship/box/meta/phone', $author_phone, $profile['phone'], $add_microdata, $nofollow );
+    $author_phone = '<a href="tel:'.esc_attr( $profile->get_meta( 'phone' ) ).'"'. ( $add_microdata ? ' itemprop="telephone"' : '' ) . ' content="'.esc_attr( $profile->get_meta( 'phone' ) ).'" '.$nofollow.'>' . esc_html( $profile->get_meta( 'phone' ) ) . '</a>';
+    $author_phone = apply_filters( 'authorship/box/meta/phone', $author_phone, $profile->get_meta( 'phone' ), $add_microdata, $nofollow );
 }
-if ( !empty( $profile['mail'] ) )
+if ( !empty( $profile->get_email() ) )
 {
-    $author_email = '<a href="mailto:'.esc_attr( $profile['mail'] ).'" target="_top"'. ( $add_microdata ? ' itemprop="email"' : '' ) . ' content="'.esc_attr( $profile['mail'] ).'" '.$nofollow.'>' . esc_html( $profile['mail'] ) . '</a>';
-    $author_email = apply_filters( 'authorship/box/meta/email', $author_email, $profile['mail'], $add_microdata, $nofollow );
+    $author_email = '<a href="mailto:'.esc_attr( $profile->get_email() ).'" target="_top"'. ( $add_microdata ? ' itemprop="email"' : '' ) . ' content="'.esc_attr( $profile->get_email() ).'" '.$nofollow.'>' . esc_html( $profile->get_email() ) . '</a>';
+    $author_email = apply_filters( 'authorship/box/meta/email', $author_email, $profile->get_email(), $add_microdata, $nofollow );
 
 }
-if ( !empty( $profile['web'] ) )
+if ( !empty( $profile->get_website() ) )
 {
-    $author_web = '<a href="' . esc_attr( $profile['web'] ) . '" target="_blank" '. $nofollow . '>'
+    $author_web = '<a href="' . esc_attr( $profile->get_website() ) . '" target="_blank" '. $nofollow . '>'
                   . '<span class="m-a-box-string-web">' . apply_filters( 'authorship/box/meta/web', ( $options['author_box_meta_web'] ? $options['author_box_meta_web'] : __( "Website", 'molongui-authorship' ) ), $profile ) . '</span>'
                   . '</a>';
 }
-if ( 'slim' === $options['author_box_layout'] and $options['author_box_show_related_posts'] and ( !empty( $profile['posts'] ) or !empty( $options['author_box_related_show_empty'] ) ) )
+if ( 'slim' === $options['author_box_layout'] and $options['author_box_show_related_posts'] and ( $profile->has_posts() or !empty( $options['author_box_related_show_empty'] ) ) )
 {
     $more_posts_label = !empty( $options[ 'author_box_meta_posts' ] )
         ? esc_html( apply_filters( 'authorship/box/meta/more', $options['author_box_meta_posts'], $profile ) )
@@ -88,7 +88,7 @@ if ( !empty( $author_company ) )
     $showing_company = true;
     $meta .= $author_company;
 }
-if ( !empty( $author_phone ) and ( $options['author_box_meta_show_phone'] or $profile['show_meta_phone'] ) )
+if ( !empty( $author_phone ) and ( $options['author_box_meta_show_phone'] or $profile->get_meta( 'show_meta_phone' ) ) )
 {
     if ( !empty( $showing_job ) or !empty( $showing_company ) )
     {
@@ -98,7 +98,7 @@ if ( !empty( $author_phone ) and ( $options['author_box_meta_show_phone'] or $pr
     $showing_phone = true;
     $meta .= $author_phone;
 }
-if ( !empty( $author_email ) and ( $options['author_box_meta_show_email'] or $profile['show_meta_mail'] ) )
+if ( !empty( $author_email ) and ( $options['author_box_meta_show_email'] or $profile->get_meta( 'show_meta_mail' ) ) )
 {
     if ( !empty( $showing_job ) or !empty( $showing_company ) or !empty( $showing_phone ) )
     {

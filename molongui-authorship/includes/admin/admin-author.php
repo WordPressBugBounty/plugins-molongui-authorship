@@ -53,7 +53,7 @@ class Admin_Author
                 'edit_others_posts',
                 'authors',
                 array( $this, 'render_view_all_screen' ),
-                $icon, //molongui_get_base64_svg( $this->menu_icon() ),
+                $icon, //Helpers::get_base64_svg( $this->menu_icon() ),
                 $position
             );
         }
@@ -203,7 +203,6 @@ class Admin_Author
             }
             else
             {
-                Admin_Guest_Author::clear_object_cache();
                 wp_safe_redirect( add_query_arg( array( 'post' => $guest_id, 'action' => 'edit' ), self_admin_url( 'post.php' ) ) );
                 die();
             }
@@ -240,7 +239,6 @@ class Admin_Author
             {
                 $notify = !empty( $_REQUEST['user-notify'] ) ? 'both' : 'admin';
                 wp_new_user_notification( $user_id, null, $notify );
-                Admin_User::clear_object_cache();
                 wp_safe_redirect( add_query_arg( 'user_id', $user_id, self_admin_url( 'user-edit.php#molongui-user-fields' ) ) );
                 die();
             }

@@ -12,7 +12,7 @@ use Molongui\Authorship\Common\Utils\WP;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author_Filters
 {
-    private $javascript = '/assets/js/byline.f4f7.min.js';
+    private $javascript = '/assets/js/byline.e0b3.min.js';
     public function __construct()
     {
         if ( Post::byline_takeover() )
@@ -243,6 +243,20 @@ class Author_Filters
         {
             return $link;
         }
+        $primary_author = null;
+        if ( is_array( $post_authors ) && ! empty( $post_authors ) )
+        {
+            $candidate = reset( $post_authors );
+
+            if ( is_object( $candidate ) )
+            {
+                $primary_author = $candidate;
+            }
+        }
+        if ( ! $primary_author || empty( $primary_author->type ) )
+        {
+            return $link;
+        }
 
         $count            = count( $post_authors );
         $show_remaining   = false;
@@ -272,22 +286,22 @@ class Author_Filters
                         switch ( $i )
                         {
                             case 0:
-                                $function  = 'get_url';      // 'get_url' must be used so returned $link is a valid URL.
-                                $default   = WP::home_url(); // To ensure we return a valid URL even if main author is a guest.
-                                $delimiter = '';             // Do not append anything at the beginning of the returned $link.
+                                $function  = 'get_archive_url'; // 'get_archive_url' must be used so returned $link is a valid URL.
+                                $default   = WP::home_url();    // To ensure we return a valid URL even if main author is a guest.
+                                $delimiter = '';                // Do not append anything at the beginning of the returned $link.
                                 $querychar = '';
                                 break;
 
                             case 1:
-                                $function  = 'get_url';                // 'get_slug' could be used to return the author nicename.
+                                $function  = 'get_archive_url';        // 'get_slug' could be used to return the author nicename.
                                 $default   = 'molongui-disabled-link'; // Do NOT add a leading '#'!!!
-                                $disabled  = $post_authors[0]->type == 'guest' ? apply_filters( '_authorship/filter/link/disable_main', true, $post_authors[0]->type ) : false;
+                                $disabled  = $primary_author->type == 'guest' ? apply_filters( '_authorship/filter/link/disable_main', true, $primary_author->type ) : false;
                                 $delimiter = $disabled ? 'molongui_byline=old'.$amp.'m_main_disabled=true'.$amp.'mca=' : 'molongui_byline=old'.$amp.'mca=';
                                 $querychar = $que;
                                 break;
 
                             default:
-                                $function  = 'get_url';                // 'get_slug' could be used to return the author nicename.
+                                $function  = 'get_archive_url';        // 'get_slug' could be used to return the author nicename.
                                 $default   = 'molongui-disabled-link'; // Do NOT add a leading '#'!!!
                                 $delimiter = 'mca=';
                                 $querychar = $amp;
@@ -335,7 +349,7 @@ class Author_Filters
                                     $data = 'molongui-disabled-link';
                                 }
 
-                                $disabled = $post_authors[0]->type == 'guest' ? apply_filters( '_authorship/filter/link/disable_main', true, $post_authors[0]->type ) : false;
+                                $disabled = $primary_author->type == 'guest' ? apply_filters( '_authorship/filter/link/disable_main', true, $primary_author->type ) : false;
                                 if ( $disabled )
                                 {
                                     $url = esc_url( add_query_arg( array
@@ -408,14 +422,14 @@ class Author_Filters
                     break;
             }
         }
-        elseif ( $post_authors[0]->type == 'guest' )
+        elseif ( $primary_author && $primary_author->type === 'guest' )
         {
-            $author = new Author( $post_authors[0]->id, $post_authors[0]->type );
+            $author = new Author( $primary_author->id, $primary_author->type );
             $url    = $author->get_archive_url();
         }
-        elseif ( !in_the_loop() and $post_authors[0]->type == 'user' )
+        elseif ( $primary_author && $primary_author->type === 'user' && ! in_the_loop() )
         {
-            $author = new Author( $post_authors[0]->id, $post_authors[0]->type );
+            $author = new Author( $primary_author->id, $primary_author->type );
             $url    = $author->get_archive_url();
         }
         else
@@ -477,7 +491,7 @@ class Author_Filters
             $author_type = 'guest';
             $author_id   = $the_query->guest_author_id;
         }
-        elseif ( $the_query->query_vars['author'] )
+        elseif ( !empty( $the_query->query_vars['author'] ) )
         {
             $author_type = 'user';
             $author_id   = $the_query->query_vars['author'];
@@ -624,7 +638,7 @@ class Author_Filters
         elseif ( $id_or_email instanceof \WP_Post )
         {
             $author->object = get_user_by( 'id', (int) $id_or_email->post_author );
-            $author->id     = $author->object->ID;
+            $author->id     = $author->object->get_id();
             $author->type   = isset( $author->object->guest_id ) ? 'guest' : 'user';
 
             $email = $author->object->user_email;
@@ -653,14 +667,14 @@ class Author_Filters
                 return $args;
             }
 
-            if ( $author->object = Author::get_by( 'user_email', $email, 'user' ) )
+            if ( $author->object = Authors::get_author_by( 'user_email', $email, 'user' ) )
             {
-                $author->id   = $author->object->ID;
+                $author->id   = $author->object->get_id();
                 $author->type = 'user';
             }
-            elseif ( $author->object = Author::get_by( '_molongui_guest_author_mail', $email, 'guest' ) )
+            elseif ( $author->object = Authors::get_author_by( '_molongui_guest_author_mail', $email, 'guest' ) )
             {
-                $author->id   = $author->object->ID;
+                $author->id   = $author->object->get_id();
                 $author->type = 'guest';
             }
             else

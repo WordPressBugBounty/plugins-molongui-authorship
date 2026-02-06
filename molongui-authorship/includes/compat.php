@@ -31,6 +31,7 @@ if ( apply_filters( 'authorship/theme_compatibility', Settings::is_enabled( 'the
     elseif ( 'Bitz' == $theme->name or 'Bitz' == $theme->parent_theme )                             require_once $path . 'bitz.php';
     elseif ( 'Mundana' == $theme->name or 'Mundana' == $theme->parent_theme )                       require_once $path . 'mundana.php';
     elseif ( 'Genesis' == $theme->name or 'Genesis' == $theme->parent_theme )                       require_once $path . 'genesis.php';
+    elseif ( 'Pro' == $theme->name or 'Pro' == $theme->parent_theme )                               require_once $path . 'pro.php';
     elseif ( 'Spotlight' == $theme->name or 'Spotlight' == $theme->parent_theme )                   require_once $path . 'spotlight.php';
     elseif ( 'Themify Ultra' == $theme->name or 'Themify Ultra' == $theme->parent_theme )           require_once $path . 'themify-ultra.php';
     elseif ( 'Flatsome' == $theme->name or 'Flatsome' == $theme->parent_theme )                     require_once $path . 'flatsome.php';

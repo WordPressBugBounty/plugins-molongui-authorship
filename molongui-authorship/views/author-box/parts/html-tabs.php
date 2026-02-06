@@ -3,6 +3,10 @@
 use Molongui\Authorship\Common\Utils\Helpers;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+if ( !isset( $profile ) and isset( $profiles ) )
+{
+    $profile = $profiles;
+}
 $random_id = Helpers::rand();
 $box_tabs  = array
 (

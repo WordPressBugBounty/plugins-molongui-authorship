@@ -1,6 +1,6 @@
 <?php
 /*!
- * This file contains the definition for the Settings class, which extends the core plugin settings functionalityand
+ * This file contains the definition for the Settings class, which extends the core plugin settings functionality and
  *  allows for additional handling and customization of the Molongui Authorship plugin options.
  *
  * @author     Molongui
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Settings extends \Molongui\Authorship\Common\Modules\Settings
 {
     private $stylesheet = '/assets/js/options.xxxx.min.css';
-    private $javascript = 'assets/js/options.cb9c.min.js';
+    private $javascript = 'assets/js/options.e5e2.min.js';
     private $screen_id;
     use Singleton;
     public function __construct()
@@ -50,11 +50,10 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
         add_filter( 'authorship/common_settings_section_id', array( $this, 'define_common_settings_section_id' ) );
         add_filter( 'authorship/common_settings_section_name', array( $this, 'define_common_settings_section_name' ) );
         add_filter( 'authorship/default_options', array( __CLASS__, 'set_defaults' ) );
-        add_action( 'authorship/options', 'authorship_add_defaults' );
+        add_action( 'authorship/options', array( __CLASS__, 'add_defaults' ) );
         add_filter( 'authorship/plugin_settings', array( $this, 'define_plugin_settings' ) );
         add_filter( 'authorship/validate_options', array( $this, 'validate_freemium' ), 10, 2 );
         add_filter( 'authorship/validate_options', array( $this, 'validate' ), 10, 2 );
-        add_filter( 'authorship/cache', array( $this, 'object_cache_status' ) );
         add_filter( 'authorship/options/styles', array( $this, 'stylesheet' ) );
         add_filter( 'authorship/options/script', array( $this, 'javascript' ) );
         add_filter( "authorship/options/script_deps", array( $this, 'require_dependencies' ) );
@@ -62,7 +61,7 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
         add_filter( 'authorship/options/script_params', array( $this, 'javascript_params' ) );
         add_action( 'wp_ajax_social_profiles_ajax_suggest', array( $this, 'suggest_social_profiles' ) );
             add_action( "admin_print_footer_scripts-" . $this->screen_id, array( $this, 'author_selector_params' ) );
-        add_action( 'wp_ajax_authorship_clear_cache_action', array( $this, 'clear_object_cache' ) );
+        add_action( 'wp_ajax_authorship_kill_tasks_action', array( $this, 'kill_background_jobs' ) );
         add_filter( 'authorship/export_options', array( $this, 'filter_export' ) );
         add_filter( 'authorship/validate_options', array( $this, 'keep_db_19_keys' ), 20, 2 );
         add_filter( 'authorship/validate_editor_options', array( $this, 'keep_db_19_keys' ), 20, 2 );
@@ -168,7 +167,6 @@ public function define_common_settings_section_name()
             'compatibility_mode_browser'        => false,
             'element_queries_enabled'           => false,
             'element_queries_cdn_compatibility' => false,
-            'object_cache_enabled'              => true,
             'dashboard_settings_enabled'            => true,
             'dashboard_authors_menu'                => true,
             'dashboard_guest_authors_menu'          => false,
@@ -252,7 +250,7 @@ public function define_common_settings_section_name()
             'author_box_related_none'             => ( doing_action( 'init' ) or did_action( 'init' ) ) ? __( "This author does not have any more posts", 'molongui-authorship' ) : "This author does not have any more posts",
             'author_box_related_orderby'          => 'date',
             'author_box_related_order'            => 'DESC',
-            'author_box_related_count'            => 4,
+            'author_box_related_posts_count'      => 4,
             'author_box_related_posts_post_types' => "post", // Data stored as a string with comma-separated items. No array!
             'author_box_related_font_size'        => 14,
             'author_box_related_line_height'      => '', // inherit
@@ -448,261 +446,6 @@ $options[] = array
                 'type'     => 'callback',
                 'callback' => array( $this, 'get_shortcodes_section' ),
             );
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'header',
-    'class'    => '',
-    'id'       => 'author_box_shortcodes_header',
-    'label'    => __( "Author Box", 'molongui-authorship' ),
-    'buttons'  => array(),
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_box',
-    'title'    => '[molongui_author_box]',
-    'desc'     => sprintf( __( "Displays an author box anywhere you want. You can customize which author information to show and how the displayed author box will look like by using additional attributes. All styling settings can be overridden. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_box/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_box/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'header',
-    'class'    => '',
-    'id'       => 'byline_shortcodes_header',
-    'label'    => __( "Post Byline", 'molongui-authorship' ),
-    'buttons'  => array(),
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_post_byline',
-    'title'    => '[molongui_post_byline]',
-    'desc'     => sprintf( __( "Displays the post's byline. Most themes display the byline just below the title. You can place it anywhere you want using this shortcode. What is more, customize it by prepending and/or appending any text you like. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_byline/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_byline/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_post_avatars',
-    'title'    => '[molongui_post_avatars]',
-    'desc'     => sprintf( __( "This shortcode allows you to show the avatars of all the authors of a post. You can place it anywhere you want using this shortcode. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/help/post_avatars/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_byline/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'header',
-    'class'    => '',
-    'id'       => 'author_list_shortcodes_header',
-    'label'    => __( "Author Lists", 'molongui-authorship' ),
-    'buttons'  => array(),
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_list',
-    'title'    => '[molongui_author_list]',
-    'desc'     => sprintf( __( "Displays a list of (all) authors in your site anywhere you want. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_list/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_list/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_select',
-    'title'    => '[molongui_author_select]',
-    'desc'     => sprintf( __( "Displays a dropdown select listing (all the) authors from your blog. This shortcode is intended for developers only. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui-author-select/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui-author-select/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'header',
-    'class'    => '',
-    'id'       => 'author_list_shortcodes_header',
-    'label'    => __( "Author Posts", 'molongui-authorship' ),
-    'buttons'  => array(),
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_posts',
-    'title'    => '[molongui_author_posts]',
-    'desc'     => sprintf( __( "Displays a list showing (all the) posts from any given author anywhere you want. Listed posts can be configured making use of the optional attributes this shortcode can take. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_posts/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_posts/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'header',
-    'class'    => '',
-    'id'       => 'author_data_shortcodes_header',
-    'label'    => __( "Author Data", 'molongui-authorship' ),
-    'buttons'  => array(),
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_name',
-    'title'    => '[molongui_author_name]',
-    'desc'     => sprintf( __( "Displays the name of the current post author(s) if no attributes are provided or the name of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_name/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_name/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_slug',
-    'title'    => '[molongui_author_slug]',
-    'desc'     => sprintf( __( "Displays the slug of the current post author(s) if no attributes are provided or the slug of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_slug/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_slug/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_url',
-    'title'    => '[molongui_author_url]',
-    'desc'     => sprintf( __( "Displays the url to the archive page of the current post author(s) if no attributes are provided or the url to the archive page of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_url/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_url/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_bio',
-    'title'    => '[molongui_author_bio]',
-    'desc'     => sprintf( __( "Displays the bio of the current post author(s) if no attributes are provided or the bio of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_bio/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_bio/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_mail',
-    'title'    => '[molongui_author_mail]',
-    'desc'     => sprintf( __( "Displays the email address of the current post author(s) if no attributes are provided or the email address of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_mail/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_mail/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_meta',
-    'title'    => '[molongui_author_meta]',
-    'desc'     => sprintf( __( "Displays the any author meta data of the current post author(s) if no attributes are provided or any author meta data of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_meta/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_meta/",
-);
-$options[] = array
-(
-    'display'  => true,
-    'advanced' => false,
-    'deps'     => '',
-    'search'   => '',
-    'type'     => 'notice',
-    'class'    => '',
-    'default'  => '',
-    'id'       => 'shortcode_molongui_author_avatar',
-    'title'    => '[molongui_author_avatar]',
-    'desc'     => sprintf( __( "Displays the avatar of the current post author(s) if no attributes are provided or the avatar of a given author if you provide the author ID and author type. %sLearn more →%s", 'molongui-authorship' ), '<a href="https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_avatar/" target="_blank">', '</a>' ),
-    'help'     => '',
-    'link'     => "https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_avatar/",
-);
         }
         if ( apply_filters( 'molongui_authorship/show_tools_options', true ) )
         {
@@ -1140,6 +883,293 @@ if ( apply_filters( 'molongui_authorship/show_help_options', true ) )
             'premium' => true,
         ));
 
+        UI::heading( array
+        (
+            'title' => __( "Content", 'molongui-authorship' ),
+        ));
+
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_box]", 'molongui-authorship' ),
+            'description' => __( "Displays an author box for a given author. Many configuration attributes available.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_box/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_list]", 'molongui-authorship' ),
+            'description' => __( "Displays a list of all the authors in your site. Several layouts and configuration attributes available.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_list/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_posts]", 'molongui-authorship' ),
+            'description' => __( "Displays a list of posts for a given author. Several layouts and configuration attributes available.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_posts/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        echo '</div>';
+
+        UI::heading( array
+        (
+            'title' => __( "Post Byline", 'molongui-authorship' ),
+        ));
+
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_post_byline]", 'molongui-authorship' ),
+            'description' => __( "Displays the post byline for a given post.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_byline/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_post_avatars]", 'molongui-authorship' ),
+            'description' => __( "Displays the avatars of all assigned authors to a given post.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/help/post_avatars/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        echo '</div>';
+
+        UI::heading( array
+        (
+            'title' => __( "Author data", 'molongui-authorship' ),
+        ));
+
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_name]", 'molongui-authorship' ),
+            'description' => __( "Shows the author display name.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_name/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_email]", 'molongui-authorship' ),
+            'description' => __( "Shows the author email address.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_mail/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_bio]", 'molongui-authorship' ),
+            'description' => __( "Shows the author biography/description.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_bio/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_avatar]", 'molongui-authorship' ),
+            'description' => __( "Shows the author avatar/profile image.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_avatar/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        echo '</div>';
+
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_slug]", 'molongui-authorship' ),
+            'description' => __( "Shows the author slug.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_slug/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_url]", 'molongui-authorship' ),
+            'description' => __( "Shows the URL to the author's archive page.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_url/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_meta]", 'molongui-authorship' ),
+            'description' => __( "Shows the requested author meta (i.e. first_name, last_name, phone, job, company, post_count, instagram, ...).", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui_author_meta/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        echo '</div>';
+
+        UI::heading( array
+        (
+            'title' => __( "Developer utils", 'molongui-authorship' ),
+        ));
+
+        echo '<div class="molongui-ui-cards">';
+
+        UI::card( array
+        (
+            'id'          => '',
+            'image'       => '',
+            'title'       => __( "[molongui_author_select]", 'molongui-authorship' ),
+            'description' => __( "Displays a dropdown selector listing all the authors on the site.", 'molongui-authorship' ),
+            'button'      => array
+            (
+                'id'     => '',
+                'label'  => __( "Learn more →", 'molongui-authorship' ),
+                'link'   => 'https://www.molongui.com/docs/molongui-authorship/shortcodes/molongui-author-select/',
+                'target' => '_blank',
+                'nonce'  => '',
+            ),
+            'echo'        => true,
+            'disabled'    => false,
+            'class'       => '',
+        ));
+
+        echo '</div>';
+
         return ob_get_clean();
     }
     public function get_tools_section()
@@ -1380,12 +1410,12 @@ if ( apply_filters( 'molongui_authorship/show_help_options', true ) )
         (
             'id'          => '',
             'image'       => '',
-            'title'       => __( "Clear Cache", 'molongui-authorship' ),
-            'description' => __( "Clear the object cache used by the plugin.", 'molongui-authorship' ),
+            'title'       => __( "Terminate Tasks", 'molongui-authorship' ),
+            'description' => __( "Immediately stop all currently running background tasks for this plugin.", 'molongui-authorship' ),
             'button'      => array
             (
-                'id'    => 'clear-cache',
-                'label' => __( "Clear", 'molongui-authorship' ),
+                'id'    => 'kill-tasks',
+                'label' => __( "Terminate", 'molongui-authorship' ),
                 'link'  => '',
             ),
             'echo'        => true,
@@ -1720,7 +1750,7 @@ if ( apply_filters( 'molongui_authorship/show_help_options', true ) )
             'id'          => 'contributors_reading_ad',
             'value'       => self::get( 'contributors_reading_ad', false ),
             'label'       => __( "Display additional post information", 'molongui-authorship' ),
-            'echo'        => true,
+            'echo'        => ! class_exists( '\Molongui\Contributors\MolonguiPostContributors' ),
             'class'       => '',
             'help'        => sprintf( "%s%s%s"
                                 , '<p>'
@@ -3478,31 +3508,6 @@ public function get_author_pages_section()
             ),
         ));
 
-        UI::checkbox( array
-        (
-            'id'          => 'object_cache_enabled',
-            'value'       => self::get( 'object_cache_enabled', true ),
-            'label'       => __( "Use WordPress Object Cache", 'molongui-authorship' ),
-            'echo'        => true,
-            'class'       => '',
-            'help'        => sprintf( "%s%s%s%s%s%s%s%s%s%s%s%s"
-                                , '<p>'
-                                , __( "<b>Disable this setting only if you are experiencing issues!</b>", 'molongui-authorship' )
-                                , '</p>'
-                                , '<p>'
-                                , __( "The WordPress Object Cache is used to save on trips to the database. Having this setting enabled can reduce query time up to 94%. So sit is really advised to have it ON.", 'molongui-authorship' )
-                                , '</p>'
-                                , '<p>'
-                                , __( "By default, the object cache is non-persistent. This means that data stored in the cache resides in memory only and only for the duration of the request. Cached data will not be stored persistently across page loads unless you install a persistent caching plugin.", 'molongui-authorship' )
-                                , '</p>'
-                                , '<p>'
-                                , '<b>' . __( "When in doubt, it's recommended to keep this setting enabled.", 'molongui-authorship' ) . '</b>'
-                                , '</p>'
-                             ),
-            'description' => '',
-            'content'     => '',
-        ));
-
         UI::banner( array
         (
             'echo'   => true,
@@ -4076,18 +4081,37 @@ public function get_author_pages_section()
 
         return $options;
     }
-    public function clear_object_cache()
+    public function kill_background_jobs()
     {
-        check_ajax_referer( 'authorship_clear_cache_nonce', 'nonce', true );
-        Cache::clear( 'posts' );
-        Cache::clear( 'users' );
-        Cache::clear( 'guests' );
+        check_ajax_referer( 'authorship_kill_tasks_nonce', 'nonce', true );
+        self::delete_job_flags();
         echo json_encode( true );
         wp_die();
     }
-    public function object_cache_status()
+    public static function delete_job_flags()
     {
-        return self::is_enabled( 'cache' );
+        global $wpdb;
+
+        delete_option( 'molongui_authorship_update_post_authors' );
+        delete_option( 'molongui_authorship_update_post_authorship_complete' );
+        delete_option( 'molongui_authorship_update_post_authorship_running' );
+        delete_option( 'molongui_authorship_update_post_counters' );
+        delete_option( 'molongui_authorship_update_posts_count_complete' );
+        delete_option( 'molongui_authorship_update_posts_count_running' );
+
+        $likes = array
+        (
+            'molongui_authorship_update_post_authors_batch_%',
+            'molongui_authorship_update_post_authorship_batch_%',
+            'molongui_authorship_add_author_error_%',
+            'molongui_authorship_add_author_input_%',
+        );
+        foreach( $likes as $like )
+        {
+            $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '{$like}';" );
+        }
+
+        do_action( 'molongui_authorship/delete_job_flags' );
     }
     public function stylesheet( $file )
     {
@@ -4133,15 +4157,15 @@ public function get_author_pages_section()
             101 => __( "Disabling author box styles requires you to provide your own CSS rules. If you are not an skilled developer, we strongly advise you not to proceed.", 'molongui-authorship' ),
             102 => __( "Disabled", 'molongui-authorship' ),
             103 => __( "Remember to provide your own styles. To do so you can use the 'Additional CSS' setting available on the WordPress Customizer or a child theme.", 'molongui-authorship' ),
-            200 => wp_create_nonce( 'authorship_clear_cache_nonce' ),
-            201 => __( "Clear Cache", 'molongui-authorship' ),
-            202 => __( "WordPress object cache is used to speed things up. Please confirm you want to go ahead and clear it.", 'molongui-authorship' ),
+            200 => wp_create_nonce( 'authorship_kill_tasks_nonce' ),
+            201 => __( "Kill Plugin Tasks", 'molongui-authorship' ),
+            202 => __( "Use this if tasks are stuck or using excessive resources. Please confirm you want to proceed.", 'molongui-authorship' ),
             203 => __( "Cancel", 'molongui-authorship' ),
-            204 => __( "OK", 'molongui-authorship' ),
-            205 => __( "Cleared!", 'molongui-authorship' ),
-            206 => __( "Object cache used by Molongui Authorship has been cleared successfully", 'molongui-authorship' ),
+            204 => __( "Yes", 'molongui-authorship' ),
+            205 => __( "Done!", 'molongui-authorship' ),
+            206 => __( "All running background tasks for this plugin have been stopped successfully", 'molongui-authorship' ),
             207 => __( "Error", 'molongui-authorship' ),
-            208 => __( "Something went wrong and cache clean up failed. Please refresh this page and try again.", 'molongui-authorship' ),
+            208 => __( "Something went wrong and job termination failed. Please refresh this page and try again.", 'molongui-authorship' ),
             209 => __( "Something went wrong and couldn't connect to the server. Please, try again.", 'molongui-authorship' ),
             300 => wp_create_nonce( 'molongui_authorship_post_count_updater_nonce' ),
             301 => __( "Count Update", 'molongui-authorship' ),
@@ -4418,11 +4442,11 @@ public function get_author_pages_section()
 
         /*!
          * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
+         * This filter hook is scheduled for removal in a future version. Update any dependencies accordingly.
          *
          * @deprecated 5.0.8
          */
-        if ( has_filter( 'authorship/user/roles' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
+        if ( has_filter( 'authorship/user/roles' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true, __FUNCTION__ ) )
         {
             $user_roles = apply_filters_deprecated( 'authorship/user/roles', array( $user_roles ), '5.0.8' );
         }
@@ -4446,7 +4470,6 @@ public function get_author_pages_section()
             'user-profile'         => 'user_extra_data_enabled',
             'author-search'        => 'search_by_author_enabled',
             'guest-search'         => 'guests_in_search_enabled',
-            'cache'                => 'object_cache_enabled',
             'microdata'            => 'schema_markup_enabled',
             'theme-compat'         => 'compatibility_mode_themes',
             'plugin-compat'        => 'compatibility_mode_plugins',
@@ -4621,6 +4644,22 @@ public function get_author_pages_section()
     public static function social_profile_selector()
     {
         include MOLONGUI_AUTHORSHIP_DIR . 'views/admin/html-social-profile-selector.php';
+    }
+    public function clear_object_cache()
+    {
+        WP::deprecated_function_once( __FUNCTION__, '5.2.0' );
+        check_ajax_referer( 'authorship_clear_cache_nonce', 'nonce', true );
+        Cache::clear( 'posts' );
+        Cache::clear( 'users' );
+        Cache::clear( 'guests' );
+        echo json_encode( true );
+        wp_die();
+    }
+    public function object_cache_status()
+    {
+        WP::deprecated_function_once( __FUNCTION__, '5.2.0' );
+
+        return self::is_enabled( 'cache' );
     }
 
 } // class

@@ -64,7 +64,7 @@ function molongui_is_guest_author()
 function molongui_has_local_avatar( $id, $type = 'user' )
 {
     $author = new Author( $id, $type );
-    return $author->has_avatar();
+    return $author->has_local_avatar();
 }
 function molongui_has_posts( $id, $type = 'user', $post_types = array() )
 {

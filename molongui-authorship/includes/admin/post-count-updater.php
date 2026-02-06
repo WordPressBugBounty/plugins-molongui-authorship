@@ -15,6 +15,7 @@ namespace Molongui\Authorship\Admin;
 use Molongui\Authorship\Common\Libraries\WP_Background_Process;
 use Molongui\Authorship\Author;
 use Molongui\Authorship\Authors;
+use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Guest_Author;
 use Molongui\Authorship\Post;
@@ -69,7 +70,6 @@ class Post_Count_Updater extends WP_Background_Process
     public function enable_ajax_request()
     {
         add_action( "wp_ajax_molongui_authorship_update_post_count", array( $this, 'handle_ajax_request' ) );
-        add_action( 'wp_ajax_authorship_update_counters', array( $this, 'handle_ajax_request' ) );
     }
     public function handle_ajax_request()
     {
@@ -224,7 +224,7 @@ class Post_Count_Updater extends WP_Background_Process
             {
                 foreach ( $this->authors as $author )
                 {
-                    $this->push_to_queue( array( 'post_type' => $post_type, 'author_id' => $author['id'], 'author_type' => $author['type'] ) );
+                    $this->push_to_queue( array( 'post_type' => $post_type, 'author_id' => $author->get_id(), 'author_type' => $author->get_type() ) );
                 }
 
                 $r = $this->save()->dispatch();
@@ -272,7 +272,7 @@ class Post_Count_Updater extends WP_Background_Process
     }
     public static function get_all_authors()
     {
-        return Authors::get_authors();
+        return Authors::get_authors( array() );
     }
     public static function prepare_authors( $ids = null, $type = 'user' )
     {
@@ -282,7 +282,7 @@ class Post_Count_Updater extends WP_Background_Process
         {
             foreach( $ids as $id )
             {
-                $authors[] = array( 'id' => $id, 'type' => $type, 'ref' => $type.'-'.$id, 'name' => '' );
+                $authors[] = new Author( $id, $type );
             }
         }
 
@@ -331,9 +331,9 @@ class Post_Count_Updater extends WP_Background_Process
 
         if ( !isset( $count ) )
         {
-            $count = $_author->get_post_count( $post_type, false );
+            $count = $_author->get_post_count( $post_type, 'live' );
         }
-        $_author->update_post_type_count( $count, $post_type );
+        $_author->persist_post_count( $count, $post_type );
     }
     public static function increment_counter( $post_type = 'post', $post_authors = null )
     {
@@ -341,26 +341,47 @@ class Post_Count_Updater extends WP_Background_Process
         {
             return;
         }
-        if ( is_string( $post_authors ) )
-        {
-            $parts = explode( '-', $post_authors );
 
-            if ( isset( $parts[0] ) and $parts[0] === $post_authors )
+        foreach ( (array) $post_authors as $post_author )
+        {
+            $author_id   = null;
+            $author_type = null;
+
+            if ( is_object( $post_author ) && isset( $post_author->id, $post_author->type ) )
             {
-                return;
+                $author_id   = (int) $post_author->id;
+                $author_type = (string) $post_author->type;
+
+            }
+            elseif ( is_string( $post_author ) )
+            {
+                $parts = explode( '-', $post_author, 2 );
+                if ( count( $parts ) !== 2 )
+                {
+                    continue;
+                }
+                $author_type = $parts[0];
+                $author_id   = (int) $parts[1];
+
+            }
+            else
+            {
+                continue;
             }
 
-            $post_authors          = array();
-            $post_authors[0]       = new \stdClass();
-            $post_authors[0]->id   = $parts[1];
-            $post_authors[0]->type = $parts[0];
-        }
+            if ( ! in_array( $author_type, array( 'user', 'guest' ), true ) || $author_id <= 0 )
+            {
+                continue;
+            }
 
-        foreach ( $post_authors as $post_author )
-        {
-            $author = new Author( $post_author->id, $post_author->type );
-            $count  = $author->get_post_count( $post_type );
-            self::update_author_post_counter( array( 'id' => $post_author->id, 'type' => $post_author->type ), $post_type, $count + 1 );
+            $author = new Author( $author_id, $author_type );
+            $count  = (int) $author->get_post_count( $post_type );
+
+            self::update_author_post_counter(
+                array( 'id' => $author_id, 'type' => $author_type ),
+                $post_type,
+                max( 0, $count + 1 )
+            );
         }
     }
     public static function decrement_counter( $post_type, $post_authors )
@@ -369,26 +390,47 @@ class Post_Count_Updater extends WP_Background_Process
         {
             return;
         }
-        if ( is_string( $post_authors ) )
-        {
-            $parts = explode( '-', $post_authors );
 
-            if ( isset( $parts[0] ) and $parts[0] === $post_authors )
+        foreach ( (array) $post_authors as $post_author )
+        {
+            $author_id   = null;
+            $author_type = null;
+
+            if ( is_object( $post_author ) && isset( $post_author->id, $post_author->type ) )
             {
-                return;
+                $author_id   = (int) $post_author->id;
+                $author_type = (string) $post_author->type;
+
+            }
+            elseif ( is_string( $post_author ) )
+            {
+                $parts = explode( '-', $post_author, 2 );
+                if ( count( $parts ) !== 2 )
+                {
+                    continue;
+                }
+                $author_type = $parts[0];
+                $author_id   = (int) $parts[1];
+
+            }
+            else
+            {
+                continue;
             }
 
-            $post_authors          = array();
-            $post_authors[0]       = new \stdClass();
-            $post_authors[0]->id   = $parts[1];
-            $post_authors[0]->type = $parts[0];
-        }
+            if ( ! in_array( $author_type, array( 'user', 'guest' ), true ) || $author_id <= 0 )
+            {
+                continue;
+            }
 
-        foreach ( $post_authors as $post_author )
-        {
-            $author = new Author( $post_author->id, $post_author->type );
-            $count  = $author->get_post_count( $post_type );
-            self::update_author_post_counter( array( 'id' => $post_author->id, 'type' => $post_author->type ), $post_type, $count - 1 );
+            $author = new Author( $author_id, $author_type );
+            $count  = (int) $author->get_post_count( $post_type );
+
+            self::update_author_post_counter(
+                array( 'id' => $author_id, 'type' => $author_type ),
+                $post_type,
+                max( 0, $count - 1 )
+            );
         }
     }
 

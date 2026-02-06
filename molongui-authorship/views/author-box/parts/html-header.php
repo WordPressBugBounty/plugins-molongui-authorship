@@ -5,10 +5,10 @@ $header_html_tag = ( !empty( $options['author_box_header_tag'] ) ? $options['aut
 ?>
 
 <!-- Author Box Header -->
-<div class="m-a-box-item m-a-box-header m-a-box-headline">
+<div class="m-a-box-item m-a-box-header">
     <<?php echo $header_html_tag; ?>>
         <?php if ( !empty( $options['author_box_header_url'] ) ) : ?><a class="m-a-box-header-url" href="<?php echo esc_url( $options['author_box_header_url'] ); ?>"><?php endif; ?>
-        <span class="m-a-box-header-title m-a-box-string-headline">
+        <span class="m-a-box-header-title">
             <?php
             if ( !isset( $profile ) )
             {

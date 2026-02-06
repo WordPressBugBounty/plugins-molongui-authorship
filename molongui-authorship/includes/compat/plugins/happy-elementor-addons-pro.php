@@ -1,6 +1,6 @@
 <?php
 /*!
- * Compatibility module for seamless integration with Elementor Pro.
+ * Compatibility module for seamless integration with Happy Elementor Addons Pro.
  *
  *   Package : Plugin
  *   Name    : Happy Elementor Addons Pro

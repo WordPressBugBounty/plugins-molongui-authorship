@@ -46,9 +46,6 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         add_action( 'deleted_user'  , array( __CLASS__, 'update_user_count' ) ); // Fires immediately after a user is deleted from the database.
         add_action( 'set_user_role' , array( __CLASS__, 'update_user_count' ) ); // Fires after the user's role has changed using the "Change role to..." quick setting
         add_action( 'admin_notices', array( __CLASS__, 'post_as_others_admin_notice' ) );
-        add_action( 'user_register' , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a new user is registered.
-        add_action( 'profile_update', array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after an existing user is updated.
-        add_action( 'deleted_user'  , array( __CLASS__, 'clear_object_cache' ), 0 ); // Fires immediately after a user is deleted from the database.
         if ( Settings::is_enabled( 'co-authors' ) )
         {
             add_filter( 'user_has_cap', array( $this, 'edit_others_posts' ), PHP_INT_MAX, 4 );
@@ -492,11 +489,6 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         );
         return apply_filters( 'authorship/edit_avatar/script_params', $params );
     }
-    public static function clear_object_cache()
-    {
-        Cache::clear( 'posts' );
-        Cache::clear( 'users' );
-    }
     public function can_post_as_others( $user = 0 )
     {
         $post_as_others = false;
@@ -514,18 +506,6 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         }
 
         /*!
-         * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
-         *
-         * @since      4.8.0
-         * @deprecated 5.0.0
-         */
-        if ( has_filter( 'authorship/can_post_as_others' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
-        {
-            $post_as_others = apply_filters_deprecated( 'authorship/can_post_as_others', array( $post_as_others ), '5.0.0', 'molongui_authorship/can_post_as_others' );
-        }
-
-        /*!
          * FILTER HOOK
          * Allows filtering whether the user can post as another author.
          *
@@ -536,6 +516,13 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
     public static function get_user_count()
     {
         return get_option( 'molongui_authorship_user_count', 0 );
+    }
+    public static function clear_object_cache()
+    {
+        WP::deprecated_function_once( __FUNCTION__, '5.2.0' );
+
+        Cache::clear( 'posts' );
+        Cache::clear( 'users' );
     }
 
 } // class

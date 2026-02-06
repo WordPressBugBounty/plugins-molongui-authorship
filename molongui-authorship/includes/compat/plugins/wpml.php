@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'wpml_translatable_user_meta_fields', 'authorship_add_user_meta_fields_to_wpml' );
 add_filter( 'authorship/pre_author_link', 'authorship_dont_filter_author_link_for_wpml', 10, 4 );
 add_filter( 'icl_ls_languages', 'authorship_wpml_translated_author_urls_fix', 10, 2 );
+add_filter( '_molongui_authorship/author/use_get_the_author_meta', '__return_true' );
 function authorship_add_user_meta_fields_to_wpml( $user_meta_fields )
 {
     $user_meta_fields[] = 'user_url'; // from users table

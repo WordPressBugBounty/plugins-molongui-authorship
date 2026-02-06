@@ -797,10 +797,10 @@ Author_Box_Editor::render_select( 'author_box_related_order', __( "Order", 'molo
         'parent'  => 'related',
     )
 );
-Author_Box_Editor::render_input( 'author_box_related_count', __( "Posts to show", 'molongui-authorship' ), array
+Author_Box_Editor::render_input( 'author_box_related_posts_count', __( "Posts to show", 'molongui-authorship' ), array
     (
         'type'    => 'number',
-        'min'     => -1,
+        'min'     => 1,
         'default' => 4,
         'parent'  => 'related',
     )

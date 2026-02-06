@@ -246,7 +246,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                 $post_type = get_post_type( $ID );
 
                 $author        = new Author( $post_author->id, $post_author->type );
-                $display_name  = $author->get_name();
+                $display_name  = $author->get_display_name();
                 $author_avatar = $author->get_avatar( array( 20, 20 ), 'url' );
 
                 if ( 'guest' === $post_author->type )
@@ -394,7 +394,18 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             $post_types = Settings::enabled_post_types( 'guest-author' );
             if ( in_array( $post_type, $post_types ) )
             {
-                $guests = Authors::get_guests();
+                $args = array
+                (
+                    'type'       => 'guests',
+                    'post_types' => array( $post_type ),
+                    'dont_sort'  => true,
+                    'prefetch'   => array
+                    (
+                        'core' => array( 'post_title' ),
+                        'meta' => array(),
+                    ),
+                );
+                $guests = Authors::get_authors( $args );
 
                 if ( !empty( $guests ) )
                 {
@@ -404,7 +415,10 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                     $output .= '<option value="0">' . esc_html__( "All guest authors", 'molongui-authorship' ) . '</option>';
                     foreach ( $guests as $guest )
                     {
-                        $output .= '<option value="' . $guest->ID . '" ' . ( $guest->ID == $selected ? 'selected' : '' ) . '>' . $guest->post_title . '</option>';
+                        $guest_id   = $guest->get_id();
+                        $guest_name = $guest->get_display_name();
+
+                        $output .= '<option value="' . $guest_id . '" ' . ( $guest_id == $selected ? 'selected' : '' ) . '>' . $guest_name . '</option>';
                     }
                     $output .= '</select>';
 
@@ -424,6 +438,26 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 
         return $default;
     }
+    public function should_add_author_metabox( $post_type )
+    {
+        if ( !Post::byline_takeover() )
+        {
+            return apply_filters( 'molongui_authorship/add_authors_widget', false, $post_type );
+        }
+        if ( !in_array( $post_type, Settings::enabled_post_types(), true ) )
+        {
+            return apply_filters( 'molongui_authorship/add_authors_widget', false, $post_type );
+        }
+        return apply_filters( 'molongui_authorship/add_authors_widget', true, $post_type );
+    }
+    public function should_add_contributor_metabox( $post_type )
+    {
+        if ( is_plugin_active( 'molongui-post-contributors/molongui-post-contributors.php' ) )
+        {
+            return false;
+        }
+        return apply_filters( 'molongui_authorship/add_contributors_widget', true, $post_type );
+    }
     public function add_author_metabox( $post_type )
     {
         /*!
@@ -441,8 +475,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             return;
         }
 
-        $post_types = Settings::enabled_post_types();
-        if ( in_array( $post_type, $post_types ) and apply_filters( 'authorship/add_authors_widget', Post::byline_takeover(), $post_type ) )
+        if ( $this->should_add_author_metabox( $post_type ) )
         {
             add_meta_box
             (
@@ -455,18 +488,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             );
         }
 
-        /*!
-         * FILTER HOOK
-         *
-         * Allows filtering contributors metabox display criteria.
-         *
-         * @param bool   True by default.
-         * @param string Current post type.
-         * @since 4.8.6
-         */
-        if ( in_array( $post_type, $post_types ) and
-             !is_plugin_active( 'molongui-post-contributors/molongui-post-contributors.php' ) and
-             apply_filters( 'authorship/add_contributors_widget', true, $post_type ) )
+        if ( $this->should_add_contributor_metabox( $post_type ) )
         {
             add_meta_box
             (
@@ -601,7 +623,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
         {
             /*!
              * FILTER HOOK
-             * Allows registered users to be excluded from the search results.
+             * Allows registered users to be excluded from search results.
              *
              * @since 5.0.16
              */
@@ -623,7 +645,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                     'meta_key'       => 'molongui_author_archived',
                     'meta_compare'   => 'NOT EXISTS',//'!=',
                 );
-                $found_users = Authors::get_users( $args ); //get_users( $args );
+                $found_users = get_users( $args );
 
                 if ( !empty( $found_users ) )
                 {
@@ -640,7 +662,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
         {
             /*!
              * FILTER HOOK
-             * Allows guest authors to be excluded from the search results.
+             * Allows guest authors to be excluded from search results.
              *
              * @since 5.0.16
              */
@@ -667,16 +689,18 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
                     FROM {$wpdb->posts} 
                     LEFT JOIN {$wpdb->postmeta} pm1 ON {$wpdb->posts}.ID = pm1.post_id AND pm1.meta_key = %s
                     LEFT JOIN {$wpdb->postmeta} pm2 ON {$wpdb->posts}.ID = pm2.post_id AND pm2.meta_key = %s
+                    LEFT JOIN {$wpdb->postmeta} pm3 ON {$wpdb->posts}.ID = pm3.post_id AND pm3.meta_key = %s
                     WHERE 
                         {$wpdb->posts}.post_status = 'publish' AND 
                         {$wpdb->posts}.post_type = %s AND 
                         {$wpdb->posts}.ID NOT IN ( $ignored_guests_placeholder ) AND 
+                        pm3.meta_id IS NULL AND 
                         (
                             {$wpdb->posts}.post_title LIKE %s OR
                             pm1.meta_value LIKE %s OR 
                             pm2.meta_value LIKE %s
                         )
-                ", 'first_name', 'last_name', MOLONGUI_AUTHORSHIP_CPT, $like_keyword, $like_keyword, $like_keyword );
+                ", 'first_name', 'last_name', '_molongui_guest_author_archived', MOLONGUI_AUTHORSHIP_CPT, $like_keyword, $like_keyword, $like_keyword );
                     $found_guests = $wpdb->get_col( $sql );
 
                     if ( !empty( $found_guests ) )
@@ -756,8 +780,6 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             }
             else
             {
-                Admin_User::clear_object_cache();
-
                 $message = sprintf( wp_kses_post( __( "New user (%s) created and added to this post. You can complete their profile in the Authors > View Authors screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
                 echo wp_json_encode( array( 'result' => 'success', 'message' => $message, 'author_id' => $user_id, 'author_type' => 'user', 'author_ref' => 'user-'.$user_id, 'author_name' => $author_name ) );
                 wp_die();
@@ -792,8 +814,6 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
             }
             else
             {
-                self::clear_object_cache();
-
                 $message = sprintf( wp_kses_post( __( "New guest author (%s) created and added to this post. You can complete their profile in the Authors > View Authors screen.", 'molongui-authorship' ) ), esc_html( $author_name ) );
                 echo wp_json_encode( array( 'result' => 'success', 'message' => $message, 'author_id' => $guest_id, 'author_type' => 'guest', 'author_ref' => 'guest-'.$guest_id, 'author_name' => $author_name ) );
                 wp_die();
@@ -815,6 +835,11 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
     }
     public function hide_block_editor_author_panel()
     {
+        if ( !$this->should_add_author_metabox( Post::get_post_type() ) )
+        {
+            return;
+        }
+
         ob_start();
         ?>
         <style>
@@ -846,6 +871,11 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
     {
         $current_screen = get_current_screen();
         if ( !isset( $current_screen ) or $current_screen->base !== 'post' )
+        {
+            return;
+        }
+
+        if ( !$this->should_add_author_metabox( Post::get_post_type() ) )
         {
             return;
         }
@@ -1133,7 +1163,6 @@ public function quick_edit_save_fields( $post_id, $post )
                 update_post_meta( $post_id, '_molongui_author_box_position', sanitize_text_field( $_POST['_molongui_author_box_position'] ) );
             }
         }
-        self::clear_object_cache();
     }
     public function post_status_before_update( $post_id, $data )
     {
@@ -1152,11 +1181,10 @@ public function quick_edit_save_fields( $post_id, $post )
             return;
         }
         $post_type = self::get_post_type( $post_id );
-        if ( !Post::is_post_type_enabled( $post_type, $post_id ) )
+        if ( ! Post::is_post_type_enabled( $post_type, $post_id ) )
         {
             return;
         }
-        self::clear_object_cache();
         $post_status = Post::get_public_post_status( $post_type );
         if ( in_array( get_post_meta( $post_id, '_wp_trash_meta_status', true ), $post_status ) )
         {
@@ -1167,11 +1195,10 @@ public function quick_edit_save_fields( $post_id, $post )
     public function on_untrash( $post_id )
     {
         $post_type = self::get_post_type( $post_id );
-        if ( !Post::is_post_type_enabled( $post_type, $post_id ) )
+        if ( ! Post::is_post_type_enabled( $post_type, $post_id ) )
         {
             return;
         }
-        self::clear_object_cache();
         $post_status = Post::get_public_post_status( $post_type );
         if ( in_array( get_post_meta( $post_id, '_wp_trash_meta_status', true ), $post_status ) )
         {
@@ -1194,25 +1221,22 @@ public function quick_edit_save_fields( $post_id, $post )
             return $new_status !== $old_status;
         });
     }
-    public static function clear_object_cache()
-    {
-        Cache::clear( 'posts' );
-    }
     public static function get_countable_post_statuses()
     {
         /*!
          * FILTER HOOK
-         *
          * Allows filtering the post statuses that should be counted.
          *
          * @param array Post statuses to be counted.
          * @since 4.9.0
          */
-        return apply_filters( 'molongui_authorship/countable_post_statuses', array
+        $countable_post_status = apply_filters( 'molongui_authorship/countable_post_statuses', array
         (
             'publish',
             'private',
         ));
+
+        return Post::sanitize_post_status_arg( $countable_post_status );
     }
     public static function update_authors( $post_authors, $post_id, $post_type, $post_author )
     {
@@ -1513,6 +1537,12 @@ public function quick_edit_save_fields( $post_id, $post )
 
             echo Helpers::minify_js( ob_get_clean() );
         }
+    }
+    public static function clear_object_cache()
+    {
+        WP::deprecated_function_once( __FUNCTION__, '5.2.0' );
+
+        Cache::clear( 'posts' );
     }
 
 } // class

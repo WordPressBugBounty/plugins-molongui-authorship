@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 $add_microdata = ( !empty( $options['seo_settings_enabled'] ) and !empty( $options['schema_markup_enabled'] ) );
 if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) )
 {
-    $common_posts = Post::get_coauthored( $post_authors, false, array(), 'selected' );
+    $common_posts = Post::get_coauthored( $profiles, false, array(), 'selected' );
 
     if ( !empty( $common_posts ) or !empty( $options['author_box_related_show_empty'] ) )
     {
@@ -50,10 +50,8 @@ if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_sh
 
             <?php foreach ( $profiles as $profile ) : ?>
 
-                <?php if ( isset( $profile['hide'] ) and $profile['hide'] ) continue; ?>
-
-                <div class="m-a-box-profile-multiauthor <?php echo ( !empty( $profile['archived'] ) ? 'm-a-archived-author' : '' ); ?>" data-author-id="<?php echo $profile['id']; ?>" data-author-type="<?php echo $profile['type']; ?>" data-author-ref="<?php echo $profile['type'].'-'.$profile['id']; ?>"
-                     <?php echo ( $add_microdata ? 'itemscope itemid="'.$profile['archive_url'].'" itemtype="https://schema.org/Person"' : '' ); ?>
+                <div class="m-a-box-profile-multiauthor <?php echo ( $profile->is_archived() ? 'm-a-archived-author' : '' ); ?>" data-author-id="<?php echo $profile->get_id(); ?>" data-author-type="<?php echo $profile->get_type(); ?>" data-author-ref="<?php echo $profile->get_type().'-'.$profile->get_id(); ?>"
+                     <?php echo ( $add_microdata ? 'itemscope itemid="'.$profile->get_meta( 'archive_url' ).'" itemtype="https://schema.org/Person"' : '' ); ?>
                 >
                     <?php
 
@@ -86,8 +84,6 @@ if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_sh
 
         <?php if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) ) : ?>
 
-            <?php $profile['posts'] = Post::get_coauthored( $post_authors, false, array(), 'selected' ); ?>
-
             <div class="m-a-box-tab m-a-box-content m-a-box-related" data-related-layout="<?php echo $options['author_box_related_layout']; ?>">
 
                 <div class="m-a-box-content-top">
@@ -110,7 +106,7 @@ if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_sh
 				        ?>
                         <ul>
                             <?php
-                            if ( !empty( $profile['posts'] ) )
+                            if ( $profile->has_posts() )
                             {
                                 /*!
                                  * FILTER HOOK

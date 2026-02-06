@@ -17,6 +17,7 @@ namespace Molongui\Authorship\Admin;
 use Molongui\Authorship\Author;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Cache;
+use Molongui\Authorship\Common\Utils\WP;
 use Molongui\Authorship\Guest_Author;
 use Molongui\Authorship\Settings;
 use Molongui\Authorship\Social;
@@ -40,8 +41,6 @@ class Admin_Guest_Author
             add_action( 'save_post_'.$this->post_type, array( $this, 'on_save' ) );
             add_filter( 'removable_query_args', array( $this, 'add_removable_arg' ) );
             add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-            add_action( 'trashed_post', array( $this, 'clear_object_cache' ) );
-            add_action( 'untrashed_post', array( $this, 'clear_object_cache' ) );
             add_action( 'delete_post', array( $this, 'on_delete' ) );
             add_action( 'deleted_post', array( $this, 'on_deleted' ), 10, 2 );
             add_action( 'transition_post_status', array( $this, 'maybe_update_guest_count' ), 10, 3 );
@@ -238,7 +237,6 @@ class Admin_Guest_Author
             }
         }
         update_post_meta( $post_id, '_molongui_guest_author_box_display', 'default' );
-        $this->clear_object_cache();
         add_filter( 'redirect_post_location', array( $this, 'add_notice_query_var' ), 99, 2 );
         do_action( 'authorship/guest/save', $post_id, $_POST );
     }
@@ -344,7 +342,6 @@ class Admin_Guest_Author
                 }
             }
         }
-        $this->clear_object_cache();
         do_action( 'authorship/admin/guest/deleted', $guest_id, $guest );
     }
     public function maybe_update_guest_count( $new_status, $old_status, $post )
@@ -914,6 +911,8 @@ class Admin_Guest_Author
     }
     public static function clear_object_cache()
     {
+        WP::deprecated_function_once( __FUNCTION__, '5.2.0' );
+
         Cache::clear( 'guests' );
         Cache::clear( 'posts' );
     }

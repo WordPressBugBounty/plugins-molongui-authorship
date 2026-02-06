@@ -21,7 +21,7 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
             $main_author  = Post::get_main_author( $post_id );
             $author_class = new Author( $main_author->id, $main_author->type );
             $user->guest_id         = $author_class->get_id();
-            $user->display_name     = $author_class->get_name();//$post_class->filter_name( $post_id );
+            $user->display_name     = $author_class->get_display_name();//$post_class->filter_name( $post_id );
             $user->user_url         = $author_class->get_website();
             $user->description      = $author_class->get_description();
             $user->user_description = $user->description;

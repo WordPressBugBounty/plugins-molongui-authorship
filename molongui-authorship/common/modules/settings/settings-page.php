@@ -245,14 +245,14 @@ trait Settings_Page
     public static function register_styles()
     {
         if ( apply_filters( 'authorship/options/enqueue_colorpicker', false ) ) wp_enqueue_style( 'wp-color-picker' );
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.e456.min.css' : '/common/modules/settings/assets/css/styles.9f01.min.css' ) );
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.a16f.min.css' : '/common/modules/settings/assets/css/styles.8c6a.min.css' ) );
         $deps = array();
 
         Assets::register_style( $file, 'options', $deps );
     }
     public static function enqueue_styles()
     {
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.e456.min.css' : '/common/modules/settings/assets/css/styles.9f01.min.css' ) );
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.a16f.min.css' : '/common/modules/settings/assets/css/styles.8c6a.min.css' ) );
 
         Assets::enqueue_style( $file, 'options', true );
     }

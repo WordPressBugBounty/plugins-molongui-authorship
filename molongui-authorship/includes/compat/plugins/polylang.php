@@ -11,7 +11,6 @@
  * @package    Authorship
  * @subpackage includes/compat/plugins
  * @since      4.4.0
- * @version    5.0.0
  */
 
 namespace Molongui\Authorship;
@@ -40,7 +39,7 @@ class Polylang
     }
     public static function disable_guest_author_translation( $post_types, $is_settings )
     {
-        if ( !empty( Settings::get( 'pll_translate_guests', true ) ) )
+        if ( empty( Settings::get( 'pll_translate_guests', true ) ) )
         {
             unset( $post_types['guest_author'] );
         }

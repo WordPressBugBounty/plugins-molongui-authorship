@@ -14,7 +14,6 @@
 
 namespace Molongui\Authorship;
 
-use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Singleton;
@@ -25,8 +24,8 @@ class Author_Box
 {
     static  $javascript     = '';
     static  $stylesheet     = '';
-    private $stylesheet_ltr = '/assets/css/author-box.3aec.min.css';
-    private $stylesheet_rtl = '/assets/css/author-box-rtl.1e72.min.css';
+    private $stylesheet_ltr = '/assets/css/author-box.af84.min.css';
+    private $stylesheet_rtl = '/assets/css/author-box-rtl.4141.min.css';
     use Singleton;
     public function __construct()
     {
@@ -550,6 +549,7 @@ class Author_Box
     private function should_add()
     {
         $add = false;
+        $log = '';
 
         if ( is_main_query() )
         {
@@ -565,11 +565,11 @@ class Author_Box
                     if ( array_search( 'get_the_block_template_html', array_column( $dbt, 'function' ) ) )
                     {
                         $add = true;
-                        Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
+                        $log = "Running outside the loop by a block-based theme. Author box added to the_content.";
                     }
                     else
                     {
-                        Debug::console_log( null, "Author box not displayed outside the loop by default." );
+                        $log = "Author box not displayed outside the loop by default.";
                     }
                 }
             }
@@ -578,7 +578,21 @@ class Author_Box
                 $add = true;
             }
         }
-        return apply_filters( 'molongui_authorship/add_author_box', $add );
+
+        $_add = $add;
+        $add = apply_filters( 'molongui_authorship/add_author_box', $add );
+
+        if ( $add !== $_add )
+        {
+            $log = "Default author box criteria overridden by 'molongui_authorship/add_author_box'.";
+        }
+
+        if ( !empty( $log ) )
+        {
+            Debug::console_log( null, $log );
+        }
+
+        return $add;
     }
     private function should_display()
     {
@@ -656,31 +670,17 @@ class Author_Box
 
                 if ( 'hide' === $author->get_meta( 'box_display' ) )
                 {
-                    Debug::console_log( null, sprintf( "Author box not displayed: user configured the plugin to hide the author box for the %s author.", $post_author->ref ) );
+                    Debug::console_log( null, sprintf( "Author box not displayed: plugin configured to hide the author box for %s.", $post_author->ref ) );
                     continue;
                 }
 
-                if ( !empty( Settings::get( 'author_box_hide_if_empty_bio', false ) ) and empty( $author->get_bio() ) )
+                if ( !empty( Settings::get( 'author_box_hide_if_empty_bio', false ) ) and empty( $author->get_description() ) )
                 {
-                    Debug::console_log( null, "Author box not displayed: user configured the plugin to hide the author box when author bio is empty." );
+                    Debug::console_log( null, sprintf( "Author box not displayed: plugin configured to hide the author box when description is empty (%s has no bio).", $post_author->ref ) );
                     continue;
                 }
 
-                $profiles[$post_author->ref] = $author->get_data();
-
-                if ( $options['author_box_show_related_posts'] )
-                {
-                    $profiles[$post_author->ref]['posts'] = $author->get_posts( array
-                    (
-                        'fields'         => 'ids',
-                        'post__not_in'   => array( $post_id ),
-                        'post_type'      => explode( ",", Settings::get( 'author_box_related_posts_post_types', 'post' ) ),
-                        'post_status'    => 'publish',
-                        'posts_per_page' => Settings::get( 'author_box_related_posts_count', 4 ),
-                        'order'          => Settings::get( 'author_box_related_posts_order', 'DESC' ),
-                        'orderby'        => Settings::get( 'author_box_related_posts_orderby', 'date' ),
-                    ));
-                }
+                $profiles[$post_author->ref] = $author;
             }
         }
 
@@ -692,8 +692,8 @@ class Author_Box
          * or multiple author boxes (one per author). This filter allows developers to customize which
          * author profiles are used for displaying in the author boxes.
          *
-         * @param  array $post_authors List of authors to display in author boxes.
-         * @return array               Modified list of authors for the author boxes.
+         * @param  array $profiles List of profiles to display in an author box.
+         * @return array           Modified list of authors for the author box.
          * @since  5.0.0
          */
         $profiles = apply_filters( 'molongui_authorship/author_box_profiles', $profiles );
@@ -716,7 +716,6 @@ class Author_Box
         Author_Box::enqueue_styles();
 
         ob_start();
-
         if ( $multiple and empty( $options['author_box_for_co_authors'] ) )
         {
             include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-multiauthor-layout.php';
@@ -738,8 +737,9 @@ class Author_Box
          * FILTER HOOK
          * Allows modifying the author box markup before it is returned.
          *
-         * @param  string $markup The author box markup.
-         * @return array          Modified author box markup.
+         * @param  string $markup   The author box markup.
+         * @param  string $profiles The profiles to display.
+         * @return array            Modified author box markup.
          * @since  5.0.0
          */
         return apply_filters( 'molongui_authorship/author_box_markup', ob_get_clean(), $profiles );

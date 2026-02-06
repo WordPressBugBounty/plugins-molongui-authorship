@@ -5,7 +5,7 @@ use Molongui\Authorship\Common\Utils\Helpers;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $add_microdata = ( !empty( $options['seo_settings_enabled'] ) and !empty( $options['schema_markup_enabled'] ) );
-$show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) and ( !empty( $profile['posts'] ) or !empty( $options['author_box_related_show_empty'] ) ) );
+$show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) and ( $profile->has_posts() or !empty( $options['author_box_related_show_empty'] ) ) );
 ?>
 
 <?php if ( apply_filters( 'authorship/add_html_comments', true ) ) : ?>
@@ -21,9 +21,9 @@ $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options[
      data-box-layout="<?php echo ( isset( $options['author_box_layout'] ) ? $options['author_box_layout'] : '' ); ?>"
      data-box-position="<?php echo ( isset( $options['author_box_position'] ) ? $options['author_box_position'] : '' ); ?>"
      data-multiauthor="<?php echo ( $multiple ? 'true' : 'false' ); ?>"
-     data-author-id="<?php echo $profile['id']; ?>"
-     data-author-type="<?php echo $profile['type']; ?>"
-     data-author-archived="<?php echo $profile['archived']; ?>">
+     data-author-id="<?php echo $profile->get_id(); ?>"
+     data-author-type="<?php echo $profile->get_type(); ?>"
+     data-author-archived="<?php echo $profile->is_archived(); ?>">
 
 	<?php
     if ( !empty( $options['author_box_header_title'] ) )
@@ -46,8 +46,8 @@ $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options[
 
         <div class="m-a-box-tab m-a-box-content m-a-box-profile"
              data-profile-layout="<?php echo $options['author_box_profile_layout']; ?>"
-             data-author-ref="<?php echo $profile['type'].'-'.$profile['id']; ?>"
-             <?php echo ( $add_microdata ? 'itemscope itemid="'.$profile['archive_url'].'" itemtype="https://schema.org/Person"' : '' ); ?>
+             data-author-ref="<?php echo $profile->get_type().'-'.$profile->get_id(); ?>"
+             <?php echo ( $add_microdata ? 'itemscope itemid="'.$profile->get_archive_url().'" itemtype="https://schema.org/Person"' : '' ); ?>
         >
             <?php
 
@@ -91,7 +91,7 @@ $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options[
 
                     <ul>
                         <?php
-                        if ( !empty( $profile['posts'] ) )
+                        if ( $profile->has_posts() )
                         {
                             /*!
                              * FILTER HOOK

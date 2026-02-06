@@ -60,14 +60,14 @@ function molongui_authorship_wpseo_schema_author( $graph_piece, $context = null 
 
         $authors[$i]['@type'] = array( 'Person' );
         $authors[$i]['@id']   = $graph_piece['@id']; //'https://evistaging.wpengine.com/#/schema/person/682e44182a7c6f403c727e43c0b612a5';
-        $authors[$i]['name']  = $author->get_name();
+        $authors[$i]['name']  = $author->get_display_name();
         $authors[$i]['image'] = array
         (
             '@type'      => 'ImageObject',
             '@id'        => isset( $graph_piece['image']['@id'] ) ? $graph_piece['image']['@id'] : '', //'https://evistaging.wpengine.com/#personlogo',
             'inLanguage' => get_locale(),
             'url'        => $author->get_avatar( 'full', 'url' ),
-            'caption'    => $author->get_name(),
+            'caption'    => $author->get_display_name(),
         );
 
         ++$i;
@@ -82,7 +82,7 @@ function molongui_authorship_wpseo_replacements( $replacements, $args = null )
     if ( isset( $replacements['%%name%%'] ) )
     {
         $author = new Molongui\Authorship\Author( get_query_var( 'author', 0 ), 'user' );
-        $replacements['%%name%%'] = $author->get_name();
+        $replacements['%%name%%'] = $author->get_display_name();
     }
     return $replacements;
 }
@@ -135,31 +135,25 @@ function molongui_authorship_get_actual_author_data( $key, $default )
 {
     if ( molongui_is_guest_author() )
     {
-        if ( $author = get_query_var( 'guest-author-name', 0 ) )
+        if ( $guest_name = get_query_var( 'guest-author-name', 0 ) )
         {
-            $guest = Molongui\Authorship\Author::get_by( 'name', $author, 'guest', false );
-            if ( $guest )
+            $guest = Molongui\Authorship\Authors::get_author_by( 'name', $guest_name, 'guest', false );
+            if ( $guest instanceof Author )
             {
-                $author = new Molongui\Authorship\Author( $guest->ID, 'guest', $guest );
-
                 switch ( $key )
                 {
                     case 'url':
-                        $url = $author->get_archive_url();
-                        return $url;
-
-                    break;
+                        return $guest->get_archive_url();
+                        break;
 
                     case 'img':
-                        $img = $author->get_avatar();
-                        return $img;
-
-                    break;
+                        return $guest->get_avatar();
+                        break;
                 }
             }
         }
     }
-    elseif ( $key == 'url' )
+    elseif ( 'url' == $key )
     {
         if ( Post::is_multiauthor_link( ( $default ) ) )
         {
@@ -182,14 +176,18 @@ add_filter( 'wpseo_breadcrumb_links', function( $crumbs )
         {
             if ( $author = get_query_var( 'guest-author-name', 0 ) )
             {
-                $guest = Molongui\Authorship\Author::get_by( 'name', $author, 'guest', false );
-                if ( $guest ) $crumbs[$last]['text'] = $prefix . esc_html( $guest->post_title );
+                $guest = Molongui\Authorship\Authors::get_author_by( 'name', $author, 'guest', false );
+
+                if ( $guest instanceof Author )
+                {
+                    $crumbs[$last]['text'] = $prefix . esc_html( $guest->get_display_name() );
+                }
             }
         }
         else
         {
             $author = new Molongui\Authorship\Author( get_query_var( 'author', 0 ), 'user' );
-            $crumbs[$last]['text'] = $prefix . esc_html( $author->get_name() );
+            $crumbs[$last]['text'] = $prefix . esc_html( $author->get_display_name() );
         }
     }
 

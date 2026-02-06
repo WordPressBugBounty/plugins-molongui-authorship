@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/amitzy/
 Tags: author box, author bio, guest author, co-authors, multiple authors
 Requires PHP: 5.6.20
 Requires at least: 5.2
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: trunk
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -252,6 +252,66 @@ In order to run, Molongui Authorship requires:
 == Changelog ==
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
+
+= 5.2.8 (2026-01-27) =
+
+* **Fixed**: Related posts in the author box now include all relevant posts.
+* **Changed**: Updated framework files to v3.4.2.
+
+= 5.2.7 (2026-01-20) =
+
+* **Fixed**: Related posts in the author box now respect the configured ordering settings.
+* **Fixed**: Related posts in the author box no longer include drafts or future posts.
+* **Fixed**: Post count updates now work correctly in edge cases.
+* **Fixed**: Post count filtering now ignores empty or invalid author IDs to prevent unexpected behavior.
+* **Fixed**: Compatibility issue with BetterDocs where enabling Guest Author or Co-Authors could cause single doc posts to render as an archive list.
+
+= 5.2.6 (2026-01-14) =
+
+* **Fixed**: Author description now correctly appears in author boxes.
+
+= 5.2.5 (2026-01-14) =
+
+* **Fixed**: Byline linking only to the first listed author on some themes.
+* **Fixed**: Archived guest authors are now properly excluded from author search results.
+
+= 5.2.4 (2025-12-17) =
+
+* **Fixed**: Fatal error occurring during post count update.
+* **Fixed**: Post-count cache collision between users and guest authors with the same ID.
+* **Fixed**: Avoided PHP notices when the primary post author data is missing or invalid.
+* **Fixed**: Incomplete user meta cache hydration causing missing data in edge cases.
+* **Fixed**: Admin authors list search returning empty results when filtering existing authors.
+* **Fixed**: Fatal error on author pages when the Yoast SEO plugin is enabled.
+
+= 5.2.3 (2025-12-10) =
+
+* **Fixed**: Several bugs related to wrong author data retrieval.
+
+= 5.2.2 (2025-12-09) =
+
+* **Fixed**: Several PHP warnings.
+
+= 5.2.1 (2025-12-09) =
+
+* **Fixed**: Fatal error caused by an invalid callback name in a filter hook.
+
+= 5.2.0 (2025-12-09) =
+
+* **Added**: Option to stop all running background tasks related to the plugin.
+* **Enhanced**: Refactored `Author` and `Authors` classes to reduce the number of queries and significantly improve performance.
+* **Enhanced**: Added compatibility with the Pro theme.
+* **Fixed**: Fatal error when displaying a single author box on multi-authored posts.
+* **Fixed**: Missing default author selector when editing post types without authorship features enabled.
+* **Fixed**: Undefined array key warning for `author_box_related_count` in PHP 8+.
+* **Fixed**: Undefined variable warning for `$profile` in PHP 8+.
+* **Fixed**: Guest author translation compatibility with Polylang.
+* **Fixed**: Display issues in the author box editor preview.
+* **Changed**: Updated framework files to v3.4.1.
+* **Changed**: Added compatibility with WordPress 6.9.
+* **Removed**: Usage of custom object cache for improved compatibility and maintainability.
+* **Removed**: Deprecated functions and files that were marked as hard deprecated.
+* **Removed**: Deprecated hooks that were marked as hard deprecated.
 
 = 5.1.0 (2025-04-28) =
 

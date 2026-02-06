@@ -53,18 +53,6 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
     }
 
     /*!
-     * DEPRECATED
-     * This filter hook is scheduled for removal in version 5.2.0. Update usages accordingly.
-     *
-     * @since      2.0.0
-     * @deprecated 5.0.0
-     */
-    if ( has_filter( 'molongui_byline_prefix' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
-    {
-        $prefix = apply_filters_deprecated( 'molongui_byline_prefix', array( $prefix ), '5.0.0', 'molongui_authorship/byline_prefix' );
-    }
-
-    /*!
      * FILTER HOOK
      * Allows filtering the string to add at the beginning of the post byline.
      *
@@ -78,18 +66,6 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
     elseif ( Settings::get( 'byline_custom_prefix_suffix', false ) )
     {
         $suffix = Settings::get( 'byline_suffix', '' );
-    }
-
-    /*!
-     * DEPRECATED
-     * This filter hook is scheduled for removal in version 5.2.0. Update usages accordingly.
-     *
-     * @since      2.0.0
-     * @deprecated 5.0.0
-     */
-    if ( has_filter( 'molongui_byline_suffix' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
-    {
-        $suffix = apply_filters_deprecated( 'molongui_byline_suffix', array( $suffix ), '5.0.0', 'molongui_authorship/byline_suffix' );
     }
 
     /*!

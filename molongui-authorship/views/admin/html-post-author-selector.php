@@ -156,7 +156,7 @@ else
                             </div>
                         <?php endif; ?>
                         <div class="molongui-post-authors__name" title="<?php echo esc_attr( $author_tag_title ); ?>">
-                            <?php echo esc_html( $author->get_name() ); ?>
+                            <?php echo esc_html( $author->get_display_name() ); ?>
                         </div>
                         <div class="molongui-post-authors__actions">
                             <?php

@@ -11,7 +11,6 @@
  * @package    Authorship
  * @subpackage includes/compat/plugins
  * @since      4.2.4
- * @version    5.0.10
  */
 
 namespace Molongui\Authorship;

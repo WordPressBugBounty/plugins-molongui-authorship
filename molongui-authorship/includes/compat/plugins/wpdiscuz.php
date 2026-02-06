@@ -1,6 +1,20 @@
 <?php
+/*!
+ * Compatibility module for seamless integration with wpDiscuz.
+ *
+ *   Package : Plugin
+ *   Name    : wpDiscuz
+ *   Author  : gVectors Team
+ *   URI     : http://wpdiscuz.com/
+ *
+ * @author     Molongui
+ * @package    Authorship
+ * @subpackage includes/compat/plugins
+ * @since      4.0.0
+ */
 
 use Molongui\Authorship\Author;
+use Molongui\Authorship\Authors;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
@@ -46,10 +60,10 @@ add_filter( 'get_comment_author_url', function( $commentAuthorUrl, $comment_id, 
 {
     $email = $comment->comment_author_email;
     if ( !$email ) return $commentAuthorUrl;
-    if ( $guest = Author::get_by( '_molongui_guest_author_mail', $email, 'guest' ) )
+    $guest = Authors::get_author_by( '_molongui_guest_author_mail', $email, 'guest' );
+    if ( $guest instanceof Author )
     {
-        $author = new Author( $guest->ID, 'guest' );
-        $commentAuthorUrl = $author->get_archive_url();
+        $commentAuthorUrl = $guest->get_archive_url();
     }
     return $commentAuthorUrl;
 

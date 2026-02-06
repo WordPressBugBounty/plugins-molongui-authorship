@@ -53,8 +53,7 @@ class Request
     public static function is_rest_api_request()
     {
         global $wp_version;
-
-        if ( version_compare( $wp_version, '6.5', '>=' ) )
+        if ( version_compare( $wp_version, '6.5', '>=' ) && function_exists( 'wp_is_serving_rest_request' ) )
         {
             return wp_is_serving_rest_request();
         }

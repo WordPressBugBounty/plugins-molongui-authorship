@@ -977,18 +977,6 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
         }
 
         $order = 'enabled' === $query ? $enabled : array();
-
-        /*!
-         * DEPRECATED
-         * This filter hook is scheduled for removal in version 5.2.0. Update any dependencies accordingly.
-         *
-         * @since      4.2.0
-         * @deprecated 5.0.0
-         */
-        if ( has_filter( 'authorship/social_networks/order' ) and apply_filters( 'molongui_authorship/apply_filters_deprecated', true ) )
-        {
-            $order = apply_filters_deprecated( 'authorship/social_networks/order', array( $order, array_keys( $sn ) ), '5.0.0', 'molongui_authorship/social_profiles_order' );
-        }
         $order = apply_filters( 'molongui_authorship/social_profiles_order', $order, array_keys( $sn ) );
         $order = array_intersect( array_unique( $order ), array_keys( $networks ) );
         if ( empty( $order ) )
