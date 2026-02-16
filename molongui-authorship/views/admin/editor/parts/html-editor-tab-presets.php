@@ -26,6 +26,7 @@ Author_Box_Editor::render_select( 'author_box_preset', __( "Preset", 'molongui-a
         'p10'     => $has_pro ? __( "Preset 10", 'molongui-authorship' ) : __( "Preset 10 - Requires PRO", 'molongui-authorship' ),
         'p11'     => $has_pro ? __( "Preset 11", 'molongui-authorship' ) : __( "Preset 11 - Requires PRO", 'molongui-authorship' ),
         'p12'     => __( "Preset 12", 'molongui-authorship' ),
+        'p13'     => __( "Preset 13", 'molongui-authorship' ),
     ),
     array
     (

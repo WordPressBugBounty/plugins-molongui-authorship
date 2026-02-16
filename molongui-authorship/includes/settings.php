@@ -4370,18 +4370,55 @@ public function get_author_pages_section()
     }
     public static function enabled_post_types( $feature = 'all', $query = 'ids' )
     {
-        $guest_author_post_types = $co_authors_post_types = array();
+        $feature = is_string( $feature ) ? strtolower( trim( $feature ) ) : 'all';
+        $query   = is_string( $query ) ? strtolower( trim( $query ) ) : 'ids';
+        if ( ! self::is_guest_author_enabled() && ! self::is_co_authors_enabled() )
+        {
+            if ( $query === 'ids' )
+            {
+                return array( 'post' );
+            }
+            $existing_post_types = Post::get_post_types( 'all', 'objects', false );
 
+            return ! empty( $existing_post_types['post'] )
+                ? array(
+                    'post' => array(
+                        'id'       => $existing_post_types['post']->name,
+                        'label'    => $existing_post_types['post']->labels->name,
+                        'singular' => $existing_post_types['post']->labels->singular_name,
+                    ),
+                )
+                : array();
+        }
+
+        $guest_author_post_types = array();
+        $co_authors_post_types   = array();
         if ( self::is_guest_author_enabled() )
         {
-            $guest_author_post_types = explode( ',', self::get( 'guest_author_post_types', "" ) );
-        }
+            $raw = self::get( 'guest_author_post_types', '' );
 
+            if ( is_array( $raw ) )
+            {
+                $guest_author_post_types = $raw;
+            }
+            elseif ( is_string( $raw ) )
+            {
+                $guest_author_post_types = explode( ',', $raw );
+            }
+        }
         if ( self::is_co_authors_enabled() )
         {
-            $co_authors_post_types = explode( ',', self::get( 'co_authors_post_types', "" ) );
-        }
+            $raw = self::get( 'co_authors_post_types', '' );
 
+            if ( is_array( $raw ) )
+            {
+                $co_authors_post_types = $raw;
+            }
+            elseif ( is_string( $raw ) )
+            {
+                $co_authors_post_types = explode( ',', $raw );
+            }
+        }
         switch ( $feature )
         {
             case 'guest-author':
@@ -4392,28 +4429,55 @@ public function get_author_pages_section()
                 $post_types = $co_authors_post_types;
                 break;
 
+            case 'all':
             default:
-                $post_types = array_unique( array_merge( $guest_author_post_types, $co_authors_post_types ) );
+                $post_types = array_merge( $guest_author_post_types, $co_authors_post_types );
                 break;
         }
+        $sanitized = array();
 
-        if ( 'ids' === $query )
+        foreach ( (array) $post_types as $post_type )
+        {
+            if ( ! is_string( $post_type ) )
+            {
+                continue;
+            }
+
+            $post_type = sanitize_key( trim( $post_type ) );
+
+            if ( $post_type === '' )
+            {
+                continue;
+            }
+
+            if ( ! post_type_exists( $post_type ) )
+            {
+                continue;
+            }
+
+            $sanitized[ $post_type ] = true;
+        }
+
+        $post_types = array_keys( $sanitized );
+        if ( empty( $post_types ) )
+        {
+            $post_types = array( 'post' );
+        }
+        if ( $query === 'ids' )
         {
             return $post_types;
         }
-
         $existing_post_types = Post::get_post_types( 'all', 'objects', false );
         $_post_types         = array();
 
         foreach ( $post_types as $post_type )
         {
-            if ( !empty( $existing_post_types[$post_type] ) )
+            if ( ! empty( $existing_post_types[ $post_type ] ) )
             {
-                $_post_types[$post_type] = array
-                (
-                    'id'       => $existing_post_types[$post_type]->name,
-                    'label'    => $existing_post_types[$post_type]->labels->name,
-                    'singular' => $existing_post_types[$post_type]->labels->singular_name,
+                $_post_types[ $post_type ] = array(
+                    'id'       => $existing_post_types[ $post_type ]->name,
+                    'label'    => $existing_post_types[ $post_type ]->labels->name,
+                    'singular' => $existing_post_types[ $post_type ]->labels->singular_name,
                 );
             }
         }

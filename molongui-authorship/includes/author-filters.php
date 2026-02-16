@@ -12,7 +12,7 @@ use Molongui\Authorship\Common\Utils\WP;
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 class Author_Filters
 {
-    private $javascript = '/assets/js/byline.e0b3.min.js';
+    private $javascript = '/assets/js/byline.4cc4.min.js';
     public function __construct()
     {
         if ( Post::byline_takeover() )

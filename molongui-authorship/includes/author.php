@@ -1422,13 +1422,22 @@ private function get_prefetched_meta( $key )
             }
         }
         $no_found_rows = ( $posts_per_page > 0 ) ? false : $no_found_rows_raw;
-        $ref = ( $this->type === 'user' ) ? ( 'user-' . $this->id ) : ( 'guest-' . $this->id );
-        $meta_query[] = array
-        (
-            'key'     => self::RELATION_META_KEY,
-            'value'   => $ref,
-            'compare' => '==',
-        );
+        $coauthors_enabled = (bool) Settings::is_co_authors_enabled();
+        $guests_enabled    = (bool) Settings::is_guest_author_enabled();
+
+        $use_relation_meta = ( $coauthors_enabled || $guests_enabled );
+        $use_native_author = ( ! $coauthors_enabled && ! $guests_enabled );
+
+        if ( $use_relation_meta )
+        {
+            $ref = ( $this->type === 'user' ) ? ( 'user-' . $this->id ) : ( 'guest-' . $this->id );
+            $meta_query[] = array
+            (
+                'key'     => self::RELATION_META_KEY,
+                'value'   => $ref,
+                'compare' => '==',
+            );
+        }
         if ( is_string( $a['post_type'] ) && $a['post_type'] === 'related' )
         {
             $current_post_id = (int) get_queried_object_id();
@@ -1462,6 +1471,11 @@ private function get_prefetched_meta( $key )
         );
         $q_args = array_merge( $q_args, $cat_args );
 
+        if ( $use_native_author && $this->type === 'user' )
+        {
+            $q_args['author'] = (int) $this->id;
+        }
+
         /*!
          * FILTER HOOK
          * Allow last-second customization of the query args.
@@ -1471,6 +1485,7 @@ private function get_prefetched_meta( $key )
          * @since 5.2.0
          */
         $q_args = apply_filters( 'molongui_authorship/author/get_posts/query_args', $q_args, $this );
+
         $resolved = array
         (
             'fields'              => $fields,
@@ -1493,6 +1508,11 @@ private function get_prefetched_meta( $key )
             'language'            => $a['language'],
         );
         $resolved = array_merge( $resolved, $cat_args );
+
+        if ( $use_native_author && $this->type === 'user' )
+        {
+            $resolved['author'] = (int) $this->id;
+        }
 
         /*!
          * FILTER HOOK
@@ -1539,6 +1559,7 @@ private function get_prefetched_meta( $key )
     {
         $source           = apply_filters( 'molongui_authorship/author/get_post_counts/source', $source, $this );
         $fallback_to_live = (bool) apply_filters( 'molongui_authorship/author/get_post_counts/allow_fallback', $fallback_to_live, $this );
+        $relation_meta_enabled = ( Settings::is_guest_author_enabled() || Settings::is_co_authors_enabled() );
         if ( is_string( $post_types ) )
         {
             $post_types = array( $post_types );
@@ -1564,12 +1585,28 @@ private function get_prefetched_meta( $key )
         }
 
         $post_types = array_keys( $set );
+        $effective_source = $source;
+
+        if ( ! $relation_meta_enabled )
+        {
+            if ( $this->type !== 'user' )
+            {
+                $zero = array();
+                foreach ( $post_types as $pt )
+                {
+                    $zero[$pt] = 0;
+                }
+                return $zero;
+            }
+            $effective_source = $source;//'live';
+            $fallback_to_live = true;//false;
+        }
         return $this->get_computed_value(
-            'post_counts:' . implode( ',', $post_types ) . ':' . $source . ':' . ( $fallback_to_live ? '1' : '0' ),
-            function () use ( $post_types, $source, $fallback_to_live )
+            'post_counts:' . implode( ',', $post_types ) . ':' . $effective_source . ':' . ( $fallback_to_live ? '1' : '0' ) . ':' . ( $relation_meta_enabled ? 'rel' : 'native' ),
+            function () use ( $post_types, $effective_source, $fallback_to_live, $relation_meta_enabled )
             {
                 $counts   = array();
-                $use_meta = ( strtolower( $source ) !== 'live' );
+                $use_meta = ( $relation_meta_enabled && strtolower( $effective_source ) !== 'live' );
 
                 foreach ( $post_types as $pt )
                 {
@@ -1611,7 +1648,7 @@ private function get_prefetched_meta( $key )
                  * @param string            $source
                  * @since 5.2.0
                  */
-                return apply_filters( 'molongui_authorship/author/get_post_counts', $counts, $post_types, $this, $source );
+                return apply_filters( 'molongui_authorship/author/get_post_counts', $counts, $post_types, $this, $effective_source  );
             },
             ''
         );
@@ -1629,16 +1666,30 @@ private function get_prefetched_meta( $key )
     }
     private function compute_live_post_count( $post_type )
     {
-        $pre = apply_filters( 'molongui_authorship/author/get_post_counts/live_value', null, $this, $post_type );
+        $use_relation_meta = ( Settings::is_guest_author_enabled() || Settings::is_co_authors_enabled() );
+        $strategy = $use_relation_meta ? 'relation-meta' : 'native-author';
+
+        /*!
+         * FILTER HOOK
+         * Allow a site to provide an authoritative value (short-circuit).
+         *
+         * @param null              Filtered value must be an integer.
+         * @param Author $author    Current author instance.
+         * @param string $post_type Target post type.
+         * @param string $strategy  Either 'relation-meta' or 'native-author'.
+         * @since 5.2.0
+         */
+        $pre = apply_filters( 'molongui_authorship/author/get_post_counts/live_value', null, $this, $post_type, $strategy );
         if ( is_int( $pre ) )
         {
             return max( 0, $pre );
         }
+        if ( ! $use_relation_meta && $this->type !== 'user' )
+        {
+            return 0;
+        }
 
         global $wpdb;
-        $ref_prefix = ( $this->type === 'user' ) ? 'user-' : 'guest-';
-        $ref_value  = $ref_prefix . (int) $this->id;
-        $like = '%' . $wpdb->esc_like( $ref_value ) . '%';
         $statuses = (array) Admin_Post::get_countable_post_statuses();
         if ( empty( $statuses ) )
         {
@@ -1652,26 +1703,48 @@ private function get_prefetched_meta( $key )
                 "{$wpdb->posts}.post_status IN (" . implode( ',', array_fill( 0, count( $statuses ), '%s' ) ) . ")",
                 ...$statuses
             ),
-            $wpdb->prepare( "{$wpdb->postmeta}.meta_key = %s", self::RELATION_META_KEY ),
-            $wpdb->prepare( "{$wpdb->postmeta}.meta_value LIKE %s", $like ),
         );
+        if ( $use_relation_meta )
+        {
+            $ref_prefix = ( $this->type === 'user' ) ? 'user-' : 'guest-';
+            $ref_value  = $ref_prefix . (int) $this->id;
+            $like = '%' . $wpdb->esc_like( $ref_value ) . '%';
+
+            $where[] = $wpdb->prepare( "{$wpdb->postmeta}.meta_key = %s", self::RELATION_META_KEY );
+            $where[] = $wpdb->prepare( "{$wpdb->postmeta}.meta_value LIKE %s", $like );
+        }
+        else
+        {
+            $where[] = $wpdb->prepare( "{$wpdb->posts}.post_author = %d", (int) $this->id );
+        }
 
         /*!
          * FILTER HOOK
          * Allow callers to tweak WHERE fragments (e.g., include more statuses or custom storage).
          *
-         * @param string[] $where      Array of safe SQL fragments (no leading WHERE).
-         * @param Author   $author     Current author instance.
-         * @param string   $post_type  Target post type.
+         * @param string[] $where     Array of safe SQL fragments (no leading WHERE).
+         * @param Author   $author    Current author instance.
+         * @param string   $post_type Target post type.
+         * @param string   $strategy  Either 'relation-meta' or 'native-author'.
          * @since 5.2.0
          */
-        $where = apply_filters( 'molongui_authorship/author/get_post_counts/live_where', $where, $this, $post_type );
-        $sql = "
-            SELECT COUNT(1)
-            FROM {$wpdb->posts}
-            INNER JOIN {$wpdb->postmeta}
-                ON {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id
-            WHERE " . implode( ' AND ', $where );
+        $where = apply_filters( 'molongui_authorship/author/get_post_counts/live_where', $where, $this, $post_type, $strategy );
+        if ( $use_relation_meta )
+        {
+            $sql = "
+                SELECT COUNT(1)
+                FROM {$wpdb->posts}
+                INNER JOIN {$wpdb->postmeta}
+                    ON {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id
+                WHERE " . implode( ' AND ', $where );
+        }
+        else
+        {
+            $sql = "
+                SELECT COUNT(1)
+                FROM {$wpdb->posts}
+                WHERE " . implode( ' AND ', $where );
+        }
 
         /*!
          * FILTER HOOK
@@ -1680,9 +1753,10 @@ private function get_prefetched_meta( $key )
          * @param string  $sql        The final SQL to execute.
          * @param Author  $author     Current author instance.
          * @param string  $post_type  Target post type.
+         * @param string  $strategy   Either 'relation-meta' or 'native-author'.
          * @since 5.2.0
          */
-        $sql = apply_filters( 'molongui_authorship/author/get_post_counts/live_sql', $sql, $this, $post_type );
+        $sql = apply_filters( 'molongui_authorship/author/get_post_counts/live_sql', $sql, $this, $post_type, $strategy );
         $n = (int) $wpdb->get_var( $sql );
 
         $n = max( 0, $n );

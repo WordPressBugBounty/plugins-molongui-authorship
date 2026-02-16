@@ -253,6 +253,11 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.2.9 (2026-02-16) =
+
+* **Added**: New ready-to-use template for the author box.
+* **Fixed**: Author box related posts now work correctly when Co-Authors and Guest Authors are disabled.
+
 = 5.2.8 (2026-01-27) =
 
 * **Fixed**: Related posts in the author box now include all relevant posts.
