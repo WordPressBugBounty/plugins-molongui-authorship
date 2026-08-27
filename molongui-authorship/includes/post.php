@@ -553,7 +553,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                         $post_authors[$author_ref] = (object) array( 'ID' => (int)$split[1], 'id' => (int)$split[1], 'type' => $split[0], 'ref' => $author_ref );
                     }
                 }
-                array_unshift( $post_authors, $main_author );
+                $post_authors = array_merge( array( $main_author->ref => $main_author ), $post_authors );
             }
         }
         if ( !$key )
@@ -796,8 +796,9 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          *
          * @param string A space is added after/around byline separators by default.
          * @since 5.0.0
+         * @since 5.2.10 `\u{00A0}` used instead of `&nbsp;` for better compatibility (XML/Feeds).
          */
-        $space = apply_filters( 'molongui_authorship/byline_separator_space', '&nbsp;' );
+        $space = apply_filters( 'molongui_authorship/byline_separator_space', "\u{00A0}" );
 
         $separator      = $separator.$space;
         $last_separator = $space.$last_separator.$space;

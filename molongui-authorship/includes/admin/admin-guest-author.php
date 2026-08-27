@@ -17,6 +17,7 @@ namespace Molongui\Authorship\Admin;
 use Molongui\Authorship\Author;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Cache;
+use Molongui\Authorship\Common\Utils\Plugin;
 use Molongui\Authorship\Common\Utils\WP;
 use Molongui\Authorship\Guest_Author;
 use Molongui\Authorship\Settings;
@@ -863,17 +864,17 @@ class Admin_Guest_Author
     }
     public function add_conversion_metabox_class( $classes )
     {
-        if ( apply_filters( 'authorship/admin/guest/convert/metabox', true ) )
+        if ( ! Plugin::has_pro() )
         {
-            array_push( $classes, 'free' );
+            $classes[] = 'free';
         }
         return $classes;
     }
     public function add_short_bio_metabox_class( $classes )
     {
-        if ( apply_filters( 'authorship/admin/guest/shortbio/metabox', '__return_true' ) )
+        if ( ! Plugin::has_pro() )
         {
-            array_push( $classes, 'free' );
+            $classes[] = 'free';
         }
         return $classes;
     }

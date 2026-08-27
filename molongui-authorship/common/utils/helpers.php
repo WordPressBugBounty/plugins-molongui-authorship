@@ -113,7 +113,7 @@ class Helpers
     }
     public static function space_to_nbsp( $string )
     {
-        return str_replace( ' ', '&nbsp;', $string );
+        return str_replace( ' ', "\u{00A0}", (string) $string );
     }
     public static function is_bool( $var )
     {

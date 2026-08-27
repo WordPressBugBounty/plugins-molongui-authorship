@@ -16,7 +16,9 @@ $logo = file_exists( MOLONGUI_AUTHORSHIP_DIR . 'assets/img/plugin_logo.png' ) ? 
         </div>
         <div class="m-page-masthead__nav">
             <span class="m-buttons">
-                <a id="m-button-save" class="m-button m-button-save is-compact is-primary" type="button"><?php echo esc_html__( "Save Settings", 'molongui-authorship' ); ?></a>
+                <a id="m-button-save" class="button button-primary m-button-save" type="button">
+                    <?php echo esc_html__( "Save Settings", 'molongui-authorship' ); ?>
+                </a>
             </span>
         </div>
     </div><!-- !m-page-masthead -->

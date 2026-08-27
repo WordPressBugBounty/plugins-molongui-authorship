@@ -854,13 +854,6 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
                 'color'    => '#6364ff',
                 'premium'  => false,
             ),
-            'peepeth' => array
-            (
-                'name'     => 'Peepeth',
-                'url'      => 'https://peepeth.com/username/',
-                'color'    => '#ee9a35',
-                'premium'  => false,
-            ),
             'vero' => array
             (
                 'name'     => 'Vero',

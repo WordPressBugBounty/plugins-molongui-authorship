@@ -2,6 +2,16 @@
 
 == Changelog ==
 
+= 5.2.10 (2026-08-28) =
+
+* **Fixed**: Replaced `&nbsp;` usage with the Unicode non-breaking space character (`U+00A0`) for better compatibility.
+* **Fixed**: Archive Author checkbox no longer becomes unclickable when Disable author box is set to Hide.
+* **Fixed**: PHP warning for undefined variable `$post_types`.
+* **Fixed**: Minor admin styling issues.
+* **Changed**: Updated framework files to v3.4.3.
+* **Changed**: Added compatibility with WordPress 7.1.
+* **Removed**: Peepeth social profile following the network's discontinuation.
+
 = 5.2.9 (2026-02-16) =
 
 * **Added**: New ready-to-use template for the author box.

@@ -69,7 +69,14 @@ class Authors
 
             $authors = Post::get_authors( $post_id );
         }
-        if ( empty( $authors ) || !is_array( $authors ) || !isset( $authors[0] ) || empty( $authors[0]->id ) )
+        if ( empty( $authors ) || !is_array( $authors ) )
+        {
+            return false;
+        }
+
+        $first_author = reset( $authors );
+
+        if ( !is_object( $first_author ) || empty( $first_author->id ) )
         {
             return false;
         }

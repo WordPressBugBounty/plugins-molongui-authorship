@@ -12,9 +12,9 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.2.9
+ * Version:           5.2.10
  * Requires at least: 5.2
- * Tested up to:      6.9
+ * Tested up to:      7.1
  * Requires PHP:      5.6.20
  * Author:            Molongui
  * Author URI:        https://www.molongui.com
@@ -43,7 +43,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 require_once __DIR__ . '/common/utils/singleton.php';
 final class MolonguiAuthorship
 {
-    const VERSION = '5.2.9';
+    const VERSION = '5.2.10';
     use Singleton;
     function __construct()
     {
@@ -126,11 +126,11 @@ final class MolonguiAuthorship
         return array
         (
             'MOLONGUI_AUTHORSHIP_VERSION'         => self::VERSION,
-            'MOLONGUI_AUTHORSHIP_FILE'            => __FILE__,                             // /var/www/domain/wp-content/plugins/molongui-boilerplate/molongui-boilerplate.php
-            'MOLONGUI_AUTHORSHIP_DIR'             => plugin_dir_path( __FILE__ ),          // /var/www/domain/wp-content/plugins/molongui-boilerplate/
-            'MOLONGUI_AUTHORSHIP_FOLDER'          => basename( dirname( __FILE__ ) ),      // molongui-boilerplate
-            'MOLONGUI_AUTHORSHIP_URL'             => plugin_dir_url( __FILE__ ),           // https://domain.tld/wp-content/plugins/molongui-boilerplate/
-            'MOLONGUI_AUTHORSHIP_BASENAME'        => plugin_basename( __FILE__ ),          // molongui-boilerplate/molongui-boilerplate.php
+            'MOLONGUI_AUTHORSHIP_FILE'            => __FILE__,                               // /var/www/domain/wp-content/plugins/molongui-boilerplate/molongui-boilerplate.php
+            'MOLONGUI_AUTHORSHIP_DIR'             => plugin_dir_path( __FILE__ ),            // /var/www/domain/wp-content/plugins/molongui-boilerplate/
+            'MOLONGUI_AUTHORSHIP_FOLDER'          => dirname( plugin_basename( __FILE__ ) ), // molongui-boilerplate
+            'MOLONGUI_AUTHORSHIP_URL'             => plugin_dir_url( __FILE__ ),             // https://domain.tld/wp-content/plugins/molongui-boilerplate/
+            'MOLONGUI_AUTHORSHIP_BASENAME'        => plugin_basename( __FILE__ ),            // molongui-boilerplate/molongui-boilerplate.php
             'MOLONGUI_AUTHORSHIP_NAMESPACE'       => '\Molongui\Authorship',
             'MOLONGUI_AUTHORSHIP_PREFIX'          => 'molongui_authorship',
             'MOLONGUI_AUTHORSHIP_NAME'            => 'molongui-authorship',                // slug

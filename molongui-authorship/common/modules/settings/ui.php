@@ -543,14 +543,14 @@ class UI
                     </label>
                 <?php endif; ?>
                 <?php if ( !empty( $args['disabled'] ) ) : ?>
-                    <textarea class="molongui-ui-textarea__input" disabled="disabled" rows="<?php echo !empty( $args['rows'] ) ? esc_attr( $args['rows'] ) : ''; ?>" placeholder="<?php echo !empty( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : ''; ?>"><?php echo wp_kses( $args['value'], self::allowed_html() ); ?></textarea>
+                    <textarea class="molongui-ui-textarea__input" disabled="disabled" rows="<?php echo !empty( $args['rows'] ) ? esc_attr( $args['rows'] ) : ''; ?>" placeholder="<?php echo !empty( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : ''; ?>"><?php echo esc_textarea( $args['value'] ); ?></textarea>
                     <?php if ( !empty( $args['tooltip'] ) ) : ?>
                         <div class="molongui-ui-tooltip">
                             <?php echo wp_kses_post( $args['tooltip'] ); ?>
                         </div>
                     <?php endif; ?>
                 <?php else : ?>
-                    <textarea class="molongui-ui-textarea__input" id="<?php echo esc_attr( $args['id'] ); ?>" name="<?php echo esc_attr( $args['id'] ); ?>" rows="<?php echo !empty( $args['rows'] ) ? esc_attr( $args['rows'] ) : ''; ?>" placeholder="<?php echo !empty( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : ''; ?>"><?php echo wp_kses( $args['value'], self::allowed_html() ); ?></textarea>
+                    <textarea class="molongui-ui-textarea__input" id="<?php echo esc_attr( $args['id'] ); ?>" name="<?php echo esc_attr( $args['id'] ); ?>" rows="<?php echo !empty( $args['rows'] ) ? esc_attr( $args['rows'] ) : ''; ?>" placeholder="<?php echo !empty( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : ''; ?>"><?php echo esc_textarea( $args['value'] ); ?></textarea>
                 <?php endif; ?>
             </div>
         </div>

@@ -663,6 +663,10 @@ class Author_Box
                 Debug::console_log( null, sprintf( "Author box not displayed: this post (#%s) has no authors.", $post_id ) );
                 return '';
             }
+            else
+            {
+                Debug::console_log( $post_authors, sprintf( "Author box: Authors found for post (#%s):", $post_id ) );
+            }
 
             foreach ( $post_authors as $post_author )
             {
