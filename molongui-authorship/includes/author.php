@@ -115,11 +115,15 @@ final class Author
         else
         {
             $post_authors = Authors::find();
+            $main_author  = is_array( $post_authors ) ? reset( $post_authors ) : false;
 
-            if ( is_array( $post_authors ) && !empty( $post_authors ) && isset( $post_authors[0] ) )
+            if ( is_object( $main_author )
+                && !empty( $main_author->id )
+                && !empty( $main_author->type )
+            )
             {
-                $this->id   = $post_authors[0]->id;
-                $this->type = $post_authors[0]->type;
+                $this->id   = $main_author->id;
+                $this->type = $main_author->type;
             }
         }
         $this->is_user    = ( $this->type === 'user'    );
@@ -696,6 +700,62 @@ private function get_prefetched_meta( $key )
             'molongui_authorship/author/description'
         );
     }
+    public function get_social_profile( $network )
+    {
+        $network = sanitize_key( $network );
+
+        if ( empty( $network ) )
+        {
+            return '';
+        }
+
+        return $this->get_computed_value(
+            'social_profile:' . $network,
+            function() use ( $network )
+            {
+                $value = (string) $this->get_meta( $network );
+
+                if ( '' !== trim( $value ) )
+                {
+                    return $value;
+                }
+                if ( 'user' !== $this->type )
+                {
+                    return '';
+                }
+                $compatible_meta = User::get_compatible_social_meta_keys();
+
+                if ( empty( $compatible_meta[ $network ] ) || !is_array( $compatible_meta[ $network ] ) )
+                {
+                    return '';
+                }
+                foreach ( $compatible_meta[ $network ] as $meta_key )
+                {
+                    if ( !is_string( $meta_key ) || '' === $meta_key )
+                    {
+                        continue;
+                    }
+
+                    $external_value = $this->get_meta_value( $meta_key );
+
+                    if ( !is_scalar( $external_value ) )
+                    {
+                        continue;
+                    }
+
+                    $external_value = trim( (string) $external_value );
+
+                    if ( '' !== $external_value )
+                    {
+                        return $external_value;
+                    }
+                }
+
+                return '';
+            },
+            "molongui_authorship/author/social_profile/{$network}"
+        );
+    }
     public function get_social()
     {
         return $this->get_computed_value(
@@ -703,6 +763,7 @@ private function get_prefetched_meta( $key )
             function()
             {
                 $enabled = Social::get( 'enabled' );
+
                 if ( empty( $enabled ) || !is_array( $enabled ) )
                 {
                     return array();
@@ -715,13 +776,16 @@ private function get_prefetched_meta( $key )
                     {
                         continue;
                     }
-                    $raw = (string) $this->get_meta( $network );
-                    if ( $raw === '' )
+
+                    $raw = $this->get_social_profile( $network );
+
+                    if ( '' === $raw )
                     {
-                        continue; // nothing stored → skip this network
+                        continue;
                     }
                     $url = $this->build_social_url( $network, $raw );
-                    if ( $url === '' )
+
+                    if ( '' === $url )
                     {
                         continue;
                     }
@@ -1182,10 +1246,12 @@ private function get_prefetched_meta( $key )
             $default_fields = apply_filters_deprecated( 'molongui_authorship/get_author_data_fields', array( $default_fields ), '5.2.0', 'molongui_authorship/author/default_fields' );
         }
         $fields = apply_filters( 'molongui_authorship/author/default_fields', $default_fields, $this );
+        $social_profile_keys   = self::get_enabled_social_profile_keys();
+        $social_profile_lookup = array_flip( $social_profile_keys );
 
         if ( ( $key = array_search( 'social_profiles', $fields, true ) ) !== false )
         {
-            $fields = array_merge( $fields, self::get_enabled_social_profile_keys() );
+            $fields = array_merge( $fields, $social_profile_keys );
             unset( $fields[$key] );
             $fields = array_values( $fields );
         }
@@ -1193,6 +1259,11 @@ private function get_prefetched_meta( $key )
         {
             foreach ( $fields as $field )
             {
+                if ( isset( $social_profile_lookup[$field] ) )
+                {
+                    $this->data[$field] = $this->get_social_profile( $field );
+                    continue;
+                }
                 $method = 'get_' . $field;
                 $params = array();
 

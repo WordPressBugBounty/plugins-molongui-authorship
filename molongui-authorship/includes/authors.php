@@ -327,13 +327,29 @@ class Authors
             }
             if ( class_exists( '\Molongui\Authorship\Social' ) )
             {
-                $enabled = \Molongui\Authorship\Social::get( 'enabled' );
+                $enabled           = Social::get( 'enabled' );
+                $compatible_social = User::get_compatible_social_meta_keys();
+
                 if ( is_array( $enabled ) )
                 {
                     foreach ( array_keys( $enabled ) as $slug )
                     {
-                        $meta_wishlist_users[]  = 'molongui_author_' . $slug;
-                        $meta_wishlist_guests[] = '_molongui_guest_author_' . $slug;
+                        $meta_wishlist_users[]  = Author::USER_META_PREFIX . $slug;
+                        $meta_wishlist_guests[] = Author::GUEST_META_PREFIX . $slug;
+                        if ( empty( $compatible_social[$slug] ) || !is_array( $compatible_social[$slug] ) )
+                        {
+                            continue;
+                        }
+
+                        foreach ( $compatible_social[$slug] as $meta_key )
+                        {
+                            if ( !is_string( $meta_key ) || '' === $meta_key )
+                            {
+                                continue;
+                            }
+
+                            $meta_wishlist_users[] = $meta_key;
+                        }
                     }
                 }
             }
@@ -460,15 +476,20 @@ class Authors
         }
         if ( ! empty( $a['prefetch']['meta'] ) && is_array( $a['prefetch']['meta'] ) )
         {
-            foreach ( $a['prefetch']['meta'] as $mk )
+            foreach ( $a['prefetch']['meta'] as $meta_key )
             {
-                if ( strpos( $mk, 'molongui_author_' ) === 0 )
+                if ( ! is_string( $meta_key ) || '' === $meta_key )
                 {
-                    $prefetch_meta_users[] = $mk;
+                    continue;
                 }
-                elseif ( strpos( $mk, '_molongui_guest_author_' ) === 0 )
+
+                if ( 0 === strpos( $meta_key, Author::GUEST_META_PREFIX ) )
                 {
-                    $prefetch_meta_guests[] = $mk;
+                    $prefetch_meta_guests[] = $meta_key;
+                }
+                else
+                {
+                    $prefetch_meta_users[] = $meta_key;
                 }
             }
         }

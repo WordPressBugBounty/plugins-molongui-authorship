@@ -23,6 +23,31 @@ class User extends \Molongui\Authorship\Common\Utils\User
             add_filter( '_authorship/no_userdata', array( $this, 'no_userdata' ), 10, 3 );
         }
     }
+    public static function get_compatible_social_meta_keys()
+    {
+        $map = array
+        (
+            'facebook'   => array( 'facebook' ),
+            'instagram'  => array( 'instagram' ),
+            'linkedin'   => array( 'linkedin' ),
+            'mastodon'   => array( 'mastodon' ),
+            'myspace'    => array( 'myspace' ),
+            'pinterest'  => array( 'pinterest' ),
+            'soundcloud' => array( 'soundcloud' ),
+            'tumblr'     => array( 'tumblr' ),
+            'twitter'    => array( 'twitter' ),
+            'wikipedia'  => array( 'wikipedia' ),
+            'youtube'    => array( 'youtube' ),
+        );
+        $map = apply_filters( 'molongui_authorship/user/social_meta_keys', $map );
+
+        if ( !is_array( $map ) )
+        {
+            return array();
+        }
+
+        return $map;
+    }
     public function get_user_by( $user, $field, $value )
     {
         $original_user = $user;

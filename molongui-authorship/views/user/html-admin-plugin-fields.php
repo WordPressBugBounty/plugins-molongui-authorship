@@ -3,12 +3,58 @@
 use Molongui\Authorship\Common\Utils\Plugin;
 use Molongui\Authorship\Settings;
 use Molongui\Authorship\Social;
+use Molongui\Authorship\User;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 $options  = Settings::get();
 $is_pro   = Plugin::has_pro();
 $networks = Social::get( 'enabled' );
+$compatible_social      = User::get_compatible_social_meta_keys();
+$contact_methods        = array();
+$user_meta              = array();
+$contact_social_values  = array();
+
+if ( !empty( $user->ID ) )
+{
+    $contact_methods = wp_get_user_contact_methods( $user );
+    $user_meta       = get_user_meta( $user->ID );
+    foreach ( $compatible_social as $network_id => $meta_keys )
+    {
+        if ( ! is_array( $meta_keys ) )
+        {
+            continue;
+        }
+
+        foreach ( $meta_keys as $meta_key )
+        {
+            if ( ! is_string( $meta_key ) || '' === $meta_key )
+            {
+                continue;
+            }
+
+            if ( !isset( $contact_methods[$meta_key] ) )
+            {
+                continue;
+            }
+
+            if ( empty( $user_meta[$meta_key][0] ) )
+            {
+                continue;
+            }
+
+            $value = trim( (string) $user_meta[$meta_key][0] );
+
+            if ( '' === $value )
+            {
+                continue;
+            }
+
+            $contact_social_values[$network_id] = $value;
+            break;
+        }
+    }
+}
 
 ?>
 
@@ -24,7 +70,16 @@ $networks = Social::get( 'enabled' );
         aboutTable.previousElementSibling.remove();
         aboutTable.remove();
     </script>
-    <?php include apply_filters( 'authorship/edit/user/bio/tmpl', 'html-admin-profile-bio.php' ); ?>
+    <?php
+    $default_bio_template = __DIR__ . '/html-admin-profile-bio.php';
+    $bio_template         = apply_filters( 'authorship/edit/user/bio/tmpl', $default_bio_template );
+    if ( !is_string( $bio_template ) || !is_readable( $bio_template ) )
+    {
+        $bio_template = $default_bio_template;
+    }
+
+    include $bio_template;
+    ?>
 
     <!-- Profile Picture -->
     <?php include 'html-admin-profile-picture.php'; ?>
@@ -69,6 +124,20 @@ $networks = Social::get( 'enabled' );
         <div id="molongui-social-profiles">
             <h3><?php _e( "Social Profiles", 'molongui-authorship' ); ?></h3>
             <ul class="m-tip"><li><?php printf( __( "The Molongui Authorship plugin allows you to add %smore than %s different social profiles%s, so if you don't see here the ones you want to add, just go to the %splugin settings page%s and enable those you need to edit. %sSocial profiles will be displayed as icons on the author box and other relevant sections. Any blank profile will not be displayed.", 'molongui-authorship' ), '<strong>', '110', '</strong>', '<a href="'.Settings::url( 'integrations' ).'" target="_blank">', '</a>', '<br>' ); ?></li></ul>
+            <?php if ( !empty( $contact_social_values ) ) : ?>
+
+                <ul class="m-tip">
+                    <li>
+                        <?php
+                        _e(
+                            "Compatible social profiles from the Contact Info section are used automatically when the corresponding Molongui field is empty. A value entered below always takes precedence.",
+                            'molongui-authorship'
+                        );
+                        ?>
+                    </li>
+                </ul>
+
+            <?php endif; ?>
             <?php if ( !$is_pro and false !== array_search(true, array_column( $networks, 'premium' ) ) ) : ?>
                 <ul class="m-tip m-premium"><li><?php printf( __( "Disabled options are only available in the %sPro version%s of the plugin.", 'molongui-authorship' ), '<a href="'.MOLONGUI_AUTHORSHIP_WEB.'">', '</a>' ); ?></li></ul>
             <?php endif; ?>
@@ -78,7 +147,9 @@ $networks = Social::get( 'enabled' );
                 <?php foreach ( $networks as $id => $network ) : ?>
 
                     <div class="m-field <?php echo ( ( !$is_pro and $network['premium'] ) ? 'm-premium' : '' ) ?>">
-                        <label class="m-title" for="molongui_author_<?php echo $id; ?>"><i class="m-a-icon-<?php echo $id; ?>"></i><?php echo $network['name']; ?></label>
+                        <label class="m-title" for="molongui_author_<?php echo $id; ?>">
+                            <i class="m-a-icon-<?php echo $id; ?>"></i><?php echo $network['name']; ?>
+                        </label>
                         <?php if ( !$is_pro and $network['premium'] ) : ?>
                             <div class="input-wrap">
                                 <div class="m-tooltip">
@@ -87,7 +158,78 @@ $networks = Social::get( 'enabled' );
                                 </div>
                             </div>
                         <?php else : ?>
-                            <div class="input-wrap"><input type="text" class="text" placeholder="<?php echo $network['url']; ?>" id="molongui_author_<?php echo $id; ?>" name="molongui_author_<?php echo $id; ?>" value="<?php echo esc_attr( get_the_author_meta( 'molongui_author_'.$id, $user->ID ) ); ?>"></div>
+
+                            <?php
+                            $molongui_value = get_the_author_meta( 'molongui_author_' . $id, $user->ID );
+                            $fallback_value = '';
+
+                            if ( empty( $molongui_value ) && !empty( $contact_social_values[$id] ) )
+                            {
+                                $fallback_value = $contact_social_values[$id];
+                            }
+
+                            $placeholder = !empty( $fallback_value )
+                                ? $fallback_value
+                                : $network['url'];
+                            ?>
+
+                            <div class="input-wrap">
+
+                                <?php if ( !empty( $fallback_value ) ) : ?>
+
+                                    <div class="m-social-fallback-field">
+
+                                        <input
+                                                type="text"
+                                                class="text"
+                                                placeholder="<?php echo esc_attr( $placeholder ); ?>"
+                                                id="molongui_author_<?php echo esc_attr( $id ); ?>"
+                                                name="molongui_author_<?php echo esc_attr( $id ); ?>"
+                                                value="<?php echo esc_attr( $molongui_value ); ?>"
+                                        >
+
+                                        <button
+                                                type="button"
+                                                class="m-social-fallback-info"
+                                                aria-label="<?php esc_attr_e( "About this inherited social profile", 'molongui-authorship' ); ?>"
+                                                aria-describedby="molongui-social-fallback-<?php echo esc_attr( $id ); ?>"
+                                        >
+                                            <span aria-hidden="true">&#x2139;</span>
+                                        </button>
+
+                                        <span
+                                                id="molongui-social-fallback-<?php echo esc_attr( $id ); ?>"
+                                                class="m-social-fallback-tooltip"
+                                                role="tooltip"
+                                        >
+                                            <?php
+                                            printf(
+                                                esc_html__(
+                                                    "Using the compatible value from Contact Info: %s. Enter a value here to override it for Molongui Authorship.",
+                                                    'molongui-authorship'
+                                                ),
+                                                esc_html( $fallback_value )
+                                            );
+                                            ?>
+                                        </span>
+
+                                    </div>
+
+                                <?php else : ?>
+
+                                    <input
+                                            type="text"
+                                            class="text"
+                                            placeholder="<?php echo esc_attr( $placeholder ); ?>"
+                                            id="molongui_author_<?php echo esc_attr( $id ); ?>"
+                                            name="molongui_author_<?php echo esc_attr( $id ); ?>"
+                                            value="<?php echo esc_attr( $molongui_value ); ?>"
+                                    >
+
+                                <?php endif; ?>
+
+                            </div>
+
                         <?php endif; ?>
                     </div>
 

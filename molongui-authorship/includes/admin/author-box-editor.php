@@ -24,8 +24,8 @@ class Author_Box_Editor
 {
     static  $javascript     = '/assets/js/editor.3189.min.js';
     static  $stylesheet     = '';
-    private $stylesheet_ltr = '/assets/css/editor.4e0e.min.css';
-    private $stylesheet_rtl = '/assets/css/editor-rtl.1979.min.css';
+    private $stylesheet_ltr = '/assets/css/editor.db0b.min.css';
+    private $stylesheet_rtl = '/assets/css/editor-rtl.bd7f.min.css';
     private $screen_id;
     use Singleton;
     public function __construct()

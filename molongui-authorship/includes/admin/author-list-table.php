@@ -18,6 +18,7 @@ use Molongui\Authorship\Authors;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Settings;
 use Molongui\Authorship\Social;
+use Molongui\Authorship\User;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 if ( class_exists( \Molongui\Authorship\Common\Libraries\WP_List_Table::class ) )
@@ -182,6 +183,38 @@ class Author_List_Table extends Base_Author_List_Table
             add_filter( 'molongui_authorship/get_author_data_fields', array( $this, 'author_fields' ) );
             add_filter( 'authorship/get_avatar/size', array( $this, 'avatar_size' ) );
             add_filter( 'authorship/get_avatar/context', array( $this, 'avatar_context' ) );
+            $prefetch_meta = array();
+
+            if ( isset( $columns['social_profiles'] ) )
+            {
+                $enabled_social    = Social::get( 'enabled' );
+                $compatible_social = User::get_compatible_social_meta_keys();
+
+                if ( is_array( $enabled_social ) )
+                {
+                    foreach ( array_keys( $enabled_social ) as $network )
+                    {
+                        $prefetch_meta[] = Author::USER_META_PREFIX . $network;
+                        $prefetch_meta[] = Author::GUEST_META_PREFIX . $network;
+                        if ( empty( $compatible_social[$network] ) || !is_array( $compatible_social[$network] ) )
+                        {
+                            continue;
+                        }
+
+                        foreach ( $compatible_social[$network] as $meta_key )
+                        {
+                            if ( !is_string( $meta_key ) || '' === $meta_key )
+                            {
+                                continue;
+                            }
+
+                            $prefetch_meta[] = $meta_key;
+                        }
+                    }
+                }
+
+                $prefetch_meta = array_values( array_unique( $prefetch_meta ) );
+            }
             $args = array
             (
                 'type'     => $type,
@@ -189,8 +222,8 @@ class Author_List_Table extends Base_Author_List_Table
                 'orderby'  => $orderby,
                 'prefetch' => array
                 (
-                    'core' => array( 'display_name', 'post_title' ),
-                    'meta' => array(),
+                    'core' => array( 'post_title' ),
+                    'meta' => $prefetch_meta,
                 ),
             );
             $data = Authors::get_authors( $args );
@@ -463,16 +496,12 @@ class Author_List_Table extends Base_Author_List_Table
                 break;
 
             case 'social_profiles':
-                foreach ( Social::get( 'enabled' ) as $network => $data )
+                if ( !empty( $item->get_social() ) )
                 {
-                    if ( !empty( $item->get_meta( $network ) ) )
-                    {
-                        $result  = '<div class="m-tooltip">';
-                        $result .= '<span class="dashicons dashicons-yes"></span>';
-                        $result .= '<span class="m-tooltip__text m-tooltip__top m-tooltip__w50">'.__( "Has social profiles defined", 'molongui-authorship' ).'</span>';
-                        $result .= '</div>';
-                        break;
-                    }
+                    $result  = '<div class="m-tooltip">';
+                    $result .= '<span class="dashicons dashicons-yes"></span>';
+                    $result .= '<span class="m-tooltip__text m-tooltip__top m-tooltip__w50">' . __( "Has social profiles defined", 'molongui-authorship' ) . '</span>';
+                    $result .= '</div>';
                 }
                 break;
 

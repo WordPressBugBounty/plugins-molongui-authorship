@@ -41,6 +41,8 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         add_action( 'profile_update', array( $this, 'save_custom_fields' ) );
         add_action( 'delete_user', array( $this, 'save_user_posts_id' ), 10, 2 );
         add_action( 'deleted_user', array( $this, 'remove_custom_fields' ), 10, 2 );
+        add_action( 'admin_footer-profile.php', array( $this, 'add_contact_info_notice' ) );
+        add_action( 'admin_footer-user-edit.php', array( $this, 'add_contact_info_notice' ) );
         add_action( 'user_register' , array( __CLASS__, 'update_user_count' ) ); // Fires immediately after a new user is registered.
         add_action( 'profile_update', array( __CLASS__, 'update_user_count' ) ); // Fires immediately after an existing user is updated.
         add_action( 'deleted_user'  , array( __CLASS__, 'update_user_count' ) ); // Fires immediately after a user is deleted from the database.
@@ -125,6 +127,120 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         }
 
         return $value;
+    }
+    public function add_contact_info_notice()
+    {
+        if ( ! Settings::is_enabled( 'user-profile' ) )
+        {
+            return;
+        }
+        if ( 'profile.php' === $GLOBALS['pagenow'] )
+        {
+            $user_id = get_current_user_id();
+        }
+        elseif ( 'user-edit.php' === $GLOBALS['pagenow'] && !empty( $_GET['user_id'] ) )
+        {
+            $user_id = absint( $_GET['user_id'] );
+        }
+        else
+        {
+            return;
+        }
+
+        if ( empty( $user_id ) )
+        {
+            return;
+        }
+
+        $user = get_userdata( $user_id );
+
+        if ( !$user )
+        {
+            return;
+        }
+        $contact_methods = wp_get_user_contact_methods( $user );
+
+        if ( empty( $contact_methods ) || !is_array( $contact_methods ) )
+        {
+            return;
+        }
+        $compatible_social = self::get_compatible_social_meta_keys();
+        $compatible_keys   = array();
+
+        foreach ( $compatible_social as $meta_keys )
+        {
+            if ( !is_array( $meta_keys ) )
+            {
+                continue;
+            }
+
+            foreach ( $meta_keys as $meta_key )
+            {
+                if ( is_string( $meta_key ) && '' !== $meta_key )
+                {
+                    $compatible_keys[$meta_key] = true;
+                }
+            }
+        }
+
+        if ( empty( $compatible_keys ) )
+        {
+            return;
+        }
+        $has_compatible_method = false;
+
+        foreach ( array_keys( $contact_methods ) as $meta_key )
+        {
+            if ( isset( $compatible_keys[$meta_key] ) )
+            {
+                $has_compatible_method = true;
+                break;
+            }
+        }
+
+        if ( !$has_compatible_method )
+        {
+            return;
+        }
+        ?>
+        <script>
+            document.addEventListener( 'DOMContentLoaded', function() {
+                var emailRow = document.querySelector( '#your-profile .user-email-wrap' );
+
+                if ( ! emailRow ) {
+                    return;
+                }
+
+                var table = emailRow.closest( '.form-table' );
+
+                if ( ! table ) {
+                    return;
+                }
+
+                var heading = table.previousElementSibling;
+
+                if ( ! heading || 'H2' !== heading.tagName ) {
+                    return;
+                }
+
+                if ( document.querySelector( '.molongui-contact-info-description' ) ) {
+                    return;
+                }
+
+                var notice = document.createElement( 'p' );
+
+                notice.className = 'description molongui-contact-info-description';
+                notice.textContent = <?php echo wp_json_encode(
+                    __(
+                        'Molongui Authorship can use compatible social profiles entered in this section. Additional social networks and author profile fields are available in the Molongui Author Profile section below.',
+                        'molongui-authorship'
+                    )
+                ); ?>;
+
+                heading.insertAdjacentElement( 'afterend', notice );
+            } );
+        </script>
+        <?php
     }
     public function add_custom_profile_fields( $user )
     {

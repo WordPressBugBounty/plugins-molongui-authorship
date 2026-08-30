@@ -359,7 +359,7 @@ class Admin_Guest_Author
     public function enqueue_admin_scripts()
     {
         $screen = get_current_screen();
-        if ( !in_array( $screen->id, array( 'edit-'.$this->post_type, $this->post_type ) ) )
+        if ( ! isset( $screen->id ) || ! in_array( $screen->id, array( 'edit-'.$this->post_type, $this->post_type ) ) )
         {
             return;
         }
@@ -610,7 +610,10 @@ class Admin_Guest_Author
     public function quick_edit_populate_custom_fields()
     {
         $current_screen = get_current_screen();
-        if ( $current_screen->id != 'edit-'.$this->post_type or $current_screen->post_type != $this->post_type )
+        if ( ! isset( $current_screen->id, $current_screen->post_type )
+            || $current_screen->id !== 'edit-'.$this->post_type
+            || $current_screen->post_type !== $this->post_type
+        )
         {
             return;
         }
@@ -683,17 +686,18 @@ class Admin_Guest_Author
     }
     public function remove_media_buttons()
     {
-        global $current_screen;
-
-        if ( $this->post_type == $current_screen->post_type )
+        $current_screen = get_current_screen();
+        if ( ! isset( $current_screen->post_type ) || $this->post_type !== $current_screen->post_type )
         {
-            remove_action( 'media_buttons', 'media_buttons' );
+            return;
         }
+
+        remove_action( 'media_buttons', 'media_buttons' );
     }
     public function remove_preview_button()
     {
         $current_screen = get_current_screen();
-        if ( $current_screen->post_type != $this->post_type )
+        if ( ! isset( $current_screen->post_type ) || $this->post_type !== $current_screen->post_type )
         {
             return;
         }
@@ -701,6 +705,7 @@ class Admin_Guest_Author
         {
             return;
         }
+
         echo '<style>#post-preview{ display:none !important; }</style>';
     }
     public function add_top_section_after_title()

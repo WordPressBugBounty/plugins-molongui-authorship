@@ -358,15 +358,30 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
     public function add_twitter_author_meta( $author )
     {
         $meta = '';
-        $tw = $author->get_meta( 'twitter' );
-        if ( filter_var( $tw, FILTER_VALIDATE_URL ) )
+        $twitter = $author->get_social_profile( 'twitter' );
+        if ( filter_var( $twitter, FILTER_VALIDATE_URL ) )
         {
-            $url = array( 'https://www.twitter.com/', 'https://twitter.com/', 'http://www.twitter.com/', 'http://twitter.com/', '//twitter.com/', 'twitter.com/' );
-            $tw  = rtrim( str_replace( $url, '@', $tw ), '/' );
+            $urls = array
+            (
+                'https://www.twitter.com/',
+                'https://twitter.com/',
+                'http://www.twitter.com/',
+                'http://twitter.com/',
+                '//twitter.com/',
+                'twitter.com/',
+                'https://www.x.com/',
+                'https://x.com/',
+                'http://www.x.com/',
+                'http://x.com/',
+                '//x.com/',
+                'x.com/',
+            );
+
+            $twitter = rtrim( str_replace( $urls, '@', $twitter ), '/' );
         }
-        if ( !empty( $tw ) )
+        if ( !empty( $twitter ) )
         {
-            $meta .= '<meta name="twitter:creator" content="' . $tw . '" />' . "\n";
+            $meta .= '<meta name="twitter:creator" content="' . esc_attr( $twitter ) . '" />' . "\n";
         }
 
         return $meta;
@@ -374,15 +389,24 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
     public function add_facebook_author_meta( $author )
     {
         $meta = '';
-        $fb = $author->get_meta( 'facebook' );
-        if ( filter_var( $fb, FILTER_VALIDATE_URL ) )
+        $facebook = $author->get_social_profile( 'facebook' );
+        if ( filter_var( $facebook, FILTER_VALIDATE_URL ) )
         {
-            $url = array( 'https://www.facebook.com/', 'http://www.facebook.com/', 'https://facebook.com/', 'http://facebook.com/', '//facebook.com/', 'facebook.com/' );
-            $fb  = rtrim( str_replace( $url, '', $fb ), '/' );
+            $urls = array
+            (
+                'https://www.facebook.com/',
+                'http://www.facebook.com/',
+                'https://facebook.com/',
+                'http://facebook.com/',
+                '//facebook.com/',
+                'facebook.com/',
+            );
+
+            $facebook = rtrim( str_replace( $urls, '', $facebook ), '/' );
         }
-        if ( !empty( $fb ) )
+        if ( !empty( $facebook ) )
         {
-            $meta .= '<meta property="article:author" content="' . esc_attr( $fb ) . '" />' . "\n";
+            $meta .= '<meta property="article:author" content="' . esc_attr( $facebook ) . '" />' . "\n";
         }
 
         return $meta;
@@ -556,9 +580,9 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 $post_authors = array_merge( array( $main_author->ref => $main_author ), $post_authors );
             }
         }
-        if ( !$key )
+        if ( ! $key )
         {
-            return $post_authors;
+            return array_values( $post_authors );
         }
         if ( !empty( $post_authors ) )
         {
@@ -724,7 +748,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             $names_to_display = apply_filters( 'molongui_authorship/co_authors_in_byline', Settings::get( 'co_authors_in_byline_format', 'all' ), $post_id, $post_authors );
             if ( is_numeric( $names_to_display ) )
             {
-                $names_to_display = min( $names_to_display, $count );
+                $names_to_display = max( 1, min( (int) $names_to_display, $count ) );
             }
             else
             {
@@ -765,7 +789,18 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         {
             $byline .= $last_separator . sprintf( __( '%d more', 'molongui-authorship' ), $count - $names_to_display );
         }
-        Debug::console_log( array( 'post_id' => $post_id, 'post_authors' => $post_authors, 'names_to_display' => $names_to_display, 'byline_authors' => $byline_authors, 'separator' => $separator, 'last_separator' => $last_separator, 'byline' => $byline ), "Byline information" );
+        Debug::console_log(
+                array(
+                        'post_id' => $post_id,
+                        'post_authors' => $post_authors,
+                        'names_to_display' => $names_to_display,
+                        'byline_authors' => $byline_authors,
+                        'separator' => $separator,
+                        'last_separator' => $last_separator,
+                        'byline' => $byline
+                ),
+                "Byline information"
+        );
         return apply_filters( 'authorship/post_byline', $byline, $post_id, $post_authors );
     }
     public static function get_byline_separators( $separator = null, $last_separator = null, $count = null )

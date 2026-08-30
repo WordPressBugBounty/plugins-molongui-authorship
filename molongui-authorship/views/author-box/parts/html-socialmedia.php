@@ -1,23 +1,39 @@
 <?php
 
 use Molongui\Authorship\Common\Utils\Helpers;
-use Molongui\Authorship\Social;
 
 defined( 'ABSPATH' ) or exit; // Exit if accessed directly
 
 if ( !empty( $options['author_box_social_show'] ) )
 {
-	$networks  = Social::get( 'enabled' );
-    $_networks = array();
-    if ( $profile->get_meta( 'show_icon_web' ) )   $networks['web']   = array( 'name' => 'Website', 'url' => 'https://www.example.com/', 'color' => '#333', 'premium' => false );
-	if ( $profile->get_meta( 'show_icon_mail' ) )  $networks['mail']  = array( 'name' => 'E-mail',  'url' => 'your_name@example.com',    'color' => '#333', 'premium' => false );
-	if ( $profile->get_meta( 'show_icon_phone' ) ) $networks['phone'] = array( 'name' => 'Phone',   'url' => '123456789',                'color' => '#333', 'premium' => false );
-    foreach ( $networks as $network_id => $network )
+    $_networks = $profile->get_social();
+    if ( $profile->get_meta( 'show_icon_web' ) )
     {
-        $social_profile_link = $profile->get_meta( $network_id );
-        if ( !empty( $social_profile_link ) )
+        $website = $profile->get_meta( 'web' );
+
+        if ( !empty( $website ) )
         {
-            $_networks[$network_id] = $social_profile_link;
+            $_networks['web'] = $website;
+        }
+    }
+
+    if ( $profile->get_meta( 'show_icon_mail' ) )
+    {
+        $email = $profile->get_meta( 'mail' );
+
+        if ( !empty( $email ) )
+        {
+            $_networks['mail'] = $email;
+        }
+    }
+
+    if ( $profile->get_meta( 'show_icon_phone' ) )
+    {
+        $phone = $profile->get_meta( 'phone' );
+
+        if ( !empty( $phone ) )
+        {
+            $_networks['phone'] = $phone;
         }
     }
     if ( empty( $_networks ) )

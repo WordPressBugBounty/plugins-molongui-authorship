@@ -239,7 +239,7 @@ class Author_Filters
             }
         }
         $post_authors = Post::get_authors( $post_id );
-        if ( !$post_authors )
+        if ( empty( $post_authors ) || ! is_array( $post_authors ) )
         {
             return $link;
         }
@@ -267,11 +267,11 @@ class Author_Filters
             $names_to_display = apply_filters( 'molongui_authorship/co_authors_in_byline', Settings::get( 'co_authors_in_byline_format', 'all' ), $post_id, $post_authors );
             if ( is_numeric( $names_to_display ) )
             {
-                $names_to_display = min( $names_to_display, count( $post_authors ) );
+                $names_to_display = max( 1, min( (int) $names_to_display, $count ) );
             }
             else
             {
-                $names_to_display = count( $post_authors );
+                $names_to_display = $count;
             }
             switch ( apply_filters( 'authorship/author_link/filter_version', 'v3' ) )
             {
@@ -390,6 +390,16 @@ class Author_Filters
                         $byline_authors = array_slice( $post_authors, 0, $names_to_display );
                         $show_remaining = true;
                     }
+                    $main_byline_author = reset( $byline_authors );
+
+                    if ( !is_object( $main_byline_author )
+                        || empty( $main_byline_author->id )
+                        || empty( $main_byline_author->type )
+                    )
+                    {
+                        $url = $link;
+                        break;
+                    }
 
                     add_filter( 'wp_print_footer_scripts', function() use ( $post_id, $byline_authors, $names_to_display, $count, $show_remaining )
                     {
@@ -397,12 +407,27 @@ class Author_Filters
                         foreach( $byline_authors as $byline_author )
                         {
                             $author = new Author( $byline_author->id, $byline_author->type );
-                            $data[] = array( 'type' => $author->get_type(), 'id' => $author->get_id(), 'name' => esc_html( $author->get_display_name() ), 'url' => esc_url( $author->get_archive_url() ) );
+                            $data[] = array
+                            (
+                                'type' => $author->get_type(),
+                                'id'   => $author->get_id(),
+                                'name' => esc_html( $author->get_display_name() ),
+                                'url'  => esc_url( $author->get_archive_url() ),
+                            );
                         }
                         if ( $show_remaining and $count > $names_to_display )
                         {
                             /*! translators: Not displayed co-authors count. */
-                            $data[] = array( 'type' => '', 'id' => '', 'name' => sprintf( _x( '%d more', 'Not displayed co-authors count', 'molongui-authorship' ), $count - $names_to_display ), 'url' => '' );
+                            $data[] = array
+                            (
+                                'type' => '',
+                                'id'   => '',
+                                'name' => sprintf(
+                                    _x( '%d more', 'Not displayed co-authors count', 'molongui-authorship' ),
+                                    $count - $names_to_display
+                                ),
+                                'url' => '',
+                            );
                         }
                         if ( !empty( $data ) )
                         {
@@ -410,7 +435,7 @@ class Author_Filters
                         }
                     });
 
-                    $author     = new Author( $byline_authors[0]->id, $byline_authors[0]->type );
+                    $author     = new Author( $main_byline_author->id, $main_byline_author->type );
                     $author_url = $author->get_archive_url();
 
                     if ( '#molongui-disabled-link' === $author_url or empty( $author_url ) )

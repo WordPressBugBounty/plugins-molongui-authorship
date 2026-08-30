@@ -253,6 +253,13 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.2.11 (2026-08-30) =
+
+* **Added**: Fallback support for compatible third-party social profile fields.
+* **Fixed**: PHP warnings when filtering author links on multi-author bylines.
+* **Fixed**: PHP warnings related to unavailable admin screen data.
+* **Fixed**: Missing styles for the author selector.
+
 = 5.2.10 (2026-08-28) =
 
 * **Fixed**: Replaced `&nbsp;` usage with the Unicode non-breaking space character (`U+00A0`) for better compatibility.
