@@ -253,6 +253,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.2.12 (2026-09-11) =
+
+* **Fixed**: PHP fatal error on the user edit screen caused by a missing social meta compatibility method.
+
 = 5.2.11 (2026-08-30) =
 
 * **Added**: Fallback support for compatible third-party social profile fields.

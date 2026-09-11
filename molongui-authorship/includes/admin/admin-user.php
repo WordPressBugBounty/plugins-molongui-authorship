@@ -164,7 +164,7 @@ class Admin_User extends \Molongui\Authorship\Common\Utils\User
         {
             return;
         }
-        $compatible_social = self::get_compatible_social_meta_keys();
+        $compatible_social = User::get_compatible_social_meta_keys();
         $compatible_keys   = array();
 
         foreach ( $compatible_social as $meta_keys )
