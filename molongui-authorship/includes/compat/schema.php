@@ -15,7 +15,8 @@ use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 trait Schema
 {
     protected function build_author_data_from_object( $author )
@@ -29,7 +30,7 @@ trait Schema
         $employer     = $author->get_meta( 'company' );
         $employer_url = $author->get_meta( 'company_link' );
         $job_title    = $author->get_meta( 'job' );
-        $is_org       = false; // Reserved for future use when authors can be organizations.
+        $is_org       = false;  
 
         $works_for = array();
 
@@ -51,7 +52,9 @@ trait Schema
             'jobTitle'        => ! empty( $job_title ) ? $job_title : '',
             'is_organization' => ! empty( $is_org ),
         );
+
         $item = $this->clean_schema_array( $item );
+
         if ( empty( $item['name'] ) )
         {
             return array();
@@ -59,6 +62,7 @@ trait Schema
 
         return $item;
     }
+
     protected function get_post_authors_for_schema( $post_id )
     {
         $authors = array();
@@ -67,6 +71,7 @@ trait Schema
         {
             return $authors;
         }
+
         $post_authors = Post::get_authors( $post_id );
 
         if ( empty( $post_authors ) )
@@ -93,6 +98,7 @@ trait Schema
 
         return $authors;
     }
+
     protected function should_override_schema_author_data( array $authors )
     {
         if ( empty( $authors ) )
@@ -118,6 +124,7 @@ trait Schema
 
         return ( count( $authors ) > 1 );
     }
+
     protected function normalize_authors_for_schema( array $authors )
     {
         $schema_authors = array();
@@ -134,6 +141,7 @@ trait Schema
 
         return $schema_authors;
     }
+
     protected function build_schema_author_entity( array $author )
     {
         $name = isset( $author['name'] ) ? $author['name'] : '';
@@ -204,16 +212,19 @@ trait Schema
         {
             $schema_author['jobTitle'] = $author['jobTitle'];
         }
+
         $schema_author = $this->clean_schema_array( $schema_author );
 
         return $schema_author;
     }
+
     protected function apply_schema_authors_to_graph( array $graph, array $schema_authors )
     {
         if ( empty( $schema_authors ) )
         {
             return $graph;
         }
+
         $main_author = $schema_authors[0];
 
         foreach ( $graph as $key => $schema )
@@ -224,16 +235,19 @@ trait Schema
             }
 
             $type = $schema['@type'];
+
             if ( in_array( $type, array( 'Article', 'BlogPosting' ), true ) )
             {
                 $graph[ $key ]['author'] = ( 1 === count( $schema_authors ) )
                     ? $main_author
                     : $schema_authors;
             }
+
             if ( 'Person' === $type )
             {
                 $graph[ $key ] = $main_author;
             }
+
             if ( 'ProfilePage' === $type )
             {
                 if ( isset( $schema['author'] ) && is_array( $schema['author'] ) )
@@ -250,6 +264,7 @@ trait Schema
 
         return $graph;
     }
+
     protected function clean_schema_array( array $array )
     {
         foreach ( $array as $key => $value )
@@ -259,9 +274,11 @@ trait Schema
                 unset( $array[ $key ] );
                 continue;
             }
+
             if ( is_array( $value ) )
             {
                 $array[ $key ] = $this->clean_schema_array( $value );
+
                 if ( empty( $array[ $key ] ) )
                 {
                     unset( $array[ $key ] );

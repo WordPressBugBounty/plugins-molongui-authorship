@@ -3,14 +3,13 @@
 use Molongui\Authorship\Common\Modules\Settings;
 use Molongui\Authorship\Wizard;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $options      = Settings::get();
 $wizard_steps = Wizard::get_step_count();
 $wizard_step  = 0;
 ?>
 
-<?php // todo: Find a better way to override common styles. ?>
 <style>
 .molongui-setup-wizard__logo
 {
@@ -66,7 +65,7 @@ $wizard_step  = 0;
         <div class="molongui-setup-wizard__track">
             <span>
                 <?php
-                /*! // translators: %1$s: Current wizard step. %2$s: Total wizard steps. */
+                // translators: %1$s: Current wizard step. %2$s: Total wizard steps.
                 printf( esc_html_x( "Step %1\$s of %2\$s", 'Current step versus total number of wizard steps', 'molongui-authorship' ), $wizard_step, $wizard_steps );
                 ?>
             </span>
@@ -129,7 +128,7 @@ $wizard_step  = 0;
         <div class="molongui-setup-wizard__track">
             <span>
                 <?php
-                /*! // translators: %1$s: Current wizard step. %2$s: Total wizard steps. */
+                // translators: %1$s: Current wizard step. %2$s: Total wizard steps.
                 printf( esc_html_x( "Step %1\$s of %2\$s", 'Current step versus total number of wizard steps', 'molongui-authorship' ), $wizard_step, $wizard_steps );
                 ?>
             </span>
@@ -192,7 +191,7 @@ $wizard_step  = 0;
         <div class="molongui-setup-wizard__track">
         <span>
             <?php
-            /*! // translators: %1$s: Current wizard step. %2$s: Total wizard steps. */
+            // translators: %1$s: Current wizard step. %2$s: Total wizard steps.
             printf( esc_html_x( "Step %1\$s of %2\$s", 'Current step versus total number of wizard steps', 'molongui-authorship' ), $wizard_step, $wizard_steps );
             ?>
         </span>
@@ -276,7 +275,7 @@ $wizard_step  = 0;
             </ul>
             <p>
                 <?php
-                /*! // translators: %1$s: <a> tag. %2$s: </a> tag. */
+                // translators: %1$s: <a> tag. %2$s: </a> tag.
                 echo wp_kses_post( sprintf( __( "Click %1\$shere%2\$s to learn more and upgrade today!", 'molongui-authorship' ), '<a href="'.esc_url( MOLONGUI_AUTHORSHIP_WEB ).'" target="_blank" class="upgrade">', '</a>' ) );
                 ?>
             </p>

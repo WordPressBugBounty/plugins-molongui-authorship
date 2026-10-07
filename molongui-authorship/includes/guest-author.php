@@ -13,10 +13,12 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Guest_Author
 {
     const POST_TYPE = 'guest_author';
+
     public function __construct()
     {
         if ( Settings::is_enabled( 'guest-author' ) )
@@ -25,13 +27,16 @@ class Guest_Author
             add_filter( 'post_type_link', array( $this, 'post_link' ), 10, 4 );
         }
     }
+
     public static function get_post_type()
     {
         return self::POST_TYPE;
     }
+
     public function register_post_type()
     {
         $options = Settings::get();
+
         $labels = array
         (
             'name'					=> _x( "Guest Authors", 'post type general name', 'molongui-authorship' ),
@@ -48,16 +53,18 @@ class Guest_Author
             'not_found'				=> __( "No Guest Authors Found", 'molongui-authorship' ),
             'not_found_in_trash'	=> __( "No Guest Authors Found in the Trash", 'molongui-authorship' ),
             'parent_item_colon'		=> '',
-            'featured_image'        => _x( "Profile Image", 'Guest author custom post type', 'molongui-authorship' ),
-            'set_featured_image'    => _x( "Set Profile Image", 'Guest author custom post type', 'molongui-authorship' ),
-            'remove_featured_image' => _x( "Remove Profile Image", 'Guest author custom post type', 'molongui-authorship' ),
-            'use_featured_image'    => _x( "Use as Profile Image", 'Guest author custom post type', 'molongui-authorship' ),
+            'featured_image'        => _x( "Profile Picture", 'Guest author custom post type', 'molongui-authorship' ),
+            'set_featured_image'    => _x( "Set Profile Picture", 'Guest author custom post type', 'molongui-authorship' ),
+            'remove_featured_image' => _x( "Remove Profile Picture", 'Guest author custom post type', 'molongui-authorship' ),
+            'use_featured_image'    => _x( "Use as Profile Picture", 'Guest author custom post type', 'molongui-authorship' ),
         );
+
         $show_in_menu = false;
         if ( $options['dashboard_guest_authors_menu'] )
         {
             $show_in_menu = ( ( !empty( $options['dashboard_guest_authors_menu_location'] ) and $options['dashboard_guest_authors_menu_location'] !== 'top' ) ? $options['dashboard_guest_authors_menu_location'] : true );
         }
+
         $args = array
         (
             'labels'				=> $labels,
@@ -74,14 +81,16 @@ class Guest_Author
             'supports'		 		=> Settings::is_enabled( 'local-avatar' ) ? array( 'thumbnail' ) : array( '' ),
             'register_meta_box_cb'	=> '',
             'has_archive'			=> false,
-            'rewrite'				=> false,//array( 'slug' => 'guest-author' ),
+            'rewrite'				=> false, 
             'can_export'            => false,
             'query_var'             => false,
-            'capability_type'       => 'post',  // https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
-            'map_meta_cap'          => true,    // https://developer.wordpress.org/reference/functions/register_post_type/#map_meta_cap
+            'capability_type'       => 'post',
+            'map_meta_cap'          => true,
         );
+
         register_post_type( self::POST_TYPE, $args );
     }
+
     public function post_link( $post_link, $post, $leavename, $sample )
     {
         if ( self::POST_TYPE === $post->post_type )
@@ -92,16 +101,21 @@ class Guest_Author
 
         return $post_link;
     }
+
+
     public static function get_guest_by( $field, $value )
     {
         $the_query = WP::the_query();
+
         if ( !isset( $the_query->guest_author_id ) )
         {
             return null;
         }
 
         $author = new Author( $the_query->guest_author_id, 'guest' );
+
         $post_id = apply_filters( '_authorship/get_user_by/post_id', Post::get_id(), null, $field, $value );
+
         $aim = 'info';
         if ( in_the_loop() )
         {
@@ -110,6 +124,7 @@ class Guest_Author
                 $aim = 'byline';
             }
         }
+
         $aim = apply_filters( '_authorship/get_user_by/aim', $aim, null, $field, $value );
 
         if ( 'byline' === $aim )
@@ -117,7 +132,13 @@ class Guest_Author
             if ( !empty( $post_id ) )
             {
                 $post_main_author = Post::get_main_author( $post_id );
-                $main_author      = new Author( $post_main_author->id, $post_main_author->type );
+
+                if ( empty( $post_main_author ) )
+                {
+                    return null;
+                }
+
+                $main_author = new Author( $post_main_author->id, $post_main_author->type );
 
                 $display_name  = Post::get_byline( $post_id );
                 $user_nicename = $main_author->get_slug();
@@ -127,6 +148,7 @@ class Guest_Author
                 return null;
             }
         }
+
         $user = new \WP_User();
         $user->guest_id         = $author->get_id();
         $user->display_name     = ( !empty( $display_name ) ? $display_name : $author->get_display_name() );
@@ -142,10 +164,13 @@ class Guest_Author
 
         return $user;
     }
+
     public static function get_guest_count()
     {
         return get_option( 'molongui_authorship_guest_count', 0 );
     }
+
+
     public static function is_guest_archive()
     {
         $the_query = WP::the_query();
@@ -161,5 +186,6 @@ class Guest_Author
         return isset( $the_query->is_guest_author ) ? $the_query->is_guest_author : false;
     }
 
-} // class
+}  
+
 new Guest_Author();

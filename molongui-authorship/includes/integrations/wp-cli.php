@@ -12,17 +12,23 @@
  */
 
 namespace Molongui\Authorship\Integrations;
-defined( 'WP_CLI' ) && WP_CLI or exit; // Exit if WP-CLI not active
+
+defined( 'WP_CLI' ) && WP_CLI or exit;  
+
 class MolonguiAuthorship_CLI extends \WP_CLI_Command
 {
     protected $version = '1.0.0';
+
     protected $dry_run;
+
     public function init_post_authorship( $args, $assoc_args )
     {
     }
+
     public function update_post_count( $args, $assoc_args )
     {
     }
+
     public function migrate_coauthors_plus( $args, $assoc_args )
     {
         if ( apply_filters( 'molongui_authorship/migrate_coauthors_plus', false ) )
@@ -30,6 +36,7 @@ class MolonguiAuthorship_CLI extends \WP_CLI_Command
             new \Molongui\Authorship\Migration\Co_Authors_Plus\Cli();
         }
     }
+
     public function migrate_publishpress_authors( $args, $assoc_args )
     {
         if ( apply_filters( 'molongui_authorship/migrate_publishpress_authors', false ) )
@@ -37,6 +44,7 @@ class MolonguiAuthorship_CLI extends \WP_CLI_Command
             new \Molongui\Authorship\Migration\Publishpress_Authors\Cli();
         }
     }
+
     public function migrate_one_user_avatar( $args, $assoc_args )
     {
         if ( apply_filters( 'molongui_authorship/migrate_one_user_avatar', false ) )
@@ -46,6 +54,7 @@ class MolonguiAuthorship_CLI extends \WP_CLI_Command
     }
 
 }
+
 add_action( 'cli_init', function()
 {
     \WP_CLI::add_command( 'molongui-authorship', __NAMESPACE__ . '\\MolonguiAuthorship_CLI' );

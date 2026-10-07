@@ -2,8 +2,7 @@
 
 use Molongui\Authorship\Common\Utils\Plugin;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-
+defined( 'ABSPATH' ) || exit;  
 ?>
 
 <div class="molongui-metabox">

@@ -12,7 +12,8 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Deactivator
 {
     public static function deactivate( $network_wide )
@@ -20,6 +21,7 @@ class Deactivator
 	    if ( function_exists('is_multisite') and is_multisite() and $network_wide )
 	    {
 		    if ( !is_super_admin() ) return;
+
 		    foreach ( WP::get_sites() as $site_id )
 		    {
 			    switch_to_blog( $site_id );
@@ -27,6 +29,7 @@ class Deactivator
 			    restore_current_blog();
 		    }
 	    }
+
 	    else
 	    {
 		    if ( !current_user_can( 'activate_plugins' ) ) return;
@@ -34,12 +37,16 @@ class Deactivator
 			self::deactivate_single_blog();
 	    }
     }
+
 	private static function deactivate_single_blog()
 	{
         global $wpdb;
+
+
 		delete_transient( MOLONGUI_AUTHORSHIP_NAME.'-activated' );
 		delete_transient( MOLONGUI_AUTHORSHIP_NAME.'-updated' );
+
         Settings::delete_job_flags();
 	}
 
-} // class
+}  

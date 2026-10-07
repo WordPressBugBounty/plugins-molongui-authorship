@@ -4,10 +4,12 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\Request;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Wizard extends \Molongui\Authorship\Common\Modules\Setup_Wizard
 {
     protected $settings_slug = 'admin.php?page=molongui-authorship';
+
     public function __construct()
     {
         add_filter( 'authorship/wizard_fallback', array( $this, 'get_fallback_url' ) );
@@ -16,10 +18,12 @@ class Wizard extends \Molongui\Authorship\Common\Modules\Setup_Wizard
 
         parent::__construct();
     }
+
     public function get_fallback_url()
     {
         return '/admin.php?page=molongui-authorship';
     }
+
     public function parse_settings( $wizard_settings )
     {
         $ignore = array
@@ -39,6 +43,7 @@ class Wizard extends \Molongui\Authorship\Common\Modules\Setup_Wizard
 
         return $wizard_settings;
     }
+
     public static function get_step_count()
     {
         $max_steps = 5;
@@ -46,5 +51,6 @@ class Wizard extends \Molongui\Authorship\Common\Modules\Setup_Wizard
         return $max_steps - 2;
     }
 
-} // class
+}  
+
 new Wizard();

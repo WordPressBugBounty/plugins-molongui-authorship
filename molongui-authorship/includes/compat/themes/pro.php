@@ -15,17 +15,20 @@
 
 namespace Molongui\Authorship;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Pro
 {
     public function __construct()
     {
         add_filter( 'molongui_authorship/add_author_box', array( $this, 'add_author_box_on_templates' ) );
     }
+
     public function add_author_box_on_templates( $add )
     {
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
         $fn  = 'x_element_render_the_content';
+
         if ( array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
             if ( is_main_query() )
@@ -40,5 +43,6 @@ class Pro
         return $add;
     }
 
-} // class
+}  
+
 new Pro;

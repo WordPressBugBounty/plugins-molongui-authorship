@@ -20,14 +20,18 @@ use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Common\Utils\WP;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 abstract class Background_Process extends WP_Background_Process
 {
     protected $prefix = 'molongui_authorship';
+
     protected $name, $id, $path;
+
     public function __construct()
     {
         $this->action = 'import_'.$this->id.'_data';
+
         if ( WP::is_plugin_installed( $this->path ) )
         {
             add_filter( 'molongui_authorship/data_migration_tools', array( $this, 'add_migration_option' ) );
@@ -41,6 +45,7 @@ abstract class Background_Process extends WP_Background_Process
             parent::__construct();
         }
     }
+
     public function add_migration_option( $tools )
     {
         echo UI::card( array
@@ -60,6 +65,7 @@ abstract class Background_Process extends WP_Background_Process
             'class'       => '',
         ));
     }
+
     public function add_migration_option_scripts()
     {
         ob_start();
@@ -72,7 +78,11 @@ abstract class Background_Process extends WP_Background_Process
                     const $this  = $(this);
                     const $label = $(this).html();
                     const loader = '<div class="m-typing-loader"></div>';
+
+                    // Change button label.
                     $(this).html(loader);
+
+                    // Confirm proceeding to data migration.
                     molongui_swal(
                     {
                         icon       : "warning",
@@ -110,8 +120,10 @@ abstract class Background_Process extends WP_Background_Process
                     })
                     .then((value) =>
                     {
+                        // If the user confirmed the action, proceed with the migration process.
                         if (value)
                         {
+                            // Run server-side chores.
                             $.ajax(
                             {
                                 url  : ajaxurl,
@@ -123,10 +135,16 @@ abstract class Background_Process extends WP_Background_Process
                                 },
                                 success: function(response)
                                 {
+                                    // DEBUG: What does PHP say?
+                                    //console.log( JSON.stringify( response ) );
+                                    //alert('AJAX successful. Response = ' + response);
+
+                                    // Handle result.
                                     if (response)
                                     {
                                         if ('cron_disabled' === response)
                                         {
+                                            // Show cron disabled message.
                                             molongui_swal(
                                             {
                                                 icon  : 'error',
@@ -135,11 +153,13 @@ abstract class Background_Process extends WP_Background_Process
                                             })
                                             .then( (value) =>
                                             {
+                                                // Restore button label.
                                                 $this.html($label);
                                             });
                                         }
                                         else if ('false' === response)
                                         {
+                                            // Show error message.
                                             molongui_swal(
                                             {
                                                 icon  : 'error',
@@ -148,11 +168,13 @@ abstract class Background_Process extends WP_Background_Process
                                             })
                                             .then( (value) =>
                                             {
+                                                // Restore button label.
                                                 $this.html($label);
                                             });
                                         }
                                         else
                                         {
+                                            // Show success message.
                                             molongui_swal(
                                             {
                                                 icon  : 'success',
@@ -161,12 +183,14 @@ abstract class Background_Process extends WP_Background_Process
                                             })
                                             .then( (value) =>
                                             {
+                                                // Restore button label.
                                                 $this.html($label);
                                             });
                                         }
                                     }
                                     else
                                     {
+                                        // Show error message.
                                         molongui_swal(
                                         {
                                             icon  : 'error',
@@ -175,12 +199,23 @@ abstract class Background_Process extends WP_Background_Process
                                         })
                                         .then( (value) =>
                                         {
+                                            // Restore button label.
                                             $this.html($label);
+
+                                            // Force page reload without prompting user for confirmation.
+                                            //$(window).off("beforeunload");
+                                            //location.reload();
                                         });
                                     }
                                 },
                                 error: function( jqXHR, textStatus, errorThrown )
                                 {
+                                    // DEBUG: Uncomment to debug.
+                                    //console.warn(JSON.stringify(jqXHR));
+                                    //console.warn("AJAX Error: textStatus  = " + textStatus);
+                                    //console.warn("AJAX Error: errorThrown = " + errorThrown);
+
+                                    // Show error message.
                                     molongui_swal(
                                     {
                                         icon  : 'error',
@@ -189,6 +224,7 @@ abstract class Background_Process extends WP_Background_Process
                                     })
                                     .then((value) =>
                                     {
+                                        // Restore button label.
                                         $this.html($label);
                                     });
                                 }
@@ -196,6 +232,7 @@ abstract class Background_Process extends WP_Background_Process
                         }
                         else
                         {
+                            // Restore button label.
                             $this.html($label);
                         }
                     });
@@ -207,9 +244,11 @@ abstract class Background_Process extends WP_Background_Process
         <?php
         echo Helpers::minify_js( ob_get_clean() );
     }
+
     public function handle_ajax_request()
     {
         check_ajax_referer( 'molongui_authorship_'.$this->id.'_migration_nonce', 'nonce', true );
+
         if ( apply_filters( 'authorship/check_wp_cron', true ) and defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON )
         {
             $result = 'cron_disabled';
@@ -218,9 +257,12 @@ abstract class Background_Process extends WP_Background_Process
         {
             $result = $this->run();
         }
+
         echo json_encode( is_wp_error( $result ) ? 'false' : $result );
+
         wp_die();
     }
+
     public function run()
     {
         if ( apply_filters( 'authorship/check_wp_cron', true ) )
@@ -233,7 +275,9 @@ abstract class Background_Process extends WP_Background_Process
 
         return $this->migrate_data();
     }
+
     abstract protected function migrate_data();
+
     public function dispatch()
     {
         $result = parent::dispatch();
@@ -245,22 +289,29 @@ abstract class Background_Process extends WP_Background_Process
 
         return $result;
     }
+
     protected function task( $item )
     {
         return false;
     }
+
     protected function complete()
     {
         parent::complete();
+
+
         add_option( $this->prefix . '_' . $this->action . '_complete', true, '', true );
+
         add_option( $this->prefix . '_' . $this->action . '_done', true, '', true );
     }
+
     public function add_migration_notice()
     {
         if ( get_option( $this->prefix . '_' . $this->action . '_done' ) )
         {
             return;
         }
+
         if ( get_option( $this->prefix . '_' . $this->action . '_running' ) )
         {
             return;
@@ -269,9 +320,9 @@ abstract class Background_Process extends WP_Background_Process
         ob_start();
 
         printf( '<p><strong>%s</strong> - %s</p>',
-            /*! // translators: %s: The name of the plugin being migrated. */
+            // translators: %s: The name of the plugin being migrated.
             sprintf( esc_html__( "%s Data Migration", 'molongui-authorship' ), $this->name ),
-            /*! // translators: %s: The name of the plugin being migrated. */
+            // translators: %s: The name of the plugin being migrated.
             sprintf( esc_html__( "You have the option to easily migrate all your %s data to Molongui Authorship. Simply click the button below to start the migration process.", 'molongui-authorship' ), $this->name )
         );
         ?>
@@ -290,6 +341,7 @@ abstract class Background_Process extends WP_Background_Process
             'info'
         );
     }
+
     public function task_status_notice()
     {
         if ( get_option( $this->prefix . '_' . $this->action . '_complete' ) )
@@ -300,7 +352,7 @@ abstract class Background_Process extends WP_Background_Process
             $message = sprintf(
                 '<p><strong>%s</strong> - %s</p>',
                 esc_html__( "Data Migration", 'molongui-authorship' ),
-                /*! // translators: %s: The name of the plugin being migrated. */
+                // translators: %s: The name of the plugin being migrated.
                 sprintf( esc_html__( 'The migration process is now complete. Data from the %s plugin have been successfully migrated.', 'molongui-authorship' ), $this->name )
             );
             echo '<div class="notice notice-success is-dismissible">' . wp_kses_post( $message ) . '</div>';

@@ -2,9 +2,10 @@
 
 use Molongui\Authorship\Admin\Author_Box_Editor;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $has_pro = did_action( 'authorship_pro/loaded' );
+
 
 Author_Box_Editor::render_heading( __( "Ready-to-use templates", 'molongui-authorship' ) );
 Author_Box_Editor::render_notice( 'author_box_preset_notice', sprintf( __( "You can optionally select a preset to load ready-to-use templates for your author box. Then, you can further customize it, or you can directly use the settings in the %sContent%s, %sLayout%s and %sAdvanced%s tabs to design your author box from scratch.", 'molongui-authorship' ), '<strong>', '</strong>', '<strong>', '</strong>', '<strong>', '</strong>' ) );

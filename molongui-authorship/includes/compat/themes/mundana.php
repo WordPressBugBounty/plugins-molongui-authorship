@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_action( 'parse_request', function( $wp_query )
 {
 

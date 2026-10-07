@@ -2,7 +2,9 @@
 
 use Molongui\Authorship\Admin\Author_Box_Editor;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 
 Author_Box_Editor::render_heading( __( "Custom CSS", 'molongui-authorship' ) );
 Author_Box_Editor::render_textarea( 'author_box_custom_css', __( "Custom CSS", 'molongui-authorship' ), array( 'placeholder' => __( "Add your own custom CSS here...", 'molongui-authorship' ), 'default' => '', 'rows' => 20 ) );

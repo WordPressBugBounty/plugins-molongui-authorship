@@ -2,22 +2,26 @@
 
 namespace Molongui\Authorship;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class AvadaBuilder
 {
     public function __construct()
     {
         add_filter( 'molongui_authorship/display_author_box', array( $this, 'hide_author_box' ) );
     }
+
     public function hide_author_box( $default )
     {
         if ( !$default )
         {
             return $default;
         }
+
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
         $class = 'Fusion_Template_Builder';
         $fn    = 'render_content';
+
         if ( in_the_loop() )
         {
             if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
@@ -31,5 +35,6 @@ class AvadaBuilder
         return $default;
     }
 
-} // class
+}  
+
 new AvadaBuilder;

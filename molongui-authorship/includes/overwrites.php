@@ -10,44 +10,43 @@
  * @since      4.4.2
  */
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-if ( !function_exists( 'get_user_by' ) )
-{
-    function get_user_by( $field, $value )
-    {
-        $userdata = WP_User::get_data_by( $field, $value );
+defined( 'ABSPATH' ) || exit;  
 
-        if ( ! $userdata )
-        {
-            /*!
-             * [PRIVATE] FILTER HOOK
-             * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
-             * If you choose to use it, you do so at your own risk, as it may cause code issues.
-             *
-             * @since 4.4.2
-             */
-            $user = apply_filters( '_authorship/no_userdata', false, $field, $value );
 
-            if ( $user )
-            {
-                return $user;
-            }
+if ( ! function_exists( 'get_user_by' ) ) {
+	function get_user_by( $field, $value ) {
+		$userdata = WP_User::get_data_by( $field, $value );
 
-            return false;
-        }
+		if ( ! $userdata ) {
+			/*!
+			 * [PRIVATE] FILTER HOOK
+			 * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
+			 * If you choose to use it, you do so at your own risk, as it may cause code issues.
+			 *
+			 * @since 4.4.2
+			 */
+			$user = apply_filters( '_authorship/no_userdata', false, $field, $value );
 
-        $user = new WP_User;
-        $user->init( $userdata );
+			if ( $user ) {
+				return $user;
+			}
 
-        /*!
-         * [PRIVATE] FILTER HOOK
-         * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
-         * If you choose to use it, you do so at your own risk, as it may cause code issues.
-         *
-         * @since 4.4.2
-         */
-        $user = apply_filters( '_authorship/get_user_by', $user, $field, $value );
+			return false;
+		}
 
-        return $user;
-    }
+
+		$user = new WP_User();
+		$user->init( $userdata );
+
+		/*!
+		 * [PRIVATE] FILTER HOOK
+		 * For internal use only. This filter may be changed or removed at any time without notice or deprecation.
+		 * If you choose to use it, you do so at your own risk, as it may cause code issues.
+		 *
+		 * @since 4.4.2
+		 */
+		$user = apply_filters( '_authorship/get_user_by', $user, $field, $value );
+
+		return $user;
+	}
 }

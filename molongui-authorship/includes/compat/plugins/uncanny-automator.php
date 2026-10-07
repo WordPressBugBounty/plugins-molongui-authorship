@@ -1,6 +1,9 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
+
 function authorship_uncanny_automator_dont_filter_user_data( $data, $args )
 {
     list( $filter, $user ) = $data;

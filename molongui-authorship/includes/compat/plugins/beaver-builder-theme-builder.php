@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     if ( !is_author() and !molongui_is_guest_author() ) return $user;
@@ -11,14 +13,14 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
     $file  = '/bb-theme-builder/classes/class-fl-page-data.php';
 
     if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and
-         isset( $dbt[$key]['class'] ) and ( $dbt[$key]['class'] == $class ) /*and
-         isset( $dbt[$key]['file'] ) and substr_compare( $dbt[$key]['file'], $file, strlen( $dbt[$key]['file'] )-strlen( $file ), strlen( $file ) ) === 0 */ )
+         isset( $dbt[$key]['class'] ) and ( $dbt[$key]['class'] == $class )   )
     {
         return $user;
     }
 
     return $user;
 }, 10, 4 );
+
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )
 {
     if ( is_author() or molongui_is_guest_author() )
@@ -36,34 +38,4 @@ add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value
 
     return $aim;
 }, 10, 4 );
-/*
-add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
-{
-    $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
-    $fn   = 'do_shortcode';
-    $file = 'bb-theme-builder/modules/fl-author-bio/includes/frontend.php';
 
-    if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
-         and
-         isset( $dbt[$i]['file'] ) and substr_compare( $dbt[$i]['file'], $file, strlen( $dbt[$i]['file'] )-strlen( $file ), strlen( $file ) ) === 0 )
-    {
-        return $original_user;
-    }
-
-    return $user;
-}, 10, 4 );
-add_filter( 'authorship/get_avatar_data/skip', function( $default, $args, $dbt )
-{
-    $fn   = 'do_shortcode';
-    $file = 'bb-theme-builder/modules/fl-author-bio/includes/frontend.php';
-    $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
-
-    if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and
-        isset( $dbt[$key]['file'] ) and substr_compare( $dbt[$key]['file'], $file, strlen( $dbt[$key]['file'] )-strlen( $file ), strlen( $file ) ) === 0
-    ){
-        return true;
-    }
-
-    return $default;
-}, 10, 3 );
-*/

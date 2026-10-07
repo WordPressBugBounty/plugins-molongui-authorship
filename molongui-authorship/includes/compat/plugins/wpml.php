@@ -1,14 +1,15 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 add_filter( 'wpml_translatable_user_meta_fields', 'authorship_add_user_meta_fields_to_wpml' );
 add_filter( 'authorship/pre_author_link', 'authorship_dont_filter_author_link_for_wpml', 10, 4 );
 add_filter( 'icl_ls_languages', 'authorship_wpml_translated_author_urls_fix', 10, 2 );
 add_filter( '_molongui_authorship/author/use_get_the_author_meta', '__return_true' );
+
 function authorship_add_user_meta_fields_to_wpml( $user_meta_fields )
 {
-    $user_meta_fields[] = 'user_url'; // from users table
+    $user_meta_fields[] = 'user_url';  
     $user_meta_fields[] = 'molongui_author_phone';
     $user_meta_fields[] = 'molongui_author_job';
     $user_meta_fields[] = 'molongui_author_company';
@@ -17,8 +18,10 @@ function authorship_add_user_meta_fields_to_wpml( $user_meta_fields )
 $user_meta_fields[] = 'molongui_author_long_bio';
     $user_meta_fields[] = 'molongui_author_custom_link';
 
+
     return $user_meta_fields;
 }
+
 function authorship_dont_filter_author_link_for_wpml( $link, $original_link, $author_id, $author_nicename )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -31,6 +34,7 @@ function authorship_dont_filter_author_link_for_wpml( $link, $original_link, $au
 
     return $link;
 }
+
 function authorship_wpml_translated_author_urls_fix( $w_active_languages )
 {
     if ( is_author() )
@@ -48,15 +52,21 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                     if ( !empty( $w_active_languages[$lang] ) )
                     {
                         $id = apply_filters( 'wpml_object_id', $wp_query->guest_author_id, 'guest_author', false, $lang );
+
                         $author   = new Molongui\Authorship\Author( $id, 'guest' );
                         $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
+
+
                         $w_active_languages[$lang]['url'] = $wpml_url;
                     }
+
                     else
                     {
                         $id = apply_filters( 'wpml_object_id', $wp_query->guest_author_id, 'guest_author', false, $lang );
+
                         global $sitepress;
                         $temp_lang_switch = new \WPML_Temporary_Switch_Language( $sitepress, $lang );
+
                         $author = new Molongui\Authorship\Author( $id, 'guest' );
 
                         $args = array
@@ -74,16 +84,21 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                             'post_type'           => 'selected',
                             'post_status'         => array( 'publish' ),
                             'posts_per_page'      => '-1',
+
                             'author_id'           => $wp_query->guest_author_id,
                             'author_type'         => 'guest',
                             'site_id'             => get_current_blog_id(),
                             'language'            => $lang,
                         );
                         $posts = $author->get_posts( $args );
+
                         $temp_lang_switch->restore_lang();
+
                         if ( !empty( $posts ) )
                         {
                             $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
+
+
                             global $sitepress, $wpml_post_translations, $wpml_term_translations;
                             $current_language = $sitepress->get_current_language();
                             $languages_helper = new \WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
@@ -106,6 +121,7 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                     }
                 }
             }
+
             else
             {
                 foreach ( $languages as $lang )
@@ -114,12 +130,16 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                     {
                         $author = new Molongui\Authorship\Author( get_queried_object_id(), 'user' );
                         $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
+
+
                         $w_active_languages[$lang]['url'] = $wpml_url;
                     }
+
                     else
                     {
                         global $sitepress;
                         $temp_lang_switch = new \WPML_Temporary_Switch_Language( $sitepress, $lang );
+
                         $author = new Molongui\Authorship\Author( get_queried_object_id(), 'user' );
 
                         $args = array
@@ -137,16 +157,21 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
                             'post_type'           => 'selected',
                             'post_status'         => array( 'publish' ),
                             'posts_per_page'      => '-1',
+
                             'author_id'           => get_queried_object_id(),
                             'author_type'         => 'user',
                             'site_id'             => get_current_blog_id(),
                             'language'            => $lang,
                         );
                         $posts = $author->get_posts( $args );
+
                         $temp_lang_switch->restore_lang();
+
                         if ( !empty( $posts ) )
                         {
                             $wpml_url = apply_filters( 'wpml_permalink', $author->get_archive_url(), $lang );
+
+
                             global $sitepress, $wpml_post_translations, $wpml_term_translations;
                             $current_language = $sitepress->get_current_language();
                             $languages_helper = new \WPML_Languages( $wpml_term_translations, $sitepress, $wpml_post_translations );
@@ -171,6 +196,7 @@ function authorship_wpml_translated_author_urls_fix( $w_active_languages )
             }
         }
     }
+
 
     return $w_active_languages;
 }

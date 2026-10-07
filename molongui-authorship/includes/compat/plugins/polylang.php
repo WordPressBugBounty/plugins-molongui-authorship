@@ -18,7 +18,8 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Common\Utils\Request;
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Polylang
 {
     public function __construct()
@@ -28,6 +29,7 @@ class Polylang
 
         add_filter( 'authorship/author/id', array( __CLASS__, 'get_guest_translation_id' ), 10, 2 );
     }
+
     public static function copy_custom_post_meta( $keys, $sync, $from, $to )
     {
         if ( !$sync )
@@ -37,6 +39,7 @@ class Polylang
 
         return $keys;
     }
+
     public static function disable_guest_author_translation( $post_types, $is_settings )
     {
         if ( empty( Settings::get( 'pll_translate_guests', true ) ) )
@@ -46,6 +49,7 @@ class Polylang
 
         return $post_types;
     }
+
     public static function get_guest_translation_id( $id, $type )
     {
         if ( empty( $id ) or empty( $type ) )
@@ -68,6 +72,7 @@ class Polylang
 
         return $id;
     }
+
     public static function remove_lang_from_query( $query )
     {
         if ( !Request::is_from( 'ajax' ) )
@@ -83,8 +88,10 @@ class Polylang
              or
              !apply_filters( 'authorship/pll_filter_query', true ) )
         {
+
             $query->set( 'lang', '' );
         }
     }
-} // class
+}  
+
 new Polylang;

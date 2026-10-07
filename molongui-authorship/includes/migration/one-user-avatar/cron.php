@@ -17,10 +17,12 @@ use Molongui\Authorship\Migration\Background_Process;
 use Molongui\Authorship\Migration\One_User_Avatar;
 use Molongui\Authorship\Migration\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Cron extends Background_Process
 {
     use Utils;
+
     public function __construct()
     {
         $this->name = One_User_Avatar::instance()->get_name();
@@ -29,9 +31,11 @@ class Cron extends Background_Process
 
         parent::__construct();
     }
+
     protected function migrate_data()
     {
         $r = true;
+
         if ( apply_filters( 'molongui_authorship/migrate_oua_avatars', true ) )
         {
             $r = $this->migrate_avatars();
@@ -39,9 +43,11 @@ class Cron extends Background_Process
 
         return $r;
     }
+
     public function migrate_avatars()
     {
         $r = true;
+
         $relationships = One_User_Avatar::instance()->get_user_attachment_relationships();
 
         if ( !empty( $relationships ) )
@@ -50,20 +56,27 @@ class Cron extends Background_Process
             {
                 $this->push_to_queue( array( 'attachment_id' => $relationship['post_id'], 'user_id' => $relationship['meta_value'] ) );
             }
+
             $r = $this->save()->dispatch();
+
         }
 
         return $r;
     }
+
     protected function task( $item )
     {
         if ( !is_array( $item ) or !isset( $item['user_id'] ) or !isset( $item['attachment_id'] ) )
         {
             return false;
         }
+
         One_User_Avatar::instance()->update_user_metadata( $item );
+
+
         return false;
     }
 
-} // class
+}  
+
 new Cron();

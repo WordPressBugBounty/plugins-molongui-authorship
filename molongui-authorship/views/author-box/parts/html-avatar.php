@@ -2,7 +2,7 @@
 
 use Molongui\Authorship\Common\Utils\Plugin;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 ?>
 
 <?php if ( !empty( $options['author_box_avatar_show'] ) ) : ?>

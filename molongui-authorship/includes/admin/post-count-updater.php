@@ -21,14 +21,20 @@ use Molongui\Authorship\Guest_Author;
 use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Post_Count_Updater extends WP_Background_Process
 {
     protected $prefix = 'molongui_authorship';
+
     protected $action = 'update_posts_count';
+
     protected $authors;
+
     protected $post_types;
+
     use Singleton;
+
     protected function __construct()
     {
         if ( apply_filters( 'molongui_authorship/enable_post_count_updater', true ) )
@@ -43,15 +49,21 @@ class Post_Count_Updater extends WP_Background_Process
             parent::__construct();
         }
     }
+
+
     public function enable_admin_init()
     {
         $this->handle_admin_init();
     }
+
     public function handle_admin_init()
     {
         if ( get_option( 'molongui_authorship_update_post_counters' ) )
         {
-            if ( get_option( 'molongui_authorship_update_post_authors', false ) or get_option( 'molongui_post_authorship_update_running', false ) )
+            if ( get_option( 'molongui_authorship_update_post_authors', false )
+                or get_option( 'molongui_authorship_update_post_authorship_running', false )
+                or get_option( 'molongui_post_authorship_update_running', false )
+            )
             {
                 add_action( 'admin_notices', function()
                 {
@@ -62,18 +74,23 @@ class Post_Count_Updater extends WP_Background_Process
             else
             {
                 delete_option( 'molongui_authorship_update_post_counters' );
+
                 $this->authors = self::get_all_authors();
+
                 $this->run();
             }
         }
     }
+
     public function enable_ajax_request()
     {
         add_action( "wp_ajax_molongui_authorship_update_post_count", array( $this, 'handle_ajax_request' ) );
     }
+
     public function handle_ajax_request()
     {
         check_ajax_referer( 'molongui_authorship_post_count_updater_nonce', 'nonce', true );
+
         if ( apply_filters( 'authorship/check_wp_cron', true ) and defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON )
         {
             $result = 'cron_disabled';
@@ -81,11 +98,15 @@ class Post_Count_Updater extends WP_Background_Process
         else
         {
             $this->authors = self::get_all_authors();
+
             $result = $this->run();
         }
+
         echo json_encode( is_wp_error( $result ) ? 'false' : $result );
+
         wp_die();
     }
+
     public function enable_bulk_request()
     {
         if ( apply_filters( 'molongui_authorship/enable_bulk_count_update_for_users', true ) )
@@ -104,12 +125,14 @@ class Post_Count_Updater extends WP_Background_Process
         {
         }
     }
+
     public function register_bulk_action( $bulk_actions )
     {
         $bulk_actions[$this->prefix . '_bulk_' . $this->action] = __( "Update Posts Count", 'molongui-authorship' );
 
         return $bulk_actions;
     }
+
     public function handle_bulk_action( $redirect_to, $doaction, $object_ids )
     {
         if ( $doaction === $this->prefix . '_bulk_' . $this->action )
@@ -117,6 +140,7 @@ class Post_Count_Updater extends WP_Background_Process
             if ( !empty( $object_ids ) )
             {
                 $current_screen = get_current_screen();
+
                 if ( 'users' === $current_screen->id )
                 {
                     $author_type = 'user';
@@ -129,30 +153,38 @@ class Post_Count_Updater extends WP_Background_Process
                 {
                     return $redirect_to;
                 }
+
                 $this->authors = self::prepare_authors( $object_ids, $author_type );
+
                 $result = $this->run();
+
                 $redirect_to = add_query_arg( 'update_count_bulk_action_running', count( $object_ids ), $redirect_to );
             }
         }
 
         return $redirect_to;
     }
+
     public function enable_admin_action()
     {
         if ( apply_filters( 'molongui_authorship/enable_row_count_update_for_users', true ) )
         {
             add_filter( 'user_row_actions', array( $this, 'register_row_action' ), 10, 2 );
         }
+
         if ( apply_filters( 'molongui_authorship/enable_row_count_update_for_guests', true ) )
         {
             add_filter( 'post_row_actions', array( $this, 'register_row_action' ), 10, 2 );
         }
+
         if ( apply_filters( 'molongui_authorship/enable_row_count_update_for_authors', true ) )
         {
             add_filter( 'molongui_authorship/author_row_actions', array( $this, 'register_row_action' ), 10, 2 );
         }
+
         add_action( 'admin_action_'.$this->prefix . '_' . $this->action, array( $this, 'handle_admin_action' ) );
     }
+
     public function register_row_action( $actions, $object )
     {
         if ( !empty( $object ) and is_a( $object, 'WP_User' ) )
@@ -186,25 +218,33 @@ class Post_Count_Updater extends WP_Background_Process
 
         return $actions;
     }
+
     public function handle_admin_action()
     {
         if ( !( isset( $_GET['author_id'] ) or isset( $_POST['author_id'] ) or ( isset( $_REQUEST['action'] ) and $this->prefix.'_'.$this->action == $_REQUEST['action'] ) ) )
         {
             wp_die( __( "No author to update posts count for has been supplied!", 'molongui-authorship' ) );
         }
+
         $author_id   = ( isset( $_GET['author_id'] ) ? $_GET['author_id'] : $_POST['author_id'] );
         $author_type = ( isset( $_GET['author_type'] ) ? $_GET['author_type'] : $_POST['author_type'] );
+
         $this->authors = self::prepare_authors( array( $author_id ), $author_type );
+
         $result = $this->run();
+
         $redirect_url = remove_query_arg( array( 'action', 'author_id', 'author_type' ), wp_get_referer() );
         wp_redirect( esc_url( $redirect_url ) );
         exit;
     }
+
     public function handle_internal_request()
     {
         $this->authors = self::get_all_authors();
+
         $result = $this->run();
     }
+
     public function run()
     {
         if ( apply_filters( 'authorship/check_wp_cron', true ) )
@@ -216,6 +256,7 @@ class Post_Count_Updater extends WP_Background_Process
         }
 
         $r = true;
+
         $this->post_types = self::get_post_types();
 
         foreach ( $this->post_types as $post_type )
@@ -228,16 +269,21 @@ class Post_Count_Updater extends WP_Background_Process
                 }
 
                 $r = $this->save()->dispatch();
+
             }
         }
 
         return $r;
     }
+
     protected function task( $item )
     {
         self::update_author_post_counter( array( 'id' => $item['author_id'], 'type' => $item['author_type'] ), $item['post_type'] );
+
+
         return false;
     }
+
     public function dispatch()
     {
         $result = parent::dispatch();
@@ -249,11 +295,15 @@ class Post_Count_Updater extends WP_Background_Process
 
         return $result;
     }
+
     protected function complete()
     {
         parent::complete();
+
+
         add_option( $this->prefix . '_' . $this->action . '_complete', true, '', true );
     }
+
     public function task_status_notice()
     {
         if ( get_option( $this->prefix . '_' . $this->action . '_complete' ) )
@@ -270,10 +320,13 @@ class Post_Count_Updater extends WP_Background_Process
             echo '<div class="notice notice-warning is-dismissible">' . $message . '</div>';
         }
     }
+
+
     public static function get_all_authors()
     {
         return Authors::get_authors( array() );
     }
+
     public static function prepare_authors( $ids = null, $type = 'user' )
     {
         $authors = array();
@@ -288,6 +341,7 @@ class Post_Count_Updater extends WP_Background_Process
 
         return $authors;
     }
+
     public static function get_post_types()
     {
         $post_types = apply_filters( 'molongui_authorship/post_types_for_count_updater', array() );
@@ -313,6 +367,7 @@ class Post_Count_Updater extends WP_Background_Process
                     $post_types = array( $post_types );
                     break;
             }
+
             if ( empty( $post_types ) )
             {
                 $post_types = array( 'post', 'page' );
@@ -325,6 +380,7 @@ class Post_Count_Updater extends WP_Background_Process
 
         return $post_types;
     }
+
     public static function update_author_post_counter( $author, $post_type, $count = null )
     {
         $_author = new Author( $author['id'], $author['type'] );
@@ -333,8 +389,11 @@ class Post_Count_Updater extends WP_Background_Process
         {
             $count = $_author->get_post_count( $post_type, 'live' );
         }
+
+
         $_author->persist_post_count( $count, $post_type );
     }
+
     public static function increment_counter( $post_type = 'post', $post_authors = null )
     {
         if ( empty( $post_authors ) )
@@ -377,13 +436,10 @@ class Post_Count_Updater extends WP_Background_Process
             $author = new Author( $author_id, $author_type );
             $count  = (int) $author->get_post_count( $post_type );
 
-            self::update_author_post_counter(
-                array( 'id' => $author_id, 'type' => $author_type ),
-                $post_type,
-                max( 0, $count + 1 )
-            );
+            $author->persist_post_count( max( 0, $count + 1 ), $post_type );
         }
     }
+
     public static function decrement_counter( $post_type, $post_authors )
     {
         if ( empty( $post_authors ) )
@@ -426,13 +482,10 @@ class Post_Count_Updater extends WP_Background_Process
             $author = new Author( $author_id, $author_type );
             $count  = (int) $author->get_post_count( $post_type );
 
-            self::update_author_post_counter(
-                array( 'id' => $author_id, 'type' => $author_type ),
-                $post_type,
-                max( 0, $count - 1 )
-            );
+            $author->persist_post_count( max( 0, $count - 1 ), $post_type );
         }
     }
 
-} // class
+}  
+
 Post_Count_Updater::instance();

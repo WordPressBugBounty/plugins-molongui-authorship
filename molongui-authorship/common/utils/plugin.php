@@ -2,7 +2,8 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Plugin
 {
     public static function restart( $plugin )
@@ -12,6 +13,7 @@ class Plugin
 
         return $r;
     }
+
     public static function custom_admin_footer( $footer_text )
     {
         global $current_screen;
@@ -27,10 +29,12 @@ class Plugin
 
         return $footer_text;
     }
+
     public static function has_pro()
     {
         return did_action( 'authorship_pro/init' );
     }
+
     public static function add_quick_links( $links )
     {
         $more_links = array
@@ -46,10 +50,13 @@ class Plugin
 
         return array_merge( $more_links, $links );
     }
+
     public static function get_molonguis( $field = 'all' )
     {
         if ( !function_exists( 'get_plugins' ) ) require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
         $plugins = get_plugins();
+
         if ( version_compare( PHP_VERSION, '5.6.0', '<' ) )
         {
             foreach ( $plugins as $plugin_file => $plugin )
@@ -68,6 +75,7 @@ class Plugin
                 return ( $value['Author'] == 'Molongui' );
             }, ARRAY_FILTER_USE_BOTH);
         }
+
         if ( $field != 'all' )
         {
             if ( $field == 'keys' ) return array_keys( $molongui_plugins );
@@ -79,15 +87,20 @@ class Plugin
             }
             $molongui_plugins = $data;
         }
+
         return $molongui_plugins;
     }
+
     public static function get_molongui_id_from_filepath( $filepath )
     {
         if ( !isset( $filepath ) ) return false;
+
         $plugin_id = explode( '/', $filepath );
         $plugin_id = strtolower( strtr( $plugin_id[0], array( 'molongui-' => '', ' ' => '_', '-' => '_' ) ) );
+
         if ( $plugin_id == "bump_offer" ) $plugin_id = "order_bump";
+
         return $plugin_id;
     }
 
-} // class
+}  

@@ -2,13 +2,16 @@
 
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
 
     $fn    = 'get_post_layout';
     $class = 'PremiumAddons\Includes\Premium_Template_Tags';
+
 
     if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
          and
@@ -18,6 +21,7 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
         if ( !empty( $post_id ) )
         {
             $main_author = Post::get_main_author( $post_id );
+
             if ( !empty( $main_author ) )
             {
                 $author->id   = $main_author->id;

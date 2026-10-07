@@ -5,12 +5,14 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Common\Utils\Plugin;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Highlights
 {
 	public function highlights_plugin()
 	{
         $is_pro = Plugin::has_pro();
+
 		ob_start();
 		?>
 		<p><?php  _e( "Molongui Authorship is probably the most complete suite on all about authors and authorship. Check below some of its awesome features:", 'molongui-authorship' ); ?></p>
@@ -25,6 +27,7 @@ class Highlights
         </ul>
 		<?php
 		$message = ob_get_clean();
+
 		$content = array
 		(
 			'image'   => '',
@@ -70,11 +73,14 @@ class Highlights
 				),
 			),
 		);
+
 		return $content;
 	}
+
 	public function highlights_release_210()
 	{
         $is_pro = Plugin::has_pro();
+
 		ob_start();
 		?>
 			<p><?php _e( "We have listened to you and we have focused this update on improving the customization of the author box.", 'molongui-authorship' ); ?></p>
@@ -92,6 +98,7 @@ class Highlights
             <p class="molongui-notice-message-important"><?php _e( "Some styling modifications have been introduced. Please, make sure the author box looks like you want and customize it required.", 'molongui-authorship' ); ?></p>
 		<?php
 		$message = ob_get_clean();
+
 		$content = array
 		(
 			'image'   => '',
@@ -117,11 +124,14 @@ class Highlights
 				),
 			),
 		);
+
 		return $content;
 	}
+
 	public function highlights_release_300()
 	{
         $is_pro = Plugin::has_pro();
+
 		ob_start();
 		?>
         <p><?php _e( "Huge update with endless author box layout combinations!", 'molongui-authorship' ); ?></p>
@@ -137,6 +147,7 @@ class Highlights
         <p class="molongui-notice-message-important"><?php _e( "Some styling modifications have been introduced. Please, make sure the author box looks like you want and customize it if required.", 'molongui-authorship' ); ?></p>
 		<?php
 		$message = ob_get_clean();
+
 		$content = array
 		(
 			'image'   => '',
@@ -162,8 +173,10 @@ class Highlights
 				),
 			),
 		);
+
 		return $content;
 	}
+
 	public function highlights_release_320()
 	{
 		ob_start();
@@ -179,6 +192,7 @@ class Highlights
         </ul>
 		<?php
 		$message = ob_get_clean();
+
 		$content = array
 		(
 			'image'   => '',
@@ -204,7 +218,8 @@ class Highlights
 				),
 			),
 		);
+
 		return $content;
 	}
 
-} // End of the class.
+}  

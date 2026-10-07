@@ -1,21 +1,27 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
+
+
     $fns = array
     (
-        'wo_personal_data_erase_function',   //
-        'wo_personal_data_export_function',  //
-        'wpoauth_method_introspection',      //
-        'wpoauth_method_me',                 //
+        'wo_personal_data_erase_function',    
+        'wo_personal_data_export_function',   
+        'wpoauth_method_introspection',       
+        'wpoauth_method_me',                  
+
     );
 
     if ( array_intersect( $fns, array_column( $dbt, 'function' ) ) )
     {
         return $original_user;
     }
+
 
     $fn    = 'getUser';
     $class = 'WPOAuth2\Storage\Wordpressdb';
@@ -26,6 +32,7 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
     {
         return $original_user;
     }
+
 
     $fn   = 'getUser';
     $file = 'library/class-wo-api.php';

@@ -18,10 +18,12 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Compat\Schema;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class RankMath
 {
     use Schema;
+
     public function __construct()
     {
         add_filter( 'rank_math/json_ld', array( $this, 'override_author_schema_on_posts' ), 99, 2 );
@@ -39,34 +41,41 @@ public function override_author_archive_title( $title )
         {
             return $title;
         }
+
         $title = $author->get_display_name() . ', Author at ' . get_bloginfo( 'name' );
     }
 
     return $title;
 }
+
     public function override_author_schema_on_posts( $data, $jsonld )
     {
-        if ( ! is_singular( 'post' ) ) // TODO: añadir otros post_type activos!!!
+        if ( ! is_singular( 'post' ) )  
         {
             return $data;
         }
 
         $post_id = get_the_ID();
+
         $authors = $this->get_post_authors_for_schema( $post_id );
+
         if ( ! $this->should_override_schema_author_data( $authors ) )
         {
             return $data;
         }
+
         $schema_authors = $this->normalize_authors_for_schema( $authors );
 
         if ( empty( $schema_authors ) )
         {
             return $data;
         }
+
         $data = $this->apply_schema_authors_to_graph( $data, $schema_authors );
 
         return $data;
     }
+
     public function override_author_schema_on_archives( $data, $jsonld )
     {
         if ( function_exists( 'molongui_is_guest_author' ) && ! molongui_is_guest_author() && is_author() )
@@ -98,11 +107,13 @@ public function override_author_archive_title( $title )
 
         return $data;
     }
+
     public function fix_author_page_title( $aim, $user, $field, $value )
     {
         if ( is_author() or molongui_is_guest_author() )
         {
             $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
+
             $fn = 'generate_postdata';
             if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
             {
@@ -112,12 +123,14 @@ public function override_author_archive_title( $title )
 
         return $aim;
     }
+
     public function fix_disabled_link( $url, $args )
     {
         if ( '#molongui-disabled-link' !== $args['url'] )
         {
             return $url;
         }
+
         $fn_1  = 'get_author_posts_url';
         $fn_2  = 'process';
         $class = 'RankMath\Schema\Author';
@@ -128,6 +141,7 @@ public function override_author_archive_title( $title )
         {
             return $url;
         }
+
         if ( $j = array_search( $fn_1, array_column( $dbt, 'function' ) ) )
         {
             if ( $i = array_search( $fn_2, array_column( $dbt, 'function' ) ) )
@@ -141,6 +155,7 @@ public function override_author_archive_title( $title )
 
         return $url;
     }
+
     public function fix_paper_author_url( $link, $original_link, $author_id, $author_nicename )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -164,6 +179,7 @@ public function override_author_archive_title( $title )
 
         return $link;
     }
+
     public function fix_schema_author_url( $link, $original_link, $author_id, $author_nicename )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -188,5 +204,6 @@ public function override_author_archive_title( $title )
         return $link;
     }
 
-} // class
+}  
+
 new RankMath;

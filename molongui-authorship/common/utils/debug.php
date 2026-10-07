@@ -2,13 +2,15 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Debug
 {
     public static function is_enabled()
     {
         return apply_filters( 'authorship/debug', defined( 'MOLONGUI_AUTHORSHIP_DEBUG' ) and MOLONGUI_AUTHORSHIP_DEBUG );
     }
+
     public static function console_log( $value = null, $message = '' )
     {
         if ( self::is_enabled() )
@@ -49,22 +51,26 @@ class Debug
             });
         }
     }
+
     public static function dump( $data, $backtrace = false, $in_admin = true, $die = false )
     {
         if ( apply_filters( 'authorship/disable_dump', false ) )
         {
             return;
         }
+
         if ( Request::is_from( 'ajax' ) or Request::is_from( 'api' ) or wp_is_json_request() )
         {
             return;
         }
+
         if ( !$in_admin and is_admin() )
         {
             return;
         }
 
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
         $debug = array
         (
             'file'     => ( isset( $dbt[0]['file'] )     ? $dbt[0]['file'] : '' ),
@@ -86,12 +92,14 @@ class Debug
 
         $debug['data'] = $data;
         $debug = print_r( $debug, true );
+
         if ( is_admin() )
         {
             if ( !current_user_can( 'administrator' ) )
             {
                 return;
             }
+
             add_filter( '_authorship/force_inline_dump', function( $value )
             {
                 if ( did_action( 'elementor/loaded' ) and \Elementor\Plugin::$instance->editor->is_edit_mode() )
@@ -103,11 +111,13 @@ class Debug
             });
 
             $force_inline = apply_filters( '_authorship/force_inline_dump', false );
+
             if ( !did_action( 'admin_notices' ) and !$die and !$force_inline )
             {
                 add_action( 'admin_notices', function() use ( $debug )
                 {
                     $html_message = '';
+
                     if ( Helpers::is_block_editor() and !did_action( '_authorship/hide_block_editor' ) )
                     {
                         do_action( '_authorship/hide_block_editor' );
@@ -120,6 +130,7 @@ class Debug
                     echo $html_message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 }, 0 );
             }
+
             else
             {
                 if ( $die )
@@ -148,13 +159,16 @@ class Debug
             echo esc_html( $debug );
             echo "</pre>";
         }
+
         if ( $die ) die;
     }
+
     public static function dump_filter( $value )
     {
         self::dump( $value );
         return $value;
     }
+
     public static function get_debug_data( $format = 'info' )
     {
         if ( !class_exists( 'WP_Debug_Data' ) )
@@ -163,6 +177,7 @@ class Debug
         }
 
         $data = \WP_Debug_Data::debug_data();
+
         if ( !empty( $format ) )
         {
             $data = \WP_Debug_Data::format( $data, $format );
@@ -170,12 +185,14 @@ class Debug
 
         return $data;
     }
+
     public static function display_errors()
     {
         ini_set( 'display_errors', 1 );
         ini_set( 'display_startup_errors', 1 );
         error_reporting( E_ALL );
     }
+
     public static function show_main_query()
     {
         if ( !isset( $_GET['molongui_show_query'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -188,4 +205,4 @@ class Debug
         self::dump( $wp_query );
     }
 
-} // class
+}  

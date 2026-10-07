@@ -17,7 +17,8 @@ use Molongui\Authorship\Common\Utils\Plugin;
 use Molongui\Authorship\Common\Utils\Request;
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Post extends \Molongui\Authorship\Common\Utils\Post
 {
     public function __construct()
@@ -25,15 +26,21 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         if ( self::byline_takeover() )
         {
             add_action( 'wp_head', array( $this, 'inline_styles' ) );
+
             add_action( 'pre_get_posts', array( $this, 'filter_user_posts' ), PHP_INT_MAX );
             add_filter( 'posts_where', array( $this, 'remove_author_from_where_clause' ), 10, 2 );
+
             add_filter( 'the_author_posts_link', array( $this, 'filter_the_author_posts_link' ), PHP_INT_MAX );
             add_filter( 'authorship/pre_author_link', array( $this, 'keep_author_link' ), 10, 4 );
+
             add_action( 'wp_head', array( $this, 'add_author_meta' ), -1 );
         }
+
         add_filter( 'get_usernumposts', array( $this, 'filter_post_count' ), PHP_INT_MAX, 4 );
+
         add_action( 'wp_footer', array( $this, 'add_custom_styles' ), PHP_INT_MAX );
     }
+
     public function inline_styles()
     {
         $options = Settings::get();
@@ -61,6 +68,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             <?php
         }
     }
+
     public function filter_post_count( $count, $userid, $post_type, $public_only )
     {
         $post_count = apply_filters( 'authorship/pre_post_count', null, $count, $userid, $post_type, $public_only );
@@ -71,6 +79,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         }
 
         $the_query = WP::the_query();
+
         if ( molongui_is_guest_author() and isset( $the_query->guest_author_id ) and !in_the_loop() )
         {
             $author_type = 'guest';
@@ -88,12 +97,14 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          * If you choose to use it, you do so at your own risk, as it may cause code issues.
          */
         list( $author_id, $author_type ) = apply_filters( '_authorship/post_count/author', array( $author_id, $author_type ), $count, $userid, $post_type, $public_only );
+
         if ( empty( $author_id ) || absint( $author_id ) === 0 )
         {
             return apply_filters( 'molongui_authorship/post_count', $count, $count, $userid, $post_type, $public_only );
         }
+
         $author     = new Author( $author_id, $author_type );
-        $post_count = $author->get_post_count( $post_type, true );
+        $post_count = $author->get_post_count( $post_type, 'meta' );
 
         /*!
          * DEPRECATED
@@ -120,12 +131,16 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
          */
         return apply_filters( 'molongui_authorship/post_count', $post_count, $count, $userid, $post_type, $public_only );
     }
+
+
+
     public function filter_user_posts( $wp_query )
     {
         if ( isset( $wp_query->is_guest_author ) )
         {
             return;
         }
+
         if ( Request::is_from( 'admin' ) )
         {
             $current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -139,10 +154,12 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 return;
             }
         }
+
         if ( !$wp_query->is_main_query() and apply_filters_ref_array( 'molongui_edit_main_query_only', array( true, &$wp_query ) ) )
         {
             return;
         }
+
         if ( $wp_query->is_author )
         {
             if ( !empty( $wp_query->query_vars['author'] ) )
@@ -152,6 +169,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             else
             {
                 $author = get_users( array( 'nicename' => $wp_query->query_vars['author_name'] ) );
+
                 if ( !$author )
                 {
                     return;
@@ -159,10 +177,14 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
                 $author_id = $author[0]->ID;
             }
+
             self::add_author_meta_query( $wp_query, 'user', $author_id );
+
             add_filter( '_authorship/posts_where', '__return_true' );
         }
+
     }
+
     public function remove_author_from_where_clause( $where, $wp_query )
     {
         if ( apply_filters( '_authorship/posts_where', false ) )
@@ -174,16 +196,23 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             if ( !empty( $wp_query->query_vars['author'] ) )
             {
                 global $wpdb;
+
                 $where = str_replace( ' AND '.$wpdb->posts.'.post_author IN ('.$wp_query->query_vars['author'].')', '', $where );
                 $where = str_replace( ' AND ('.$wpdb->posts.'.post_author = '.$wp_query->query_vars['author'].')' , '', $where );
+
                 $where = apply_filters( 'authorship/posts_where', $where, $_where, $wp_query );
             }
         }
+
+
         return $where;
     }
+
+
     public function filter_the_author_posts_link( $link )
     {
         $original_link = $link;
+
         $link = apply_filters( 'authorship/pre_the_author_posts_link', null, $original_link );
         if ( null !== $link )
         {
@@ -194,6 +223,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return empty( $link ) ? $original_link : $link;
     }
+
     public function keep_author_link( $link, $original_link, $author_id, $author_nicename )
     {
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -206,6 +236,8 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return $link;
     }
+
+
     public function add_author_meta()
     {
         if ( !Settings::get( 'seo_settings_enabled' ) )
@@ -218,6 +250,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         $facebook_meta  = Settings::get( 'facebook_meta_enabled' );
         $twitter_meta   = Settings::get( 'twitter_meta_enabled' );
         $meta_coauthors = Settings::get( 'html_meta_coauthors' );
+
         if ( !$html_meta and !$opengraph_meta and !$facebook_meta and !$twitter_meta )
         {
             return;
@@ -229,7 +262,9 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         {
             return;
         }
+
         $authors = self::get_authors( $post_id );
+
         if ( empty( $authors ) )
         {
             return;
@@ -248,9 +283,11 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 $meta .= "\n<!-- Author Meta Tags by Molongui Authorship, visit: https://wordpress.org/plugins/molongui-authorship/ -->\n";
             }
         }
+
         if ( is_author() or molongui_is_guest_author() )
         {
             global $wp_query;
+
             if ( molongui_is_guest_author() )
             {
                 $author_id = isset( $wp_query->guest_author_id ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
@@ -260,10 +297,12 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             {
                 $author = new Author( $wp_query->get( 'author' ), 'user' );
             }
+
             if ( !empty( $html_meta ) )
             {
                 $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
             }
+
             if ( !empty( $opengraph_meta ) )
             {
                 $meta .= $this->add_opengraph_archive_meta();
@@ -274,23 +313,29 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             switch ( $meta_coauthors )
             {
                 case 'main':
+
                     if ( !$main_author = self::get_main_author( $post_id ) )
                     {
                         return;
                     }
+
                     $author = new Author( $main_author->id, $main_author->type );
+
                     if ( !empty( $html_meta ) )
                     {
                         $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
                     }
+
                     if ( !empty( $facebook_meta ) )
                     {
                         $meta .= $this->add_facebook_author_meta( $author );
                     }
+
                     if ( !empty( $twitter_meta ) )
                     {
                         $meta .= $this->add_twitter_author_meta( $author );
                     }
+
                     if ( !empty( $opengraph_meta ) and empty( $facebook_meta ) )
                     {
                         $meta .= $this->add_opengraph_author_meta( $author );
@@ -299,6 +344,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                     break;
 
                 case 'aio':
+
                     if ( !empty( $html_meta ) )
                     {
                         $meta .= '<meta name="author" content="' . esc_attr( self::get_byline( $post_id ) ) . '">'."\n";
@@ -307,14 +353,17 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                     foreach ( $authors as $auth )
                     {
                         $author = new Author( $auth->id, $auth->type );
+
                         if ( !empty( $facebook_meta ) )
                         {
                             $meta .= $this->add_facebook_author_meta( $author );
                         }
+
                         if ( !empty( $twitter_meta ) )
                         {
                             $meta .= $this->add_twitter_author_meta( $author );
                         }
+
                         if ( !empty( $opengraph_meta ) and empty( $facebook_meta ) )
                         {
                             $meta .= $this->add_opengraph_author_meta( $author );
@@ -329,18 +378,22 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                     foreach ( $authors as $auth )
                     {
                         $author = new Author( $auth->id, $auth->type );
+
                         if ( !empty( $html_meta ) )
                         {
                             $meta .= '<meta name="author" content="' . esc_attr( $author->get_display_name() ) . '">'."\n";
                         }
+
                         if ( !empty( $facebook_meta ) )
                         {
                             $meta .= $this->add_facebook_author_meta( $author );
                         }
+
                         if ( !empty( $twitter_meta ) )
                         {
                             $meta .= $this->add_twitter_author_meta( $author );
                         }
+
                         if ( !empty( $opengraph_meta ) and empty( $facebook_meta ) )
                         {
                             $meta .= $this->add_opengraph_author_meta( $author );
@@ -355,10 +408,13 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         echo $meta;
     }
+
     public function add_twitter_author_meta( $author )
     {
         $meta = '';
+
         $twitter = $author->get_social_profile( 'twitter' );
+
         if ( filter_var( $twitter, FILTER_VALIDATE_URL ) )
         {
             $urls = array
@@ -379,6 +435,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
             $twitter = rtrim( str_replace( $urls, '@', $twitter ), '/' );
         }
+
         if ( !empty( $twitter ) )
         {
             $meta .= '<meta name="twitter:creator" content="' . esc_attr( $twitter ) . '" />' . "\n";
@@ -386,10 +443,13 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return $meta;
     }
+
     public function add_facebook_author_meta( $author )
     {
         $meta = '';
+
         $facebook = $author->get_social_profile( 'facebook' );
+
         if ( filter_var( $facebook, FILTER_VALIDATE_URL ) )
         {
             $urls = array
@@ -404,6 +464,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
             $facebook = rtrim( str_replace( $urls, '', $facebook ), '/' );
         }
+
         if ( !empty( $facebook ) )
         {
             $meta .= '<meta property="article:author" content="' . esc_attr( $facebook ) . '" />' . "\n";
@@ -411,22 +472,27 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return $meta;
     }
+
     public function add_opengraph_author_meta( $author )
     {
         $meta = '';
+
         $meta .= '<meta property="article:author" content="' . esc_attr( $author->get_display_name() ) . '" />' . "\n";
 
         return $meta;
     }
+
     public function add_opengraph_archive_meta()
     {
         global $wp_query;
         $author_id   = null;
         $author_type = null;
+
         if ( !isset( $wp_query ) )
         {
             return;
         }
+
         if ( molongui_is_guest_author() )
         {
             $author_id   = isset( $wp_query->guest_author_id ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
@@ -437,29 +503,34 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             $author_id   = $wp_query->get( 'author' );
             $author_type = 'user';
         }
+
         if ( empty( $author_id ) and empty( $author_type ) )
         {
             return;
         }
+
         $author = new Author( $author_id, $author_type );
-        $author_name   = $author->get_display_name();
-        $author_first  = $author->get_first_name();
-        $author_last   = $author->get_last_name();
-        $author_bio    = esc_html( $author->get_description() );
-        $author_link   = $author->get_archive_url();
-        $author_avatar = $author->get_avatar( 'full', 'url', 'local' );
+
+		$author_username = $author->get_slug();
+        $author_first    = $author->get_first_name();
+        $author_last     = $author->get_last_name();
+        $author_bio      = esc_html( $author->get_description() );
+        $author_link     = $author->get_archive_url();
+        $author_avatar   = $author->get_avatar( 'full', 'url', 'local' );
 
         $og  = '';
         $og .= '<meta property="og:type" content="profile" />' . "\n";
-        $og .= ( $author_link   ? '<meta property="og:url" content="' . esc_attr( $author_link ) . '" />'."\n" : '' );
+        $og .= ( $author_link ? '<meta property="og:url" content="' . esc_attr( $author_link ) . '" />'."\n" : '' );
         $og .= ( $author_avatar ? '<meta property="og:image" content="' . esc_attr( $author_avatar ) . '" />'."\n" : '' );
-        $og .= ( $author_bio    ? '<meta property="og:description" content="' . esc_attr( $author_bio ) . '" />'."\n" : '' );
-        $og .= ( $author_first  ? '<meta property="profile:first_name" content="' . esc_attr( $author_first ) . '" />'."\n" : '' );
-        $og .= ( $author_last   ? '<meta property="profile:last_name" content="' . esc_attr( $author_last ) . '" />'."\n" : '' );
-        $og .= ( $author_name   ? '<meta property="profile:username" content="' . esc_attr( $author_name ) . '" />'."\n" : '' );
+        $og .= ( $author_bio ? '<meta property="og:description" content="' . esc_attr( $author_bio ) . '" />'."\n" : '' );
+        $og .= ( $author_first ? '<meta property="profile:first_name" content="' . esc_attr( $author_first ) . '" />'."\n" : '' );
+        $og .= ( $author_last ? '<meta property="profile:last_name" content="' . esc_attr( $author_last ) . '" />'."\n" : '' );
+        $og .= ( $author_username ? '<meta property="profile:username" content="' . esc_attr( $author_username ) . '" />'."\n" : '' );
 
         return $og;
     }
+
+
     public function add_custom_styles()
     {
         $custom_css = Settings::get_custom_css();
@@ -472,37 +543,64 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             Debug::console_log( $custom_css, "Custom CSS loaded." );
         }
     }
+
+
+    private static function get_author_data_from_reference( $author_ref )
+    {
+        $parsed = Post_Authorship::parse_reference( $author_ref );
+
+        if ( !$parsed )
+        {
+            return false;
+        }
+
+        return (object) array
+        (
+            'ID'   => (int)$parsed['id'],
+            'id'   => (int)$parsed['id'],
+            'type' => $parsed['type'],
+            'ref'  => $parsed['ref'],
+        );
+    }
+
     public static function get_main_author( $post_id )
     {
-        $options = Settings::get();
-        $meta    = get_post_meta( $post_id, '_molongui_main_author', true );
-        $data    = false;
+        $post_id = absint( $post_id );
 
-        if ( empty( $meta ) or ( !$options['guest_author_enabled'] and !$options['co_authors_enabled'] ) )
+        if ( !$post_id )
         {
-            if ( $post_author = get_post_field( 'post_author', $post_id ) )
-            {
-                $data = self::get_wp_author( $post_id );
-            }
+            return false;
         }
-        else
+
+        $options = Settings::get();
+
+        if ( !self::is_post_type_enabled( '', $post_id ) or ( !$options['guest_author_enabled'] and !$options['co_authors_enabled'] ) )
         {
-            $split      = explode( '-', $meta );
-            $data       = new \stdClass();
-            $data->ID   = $split[1];
-            $data->id   = $split[1];
-            $data->type = $split[0];
-            $data->ref  = $meta;
-            if ( !self::is_post_type_enabled( '', $post_id )
-                 or
-                 $data->type == 'guest' and !$options['guest_author_enabled'] )
-            {
-                $data = self::get_wp_author( $post_id );
-            }
+            return self::get_wp_author( $post_id );
+        }
+
+        $author_ref = Post_Authorship::get_main_author_ref( $post_id, true );
+
+        if ( empty( $author_ref ) )
+        {
+            return false;
+        }
+
+        $data = self::get_author_data_from_reference( $author_ref );
+
+        if ( !$data )
+        {
+            return false;
+        }
+
+        if ( 'guest' === $data->type and !$options['guest_author_enabled'] )
+        {
+            return self::get_wp_author( $post_id );
         }
 
         return $data;
     }
+
     public static function get_wp_author( $post_id )
     {
         $data = false;
@@ -518,11 +616,13 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return $data;
     }
+
     public static function get_authors( $post_id = null, $key = '' )
     {
         if ( empty( $post_id ) or !is_integer( $post_id ) )
         {
             $post_id = self::get_id();
+
             if ( !$post_id )
             {
                 return false;
@@ -530,7 +630,8 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         }
 
         $post_authors = array();
-        if ( !in_array( self::get_post_type( $post_id ), Settings::enabled_post_types() ) )
+
+        if ( !in_array( self::get_post_type( $post_id ), Settings::enabled_post_types(), true ) )
         {
             $wp_author = self::get_wp_author( $post_id );
 
@@ -543,50 +644,57 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         }
         else
         {
-            $main_author = self::get_main_author( $post_id );
-            if ( empty( $main_author ) )
-            {
-                return false;
-            }
-            if ( !Settings::is_enabled( 'co-authors' ) )
-            {
-                $post_authors[$main_author->ref] = $main_author;
-            }
-            else
-            {
-                $authors = get_post_meta( $post_id, '_molongui_author', false );
-                if ( !empty( $authors ) )
-                {
-                    $guest_enabled = Settings::is_enabled( 'guest-author' );
+            $authorship       = Post_Authorship::get_authorship( $post_id, true );
+            $author_refs      = $authorship['authors'];
+            $main_author_ref  = $authorship['main'];
+            $main_author      = !empty( $main_author_ref ) ? self::get_author_data_from_reference( $main_author_ref ) : false;
+            $guest_enabled    = Settings::is_enabled( 'guest-author' );
+            $coauthors_enabled = Settings::is_enabled( 'co-authors' );
 
-                    foreach ( $authors as $author_ref )
-                    {
-                        $split = explode( '-', $author_ref );
-                        if ( empty( $split[1] ) )
-                        {
-                            continue;
-                        }
-                        if ( $split[1] == $main_author->id )
-                        {
-                            continue;
-                        }
-                        if ( $split[0] === 'guest' and !$guest_enabled )
-                        {
-                            continue;
-                        }
-                        $post_authors[$author_ref] = (object) array( 'ID' => (int)$split[1], 'id' => (int)$split[1], 'type' => $split[0], 'ref' => $author_ref );
-                    }
+            if ( $main_author and 'guest' === $main_author->type and !$guest_enabled )
+            {
+                $main_author     = self::get_wp_author( $post_id );
+                $main_author_ref = $main_author ? $main_author->ref : '';
+            }
+
+            if ( !$coauthors_enabled and $main_author )
+            {
+                $author_refs = array( $main_author_ref );
+            }
+
+            foreach ( $author_refs as $author_ref )
+            {
+                $author = self::get_author_data_from_reference( $author_ref );
+
+                if ( !$author )
+                {
+                    continue;
                 }
+
+                if ( 'guest' === $author->type and !$guest_enabled )
+                {
+                    continue;
+                }
+
+                $post_authors[$author->ref] = $author;
+            }
+
+            if ( $main_author )
+            {
+                unset( $post_authors[$main_author->ref] );
                 $post_authors = array_merge( array( $main_author->ref => $main_author ), $post_authors );
             }
         }
-        if ( ! $key )
+
+        if ( !$key )
         {
-            return array_values( $post_authors );
+            return !empty( $post_authors ) ? array_values( $post_authors ) : false;
         }
+
         if ( !empty( $post_authors ) )
         {
             $values = array();
+
             foreach ( $post_authors as $author )
             {
                 if ( is_object( $author ) and property_exists( $author, $key ) )
@@ -594,25 +702,27 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                     $values[] = $author->$key;
                 }
             }
+
             return $values;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
+
     public static function get_coauthored( $authors, $get_all = false, $exclude = array(), $entry = 'post', $meta_query = array() )
     {
         if ( empty( $authors ) )
         {
             return array();
         }
+
         if ( ! is_array( $authors ) )
         {
             $authors = array( $authors );
         }
 
         $options = Settings::get();
+
         switch ( $entry )
         {
             case 'all':
@@ -636,9 +746,11 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         $meta_query_authors = array();
         $posts              = array();
+
         if ( count( $authors ) > 1 )
         {
             $meta_query_authors['relation'] = 'AND';
+
             foreach ( $authors as $author )
             {
                 $author_ref = ( is_object( $author ) && isset( $author->ref ) ) ? $author->ref : $author;
@@ -663,6 +775,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 'compare' => '='
             );
         }
+
         $meta_query_final = array();
 
         if ( ! empty( $meta_query_authors ) )
@@ -686,6 +799,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 $meta_query_final
             );
         }
+
         $args = array
         (
             'post_type'      => $entries,
@@ -701,11 +815,15 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             'meta_query'          => $meta_query_final,
             'no_found_rows'       => true,
             'ignore_sticky_posts' => true,
+
             'site_id'             => get_current_blog_id(),
             'language'            => Helpers::get_language(),
         );
+
         $args = apply_filters( 'molongui_authorship/post/get_coauthored_args', $args, $authors, $get_all, $exclude, $entry, $meta_query );
+
         $data = new \WP_Query( $args );
+
         if ( !empty( $data->posts ) )
         {
             $posts = $data->posts;
@@ -713,18 +831,23 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return ( !empty( $posts ) ? $posts : array() );
     }
+
     public static function get_byline( $post_id = null, $separator = null, $last_separator = null, $linked = false )
     {
         $byline = '';
+
         if ( is_null( $post_id ) or !is_integer( $post_id ) or !$post_id )
         {
             $post_id = self::get_id();
+
             if ( !$post_id )
             {
                 return $byline;
             }
         }
+
         $post_authors = self::get_authors( $post_id );
+
         if ( !$post_authors )
         {
             return $byline;
@@ -746,6 +869,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
              * @since 5.0.0
              */
             $names_to_display = apply_filters( 'molongui_authorship/co_authors_in_byline', Settings::get( 'co_authors_in_byline_format', 'all' ), $post_id, $post_authors );
+
             if ( is_numeric( $names_to_display ) )
             {
                 $names_to_display = max( 1, min( (int) $names_to_display, $count ) );
@@ -755,6 +879,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 $names_to_display = $count;
             }
         }
+
         $byline_authors = $post_authors;
         if ( $names_to_display < $count )
         {
@@ -765,6 +890,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 $show_remaining = true;
             }
         }
+
         list( $separator, $last_separator ) = self::get_byline_separators( $separator, $last_separator, $names_to_display );
 
         $i = 0;
@@ -773,6 +899,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             $divider = ( $i == 0 ? '' : ( $i == ( $names_to_display - 1 ) ? $last_separator : $separator ) );
 
             $author = new Author( $byline_author->id, $byline_author->type );
+
             if ( $linked )
             {
                 $item = $author->get_link();
@@ -781,14 +908,19 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             {
                 $item = esc_html( $author->get_display_name() );
             }
+
             $item = apply_filters( 'authorship/byline_item', $divider.$item, $item, $divider, $i, $byline_author, $names_to_display );
+
             $byline .= $item;
+
             ++$i;
         }
+
         if ( $show_remaining and $count > $names_to_display )
         {
             $byline .= $last_separator . sprintf( __( '%d more', 'molongui-authorship' ), $count - $names_to_display );
         }
+
         Debug::console_log(
                 array(
                         'post_id' => $post_id,
@@ -801,8 +933,10 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 ),
                 "Byline information"
         );
+
         return apply_filters( 'authorship/post_byline', $byline, $post_id, $post_authors );
     }
+
     public static function get_byline_separators( $separator = null, $last_separator = null, $count = null )
     {
         $options = Settings::get();
@@ -853,15 +987,19 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return array( $separator, $last_separator );
     }
+
     public static function add_byline_support()
     {
         $add_byline_support = Settings::get( 'add_byline_support', true );
+
         return apply_filters( 'molongui_authorship/add_byline_support', $add_byline_support );
     }
+
     public static function byline_takeover()
     {
         return ( Settings::is_guest_author_enabled() or Settings::is_co_authors_enabled() );
     }
+
     public static function get_public_post_status( $post_type = '' )
     {
         $post_status = array( 'draft', 'publish', 'future', 'pending', 'private' );
@@ -873,6 +1011,7 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return apply_filters( 'authorship/post_status', $post_status );
     }
+
     public static function is_post_type_enabled( $post_type = '', $post_id = null )
     {
         $post_type  = !empty( $post_type ) ? $post_type : Post::get_post_type( $post_id );
@@ -880,12 +1019,15 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
         return in_array( $post_type, $post_types );
     }
+
     public static function add_author_meta_query( &$wp_query, $author_type = 'user', $author_id = 0 )
     {
         $author_type = in_array( $author_type, array( 'user', 'guest' ) ) ? $author_type : 'user';
         $author_id   = !empty( $author_id ) ? $author_id : ( is_admin() ? get_current_user_id() : ( !empty( $wp_query->query_vars['author'] ) ? $wp_query->query_vars['author'] : 0 ) );
+
         $meta_query = $wp_query->get( 'meta_query' );
         $meta_query = ( !empty( $meta_query ) and is_array( $meta_query ) ) ? $meta_query : array();
+
         $meta_query[] = array
         (
             array
@@ -895,10 +1037,13 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
                 'compare' => '==',
             ),
         );
+
         $meta_query = apply_filters( 'authorship/author_meta_query', $meta_query, $wp_query, $author_type, $author_id );
 
         $wp_query->set( 'meta_query', $meta_query );
     }
+
+
     public static function is_guest( $post_id = null )
     {
         if ( empty( $post_id ) )
@@ -912,20 +1057,17 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
             $post_id = $post->ID;
         }
-        $author = get_post_meta( $post_id, '_molongui_main_author', true );
-        if ( !empty( $author ) )
-        {
-            if ( strncmp( $author, 'guest', strlen( 'guest' ) ) === 0 )
-            {
-                return true;
-            }
-        }
-        return false;
+
+        $author = Post_Authorship::parse_reference( Post_Authorship::get_main_author_ref( $post_id, true ) );
+
+        return ( $author and 'guest' === $author['type'] );
     }
+
     public static function has_author_box( $post = null )
     {
         return true;
     }
+
     public static function has_guest_author( $post_id = null )
     {
         if ( empty( $post_id ) )
@@ -939,21 +1081,22 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
 
             $post_id = $post->ID;
         }
-        $authors = get_post_meta( $post_id, '_molongui_author', false );
-        if ( empty( $authors ) )
+
+        $authors = Post_Authorship::get_author_refs( $post_id, true );
+
+        foreach ( $authors as $author_ref )
         {
-            return false;
-        }
-        foreach ( $authors as $author )
-        {
-            $prefix = 'guest';
-            if ( strncmp( $author, $prefix, strlen( $prefix ) ) === 0 )
+            $author = Post_Authorship::parse_reference( $author_ref );
+
+            if ( $author and 'guest' === $author['type'] )
             {
                 return true;
             }
         }
+
         return false;
     }
+
     public static function has_multiple_authors( $post_id = null )
     {
         if ( empty( $post_id ) )
@@ -966,8 +1109,9 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
             $post_id = $post->ID;
         }
 
-        return count( get_post_meta( $post_id, '_molongui_author', false ) ) > 1;
+        return count( Post_Authorship::get_author_refs( $post_id, true ) ) > 1;
     }
+
     public static function is_multiauthor_link( $link )
     {
         $arg = '?molongui_byline=true';
@@ -975,5 +1119,6 @@ class Post extends \Molongui\Authorship\Common\Utils\Post
         return ( strpos( $link, $arg ) !== false ? true : false );
     }
 
-} // class
+}  
+
 new Post();

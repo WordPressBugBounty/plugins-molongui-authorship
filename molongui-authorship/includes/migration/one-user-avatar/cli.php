@@ -15,25 +15,32 @@ namespace Molongui\Authorship\Migration\One_User_Avatar;
 
 use Molongui\Authorship\Migration\One_User_Avatar;
 use Molongui\Authorship\Migration\Utils;
+
 class Cli
 {
     protected $name, $id;
+
     use Utils;
+
     public function __construct()
     {
         $this->name = One_User_Avatar::instance()->get_name();
         $this->id   = One_User_Avatar::instance()->get_id();
+
         \WP_CLI::line('');
         \WP_CLI::line( \WP_CLI::colorize( "%BMolongui Authorship%n - The {$this->name} data migration tool is running..." ) );
+
             $this->migrate_avatars();
 
             \WP_CLI::line('');
             \WP_CLI::success( sprintf( "%s data migration completed.", $this->name ) );
     }
+
     public function migrate_avatars()
     {
         \WP_CLI::line('');
         \WP_CLI::line( \WP_CLI::colorize( "%YNotice:%n Starting user avatar data migration..." ) );
+
         $relationships = One_User_Avatar::instance()->get_user_attachment_relationships();
 
         if ( !empty( $relationships ) )

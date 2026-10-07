@@ -15,16 +15,25 @@ namespace Molongui\Authorship\Migration;
 
 use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Settings;
+
 class Publishpress_Authors
 {
     protected $name = 'Publishpress Authors';
+
     protected $path = 'publishpress-authors/publishpress-authors.php';
+
     protected $id = 'ppma';
+
     public $author_tax = 'author';
+
     public $guest_user_role = 'ppma_guest_author';
-    public $slug_prefix_pattern = ''; // The plugin doesn't add any prefix.
+
+    public $slug_prefix_pattern = '';  
+
     use Utils;
+
     use Singleton;
+
     public function __construct()
     {
         if ( apply_filters( 'molongui_authorship/enable_publishpress_authors_migration', true ) )
@@ -33,50 +42,62 @@ class Publishpress_Authors
             {
                 require_once 'publishpress-authors/cron.php';
             }
+
             if ( defined( 'WP_CLI' ) && WP_CLI )
             {
                 add_filter( 'molongui_authorship/migrate_publishpress_authors', '__return_true' );
             }
         }
     }
+
     public function get_name()
     {
         return $this->name;
     }
+
     public function get_path()
     {
         return $this->path;
     }
+
     public function get_id()
     {
         return $this->id;
     }
+
     public function get_author_tax()
     {
         return $this->author_tax;
     }
+
     public function get_guest_user_role()
     {
         return $this->guest_user_role;
     }
+
     public function get_prefix()
     {
         return $this->slug_prefix_pattern;
     }
+
     public function get_guest_authors()
     {
         $guests = array();
 
         $with_user_account    = $this->get_guest_authors_with_user_account();
         $without_user_account = $this->get_guest_authors_without_user_account();
+
         $merged = array_merge( $with_user_account, $without_user_account );
+
         $guests = array_map( 'unserialize', array_unique( array_map( 'serialize', $merged ) ) );
 
         return $guests;
     }
+
     public function get_guest_authors_with_user_account()
     {
         global $wpdb;
+
         $sql = $wpdb->prepare( "
             SELECT u.ID
             FROM {$wpdb->users} u
@@ -84,9 +105,11 @@ class Publishpress_Authors
             WHERE um.meta_key = %s
             AND um.meta_value LIKE %s
         ", $wpdb->prefix . 'capabilities', '%' . $wpdb->esc_like( '"' . $this->get_guest_user_role() . '"' ) . '%' );
+
         $users = $wpdb->get_results( $sql );
 
         $guests = array();
+
         $meta_keys = array
         (
             'first_name',
@@ -98,7 +121,9 @@ class Publishpress_Authors
         foreach ( $users as $user )
         {
             $user_id = $user->ID;
+
             $placeholders = implode( ',', array_fill( 0, count( $meta_keys ), '%s' ) );
+
             $meta_sql = $wpdb->prepare( "
                 SELECT meta_key, meta_value
                 FROM {$wpdb->usermeta}
@@ -107,18 +132,22 @@ class Publishpress_Authors
             ", array_merge( array( $user_id ), $meta_keys ) );
 
             $meta_results = $wpdb->get_results( $meta_sql );
+
             $meta = array();
             foreach ( $meta_results as $meta_row )
             {
                 $meta[$meta_row->meta_key] = maybe_unserialize( $meta_row->meta_value );
             }
+
             $userdata = get_userdata( $user_id );
+
             $term = get_term_by( 'slug', $userdata->user_login, $this->get_author_tax() );
 
             if ( $term and !is_wp_error( $term ) )
             {
                 $job_title = get_term_meta( $term->term_id, 'job_title', true );
             }
+
             $guests[] = (object) array
             (
                 'ID'           => $userdata->ID,
@@ -136,11 +165,13 @@ class Publishpress_Authors
 
         return $guests;
     }
+
     public function get_guest_authors_without_user_account()
     {
         global $wpdb;
 
         $guests = array();
+
         $author_terms = $wpdb->get_results( $wpdb->prepare( "
             SELECT t.*
             FROM {$wpdb->terms} t
@@ -148,6 +179,7 @@ class Publishpress_Authors
             WHERE tt.taxonomy = %s
             AND (tt.description IS NULL OR tt.description = '')
         ", 'author' ) );
+
         if ( empty( $author_terms ) )
         {
             error_log( 'No author terms found with empty description' );
@@ -157,11 +189,14 @@ class Publishpress_Authors
         foreach ( $author_terms as $term )
         {
             $term_id = $term->term_id;
+
             if ( get_term_meta( $term_id, 'user_id', true ) )
             {
                 continue;
             }
+
             $meta = get_term_meta( $term_id );
+
             $guests[] = (object) array
             (
                 'ID'           => $term_id,
@@ -179,11 +214,13 @@ class Publishpress_Authors
 
         return $guests;
     }
+
     public function convert_guest( $item )
     {
         global $wpdb;
 
         $updating = false;
+
         $existing = $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT pm.post_id 
@@ -260,7 +297,9 @@ class Publishpress_Authors
 
             return;
         }
+
         update_post_meta( $post_id, '_molongui_guest_author_job', $item->job_title );
+
         if ( !$updating )
         {
             if ( 'term' == $item->source )
@@ -272,6 +311,7 @@ class Publishpress_Authors
                 update_post_meta( $post_id, '_molongui_guest_author_ppma_user_id', $item->ID );
             }
         }
+
         if ( $item->avatar )
         {
             update_post_meta( $post_id, '_thumbnail_id', $item->avatar );
@@ -299,17 +339,22 @@ class Publishpress_Authors
             error_log( sprintf( "*** Updated guest author with ID #%s.", $post_id ) );
         }
     }
+
     public function get_posts()
     {
         global $wpdb;
 
         $supported_post_types = array( 'post' );
+
         if ( class_exists( 'MultipleAuthors\Classes\Utils' ) )
         {
             $supported_post_types = \MultipleAuthors\Classes\Utils::get_enabled_post_types();
         }
+
         $supported_post_types = apply_filters( 'molongui_authorship/ppma_supported_post_types', $supported_post_types );
+
         $placeholders = implode( ',', array_fill( 0, count( $supported_post_types ), '%s' ) );
+
         return $wpdb->get_col(
             $wpdb->prepare( "
                 SELECT DISTINCT p.ID
@@ -321,6 +366,7 @@ class Publishpress_Authors
             ", array_merge( array( $this->get_author_tax() ), $supported_post_types ) )
         );
     }
+
     public function convert_postmeta( $post_id )
     {
         $author_terms = wp_get_object_terms( $post_id, 'author', array( 'orderby' => 'term_order', 'order' => 'ASC' ) );
@@ -332,6 +378,7 @@ class Publishpress_Authors
             foreach ( $author_terms as $author_term )
             {
                 $found = false;
+
                 $author = $this->get_author_by_term( $author_term, 'guest' );
 
                 if ( !empty( $author ) and is_a( $author, 'WP_Post' ) )
@@ -349,9 +396,11 @@ class Publishpress_Authors
                         $found = true;
                     }
                 }
+
                 if ( !$found )
                 {
                     $this->slug_prefix_pattern = '#^cap\-#';
+
                     $author = $this->get_author_by_term( $author_term, 'guest' );
 
                     if ( !empty( $author ) and is_a( $author, 'WP_Post' ) )
@@ -381,6 +430,7 @@ class Publishpress_Authors
                 if ( apply_filters( 'molongui_authorship/delete_ppma_taxonomies', false ) )
                 {
                     wp_remove_object_terms( $post_id, array( $author_term->term_id ), $this->get_author_tax() );
+
                     if ( empty( get_objects_in_term( $author_term->term_id, $this->get_author_tax() ) ) )
                     {
                         wp_delete_term( $author_term->term_id, $this->get_author_tax() );
@@ -391,7 +441,9 @@ class Publishpress_Authors
             if ( !empty( $post_authors ) )
             {
                 $this->delete_molongui_authorship_meta( $post_id );
+
                 $this->set_post_main_author( $post_id, $post_authors[0]->ID, $this->get_author_type( $post_authors[0] ) );
+
                 foreach ( $post_authors as $post_author )
                 {
                     $this->set_post_author( $post_id, $post_author->ID, $this->get_author_type( $post_author ) );
@@ -406,5 +458,6 @@ class Publishpress_Authors
         }
     }
 
-} // class
+}  
+
 new Publishpress_Authors();

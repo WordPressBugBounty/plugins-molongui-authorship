@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -31,6 +33,7 @@ add_filter( 'authorship/pre_author_link', function( $link, $original_link, $auth
 
     return $link;
 }, 10, 4 );
+
 add_filter( 'the_seo_framework_title_from_generation', function ( $generated, $args )
 {
     global $wp_query;

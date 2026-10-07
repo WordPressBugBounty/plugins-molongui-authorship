@@ -5,7 +5,8 @@ namespace Molongui\Authorship\Common\Modules\Settings;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Control
 {
     public $_saved;
@@ -39,14 +40,17 @@ class Control
     public $_options_prefix;
 
     public $allowed_html;
+
     public function __construct( $data, $group = '', $key = '', $prefix = 'molongui' )
     {
         if ( empty( $data ) )
         {
             return;
         }
+
         if ( empty( $key ) ) $key = MOLONGUI_AUTHORSHIP_PREFIX.'_options';
         $this->_saved = (array) get_option( $key, array() );
+
         $this->_group			= $group;
         $this->_data 			= $data;
         $this->_type			= $data['type'];
@@ -175,6 +179,7 @@ class Control
                 'class' => array(),
                 'style' => array(),
             ),
+
             'svg'    => array
             (
                 'class'           => array(),
@@ -182,7 +187,7 @@ class Control
                 'xmlns'           => array(),
                 'width'           => array(),
                 'height'          => array(),
-                'viewbox'         => array(), // Must be lowercase!
+                'viewbox'         => array(),  
                 'role'            => array(),
                 'fill'            => array(),
                 'aria-hidden'     => array(),
@@ -216,7 +221,9 @@ class Control
                 'stroke-width' => true,
             ),
         );
+
     }
+
     private function _help()
     {
         $help = '';
@@ -268,6 +275,7 @@ class Control
 
         return $help;
     }
+
     private function prepend()
     {
         $help  = $this->_help();
@@ -289,15 +297,17 @@ class Control
 
         return $html;
     }
+
     private function append()
     {
         $html  = '';
         $html .= empty( $this->_data['notice'] ) ? '' : '<div class="m-option-notice">'.wp_kses( $this->_data['notice'], $this->allowed_html ).'</div>';
-        $html .= '</div>'; // Close .m-option
-        $html .= '</div>'; // Close .m-card
+        $html .= '</div>';  
+        $html .= '</div>';  
 
         return $html;
     }
+
     public function __toString()
     {
         switch ( $this->_type )
@@ -327,10 +337,12 @@ class Control
             default	:               return '';
         }
     }
+
     private function title()
     {
         return '<h2 class="m-section-title">' . esc_html( $this->_data['label'] ) . '</h2>';
     }
+
     private function header()
     {
         $output = '';
@@ -389,6 +401,7 @@ class Control
 
         return $output;
     }
+
     private function link()
     {
         $output = '';
@@ -403,6 +416,7 @@ class Control
 
         return $output;
     }
+
     private function banner()
     {
         $output = '';
@@ -451,6 +465,7 @@ class Control
 
         return $output;
     }
+
     private function callback()
     {
         $output = $this->prepend();
@@ -460,6 +475,7 @@ class Control
         $output .= $this->append();
         return $output;
     }
+
     private function notice()
     {
         $title = empty( $this->_data['title'] ) ? '' : $this->_data['title'];
@@ -475,6 +491,7 @@ class Control
 
         return $output;
     }
+
     private function toggleOFF()
     {
         $output  = $this->prepend();
@@ -524,6 +541,7 @@ class Control
 
         return $toggle;
     }
+
     private function toggle_group()
     {
         $output  = $this->prepend();
@@ -545,6 +563,7 @@ class Control
 
         return $output;
     }
+
     private function dropdown()
     {
         $value  = $this->_value;
@@ -578,6 +597,7 @@ class Control
 
         return $output;
     }
+
     private function inline_dropdown()
     {
         $saved = $this->_value;
@@ -596,6 +616,7 @@ class Control
                 $value = $this->_data['options'][array_keys( $this->_data['options'] )[0]]['label'];
             }
         }
+
         $tmp = explode( '{input}', $this->_data['label'] );
         foreach ( $tmp as $key => $part ) if ( !empty( $part ) ) $tmp[$key] = '<label class="label-inline-dropdown" for="'.esc_attr( $this->_id ).'">'.wp_kses( $part, $this->allowed_html ).'</label>';
         $label = $tmp[0].'{input}'.$tmp[1];
@@ -629,6 +650,7 @@ class Control
 
         return $output;
     }
+
     private function select_wp_page()
     {
         $args = array
@@ -644,15 +666,18 @@ class Control
             'post_status' => 'publish',
         );
         $wp_pages = get_pages( $args );
+
         $options = array();
         foreach ( $wp_pages as $wp_page )
         {
             $options[$wp_page->ID]['label'] = $wp_page->post_title;
         }
         $this->_data['options'] = $options;
-        $this->_data['class']   = 'search'; // Add a scroll if more than 8 items to list.
+        $this->_data['class']   = 'search';  
+
         return $this->inline_dropdown();
     }
+
     private function radio()
     {
         $output = $this->prepend();
@@ -672,6 +697,7 @@ class Control
 
         return $output;
     }
+
     private function radio_text()
     {
         $output = $this->prepend();
@@ -692,6 +718,7 @@ class Control
 
         return $output;
     }
+
     private function number()
     {
         $output = $this->prepend();
@@ -709,6 +736,7 @@ class Control
 
         return $output;
     }
+
     private function inline_number()
     {
         $output = $this->prepend();
@@ -729,6 +757,7 @@ class Control
 
         return $output;
     }
+
     private function text()
     {
         $output = $this->prepend();
@@ -747,6 +776,7 @@ class Control
 
         return $output;
     }
+
     private function inline_text()
     {
         $output = $this->prepend();
@@ -767,6 +797,7 @@ class Control
 
         return $output;
     }
+
     private function color()
     {
         $output = $this->prepend();
@@ -785,6 +816,7 @@ class Control
 
         return $output;
     }
+
     private function textarea()
     {
         $output = $this->prepend();
@@ -804,6 +836,7 @@ class Control
 
         return $output;
     }
+
     private function button()
     {
         $output = '';
@@ -855,10 +888,12 @@ class Control
 
         return $output;
     }
+
     private function export()
     {
         $output = '';
         $button = ( empty( $this->_data['button'] ) or !$this->_data['button']['display'] ) ? false : true;
+
         $all_options = wp_load_alloptions();
         $options_data = array();
         foreach( $all_options as $option_name => $this->_value )
@@ -889,6 +924,7 @@ class Control
 
         return $output;
     }
+
     private function unveil()
     {
         $output = '';
@@ -907,4 +943,4 @@ class Control
         return $output;
     }
 
-} // class
+}  

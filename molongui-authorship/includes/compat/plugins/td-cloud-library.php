@@ -2,10 +2,13 @@
 
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 add_filter( 'molongui_authorship_filter_the_author_display_name_post_id', function( $post_id, $post, $display_name )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+
+
     $i = 6;
     if ( isset( $dbt[$i]['function'] ) and $dbt[$i]['function'] == 'get_the_author_meta' )
     {
@@ -28,19 +31,26 @@ add_filter( 'molongui_authorship_filter_the_author_display_name_post_id', functi
         {
         }
     }
+
     return $post_id;
 }, 10, 3 );
+
 add_filter( 'molongui_authorship_dont_filter_the_author_display_name', function( $default, $display_name, $user_id, $original_user_id, $post, $dbt )
 {
     $i       = 3;
     $fn      = 'get_the_author_meta';
     $classes = array( 'tdb_state_category', 'tdb_state_tag', 'tdb_state_date', 'tdb_state_search' );
+
     if ( isset( $dbt[$i]['function'] ) and $dbt[$i]['function'] == $fn and isset( $dbt[$i+1]['class'] ) and in_array( $dbt[$i+1]['class'], $classes ) ) return true;
+
     return $default;
 }, 10, 6 );
+
 add_filter( 'molongui_authorship_filter_link_post_id', function( $post_id, $post, $link )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
+
+
     $i = 7;
     if ( isset( $dbt[$i]['function'] ) and $dbt[$i]['function'] == 'get_author_posts_url' and isset( $dbt[$i+1]['class'] ) and $dbt[$i+1]['class'] == 'tdb_state_single' )
     {
@@ -48,26 +58,38 @@ add_filter( 'molongui_authorship_filter_link_post_id', function( $post_id, $post
         $tdcl_query = $tdb_state_single->get_wp_query();
         return $tdcl_query->queried_object_id;
     }
+
     return $post_id;
 }, 10, 3 );
+
 add_filter( 'get_the_author_user_email', function( $value, $user_id = null, $original_user_id = null )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 5 );
+
     $i = 3;
+
+
     if ( isset( $dbt[$i]['function'] ) and $dbt[$i]['function'] == 'get_the_author_meta' and isset( $dbt[$i+1]['class'] ) and $dbt[$i+1]['class'] == 'tdb_state_single' )
     {
         global $tdb_state_single;
         $tdcl_query = $tdb_state_single->get_wp_query();
+
         $post_authors = Post::get_authors( $tdcl_query->queried_object_id );
+
         $author = new Molongui\Authorship\Author( $post_authors[0]->id, $post_authors[0]->type );
+
         add_filter( '_authorship/get_avatar_data/filter/post_id', function() use ( $tdcl_query )
         {
             return $tdcl_query->queried_object_id;
         });
+
         return $author->get_email();
     }
+
     return $value;
 }, 10, 3 );
+
+
 add_filter( 'authorship/pre_author_link', function( $link, $original_link, $author_id, $author_nicename )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -97,25 +119,30 @@ add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $fiel
 
     return $user;
 }, 10, 4 );
+
+
 add_filter( 'molongui_authorship_bypass_original_user_id_if', function( $value )
 {
     global $tdb_state_author;
+
     if ( $tdb_state_author )
     {
         $r = new ReflectionObject( $tdb_state_author );
         $ao = $r->getProperty( 'author_obj' );
-        $ao->setAccessible( true ); // Set the property to public before it can be read
+        $ao->setAccessible( true );  
         $aq = $r->getProperty( 'wp_query' );
-        $aq->setAccessible( true ); // Set the property to public before it can be read
+        $aq->setAccessible( true );  
 
         $query = $aq->getValue( $tdb_state_author );
         $is_author = isset( $query->is_author ) ? $query->is_author : false;
+
 
         if ( $is_author ) return false;
     }
 
     return $value;
 }, 11, 1 );
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     global $tdb_state_author;
@@ -123,9 +150,10 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
     {
         $r = new ReflectionObject( $tdb_state_author );
         $aq = $r->getProperty( 'wp_query' );
-        $aq->setAccessible( true ); // Set the property to public before it can be read
+        $aq->setAccessible( true );  
 
         $wp_query = $aq->getValue( $tdb_state_author );
+
         if ( isset( $wp_query->is_author ) )
         {
             if ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) )
@@ -141,6 +169,7 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
             else
             {
                 $user = get_users( array( 'nicename' => $wp_query->query_vars['author_name'] ) );
+
                 if ( !$user ) return $author;
 
                 $author_id   = $user[0]->ID;

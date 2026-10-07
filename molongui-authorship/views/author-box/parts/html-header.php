@@ -1,6 +1,7 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 $header_html_tag = ( !empty( $options['author_box_header_tag'] ) ? $options['author_box_header_tag'] : 'h3' );
 ?>
 

@@ -2,11 +2,18 @@
 
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
+
 require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/compat/wordpress.php';
+
+
+
 if ( apply_filters( 'authorship/theme_compatibility', Settings::is_enabled( 'theme-compat' ) ) )
 {
     $theme = wp_get_theme();
+
 
     $path = MOLONGUI_AUTHORSHIP_DIR . 'includes/compat/themes/';
 
@@ -48,6 +55,8 @@ if ( apply_filters( 'authorship/theme_compatibility', Settings::is_enabled( 'the
     elseif ( 'Thrive Themes' == $theme->get( 'Author' ) or
            ( $theme->parent() and 'Thrive Themes' == $theme->parent()->get( 'Author' ) ) )          require_once $path . 'thrive-themes.php';
 }
+
+
 if ( apply_filters( 'authorship/plugin_compatibility', Settings::is_enabled( 'plugin-compat' ) ) )
 {
     if ( !function_exists( 'is_plugin_active' ) ) require_once( ABSPATH . '/wp-admin/includes/plugin.php' );

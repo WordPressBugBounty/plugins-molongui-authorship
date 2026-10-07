@@ -15,7 +15,8 @@ namespace Molongui\Authorship\Migration;
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 trait Utils
 {
     public function get_author_by_term( $term, $author_type = 'user' )
@@ -44,6 +45,7 @@ trait Utils
 
         return $author;
     }
+
     public function delete_molongui_authorship_meta( $post_id )
     {
         $authors_meta_deleted     = delete_post_meta( $post_id, '_molongui_author' );
@@ -51,18 +53,21 @@ trait Utils
 
         return ( !empty( $authors_meta_deleted ) and !empty( $main_author_meta_deleted ) );
     }
+
     public function set_post_main_author( $post_id, $author_id, $author_type )
     {
         $r = add_post_meta( $post_id, '_molongui_main_author', $author_type . '-' . $author_id, false );
 
         return !empty( $r );
     }
+
     public function set_post_author( $post_id, $author_id, $author_type )
     {
         $r = add_post_meta( $post_id, '_molongui_author', $author_type . '-' . $author_id, false );
 
         return !empty( $r );
     }
+
     public function get_author_type( $object )
     {
         return 'WP_User' === get_class( $object ) ? 'user' : 'guest';

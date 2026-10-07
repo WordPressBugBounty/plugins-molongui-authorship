@@ -12,83 +12,88 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-class Activator
-{
-    public static function activate( $network_wide )
-    {
-	    if ( function_exists('is_multisite') and is_multisite() and $network_wide )
-	    {
-		    if ( !is_super_admin() ) return;
-		    foreach ( WP::get_sites() as $site_id )
-		    {
-			    switch_to_blog( $site_id );
-			    self::activate_single_blog();
-			    restore_current_blog();
-		    }
-        }
-        else
-        {
-	        if ( !current_user_can( 'activate_plugins' ) ) return;
+defined( 'ABSPATH' ) || exit;  
 
-	        self::activate_single_blog();
-        }
-	    set_transient( MOLONGUI_AUTHORSHIP_NAME.'-activated', 1 );
-    }
-	private static function activate_single_blog()
-	{
-        wp_cache_flush();
-		$update_db = new \Molongui\Authorship\Common\Modules\DB_Update( MOLONGUI_AUTHORSHIP_ID, MOLONGUI_AUTHORSHIP_DB_SCHEMA, MOLONGUI_AUTHORSHIP_NAMESPACE );
-		if ( $update_db->db_update_needed() )
-        {
-            $update_db->run_update();
-        }
-		self::save_installation_data();
-		self::add_default_options();
-		self::run_background_tasks();
-        self::maybe_redirect();
+class Activator {
+
+	public static function activate( $network_wide ) {
+
+		if ( function_exists( 'is_multisite' ) && is_multisite() && $network_wide ) {
+			foreach ( WP::get_sites() as $site_id ) {
+				switch_to_blog( $site_id );
+				self::activate_single_blog();
+				restore_current_blog();
+			}
+		} else {
+			self::activate_single_blog();
+		}
+
+		set_transient( MOLONGUI_AUTHORSHIP_NAME . '-activated', 1 );
 	}
-	public static function activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta )
-	{
-		if ( is_plugin_active_for_network( MOLONGUI_AUTHORSHIP_BASENAME ) )
-		{
+
+	private static function activate_single_blog() {
+
+
+		wp_cache_flush();
+
+		$update_db = new \Molongui\Authorship\Common\Modules\DB_Update( MOLONGUI_AUTHORSHIP_ID, MOLONGUI_AUTHORSHIP_DB_SCHEMA, MOLONGUI_AUTHORSHIP_NAMESPACE );
+		if ( $update_db->db_update_needed() ) {
+			$update_db->run_update();
+		}
+
+		self::save_installation_data();
+
+		self::add_default_options();
+
+		self::run_background_tasks();
+
+		self::maybe_redirect();
+	}
+
+	public static function activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+
+		if ( is_plugin_active_for_network( MOLONGUI_AUTHORSHIP_BASENAME ) ) {
 			switch_to_blog( $blog_id );
 			self::activate_single_blog();
 			restore_current_blog();
 		}
 	}
-	public static function save_installation_data()
-	{
-		if ( get_option( MOLONGUI_AUTHORSHIP_INSTALLATION ) ) return;
-		$installation = array
-		(
+
+	public static function save_installation_data() {
+
+		if ( get_option( MOLONGUI_AUTHORSHIP_INSTALLATION ) ) {
+			return;
+		}
+
+		$installation = array(
 			'timestamp' => time(),
 			'version'   => MOLONGUI_AUTHORSHIP_VERSION,
 		);
+
 		add_option( MOLONGUI_AUTHORSHIP_INSTALLATION, $installation, null, false );
 	}
-    public static function add_default_options()
-    {
-        add_filter( 'authorship/default_options', array( '\Molongui\Authorship\Settings', 'set_defaults' ) );
-        Settings::add_defaults();
-    }
-    public static function run_background_tasks()
-    {
-        if ( apply_filters( 'authorship/check_wp_cron', true ) and ( defined( 'DISABLE_WP_CRON' ) and DISABLE_WP_CRON ) )
-        {
-            return;
-        }
 
-        if ( Settings::get( 'guest_author_enabled', true ) or Settings::get( 'co_authors_enabled', true ) )
-        {
+	public static function add_default_options() {
+		add_filter( 'authorship/default_options', array( '\Molongui\Authorship\Settings', 'set_defaults' ) );
+		Settings::add_defaults();
+	}
 
-            add_option( 'molongui_authorship_update_post_authors', true, '', true );
-            add_option( 'molongui_authorship_update_post_counters', true, '', true );
-        }
-    }
-    public static function maybe_redirect()
-    {
-        set_transient( MOLONGUI_AUTHORSHIP_NAME.'-activation-redirect', true, 30 );
-    }
+	public static function run_background_tasks() {
 
-} // class
+		if ( ! Settings::get( 'guest_author_enabled', true ) && ! Settings::get( 'co_authors_enabled', true ) ) {
+			return;
+		}
+
+		update_option( 'molongui_authorship_update_post_authors', true, false );
+
+		if ( apply_filters( 'authorship/check_wp_cron', true ) && defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
+			return;
+		}
+
+		update_option( 'molongui_authorship_update_post_counters', true, false );
+	}
+
+	public static function maybe_redirect() {
+		set_transient( MOLONGUI_AUTHORSHIP_NAME . '-activation-redirect', true, 30 );
+	}
+}  

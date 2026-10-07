@@ -17,7 +17,8 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class ElementorPro
 {
     public function __construct()
@@ -28,6 +29,7 @@ class ElementorPro
         add_filter( 'molongui_authorship/co_authors_separator'     , array( Helpers::class, 'space_to_nbsp' ) );
         add_filter( 'molongui_authorship/co_authors_last_separator', array( Helpers::class, 'space_to_nbsp' ) );
     }
+
     public function filter_byline_aim( $aim, $user, $field, $value )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 );
@@ -43,6 +45,7 @@ class ElementorPro
 
         return $aim;
     }
+
     public function display_coauthored_in_loop_grid( $default )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 14 );
@@ -63,14 +66,18 @@ class ElementorPro
 
         return $default;
     }
+
     public function fix_posts_by_author_for_posts_widget( $query_args, $widget )
     {
         if ( 'posts' === $widget->get_name() )
         {
+
             if ( !empty( $query_args['author__in'] ) and is_array( $query_args['author__in'] ) and !empty( $query_args['author__in'][0] ) )
             {
                 $author_id = $query_args['author__in'][0];
+
                 $query_args['author__in'] = '';
+
                 $query_args['meta_query'] = array
                 (
                     array
@@ -86,5 +93,6 @@ class ElementorPro
         return $query_args;
     }
 
-} // class
+}  
+
 new ElementorPro;

@@ -3,12 +3,16 @@
 use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'the_author_posts_link', function( $link )
 {
     if ( is_author() )
     {
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 11 );
+
+
         $fn = 'hootkit_display_meta_info';
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {

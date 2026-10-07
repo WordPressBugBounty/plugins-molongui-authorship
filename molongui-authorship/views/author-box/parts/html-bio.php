@@ -1,19 +1,25 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-if ( 'none' === $options['author_box_bio_source'] ) return;
+defined( 'ABSPATH' ) || exit;  
+
+if ( isset( $options['author_box_bio_source'] ) && 'none' === $options['author_box_bio_source'] ) {
+	return;
+}
+
+$bio = apply_filters( 'authorship/box/bio', $profile->get_description(), $profile, $options );
+
+$bio = str_replace( array( '<br>', '<br/>', '<br />' ), '', $bio );
+$bio = wpautop( $bio );
+$bio = str_replace( array( "\n\r", "\r\n", "\n\n", "\r\r" ), '<br>', $bio );
 
 ?>
 
 <div class="m-a-box-bio" <?php echo ( $add_microdata ? 'itemprop="description"' : '' ); ?>>
-    <?php
-    $bio = apply_filters( 'authorship/box/bio', $profile->get_description(), $profile );
-    $bio = str_replace( array( "\n\r", "\r\n", "\n\n", "\r\r" ), "<br>", wpautop( str_replace( array( "<br>", "<br/>", "<br />" ), "", $bio ) ) );
+	<?php
+	echo $bio; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Bio HTML is intentionally supported and filtered upstream.
 
-    echo $bio;
-    if ( !empty( $options['extra_content'] ) )
-    {
-        echo $options['extra_content'];
-    }
-    ?>
+	if ( ! empty( $options['extra_content'] ) ) {
+		echo $options['extra_content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shortcode-provided HTML is intentionally supported.
+	}
+	?>
 </div>

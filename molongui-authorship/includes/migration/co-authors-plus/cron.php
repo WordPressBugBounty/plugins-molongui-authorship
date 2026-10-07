@@ -18,11 +18,14 @@ use Molongui\Authorship\Migration\Background_Process;
 use Molongui\Authorship\Migration\Co_Authors_Plus;
 use Molongui\Authorship\Migration\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Cron extends Background_Process
 {
     protected $author_tax;
+
     use Utils;
+
     public function __construct()
     {
         $this->name       = Co_Authors_Plus::instance()->get_name();
@@ -32,17 +35,21 @@ class Cron extends Background_Process
 
         parent::__construct();
     }
+
     protected function migrate_data()
     {
         $r1 = $r2 = true;
+
         if ( !taxonomy_exists( $this->author_tax ) )
         {
             register_taxonomy( $this->author_tax, 'post', array() );
         }
+
         if ( apply_filters( 'molongui_authorship/migrate_cap_guest_authors', true ) )
         {
             $r1 = $this->migrate_guests();
         }
+
         if ( apply_filters( 'molongui_authorship/migrate_cap_postmeta', true ) )
         {
             $r2 = $this->migrate_postmeta();
@@ -50,9 +57,11 @@ class Cron extends Background_Process
 
         return $r1 and $r2;
     }
+
     public function migrate_guests()
     {
         $r = true;
+
         $post_ids = Co_Authors_Plus::instance()->get_guest_authors();
 
         if ( !empty( $post_ids ) )
@@ -63,13 +72,16 @@ class Cron extends Background_Process
             }
 
             $r = $this->save()->dispatch();
+
         }
 
         return $r;
     }
+
     public function migrate_postmeta()
     {
         $r = true;
+
         $post_ids = Co_Authors_Plus::instance()->get_posts();
 
         if ( !empty( $post_ids ) )
@@ -80,10 +92,12 @@ class Cron extends Background_Process
             }
 
             $r = $this->save()->dispatch();
+
         }
 
         return $r;
     }
+
     protected function task( $item )
     {
         if ( !is_array( $item ) or !isset( $item['type'] ) or !isset( $item['id'] ) )
@@ -104,14 +118,19 @@ class Cron extends Background_Process
                 Co_Authors_Plus::instance()->convert_postmeta( $id );
                 break;
         }
+
+
         return false;
     }
+
     protected function complete()
     {
         parent::complete();
+
         $count_updater = Post_Count_Updater::instance();
         $count_updater->handle_internal_request();
     }
 
-} // class
+}  
+
 new Cron();

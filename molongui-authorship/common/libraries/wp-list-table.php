@@ -2,18 +2,32 @@
 
 namespace Molongui\Authorship\Common\Libraries;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
+
+
+
 #[AllowDynamicProperties]
 class WP_List_Table {
+
 	public $items;
+
 	protected $_args;
+
 	protected $_pagination_args = array();
+
 	protected $screen;
+
 	private $_actions;
+
 	private $_pagination;
+
 	protected $modes = array();
+
 	protected $_column_headers;
+
 	protected $compat_fields = array( '_args', '_pagination_args', 'screen', '_actions', '_pagination' );
+
 	protected $compat_methods = array(
 		'set_pagination_args',
 		'get_views',
@@ -32,6 +46,7 @@ class WP_List_Table {
 		'extra_tablenav',
 		'single_row_columns',
 	);
+
 	public function __construct( $args = array() ) {
 		$args = wp_parse_args(
 			$args,
@@ -67,16 +82,19 @@ class WP_List_Table {
 			);
 		}
 	}
+
 	public function __get( $name ) {
 		if ( in_array( $name, $this->compat_fields, true ) ) {
 			return $this->$name;
 		}
 	}
+
 	public function __set( $name, $value ) {
 		if ( in_array( $name, $this->compat_fields, true ) ) {
 			return $this->$name = $value;
 		}
 	}
+
 	public function __isset( $name ) {
 		if ( in_array( $name, $this->compat_fields, true ) ) {
 			return isset( $this->$name );
@@ -84,23 +102,28 @@ class WP_List_Table {
 
 		return false;
 	}
+
 	public function __unset( $name ) {
 		if ( in_array( $name, $this->compat_fields, true ) ) {
 			unset( $this->$name );
 		}
 	}
+
 	public function __call( $name, $arguments ) {
 		if ( in_array( $name, $this->compat_methods, true ) ) {
 			return $this->$name( ...$arguments );
 		}
 		return false;
 	}
+
 	public function ajax_user_can() {
 		die( 'function WP_List_Table::ajax_user_can() must be overridden in a subclass.' );
 	}
+
 	public function prepare_items() {
 		die( 'function WP_List_Table::prepare_items() must be overridden in a subclass.' );
 	}
+
 	protected function set_pagination_args( $args ) {
 		$args = wp_parse_args(
 			$args,
@@ -114,6 +137,7 @@ class WP_List_Table {
 		if ( ! $args['total_pages'] && $args['per_page'] > 0 ) {
 			$args['total_pages'] = ceil( $args['total_items'] / $args['per_page'] );
 		}
+
 		if ( ! headers_sent() && ! wp_doing_ajax() && $args['total_pages'] > 0 && $this->get_pagenum() > $args['total_pages'] ) {
 			wp_redirect( add_query_arg( 'paged', $args['total_pages'] ) );
 			exit;
@@ -121,6 +145,7 @@ class WP_List_Table {
 
 		$this->_pagination_args = $args;
 	}
+
 	public function get_pagination_arg( $key ) {
 		if ( 'page' === $key ) {
 			return $this->get_pagenum();
@@ -132,12 +157,15 @@ class WP_List_Table {
 
 		return 0;
 	}
+
 	public function has_items() {
 		return ! empty( $this->items );
 	}
+
 	public function no_items() {
 		_e( 'No items found.' );
 	}
+
 	public function search_box( $text, $input_id ) {
 		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
 			return;
@@ -165,6 +193,7 @@ class WP_List_Table {
 </p>
 		<?php
 	}
+
 	protected function get_views_links( $link_data = array() ) {
 		if ( ! is_array( $link_data ) ) {
 			_doing_it_wrong(
@@ -223,9 +252,11 @@ class WP_List_Table {
 
 		return $views_links;
 	}
+
 	protected function get_views() {
 		return array();
 	}
+
 	public function views() {
 		$views = $this->get_views();
 		$views = apply_filters( "views_{$this->screen->id}", $views );
@@ -243,12 +274,15 @@ class WP_List_Table {
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo '</ul>';
 	}
+
 	protected function get_bulk_actions() {
 		return array();
 	}
+
 	protected function bulk_actions( $which = '' ) {
 		if ( is_null( $this->_actions ) ) {
 			$this->_actions = $this->get_bulk_actions();
+
 			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 			$two = '';
@@ -289,6 +323,7 @@ class WP_List_Table {
 		submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
 		echo "\n";
 	}
+
 	public function current_action() {
 		if ( isset( $_REQUEST['filter_action'] ) && ! empty( $_REQUEST['filter_action'] ) ) {
 			return false;
@@ -300,6 +335,7 @@ class WP_List_Table {
 
 		return false;
 	}
+
 	protected function row_actions( $actions, $always_visible = false ) {
 		$action_count = count( $actions );
 
@@ -334,11 +370,14 @@ class WP_List_Table {
 
 		return $output;
 	}
+
 	protected function months_dropdown( $post_type ) {
 		global $wpdb, $wp_locale;
+
 		if ( apply_filters( 'disable_months_dropdown', false, $post_type ) ) {
 			return;
 		}
+
 		$months = apply_filters( 'pre_months_dropdown_query', false, $post_type );
 
 		if ( ! is_array( $months ) ) {
@@ -360,6 +399,7 @@ class WP_List_Table {
 			)
 		);
 		}
+
 		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
 
 		$month_count = count( $months );
@@ -394,6 +434,7 @@ class WP_List_Table {
 		</select>
 		<?php
 	}
+
 	protected function view_switcher( $current_mode ) {
 		?>
 		<input type="hidden" name="mode" value="<?php echo esc_attr( $current_mode ); ?>" />
@@ -421,6 +462,7 @@ class WP_List_Table {
 		</div>
 		<?php
 	}
+
 	protected function comments_bubble( $post_id, $pending_comments ) {
 		$approved_comments = get_comments_number();
 
@@ -526,6 +568,7 @@ class WP_List_Table {
 			);
 		}
 	}
+
 	public function get_pagenum() {
 		$pagenum = isset( $_REQUEST['paged'] ) ? absint( $_REQUEST['paged'] ) : 0;
 
@@ -535,13 +578,16 @@ class WP_List_Table {
 
 		return max( 1, $pagenum );
 	}
+
 	protected function get_items_per_page( $option, $default_value = 20 ) {
 		$per_page = (int) get_user_option( $option );
 		if ( empty( $per_page ) || $per_page < 1 ) {
 			$per_page = $default_value;
 		}
+
 		return (int) apply_filters( "{$option}", $per_page );
 	}
+
 	protected function pagination( $which ) {
 		if ( empty( $this->_pagination_args ) ) {
 			return;
@@ -696,12 +742,15 @@ class WP_List_Table {
 
 		echo $this->_pagination;
 	}
+
 	public function get_columns() {
 		die( 'function WP_List_Table::get_columns() must be overridden in a subclass.' );
 	}
+
 	protected function get_sortable_columns() {
 		return array();
 	}
+
 	protected function get_default_primary_column_name() {
 		$columns = $this->get_columns();
 		$column  = '';
@@ -709,6 +758,7 @@ class WP_List_Table {
 		if ( empty( $columns ) ) {
 			return $column;
 		}
+
 		foreach ( $columns as $col => $column_name ) {
 			if ( 'cb' === $col ) {
 				continue;
@@ -720,15 +770,19 @@ class WP_List_Table {
 
 		return $column;
 	}
+
 	public function get_primary_column() {
 		return $this->get_primary_column_name();
 	}
+
 	protected function get_primary_column_name() {
 		$columns = get_column_headers( $this->screen );
 		$default = $this->get_default_primary_column_name();
+
 		if ( ! isset( $columns[ $default ] ) ) {
 			$default = self::get_default_primary_column_name();
 		}
+
 		$column = apply_filters( 'list_table_primary_column', $default, $this->screen->id );
 
 		if ( empty( $column ) || ! isset( $columns[ $column ] ) ) {
@@ -737,6 +791,7 @@ class WP_List_Table {
 
 		return $column;
 	}
+
 	protected function get_column_info() {
 		if (
 			isset( $this->_column_headers ) &&
@@ -790,21 +845,25 @@ class WP_List_Table {
 
 		return $this->_column_headers;
 	}
+
 	public function get_column_count() {
 		list ( $columns, $hidden ) = $this->get_column_info();
 		$hidden                    = array_intersect( array_keys( $columns ), array_filter( $hidden ) );
 		return count( $columns ) - count( $hidden );
 	}
+
 	public function print_column_headers( $with_id = true ) {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$current_url = remove_query_arg( 'paged', $current_url );
+
 		if ( isset( $_GET['orderby'] ) ) {
 			$current_orderby = $_GET['orderby'];
 		} else {
 			$current_orderby = '';
 		}
+
 		if ( isset( $_GET['order'] ) && 'desc' === $_GET['order'] ) {
 			$current_order = 'desc';
 		} else {
@@ -849,10 +908,12 @@ class WP_List_Table {
 				$abbr          = isset( $sortable[ $column_key ][2] ) ? $sortable[ $column_key ][2] : '';
 				$orderby_text  = isset( $sortable[ $column_key ][3] ) ? $sortable[ $column_key ][3] : '';
 				$initial_order = isset( $sortable[ $column_key ][4] ) ? $sortable[ $column_key ][4] : '';
+
 				if ( '' === $current_orderby && $initial_order ) {
 					$current_orderby = $orderby;
 					$current_order = $initial_order;
 				}
+
 				if ( $current_orderby === $orderby ) {
 					if ( 'asc' === $current_order ) {
 						$order          = 'desc';
@@ -884,6 +945,7 @@ class WP_List_Table {
 				if ( '' !== $order_text ) {
 					$order_text = ' <span class="screen-reader-text">' . $order_text . '</span>';
 				}
+
 				$abbr_attr = $abbr ? ' abbr="' . esc_attr( $abbr ) . '"' : '';
 
 				$column_display_name = sprintf(
@@ -912,17 +974,20 @@ class WP_List_Table {
 			echo "<$tag $scope $id $class $aria_sort_attr $abbr_attr>$column_display_name</$tag>";
 		}
 	}
+
 	public function print_table_description() {
 		list( $columns, $hidden, $sortable ) = $this->get_column_info();
 
 		if ( empty( $sortable ) ) {
 			return;
 		}
+
 		if ( isset( $_GET['orderby'] ) ) {
 			$current_orderby = $_GET['orderby'];
 		} else {
 			$current_orderby = '';
 		}
+
 		if ( isset( $_GET['order'] ) && 'desc' === $_GET['order'] ) {
 			$current_order = 'desc';
 		} else {
@@ -945,6 +1010,7 @@ class WP_List_Table {
 					$current_orderby = $orderby;
 					$current_order = $initial_order;
 				}
+
 				if ( $current_orderby === $orderby ) {
 					/*! translators: Hidden accessibility text. */
 					$asc_text = __( 'Ascending.' );
@@ -958,6 +1024,7 @@ class WP_List_Table {
 			}
 		}
 	}
+
 	public function display() {
 		$singular = $this->_args['singular'];
 
@@ -993,6 +1060,7 @@ class WP_List_Table {
 		<?php
 		$this->display_tablenav( 'bottom' );
 	}
+
 	protected function get_table_classes() {
 		$mode = get_user_setting( 'posts_list_mode', 'list' );
 
@@ -1000,6 +1068,7 @@ class WP_List_Table {
 
 		return array( 'widefat', 'fixed', 'striped', $mode_class, $this->_args['plural'] );
 	}
+
 	protected function display_tablenav( $which ) {
 		if ( 'top' === $which ) {
 			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
@@ -1021,7 +1090,9 @@ class WP_List_Table {
 	</div>
 		<?php
 	}
+
 	protected function extra_tablenav( $which ) {}
+
 	public function display_rows_or_placeholder() {
 		if ( $this->has_items() ) {
 			$this->display_rows();
@@ -1031,18 +1102,23 @@ class WP_List_Table {
 			echo '</td></tr>';
 		}
 	}
+
 	public function display_rows() {
 		foreach ( $this->items as $item ) {
 			$this->single_row( $item );
 		}
 	}
+
 	public function single_row( $item ) {
 		echo '<tr>';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
+
 	protected function column_default( $item, $column_name ) {}
+
 	protected function column_cb( $item ) {}
+
 	protected function single_row_columns( $item ) {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
@@ -1055,6 +1131,7 @@ class WP_List_Table {
 			if ( in_array( $column_name, $hidden, true ) ) {
 				$classes .= ' hidden';
 			}
+
 			$data = 'data-colname="' . esc_attr( wp_strip_all_tags( $column_display_name ) ) . '"';
 
 			$attributes = "class='$classes' $data";
@@ -1084,12 +1161,14 @@ class WP_List_Table {
 			}
 		}
 	}
+
 	protected function handle_row_actions( $item, $column_name, $primary ) {
 		return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">' .
 			/*! translators: Hidden accessibility text. */
 			__( 'Show more details' ) .
 		'</span></button>' : '';
 	}
+
 	public function ajax_response() {
 		$this->prepare_items();
 
@@ -1118,6 +1197,7 @@ class WP_List_Table {
 
 		die( wp_json_encode( $response ) );
 	}
+
 	public function _js_vars() {
 		$args = array(
 			'class'  => get_class( $this ),

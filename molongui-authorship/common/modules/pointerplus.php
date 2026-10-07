@@ -2,7 +2,8 @@
 
 namespace Molongui\Authorship\Common\Modules;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 /*!
  * Super pointer creation for WP Admin.
  *
@@ -14,19 +15,22 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
  * @copyright 2014-2018 GPL
  */
 class PointerPlus {
+
     var $prefix = 'pointerplus';
     var $pointers = array();
+
     function __construct( $args = array() ) {
         if ( isset( $args[ 'prefix' ] ) ) {
             $this->prefix = $args[ 'prefix' ];
         }
         add_action( 'current_screen', array( $this, 'maybe_add_pointers' ) );
     }
+
     function initial_pointers() {
         global $pagenow;
         $defaults = array(
             'class' => '',
-            'width' => 300, //only fixed value
+            'width' => 300,  
             'align' => 'middle',
             'edge' => 'left',
             'post_type' => array(),
@@ -87,10 +91,14 @@ class PointerPlus {
 
         return $pointers;
     }
+
     function maybe_add_pointers() {
         $default_keys = $this->initial_pointers();
+
         $dismissed = explode( ',', get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+
         $diff = array_diff_key( $default_keys, array_combine( $dismissed, $dismissed ) );
+
         if ( !empty( $diff ) ) {
             $this->pointers = $diff;
             add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_assets' ) );
@@ -107,15 +115,18 @@ class PointerPlus {
             'dismiss' => __( 'Dismiss' ),
         );
     }
+
     function admin_enqueue_assets() {
-        $base_url = MOLONGUI_AUTHORSHIP_URL; //plugins_url( '', __FILE__ );
+        $base_url = MOLONGUI_AUTHORSHIP_URL;  
         wp_enqueue_style( $this->prefix, $base_url . ( is_rtl() ? 'common/modules/pointerplus/assets/css/pointerplus-rtl.0390.min.css' : 'common/modules/pointerplus/assets/css/pointerplus.060f.min.css' ), array( 'wp-pointer' ), MOLONGUI_AUTHORSHIP_VERSION );
-        wp_enqueue_script( $this->prefix, $base_url . 'common/modules/pointerplus/assets/js/pointerplus.e75e.min.js?var=' . str_replace( '-', '_', $this->prefix ) . '_pointerplus', array( 'wp-pointer' ), MOLONGUI_AUTHORSHIP_VERSION, array( 'in_footer' => true ) );
+        wp_enqueue_script( $this->prefix, $base_url . 'common/modules/pointerplus/assets/js/pointerplus.0a61.min.js?var=' . str_replace( '-', '_', $this->prefix ) . '_pointerplus', array( 'wp-pointer' ), MOLONGUI_AUTHORSHIP_VERSION, array( 'in_footer' => true ) );
         wp_localize_script( $this->prefix, str_replace( '-', '_', $this->prefix ) . '_pointerplus', apply_filters( $this->prefix . '_pointerplus_js_vars', $this->pointers ) );
     }
+
     function reset_pointer() {
         add_action( 'current_screen', array( $this, '_reset_pointer' ), 0 );
     }
+
     function _reset_pointer( $id = 'me' ) {
         if ( $id === 'me' ) {
             $id = get_current_user_id();

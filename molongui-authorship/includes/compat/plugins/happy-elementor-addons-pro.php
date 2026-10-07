@@ -17,13 +17,15 @@ namespace Molongui\Authorship;
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class HappyElementorAddonsPro
 {
     public function __construct()
     {
         add_filter( '_authorship/get_avatar_data/filter/author', array( $this, 'fix_post_grid_avatar' ), 10, 3 );
     }
+
     public function fix_post_grid_avatar( $author, $id_or_email, $dbt )
     {
         $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
@@ -50,5 +52,6 @@ class HappyElementorAddonsPro
         return $author;
     }
 
-} // class
+}  
+
 new HappyElementorAddonsPro;

@@ -2,7 +2,8 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Icon
 {
     public static function get_svg( $icon )
@@ -23,4 +24,4 @@ class Icon
         return $output;
     }
 
-} // class
+}  

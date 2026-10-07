@@ -1,7 +1,6 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-
+defined( 'ABSPATH' ) || exit;  
 ?>
 
 <div id="molongui-author-tools">

@@ -1,8 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-
+defined( 'ABSPATH' ) || exit;  
 ?>
+
 <div class="molongui-metabox">
 
     <div class="m-flex-container m-settings-container">

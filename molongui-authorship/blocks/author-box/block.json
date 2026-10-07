@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "molongui-authorship/author-box",
+  "title": "Author Box",
+  "category": "molongui-authorship",
+  "icon": "id",
+  "description": "Displays the Molongui author box for the current post.",
+  "keywords": [
+    "author",
+    "bio",
+    "profile"
+  ],
+  "textdomain": "molongui-authorship",
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "editorScript": "molongui-authorship-author-box-block",
+  "editorStyle": "molongui-authorship-box",
+  "supports": {
+    "html": false,
+    "multiple": false,
+    "className": false,
+    "customClassName": false
+  }
+}

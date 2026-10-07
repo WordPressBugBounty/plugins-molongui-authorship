@@ -3,14 +3,17 @@
 use Molongui\Authorship\Author;
 use Molongui\Authorship\Author_Filters;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Astra
 {
     public function __construct()
     {
         add_filter( 'molongui_authorship_do_filter_name', array( $this, 'filter_the_author_name' ), 10, 2 );
         add_filter( 'get_the_author_user_email', array( $this, 'filter_the_author_user_email' ), 10, 3 );
+
     }
+
     public function filter_the_author_name( $leave, &$args )
     {
         $dbt = $args['dbt'];
@@ -19,23 +22,31 @@ class Astra
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
             $args['display_name'] = Author_Filters::filter_the_archive_title( $args['display_name'] );
+
             return true;
         }
+
         return false;
     }
+
     public function filter_the_author_user_email( $value, $user_id = null, $original_user_id = null )
     {
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 5 );
         $fn  = 'astra_archive_page_info';
+
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
         {
             global $wp_query;
             $author_id = ( molongui_is_guest_author() and isset( $wp_query->guest_author_id ) ) ? $wp_query->guest_author_id : $wp_query->query_vars['author'];
+
             $author = new Author( $author_id, !empty( $wp_query->is_guest_author ) ? 'guest' : 'user' );
+
             return $author->get_email();
         }
+
         return $value;
     }
+
     public function autop_the_author_description( $value, $user_id, $original_user_id )
     {
         if ( is_author() )
@@ -45,12 +56,13 @@ class Astra
 
             if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) )
             {
-                $value = wpautop( $value ); // Doesn't add any extra spacing between new lines. Check CSS
+                $value = wpautop( $value );  
             }
         }
 
         return $value;
     }
+
     public function filter_the_author_description( $value, $user_id = null, $original_user_id = null )
     {
         $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 5 );
@@ -74,5 +86,6 @@ class Astra
         return $value;
     }
 
-} // class
+}  
+
 new Astra;

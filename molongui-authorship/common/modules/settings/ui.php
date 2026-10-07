@@ -12,7 +12,8 @@ namespace Molongui\Authorship\Common\Modules\Settings;
 
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class UI
 {
     public static function allowed_html()
@@ -156,6 +157,7 @@ class UI
                 'rows'     => array(),
                 'disabled' => array(),
             ),
+
             'svg' => array
             (
                 'class'           => array(),
@@ -164,7 +166,7 @@ class UI
                 'xmlns'           => array(),
                 'width'           => array(),
                 'height'          => array(),
-                'viewbox'         => array(), // Must be lowercase!
+                'viewbox'         => array(),  
                 'role'            => array(),
                 'fill'            => array(),
                 'transform'       => array(),
@@ -233,6 +235,7 @@ class UI
             ),
         );
     }
+
     public static function get_icon( $id = null )
     {
         $icon = '';
@@ -288,6 +291,7 @@ class UI
 
         return $icon;
     }
+
     public static function render_tabs( $tabs )
     {
         if ( empty( $tabs ) )
@@ -361,14 +365,35 @@ class UI
             <div class="molongui-ui-tabs-content">
                 <?php foreach ( $tabs as $index => $tab ) : ?>
                     <div class="molongui-ui-tab-content" id="content-tab-<?php echo esc_attr( $index ); ?>">
-                        <?php //echo wp_kses_post( $tab['content'] ); ?>
-<?php echo wp_kses( $tab['content'] ); ?>
+						<?php echo wp_kses( $tab['content'] ); ?>
                     </div>
                 <?php endforeach; ?>
             </div>
         </div>
         <?php
     }
+
+    private static function render_content( $content )
+    {
+        if ( is_callable( $content ) )
+        {
+            $rendered = call_user_func( $content );
+
+            if ( is_string( $rendered ) )
+            {
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted component renderer output.
+                echo $rendered;
+            }
+
+            return;
+        }
+
+        if ( is_string( $content ) )
+        {
+            echo wp_kses( $content, self::allowed_html() );
+        }
+    }
+
     public static function heading( $args )
     {
         ob_start(); ?>
@@ -395,6 +420,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function card( $args )
     {
         ob_start();
@@ -451,6 +477,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function input_text( $args )
     {
         ob_start(); ?>
@@ -489,6 +516,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function input_number( $args )
     {
         ob_start(); ?>
@@ -527,6 +555,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function textarea( $args )
     {
         ob_start(); ?>
@@ -565,6 +594,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function radio( $args )
     {
         ob_start(); ?>
@@ -611,6 +641,57 @@ class UI
             return ob_get_clean();
         }
     }
+
+    public static function group( $args )
+    {
+        $id             = ! empty( $args['id'] ) ? $args['id'] : '';
+        $label_id       = $id ? $id . '-label' : '';
+        $description_id = $id && ! empty( $args['description'] ) ? $id . '-description' : '';
+
+        ob_start(); ?>
+        <div
+            <?php echo $id ? 'id="' . esc_attr( $id ) . '"' : ''; ?>
+            class="molongui-ui-control molongui-ui-control__group"
+            role="group"
+            <?php echo $label_id ? 'aria-labelledby="' . esc_attr( $label_id ) . '"' : ''; ?>
+            <?php echo $description_id ? 'aria-describedby="' . esc_attr( $description_id ) . '"' : ''; ?>
+        >
+
+            <div class="molongui-ui-group <?php echo ! empty( $args['class'] ) ? esc_attr( $args['class'] ) : ''; ?>">
+                <span class="molongui-ui-group__spacer" aria-hidden="true"></span>
+
+                <div class="molongui-ui-group__text">
+                    <div class="molongui-ui-group__label" <?php echo $label_id ? 'id="' . esc_attr( $label_id ) . '"' : ''; ?>>
+                        <?php echo wp_kses_post( $args['label'] ); ?>
+                    </div>
+
+                    <?php if ( ! empty( $args['description'] ) ) : ?>
+                        <div class="molongui-ui-group__description" <?php echo $description_id ? 'id="' . esc_attr( $description_id ) . '"' : ''; ?>>
+                            <?php echo wp_kses( $args['description'], self::allowed_html() ); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <?php if ( ! empty( $args['content'] ) ) : ?>
+                <div class="molongui-ui-control__content molongui-ui-control__content--group">
+                    <?php self::render_content( $args['content'] ); ?>
+                </div>
+            <?php endif; ?>
+
+        </div>
+        <?php
+
+        if ( ! isset( $args['echo'] ) or $args['echo'] )
+        {
+            echo ob_get_clean();
+        }
+        else
+        {
+            return ob_get_clean();
+        }
+    }
+
     public static function checkbox( $args )
     {
         ob_start(); ?>
@@ -645,12 +726,12 @@ class UI
                 <div class="molongui-ui-control__content">
                     <?php if ( !empty( $args['content']['off'] ) ) : ?>
                         <div class="molongui-ui-control__content--off">
-                            <?php echo wp_kses( $args['content']['off'], self::allowed_html() ); ?>
+                            <?php self::render_content( $args['content']['off'] ); ?>
                         </div>
                     <?php endif; ?>
                     <?php if ( !empty( $args['content']['on'] ) ) : ?>
                         <div class="molongui-ui-control__content--on">
-                            <?php echo wp_kses( $args['content']['on'], self::allowed_html() ); ?>
+                            <?php self::render_content( $args['content']['on'] ); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -668,16 +749,19 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function checkbox_group( $args )
     {
         if ( empty( $args['options'] ) or !is_array( $args['options'] ) )
         {
             return;
         }
+
         if ( empty( $args['layout'] ) or !in_array( $args['layout'], array( 'block', 'inline' ) ) )
         {
             $args['layout'] = 'block';
         }
+
         $selected_values = explode( ',', $args['selected'] );
 
         ob_start(); ?>
@@ -742,6 +826,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function toggle( $args )
     {
         ob_start(); ?>
@@ -763,12 +848,12 @@ class UI
                 <div class="molongui-ui-control__content">
                     <?php if ( !empty( $args['content']['off'] ) ) : ?>
                         <div class="molongui-ui-control__content--off">
-                            <?php echo wp_kses( $args['content']['off'], self::allowed_html() ); ?>
+                            <?php self::render_content( $args['content']['off'] ); ?>
                         </div>
                     <?php endif; ?>
                     <?php if ( !empty( $args['content']['on'] ) ) : ?>
                         <div class="molongui-ui-control__content--on">
-                            <?php echo wp_kses( $args['content']['on'], self::allowed_html() ); ?>
+                            <?php self::render_content( $args['content']['on'] ); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -786,6 +871,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function select( $args )
     {
         ob_start(); ?>
@@ -839,6 +925,7 @@ class UI
             return ob_get_clean();
         }
     }
+
     public static function notice( $args )
     {
         if ( apply_filters( 'authorship/show_settings_notice', true ) )
@@ -882,6 +969,7 @@ class UI
             }
         }
     }
+
     public static function banner( $args )
     {
         if ( !empty( $args['premium'] ) )
@@ -943,6 +1031,7 @@ class UI
             }
         }
     }
+
     public static function upgrade( $args )
     {
         if ( apply_filters( 'authorship/show_upgrade_notice', true ) or !empty( $args['keep'] ) )
@@ -977,6 +1066,7 @@ class UI
             }
         }
     }
+
     public static function div_open( $args )
     {
         $id    = !empty( $args['id'] ) ? $args['id'] : '';
@@ -1010,6 +1100,7 @@ class UI
             return $html;
         }
     }
+
     public static function div_close( $args )
     {
         if ( !isset( $args['echo'] ) or $args['echo'] )
@@ -1021,6 +1112,8 @@ class UI
             return '</div>';
         }
     }
+
+
     public static function help_markup( $message )
     {
         if ( empty( $message ) )
@@ -1043,4 +1136,4 @@ class UI
     }
 
 
-} // class
+}  

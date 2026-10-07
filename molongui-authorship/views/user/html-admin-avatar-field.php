@@ -4,10 +4,12 @@ use Molongui\Authorship\Admin_User;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 $img_id       = get_the_author_meta( 'molongui_author_image_id',   $user->ID );
 $img_url      = get_the_author_meta( 'molongui_author_image_url',  $user->ID );
 $img_edit_url = get_the_author_meta( 'molongui_author_image_edit', $user->ID );
+
 if ( !empty( $user->ID ) and Settings::is_enabled( 'user-profile' ) )
 {
     $gravatar_url = get_avatar_url( $user->ID, array( 'size' => '150' ) );
@@ -20,6 +22,7 @@ else
 }
 
 if ( current_user_can( 'upload_files' ) ) :
+
     wp_enqueue_media();
     Admin_User::enqueue_avatar_scripts();
     Assets::enqueue_media_uploader_styles();

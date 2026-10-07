@@ -15,14 +15,18 @@ namespace Molongui\Authorship\Migration\Publishpress_Authors;
 
 use Molongui\Authorship\Migration\Publishpress_Authors;
 use Molongui\Authorship\Migration\Utils;
+
 class Cli
 {
     protected $name, $id;
+
     use Utils;
+
     public function __construct()
     {
         $this->name = Publishpress_Authors::instance()->get_name();
         $this->id   = Publishpress_Authors::instance()->get_id();
+
         \WP_CLI::line('');
         \WP_CLI::line( \WP_CLI::colorize( "%BMolongui Authorship%n - The {$this->name} data migration tool is running..." ) );
 
@@ -40,6 +44,7 @@ class Cli
             \WP_CLI::error( sprintf( "To migrate data, please first activate the %s plugin.", $this->name ) );
         }
     }
+
     public function migrate_guests()
     {
         \WP_CLI::line('');
@@ -61,10 +66,12 @@ class Cli
             \WP_CLI::warning( 'No guest authors found to migrate. All existing authors are already registered users.' );
         }
     }
+
     public function migrate_postmeta()
     {
         \WP_CLI::line('');
         \WP_CLI::line( \WP_CLI::colorize( "%YNotice:%n Starting post authorship data migration..." ) );
+
         $post_ids = Publishpress_Authors::instance()->get_posts();
 
         if ( !empty( $post_ids ) )

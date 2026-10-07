@@ -4,12 +4,14 @@ namespace Molongui\Authorship\Common\Modules\Settings;
 
 use Molongui\Authorship\Common\Modules\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 trait Options
 {
     public static function get_options()
     {
         $fw_options = array();
+
         if ( apply_filters( 'authorship/options/add_common_advanced', true ) )
         {
             $fw_options[] = array
@@ -19,6 +21,7 @@ trait Options
                 'id'      => 'advanced',
                 'name'    => __( "Advanced", 'molongui-authorship' ),
             );
+
             $fw_options[] = array
             (
                 'display' => true,
@@ -30,6 +33,7 @@ trait Options
                 'label'   => __( "Custom CSS", 'molongui-authorship' ),
                 'button'  => array(),
             );
+
             $fw_options[] = array
             (
                 'display'     => true,
@@ -57,6 +61,8 @@ trait Options
                     ),
                 ),
             );
+
+
             $fw_options[] = array
             (
                 'display' => true,
@@ -68,6 +74,7 @@ trait Options
                 'label'   => __( "Custom PHP", 'molongui-authorship' ),
                 'button'  => array(),
             );
+
             $fw_options[] = array
             (
                 'display'     => true,
@@ -96,6 +103,7 @@ trait Options
                     ),
                 ),
             );
+
             $fw_options[] = array
             (
                 'display'  => true,
@@ -119,6 +127,8 @@ trait Options
                 /*! // translators: %1$s: <code>. %2$s: </code> */
                 'label'    => sprintf( esc_html__( "Enable custom PHP also in admin. %1\$sExercise extreme caution!%2\$s", 'molongui-authorship' ), '<code>', '</code>' ),
             );
+
+
             $fw_options[] = array
             (
                 'display'  => true,
@@ -139,6 +149,7 @@ trait Options
                     ),
                 ),
             );
+
             $fw_options[] = array
             (
                 'display'  => true,
@@ -153,6 +164,7 @@ trait Options
                 'help'     => sprintf( esc_html__( "%1\$sKeep this setting enabled to prevent config loss when removing the plugin from your site.%2\$s %3\$sKeeping plugin config might be useful on plugin reinstall or site migration.%4\$s %5\$sIf you want to completely remove all plugin config, uncheck this setting and then remove the plugin.%6\$s", 'molongui-authorship' ), '<p>', '</p>', '<p>', '</p>', '<p>', '</p>' ),
                 'label'    => __( "Keep plugin configuration for future use upon plugin uninstall.", 'molongui-authorship' ),
             );
+
             $fw_options[] = array
             (
                 'display'  => true,
@@ -168,6 +180,7 @@ trait Options
                 'label'    => __( "Keep plugin data for future use upon plugin uninstall.", 'molongui-authorship' ),
             );
         }
+
         if ( apply_filters( 'authorship/options/add_common_tools', true ) )
         {
             $fw_options[] = array
@@ -179,6 +192,7 @@ trait Options
             );
 
             $fw_options = apply_filters( 'authorship/tools/before_plugin_settings_panel', $fw_options );
+
             $fw_options[] = array
             (
                 'display' => true,
@@ -187,6 +201,7 @@ trait Options
                 'label'   => __( "Plugin Settings", 'molongui-authorship' ),
                 'buttons' => array(),
             );
+
             $fw_options[] = array
             (
                 'display' => true,
@@ -203,6 +218,7 @@ trait Options
                     'disabled' => false,
                 ),
             );
+
             $plugin_tools   = array();
             $plugin_tools[] = array
             (
@@ -222,6 +238,7 @@ trait Options
                     'target' => '_blank',
                 ),
             );
+
             $plugin_tools[] = array
             (
                 'display' => apply_filters( 'authorship/options/display_banners', true ),
@@ -240,8 +257,10 @@ trait Options
                     'target' => '_blank',
                 ),
             );
+
             $fw_options = array_merge( $fw_options, apply_filters( 'authorship/options/common_tools', $plugin_tools ) );
         }
+
         if ( apply_filters( 'authorship/show_help_options', true ) )
         {
             $fw_options[] = array
@@ -252,6 +271,7 @@ trait Options
                 'name'    => __( 'Help' ),
             );
         }
+
         return apply_filters( 'authorship/options/common', $fw_options );
     }
 }

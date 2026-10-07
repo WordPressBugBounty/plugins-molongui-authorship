@@ -6,7 +6,8 @@ use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 trait Settings_Page
 {
     public static function is_settings_page()
@@ -28,6 +29,7 @@ trait Settings_Page
             return $pagenow === 'admin.php' && isset( $_GET['page'] ) && $_GET['page'] === MOLONGUI_AUTHORSHIP_NAME;
         }
     }
+
     public function dequeue_wp_forms_styles( $wp_styles )
     {
         if ( !( is_admin() && self::is_settings_page() ) )
@@ -36,13 +38,16 @@ trait Settings_Page
         }
 
         $style_handle = 'forms';
+
         if ( isset( $wp_styles->registered[ $style_handle ] ) )
         {
             unset( $wp_styles->registered[ $style_handle ] );
+
             if ( in_array( $style_handle, $wp_styles->queue, true ) )
             {
                 $wp_styles->queue = array_diff( $wp_styles->queue, array( $style_handle ) );
             }
+
             foreach ( $wp_styles->registered as $handle => $style )
             {
                 if ( in_array( $style_handle, $style->deps, true ) )
@@ -54,6 +59,7 @@ trait Settings_Page
 
         return $wp_styles;
     }
+
     public function void_wp_forms_styles( $html, $handle, $href, $media )
     {
         if ( 'forms' === $handle && is_admin() && self::is_settings_page() )
@@ -62,9 +68,11 @@ trait Settings_Page
         }
         return $html;
     }
+
     public static function render()
     {
         $settings = apply_filters( 'authorship/plugin_settings', array() );
+
         if ( $settings )
         {
             foreach ( $settings as $key => $value )
@@ -91,24 +99,29 @@ trait Settings_Page
                     {
                         $parent = 0;
                     }
+
                     ${'tab_'.$parent}[$key] = $value;
                 }
             }
+
             if ( isset( $tabs ) )
             {
                 $nav_items    = '';
                 $div_contents = null;
                 $current_tab  = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
                 if ( $current_tab == '' )
                 {
                     reset( $tabs );
                     $current_tab = key( $tabs );
+
                     while ( !$tabs[$current_tab]['display'] )
                     {
                         next( $tabs );
                         $current_tab = key( $tabs );
                     }
                 }
+
                 foreach ( $tabs as $tab )
                 {
                     if ( 'private' !== $tab['access'] )
@@ -116,6 +129,7 @@ trait Settings_Page
                         $nav_items .= '<li class="m-section-nav-tab '.( $tab['id'] == $current_tab ? 'is-selected' : '' ).'"><a class="m-section-nav-tab__link" href="#'.$tab['id'].'" data-id="'.$tab['id'].'" role="menuitem"><span class="m-section-nav-tab__text">' . $tab['name'] . '</span></a></li>';
                     }
                     $div_contents .= '<section id="'.$tab['id'].'" class="m-tab '.( $tab['id'] == $current_tab ? 'current' : '' ).'">';
+
                     if ( isset( ${'tab_'.$tab['id']} ) )
                     {
                         $group = '';
@@ -154,27 +168,35 @@ trait Settings_Page
             }
 
         }
+
         require_once MOLONGUI_AUTHORSHIP_DIR . 'common/modules/settings/views/html-page-options.php';
     }
+
     public static function register_scripts()
     {
         do_action( 'authorship/options/enqueue_required_deps' );
+
         Assets::enqueue_sweetalert();
+
         $deps = apply_filters( 'authorship/options/script_deps', array() );
+
         if ( !empty( $deps ) )
         {
             add_filter( "authorship/options/inline_script", '__return_false' );
         }
+
         $file = apply_filters( 'authorship/options/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/options.xxxx.min.js' );
 
         Assets::register_script( $file, 'options', $deps );
     }
+
     public static function enqueue_scripts()
     {
         $file = apply_filters( 'authorship/options/script', MOLONGUI_AUTHORSHIP_FOLDER . '/assets/js/common/options.xxxx.min.js' );
 
         Assets::enqueue_script( $file, 'options', true );
     }
+
     public static function localize_scripts()
     {
         $params = array
@@ -183,14 +205,17 @@ trait Settings_Page
             'plugin_version' => MOLONGUI_AUTHORSHIP_VERSION,
             'is_pro'         => did_action( 'authorship_pro/loaded' ),
             'options_page'   => esc_url( admin_url( 'admin.php?page=' . MOLONGUI_AUTHORSHIP_NAME . '&tab=' . MOLONGUI_AUTHORSHIP_PREFIX . '_pro_' . 'license' ) ),
+
             'cm_settings' => array
             (
                 'custom_css' => wp_enqueue_code_editor( array( 'type' => 'text/css', 'codemirror' => array( 'mode' => 'css', 'lint' => true, 'autofocus' => true ) ) ),
                 'custom_php' => wp_enqueue_code_editor( array( 'type' => 'application/x-httpd-php', 'codemirror' => array( 'mode' => 'php', 'lint' => true, 'autofocus' => true ) ) ),
             ),
+
             1 => __( "Premium feature", 'molongui-authorship' ),
             2 => __( "This feature is available only for Premium users. Upgrade to Premium to unlock it!", 'molongui-authorship' ),
-            10001 => '', // unused?
+
+            10001 => '',  
             10002 => __( "Saving", 'molongui-authorship' ),
             10003 => __( "You are about to leave this page without saving. All changes will be lost.", 'molongui-authorship' ),
             10004 => __( "WARNING: You are about to delete all your settings! Please confirm this action.", 'molongui-authorship' ),
@@ -221,6 +246,7 @@ trait Settings_Page
             10028 => __( "Plugin settings have been restored to defaults successfully. Click on the OK button and the page will be reloaded automatically.", 'molongui-authorship' ),
             10029 => __( "Something went wrong and plugin defaults couldn't be restored. Please, try again.", 'molongui-authorship' ),
             10030 => __( "Something went wrong and couldn't connect to the server. Please, try again.", 'molongui-authorship' ),
+
             20000 => wp_create_nonce( 'mfw_license_nonce' ),
             20001 => __( "Something is missing...", 'molongui-authorship' ),
             20002 => __( "You need to provide both values, License Key and PIN", 'molongui-authorship' ),
@@ -240,28 +266,36 @@ trait Settings_Page
             20016 => __( "Error", 'molongui-authorship' ),
             20017 => __( "License PIN must contain only digits", 'molongui-authorship' ),
         );
+
         return apply_filters( 'authorship/options/script_params', $params );
     }
+
     public static function register_styles()
     {
         if ( apply_filters( 'authorship/options/enqueue_colorpicker', false ) ) wp_enqueue_style( 'wp-color-picker' );
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.6b5f.min.css' : '/common/modules/settings/assets/css/styles.a6a1.min.css' ) );
+
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.dea5.min.css' : '/common/modules/settings/assets/css/styles.c951.min.css' ) );
         $deps = array();
 
         Assets::register_style( $file, 'options', $deps );
     }
+
     public static function enqueue_styles()
     {
-        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.6b5f.min.css' : '/common/modules/settings/assets/css/styles.a6a1.min.css' ) );
+        $file = apply_filters( 'authorship/options/styles', MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/common/modules/settings/assets/css/styles-rtl.dea5.min.css' : '/common/modules/settings/assets/css/styles.c951.min.css' ) );
 
         Assets::enqueue_style( $file, 'options', true );
     }
+
     public static function extra_styles()
     {
         $css = '';
+
         $css .= WP::get_admin_color();
+
         return apply_filters( 'authorship/options/extra_styles', $css );
     }
+
     public static function support_tab_content()
     {
         $tidio_url   = Helpers::get_tidio_url();
@@ -410,6 +444,7 @@ trait Settings_Page
 
         return ob_get_clean();
     }
+
     public static function get_custom_php_tip()
     {
         ob_start();
@@ -435,6 +470,7 @@ trait Settings_Page
 
         return ob_get_clean();
     }
+
     public static function custom_css_control()
     {
         UI::textarea( array
@@ -451,6 +487,7 @@ trait Settings_Page
             'tooltip'     => '',
         ));
     }
+
     public static function custom_php_control()
     {
         UI::textarea( array
@@ -512,6 +549,7 @@ trait Settings_Page
             ),
         ));
     }
+
     public static function plugin_settings_control()
     {
         echo '<div class="molongui-ui-cards">';
@@ -572,6 +610,7 @@ trait Settings_Page
 
         echo '</div>';
     }
+
     public static function plugin_data_removal()
     {
         UI::toggle( array
@@ -590,9 +629,11 @@ trait Settings_Page
             ),
         ));
     }
+
     public static function get_plugin_data_removal_hidden_content()
     {
         $uninstall = self::get( 'uninstall', 'files' );
+
         if ( empty( $uninstall ) or !is_string( $uninstall ) )
         {
             $uninstall = 'files';
@@ -637,4 +678,4 @@ trait Settings_Page
         ));
     }
 
-} // trait
+}  

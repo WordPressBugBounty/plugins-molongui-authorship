@@ -13,7 +13,8 @@ namespace Molongui\Authorship;
 use Molongui\Authorship\Common\Utils\Helpers;
 use \Molongui\Authorship\Common\Utils\Plugin;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Social extends \Molongui\Authorship\Common\Utils\Icon
 {
     public static function supported_profiles()
@@ -302,7 +303,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'plurk' => array
             (
                 'name'     => 'Plurk',
-                'url'      => 'http://www.plurk.com/your_username',
+                'url'      => 'https://www.plurk.com/your_username',
                 'color'    => '#FF6B6B',
                 'premium'  => false,
             ),
@@ -449,7 +450,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'deezer' => array
             (
                 'name'     => 'Deezer',
-                'url'      => 'http://www.deezer.com/profile/your_username',
+                'url'      => 'https://www.deezer.com/profile/your_username',
                 'color'    => '#2DC9D7',
                 'premium'  => false,
             ),
@@ -602,7 +603,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
                 'color'    => '#000000',
                 'premium'  => false,
             ),
-            'stitcher' => array // Stitcher was shut down! Remove it in the future!
+            'stitcher' => array  
             (
                                 'name'     => 'Stitcher',
                                 'url'      => 'https://www.stitcher.com/podcast/your_username',
@@ -612,7 +613,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'codepen' => array
             (
                 'name'     => 'CodePen',
-                'url'      => 'http://codepen.io/your_username',
+                'url'      => 'https://codepen.io/your_username',
                 'color'    => '#000000',
                 'premium'  => false,
             ),
@@ -661,7 +662,7 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'digg' => array
             (
                 'name'     => 'Digg',
-                'url'      => 'http://digg.com/your_username',
+                'url'      => 'https://digg.com/your_username',
                 'color'    => '#000000',
                 'premium'  => false,
             ),
@@ -689,14 +690,14 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             'line' => array
             (
                 'name'     => 'Line',
-                'url'      => 'line://ti/p/@UserlineID',    // https://developers.line.biz/en/docs/messaging-api/using-line-url-scheme/#sharing-your-bot-account
+                'url'      => 'line://ti/p/@UserlineID',     
                 'color'    => '#00c300',
                 'premium'  => false,
             ),
             'lineat' => array
             (
                 'name'     => 'Line@',
-                'url'      => 'line://ti/p/@UserlineID',    // https://developers.line.biz/en/docs/messaging-api/using-line-url-scheme/#sharing-your-bot-account
+                'url'      => 'line://ti/p/@UserlineID',     
                 'color'    => '#00c300',
                 'premium'  => true,
             ),
@@ -933,21 +934,26 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
             ),
         );
     }
+
     public static function get( $query = 'all', $networks = array(), $is_search = false )
     {
         $sn = array();
+
         if ( !$is_search and !Settings::get( 'social_profiles_enabled' ) )
         {
             return $sn;
         }
+
         if ( empty( $networks ) )
         {
             $networks = self::supported_profiles();
         }
+
         if ( empty( $networks ) )
         {
             return $sn;
         }
+
         $enabled = array();
         if ( 'all' !== $query )
         {
@@ -956,7 +962,9 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
                 $enabled = explode( ",", Settings::get( 'social_profiles', '' ) );
             }
         }
+
         $mod = ( $query == 'all' ? 'true or ' : ( $query == 'disabled' ? '!' : '' ) );
+
         foreach ( $networks as $id => $network )
         {
             if ( $mod.in_array( $id, (array)$enabled ) )
@@ -970,8 +978,11 @@ class Social extends \Molongui\Authorship\Common\Utils\Icon
         }
 
         $order = 'enabled' === $query ? $enabled : array();
+
         $order = apply_filters( 'molongui_authorship/social_profiles_order', $order, array_keys( $sn ) );
+
         $order = array_intersect( array_unique( $order ), array_keys( $networks ) );
+
         if ( empty( $order ) )
         {
             $sn = Helpers::array_sort( $sn, 'ASC', 'name' );

@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value )
 {
     if ( is_author() or molongui_is_guest_author() )
@@ -23,6 +25,8 @@ add_filter( '_authorship/get_user_by/aim', function( $aim, $user, $field, $value
 add_filter( '_authorship/get_user_by/post_id', function( $post_id, $user, $field, $value )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_PROVIDE_OBJECT, 10 );
+
+
     $fn    = 'get_author';
     $class = 'td_module';
 
@@ -36,28 +40,37 @@ add_filter( '_authorship/get_user_by/post_id', function( $post_id, $user, $field
             return $dbt[$key]['object']->post->ID;
         }
     }
+
     return $post_id;
 }, 10, 4 );
+
 add_filter( 'molongui_edit_main_query_only', function( $default, &$query )
 {
     if ( !$query->is_author() ) return $default;
+
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
     if ( empty( $dbt ) ) return $default;
+
     $fn    = 'render';
     $class = 'td_block';
+
+
     if ( $key = array_search( $fn, array_column( $dbt, 'function' ) )
          and
          isset( $dbt[$key]['class'] ) and ( $dbt[$key]['class'] == $class ) )
     {
         return false;
     }
+
     return $default;
 }, 10, 2 );
+
 add_filter( 'authorship/author_link', function( $value, $args )
 {
     $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     $fn   = 'get_author_posts_url';
     $file = 'td-composer/mobile/parts/logged.php';
+
 
     if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and
          isset( $dbt[$key]['file'] ) and substr_compare( $dbt[$key]['file'], $file, strlen( $dbt[$key]['file'] )-strlen( $file ), strlen( $file ) ) === 0

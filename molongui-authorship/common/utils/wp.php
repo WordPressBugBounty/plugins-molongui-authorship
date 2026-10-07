@@ -2,7 +2,8 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class WP
 {
     public static function the_query()
@@ -11,6 +12,7 @@ class WP
 
         return apply_filters( 'authorship/the_query', $wp_the_query );
     }
+
     public static function home_url()
     {
         if ( function_exists( 'pll_home_url' ) && ( !defined( 'PLL_FILTER_HOME_URL' ) || !PLL_FILTER_HOME_URL ) )
@@ -18,8 +20,10 @@ class WP
             $lang = apply_filters( 'authorship/lang', '' );
             return pll_home_url( $lang );
         }
+
         return home_url();
     }
+
     public static function verify_nonce( $action, $nonce = null, $source = 'post' )
     {
         if ( in_array( $source, array( 'get', 'post', 'request', 'server' ) ) )
@@ -71,6 +75,7 @@ class WP
 
         return !empty( $nonce ) and wp_verify_nonce( sanitize_text_field( wp_unslash( $nonce ) ), $action );
     }
+
     public static function get_sites()
     {
         if ( function_exists( 'get_sites' ) and function_exists( 'get_current_network_id' ) )
@@ -85,6 +90,7 @@ class WP
 
         return $site_ids;
     }
+
     public static function get_domain()
     {
         $scheme    = isset( $_SERVER['REQUEST_SCHEME'] ) ? sanitize_text_field( $_SERVER['REQUEST_SCHEME'] ) . '://' : '';
@@ -94,10 +100,13 @@ class WP
 
         return $scheme . $host . $subfolder;
     }
+
     public static function get_image_sizes( $type = 'all' )
     {
         $image_sizes = array();
+
         $type = in_array( $type, array( 'all', 'default', 'additional' ) ) ? $type : 'all';
+
         if ( in_array( $type, array( 'all', 'default' ) ) )
         {
             $default_image_sizes = get_intermediate_image_sizes();
@@ -109,6 +118,7 @@ class WP
                 $image_sizes[$size]['crop']   = get_option( "{$size}_crop" ) ? get_option( "{$size}_crop" ) : false;
             }
         }
+
         if ( in_array( $type, array( 'all', 'additional' ) ) )
         {
             global $_wp_additional_image_sizes;
@@ -118,11 +128,14 @@ class WP
                 $image_sizes = array_merge( $image_sizes, $_wp_additional_image_sizes );
             }
         }
+
         return $image_sizes;
     }
+
     public static function get_admin_color()
     {
         $css = $scheme = '';
+
         global $_wp_admin_css_colors;
 
         if ($_wp_admin_css_colors)
@@ -135,19 +148,23 @@ class WP
                 {
                     $scheme .= '--m-admin-color-' . $key . ':' . $color . ';';
                 }
+
                 $css .= ":root{ " . $scheme . " }";
             }
         }
 
         return !empty($css) ? $css : '';
     }
+
     public static function is_callback_hooked( $hook, $callback, $priority = 10 )
     {
         global $wp_filter;
+
         if ( !isset( $wp_filter[ $hook ] ) )
         {
             return false;
         }
+
         if ( is_a( $wp_filter[ $hook ], 'WP_Hook' ) )
         {
             $callbacks = $wp_filter[ $hook ]->callbacks;
@@ -156,10 +173,12 @@ class WP
         {
             $callbacks = $wp_filter[ $hook ];
         }
+
         if ( !isset( $callbacks[ $priority ] ) )
         {
             return false;
         }
+
         foreach ( $callbacks[ $priority ] as $hooked_callback )
         {
             if ( $hooked_callback['function'] === $callback )
@@ -170,13 +189,17 @@ class WP
 
         return false;
     }
+
+
     public static function is_block_editor()
     {
         $edit_mode = false;
+
         if ( function_exists( 'is_gutenberg_page' ) and is_gutenberg_page() )
         {
             $edit_mode = true;
         }
+
         if ( function_exists( 'get_current_screen' ) )
         {
             $current_screen = get_current_screen();
@@ -188,10 +211,12 @@ class WP
 
         return apply_filters( 'authorship/is_block_editor', $edit_mode );
     }
+
     public static function is_block_theme()
     {
         return current_theme_supports( 'block-templates' );
     }
+
     public static function is_plugin_installed( $plugin_file )
     {
         if ( !function_exists( 'get_plugins' ) )
@@ -203,25 +228,31 @@ class WP
 
         return isset( $all_plugins[ $plugin_file ] );
     }
+
+
     public static function deprecated_once( $type, $identifier, $since, $replacement = null, $message = '' )
     {
         static $seen = array();
+
         $should_log = apply_filters( 'authorship/deprecated_once_should_log', true, $type, $identifier, $since, $replacement, $message );
         if ( !$should_log )
         {
             return;
         }
+
         $enabled = apply_filters( 'authorship/deprecated_once_enabled', true, $type, $identifier, $since, $replacement, $message );
+
         if ( $enabled )
         {
             $key = $type . '|' . $identifier;
 
             if ( isset( $seen[$key] ) )
             {
-                return; // Already logged this one in this request.
+                return;  
             }
             $seen[$key] = true;
         }
+
         switch ( $type )
         {
             case 'function':
@@ -249,17 +280,20 @@ class WP
                 _doing_it_wrong( __FUNCTION__, 'Unknown deprecation type.', $since );
         }
     }
+
     public static function deprecated_function_once( $function, $since, $replacement = null )
     {
         self::deprecated_once( 'function', $function, $since, $replacement );
     }
+
     public static function deprecated_argument_once( $owner_function, $since, $replacement = null, $message = '' )
     {
         self::deprecated_once( 'argument', $owner_function, $since, $replacement, $message );
     }
+
     public static function deprecated_hook_once( $hook, $since, $replacement = null, $message = '' )
     {
         self::deprecated_once( 'hook', $hook, $since, $replacement, $message );
     }
 
-} // class
+}  

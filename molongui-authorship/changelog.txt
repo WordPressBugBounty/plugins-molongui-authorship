@@ -2,6 +2,55 @@
 
 == Changelog ==
 
+= 5.3.0 (2026-10-06) =
+
+* **Added**: Author Box Gutenberg block for WordPress 6.3 and later.
+* **Added**: Post Byline Gutenberg block for WordPress 6.3 and later.
+* **Added**: Option to upload a custom default avatar for authors without an avatar.
+* **Added**: Ability to disable Gravatar.
+* **Added**: Option to reassign a deleted user's authorship to an existing Guest Author.
+* **Added**: Option to remove a deleted user's authorship while keeping their content.
+* **Added**: Option to reassign a deleted guest author's authorship to a user.
+* **Added**: Option to reassign a deleted guest author's authorship to another Guest Author.
+* **Added**: Option to remove a deleted guest author's authorship while keeping their content.
+* **Added**: Redesigned Author Profile UI for WordPress Users and Guest Authors, including dedicated Public Name and Contact Info sections.
+* **Added**: Support for custom author name prefixes and suffixes.
+* **Added**: Credentials field.
+* **Added**: Professional Headline field.
+* **Added**: Department field.
+* **Added**: Author Location field.
+* **Added**: Configurable Author Box meta fields for Professional Headline, Job Title, Company, Department, Location, Email, Phone, and Website.
+* **Added**: Per-author Default, Show, and Hide overrides for Author Box meta fields.
+* **Enhanced**: Split the Authors column into separate Author and Co-authors columns for clearer post attribution.
+* **Enhanced**: Centralized avatar resolution so frontend and admin screens consistently honor the configured avatar sources and fallbacks.
+* **Enhanced**: Public author names can now include prefixes, suffixes, and credentials.
+* **Enhanced**: Profile Picture controls now use clearer Upload, Change, Edit, and Remove actions.
+* **Enhanced**: Added Ctrl+S and Cmd+S keyboard shortcuts for saving Author Profile changes.
+* **Changed**: Moved the Phone field to the Contact Info section.
+* **Changed**: Replaced the legacy avatar uploader with the common Media Picker component.
+* **Changed**: Email and Phone Author Box visibility now use the same Default, Show, and Hide system as other meta fields.
+* **Changed**: Updated framework files to v3.4.4.
+* **Fixed**: PHP fatal error caused by calling an undefined method on the edit-user screen.
+* **Fixed**: Stored DOM-based XSS vulnerability in byline link processing by validating decoded URL protocols before updating links.
+* **Fixed**: Phone value not being saved for WordPress Users.
+* **Fixed**: Local Avatar controls not behaving correctly when the Local Avatar feature was disabled.
+* **Fixed**: Social profile fallbacks no longer use stale or orphaned third-party data when the source contact method is no longer registered.
+* **Fixed**: Social profile placeholders making empty fields appear populated.
+* **Fixed**: Media Picker asset paths resolving to the wrong location.
+* **Fixed**: Guest Author avatars and email addresses not being displayed correctly in admin author tables.
+* **Fixed**: Incorrect Author Box visibility status in the posts list.
+* **Deprecated**: `authorship/edit/user/fields` in favor of `authorship/edit_user/fields`.
+* **Removed**: Legacy `edit-avatar.js` usage from the user profile screen.
+* **Removed**: `authorship/edit/user/tools/tmpl` filter.
+* **Dev**: Added `authorship/edit_user/fields` action hook.
+* **Dev**: Added `authorship/edit_user/sidebar` action hook.
+* **Dev**: Added `authorship/edit_user/conversion/tmpl` filter hook.
+* **Dev**: Added a centralized Author Meta Fields registry for field definitions, visibility, values, aliases, and prefetch requirements.
+* **Dev**: Added `molongui_authorship/author_meta_fields` filter to extend or customize registered author meta fields.
+* **Dev**: Added `molongui_authorship/author_meta_field_visibility` filter to control field visibility by context.
+* **Dev**: Added `molongui_authorship/author_meta_field_value` filter to customize resolved field values.
+* **Dev**: Author Box bio filters now receive the current Author Box options as an additional argument.
+
 = 5.2.12 (2026-09-11) =
 
 * **Fixed**: PHP fatal error on the user edit screen caused by a missing social meta compatibility method.

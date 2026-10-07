@@ -1,18 +1,25 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'molongui_authorship_bypass_original_user_id_if', function( $default )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     $fns = array( 'post_meta_1', 'post_meta_3', 'jnews_the_author_link' );
+
+
     foreach ( $fns as $fn ) if ( array_search( $fn, array_column( $dbt, 'function' ) ) ) return true;
+
     return $default;
 });
 add_filter( 'molongui_authorship_filter_the_author_display_name_post_id', function( $post_id, $post, $display_name )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_PROVIDE_OBJECT, 8 );
+
     $fns   = array( 'post_meta_1', 'post_meta_3' );
     $class = 'JNews\Module\ModuleViewAbstract';
+
     foreach ( $fns as $fn ) if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
         if ( isset( $dbt[$i]['class'] ) and $dbt[$i]['class'] == $class )
@@ -23,14 +30,18 @@ add_filter( 'molongui_authorship_filter_the_author_display_name_post_id', functi
             }
         }
     }
+
     return $post_id;
 }, 10, 3 );
+
 add_filter( 'molongui_authorship_filter_link_post_id', function( $post_id, $post, $link )
 {
     $dbt = debug_backtrace( DEBUG_BACKTRACE_PROVIDE_OBJECT, 9 );
+
     $i     = 8;
     $fns   = array( 'post_meta_1', 'post_meta_3' );
     $class = 'JNews\Module\ModuleViewAbstract';
+
     foreach ( $fns as $fn ) if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
         if ( isset( $dbt[$i]['class'] ) and $dbt[$i]['class'] == $class )
@@ -41,13 +52,16 @@ add_filter( 'molongui_authorship_filter_link_post_id', function( $post_id, $post
             }
         }
     }
+
     return $post_id;
 }, 10, 3 );
+
 add_filter( 'molongui_authorship/display_author_box', function( $default )
 {
     $dbt   = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
     $class = 'JNews\Footer\FooterBuilder';
     $fn    = 'render_footer';
+
     if ( in_the_loop() )
     {
         if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
@@ -60,12 +74,18 @@ add_filter( 'molongui_authorship/display_author_box', function( $default )
 
     return $default;
 });
+
 add_filter( 'jnews_default_query_args', function( $args )
 {
     global $wp_query;
+
     if ( is_admin() or !$wp_query->is_main_query() ) return $args;
+
     if ( empty( $wp_query->get( 'meta_query' ) ) ) return $args;
+
+
     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
+
     if ( is_author() or molongui_is_guest_author() )
     {
         $fn    = 'render_content';
@@ -74,18 +94,23 @@ add_filter( 'jnews_default_query_args', function( $args )
         if ( $key = array_search( $fn, array_column( $dbt, 'function' ) ) and isset( $dbt[$key]['class'] ) and ( $dbt[$key]['class'] == $class ) )
         {
             unset( $args['author__in'] );
+
             $args['meta_query'] = $wp_query->get( 'meta_query' );
         }
     }
 
+
     return $args;
 }, 99, 1 );
+
 add_filter( 'molongui_authorship_dont_filter_the_author_display_name', function( $default, $display_name, $user_id, $original_user_id, $post, $dbt )
 {
     $fn    = 'top_bar_account';
     $class = 'FirstLoadAction';
+
     if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) ) return true;
     if ( $i = array_search( $class, array_column( $dbt, 'class' ) ) ) return true;
+
     return $default;
 }, 10, 6 );
 add_filter( 'authorship/pre_get_user_by', function( $user, $original_user, $field, $value )
@@ -105,7 +130,9 @@ add_filter( 'authorship/get_avatar_data/skip', function( $default, $avatar, $dbt
 {
     $fn    = 'top_bar_account';
     $class = 'FirstLoadAction';
+
     if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) ) return true;
     if ( $i = array_search( $class, array_column( $dbt, 'class' ) ) ) return true;
+
     return $default;
 }, 10, 3 );

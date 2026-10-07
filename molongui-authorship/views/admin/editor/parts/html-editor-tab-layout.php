@@ -3,7 +3,9 @@
 use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 
 $box_layouts = apply_filters( 'authorship/box_layouts', array
 (
@@ -201,6 +203,7 @@ Author_Box_Editor::render_input( 'author_box_shadow_inset', __( "Inner shadow", 
         'default' => 0,
     )
 );
+
 
 Author_Box_Editor::render_heading( __( "Tabs", 'molongui-authorship' ) );
 Author_Box_Editor::render_notice( 'tabs', sprintf( __( "Tab settings apply only if the %sTabbed%s box layout is selected. Since it is not selected, they are currently disabled.", 'molongui-authorship' ), '<span style="font-weight:700">', '</span>' ) );

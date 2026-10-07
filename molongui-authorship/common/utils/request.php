@@ -2,36 +2,44 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Request
 {
     public static function get( $key = null, $default = null )
     {
         return self::readArray( __FUNCTION__, $key, $default );
     }
+
     public static function post( $key = null, $default = null )
     {
         return self::readArray( __FUNCTION__, $key, $default );
     }
+
     public static function request( $key = null, $default = null )
     {
         return self::readArray( __FUNCTION__, $key, $default );
     }
+
     public static function server( $key = null, $default = null )
     {
         return self::readArray( __FUNCTION__, $key, $default );
     }
+
     public static function cookie( $key = null, $default = null )
     {
         return self::readArray( __FUNCTION__, $key, $default );
     }
+
     protected static function readArray( $type, $key, $default )
     {
         $type = strtoupper( $type );
+
         if ( !in_array( $type, ['GET', 'POST', 'REQUEST', 'SERVER', 'COOKIE'] ) )
         {
             return $default;
         }
+
         $superglobal = $GLOBALS['_' . $type];
 
         if ( isset( $superglobal[$key] ) )
@@ -50,9 +58,11 @@ class Request
             return $default;
         }
     }
+
     public static function is_rest_api_request()
     {
         global $wp_version;
+
         if ( version_compare( $wp_version, '6.5', '>=' ) && function_exists( 'wp_is_serving_rest_request' ) )
         {
             return wp_is_serving_rest_request();
@@ -70,6 +80,7 @@ class Request
             return apply_filters( 'authorship/is_rest_api_request', $is_rest_api_request );
         }
     }
+
     public static function is_from( $type )
     {
         switch ( $type )

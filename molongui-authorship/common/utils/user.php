@@ -4,7 +4,8 @@ namespace Molongui\Authorship\Common\Utils;
 
 use Molongui\Authorship\Common\Libraries\Browser;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class User
 {
     public static function get( $user = 0 )
@@ -30,6 +31,7 @@ class User
 
         return $user_object;
     }
+
     public static function get_roles( $user = 0 )
     {
         $user_roles  = array();
@@ -42,20 +44,26 @@ class User
 
         return $user_roles;
     }
+
     public static function has_role( $role, $user = 0 )
     {
         return in_array( $role, (array) self::get_roles( $user ) );
     }
+
     public static function has_multiple_roles( $user = null )
     {
         $user = self::get( $user );
+
         if ( !$user or !$user->exists() )
         {
             return false;
         }
+
         $roles = $user->roles;
+
         return count( $roles ) > 1;
     }
+
     public static function get_browser_data()
     {
         $browser = new Browser();
@@ -68,6 +76,7 @@ class User
             'ip'         => self::get_ip(),
         );
     }
+
     public static function get_ip()
     {
         $ip = '127.0.0.1';
@@ -88,4 +97,4 @@ class User
         return $ip;
     }
 
-} // class
+}  

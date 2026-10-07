@@ -11,16 +11,24 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 final class Request_LRU_Cache
 {
     private $enabled = true;
+
     private $capacity = 5000;
+
     private $size = 0;
+
     private $namespace = 'default';
+
     private $map = array();
+
     private $head = null;
+
     private $tail = null;
+
     private $stats = array
     (
         'hits'      => 0,
@@ -28,12 +36,14 @@ final class Request_LRU_Cache
         'sets'      => 0,
         'evictions' => 0,
     );
+
     public function __construct( $capacity = 5000, $enabled = true, $namespace = 'default' )
     {
         $this->capacity  = max( 0, (int) $capacity );
         $this->enabled   = (bool) $enabled;
         $this->namespace = (string) $namespace;
     }
+
     public function get( $segment, $key )
     {
         if ( ! $this->enabled || $this->capacity === 0 )
@@ -61,6 +71,7 @@ final class Request_LRU_Cache
         $this->stats['misses']++;
         return null;
     }
+
     public function has( $segment, $key )
     {
         if ( ! $this->enabled || $this->capacity === 0 )
@@ -72,7 +83,7 @@ final class Request_LRU_Cache
 
         if ( isset( $this->map[ $fq ] ) )
         {
-            $this->touch( $fq ); // maintain recency invariant
+            $this->touch( $fq );  
             $this->stats['hits']++;
             return true;
         }
@@ -80,6 +91,7 @@ final class Request_LRU_Cache
         $this->stats['misses']++;
         return false;
     }
+
     public function set( $segment, $key, $value )
     {
         if ( ! $this->enabled || $this->capacity === 0 )
@@ -88,6 +100,7 @@ final class Request_LRU_Cache
         }
 
         $fq = $this->fq_key( $segment, $key );
+
         if ( isset( $this->map[ $fq ] ) )
         {
             $this->map[ $fq ]['value'] = $value;
@@ -95,6 +108,7 @@ final class Request_LRU_Cache
             $this->stats['sets']++;
             return;
         }
+
         $node = array(
             'k'       => (string) $key,
             'segment' => (string) $segment,
@@ -118,8 +132,10 @@ final class Request_LRU_Cache
 
         $this->size++;
         $this->stats['sets']++;
+
         $this->evict_if_needed();
     }
+
     public function delete( $segment, $key )
     {
         if ( ! $this->enabled || $this->capacity === 0 )
@@ -136,6 +152,7 @@ final class Request_LRU_Cache
             $this->size--;
         }
     }
+
     public function clear( $segment = null )
     {
         if ( $segment === null )
@@ -146,6 +163,7 @@ final class Request_LRU_Cache
             $this->size = 0;
             return;
         }
+
         $fq = $this->head;
         while ( $fq !== null )
         {
@@ -158,6 +176,7 @@ final class Request_LRU_Cache
             }
             $fq = $next;
         }
+
         if ( $this->head !== null && ! isset( $this->map[ $this->head ] ) )
         {
             $this->head = $this->find_new_head();
@@ -173,6 +192,7 @@ final class Request_LRU_Cache
             $this->tail = null;
         }
     }
+
     public function remember( $segment, $key, $producer )
     {
         $hit = $this->get( $segment, $key );
@@ -180,7 +200,9 @@ final class Request_LRU_Cache
         {
             return $hit;
         }
+
         $value = call_user_func( $producer );
+
         if ( $this->enabled && $this->capacity > 0 )
         {
             $this->set( $segment, $key, $value );
@@ -188,27 +210,33 @@ final class Request_LRU_Cache
 
         return $value;
     }
+
     public function is_enabled()
     {
         return $this->enabled;
     }
+
     public function set_enabled( $enabled )
     {
         $this->enabled = (bool) $enabled;
     }
+
     public function get_capacity()
     {
         return $this->capacity;
     }
+
     public function set_capacity( $capacity )
     {
         $this->capacity = max( 0, (int) $capacity );
         $this->evict_if_needed();
     }
+
     public function get_size()
     {
         return $this->size;
     }
+
     public function stats()
     {
         return array(
@@ -221,10 +249,11 @@ final class Request_LRU_Cache
             'namespace' => (string) $this->namespace,
         );
     }
+
     public function dump( $segment = null )
     {
         $out = array();
-        $fq  = $this->tail; // start from LRU
+        $fq  = $this->tail;  
 
         while ( $fq !== null )
         {
@@ -241,21 +270,26 @@ final class Request_LRU_Cache
 
         return $out;
     }
+
+
     private function fq_key( $segment, $key )
     {
         return (string) $segment . '|' . (string) $key;
     }
+
     private function touch( $fq )
     {
         if ( $this->head === $fq )
         {
             return;
         }
+
         if ( ! isset( $this->map[ $fq ] ) )
         {
             return;
         }
         $node = &$this->map[ $fq ];
+
         $prev = isset( $node['prev'] ) ? $node['prev'] : null;
         $next = isset( $node['next'] ) ? $node['next'] : null;
 
@@ -267,10 +301,12 @@ final class Request_LRU_Cache
         {
             $this->map[ $next ]['prev'] = $prev;
         }
+
         if ( $this->tail === $fq )
         {
             $this->tail = $next;
         }
+
         $node['prev'] = null;
         $node['next'] = $this->head;
 
@@ -280,11 +316,13 @@ final class Request_LRU_Cache
         }
 
         $this->head = $fq;
+
         if ( $this->tail === null )
         {
             $this->tail = $fq;
         }
     }
+
     private function unlink( $fq )
     {
         $node = $this->map[ $fq ];
@@ -310,11 +348,13 @@ final class Request_LRU_Cache
             $this->tail = $prev;
         }
     }
+
     private function evict_if_needed()
     {
         while ( $this->size > $this->capacity && $this->tail !== null )
         {
             $fq = $this->tail;
+
             $next = ( isset( $this->map[ $fq ] ) && isset( $this->map[ $fq ]['next'] ) )
                 ? $this->map[ $fq ]['next']
                 : null;
@@ -324,20 +364,24 @@ final class Request_LRU_Cache
             }
 
             $this->tail = $next;
+
             unset( $this->map[ $fq ] );
             $this->size--;
             $this->stats['evictions']++;
         }
+
         if ( $this->capacity === 0 && $this->size > 0 )
         {
             $this->clear( null );
         }
+
         if ( $this->size === 0 )
         {
             $this->head = null;
             $this->tail = null;
         }
     }
+
     private function find_new_head()
     {
         $fq = $this->tail;
@@ -351,6 +395,7 @@ final class Request_LRU_Cache
         }
         return $fq;
     }
+
     private function find_new_tail()
     {
         $fq = $this->head;
@@ -364,4 +409,4 @@ final class Request_LRU_Cache
         }
         return $fq;
     }
-} // class
+}  

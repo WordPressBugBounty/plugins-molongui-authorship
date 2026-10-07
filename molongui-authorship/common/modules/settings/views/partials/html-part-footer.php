@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+defined( 'ABSPATH' ) or exit;  
+
 $plugin_url    = MOLONGUI_AUTHORSHIP_WEB;
 $help_url      = 'https://www.molongui.com/help/';
 $support_url   = $help_url . 'support/';

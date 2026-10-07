@@ -14,16 +14,25 @@
 namespace Molongui\Authorship\Migration;
 
 use Molongui\Authorship\Common\Utils\Singleton;
+
 class Co_Authors_Plus
 {
     protected $name = 'Co-Authors Plus';
+
     protected $path = 'co-authors-plus/co-authors-plus.php';
+
     protected $id = 'cap';
+
     public $author_tax = 'author';
+
     public $guest_post_type = 'guest-author';
+
     public $slug_prefix_pattern = '#^cap\-#';
+
     use Utils;
+
     use Singleton;
+
     public function __construct()
     {
         if ( apply_filters( 'molongui_authorship/enable_coauthors_plus_migration', true ) )
@@ -32,39 +41,48 @@ class Co_Authors_Plus
             {
                 require_once 'co-authors-plus/cron.php';
             }
+
             if ( defined( 'WP_CLI' ) && WP_CLI )
             {
                 add_filter( 'molongui_authorship/migrate_coauthors_plus', '__return_true' );
             }
         }
     }
+
     public function get_name()
     {
         return $this->name;
     }
+
     public function get_path()
     {
         return $this->path;
     }
+
     public function get_id()
     {
         return $this->id;
     }
+
     public function get_author_tax()
     {
         return $this->author_tax;
     }
+
     public function get_guest_post_type()
     {
         return $this->guest_post_type;
     }
+
     public function get_prefix()
     {
         return $this->slug_prefix_pattern;
     }
+
     public function get_guest_authors()
     {
         global $wpdb;
+
         return $wpdb->get_col(
             $wpdb->prepare("
                 SELECT ID
@@ -73,26 +91,32 @@ class Co_Authors_Plus
             ", $this->get_guest_post_type() )
         );
     }
+
     public function convert_guest( $post_id )
     {
         global $wpdb;
+
         $post_id = intval( $post_id );
+
         $wpdb->query( 'START TRANSACTION' );
+
         try
         {
             $wpdb->update(
                 $wpdb->posts,
-                array( 'post_type' => 'guest_author' ), // New post_type value
-                array( 'ID' => $post_id ), // WHERE condition
-                array( '%s' ), // Data format
-                array( '%d' )  // WHERE condition format
+                array( 'post_type' => 'guest_author' ),  
+                array( 'ID' => $post_id ),  
+                array( '%s' ),  
+                array( '%d' )   
             );
+
             $wpdb->query( $wpdb->prepare(
                 "UPDATE {$wpdb->posts} 
                  SET post_name = REPLACE(post_name, 'cap-', '') 
                  WHERE ID = %d AND post_name LIKE 'cap-%%'",
                 $post_id
             ));
+
             $wpdb->query( $wpdb->prepare(
                 "UPDATE {$wpdb->posts} p
                  INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -100,17 +124,20 @@ class Co_Authors_Plus
                  WHERE pm.meta_key = 'cap-description' AND p.ID = %d",
                 $post_id
             ));
+
             $wpdb->query( $wpdb->prepare(
                 "DELETE FROM {$wpdb->postmeta}
                 WHERE post_id = %d AND meta_key IN ('cap-description', 'cap-user_login', 'cap-linked_account')",
                 $post_id
             ));
+
             $wpdb->query( $wpdb->prepare(
                 "UPDATE {$wpdb->postmeta}
                  SET meta_key = REPLACE(meta_key, 'cap-', '_molongui_guest_author_')
                  WHERE post_id = %d AND meta_key LIKE 'cap-%%'",
                 $post_id
             ));
+
             $wpdb->query( $wpdb->prepare(
                 "UPDATE {$wpdb->postmeta}
                  SET meta_key = CASE
@@ -120,6 +147,7 @@ class Co_Authors_Plus
                  WHERE post_id = %d AND meta_key IN ('_molongui_guest_author_user_email', '_molongui_guest_author_website')",
                 $post_id
             ));
+
             $wpdb->query( 'COMMIT' );
 
             error_log( sprintf( "*** Migrated guest author #%s.", $post_id ) );
@@ -131,18 +159,23 @@ class Co_Authors_Plus
             error_log( 'Error updating guest author #' . $post_id . ': ' . $e->getMessage() );
         }
     }
+
     public function get_posts()
     {
         global $wpdb;
 
         $supported_post_types = array( 'post' );
+
         if ( isset( $GLOBALS['coauthors_plus'] ) )
         {
             global $coauthors_plus;
             $supported_post_types = $coauthors_plus->supported_post_types();
         }
+
         $supported_post_types = apply_filters( 'molongui_authorship/cap_supported_post_types', $supported_post_types );
+
         $placeholders = implode( ',', array_fill( 0, count( $supported_post_types ), '%s' ) );
+
         return $wpdb->get_col(
             $wpdb->prepare( "
                 SELECT DISTINCT p.ID
@@ -154,6 +187,7 @@ class Co_Authors_Plus
             ", array_merge( array( $this->get_author_tax() ), $supported_post_types ) )
         );
     }
+
     public function convert_postmeta( $post_id )
     {
         $author_terms = wp_get_object_terms( $post_id, 'author', array( 'orderby' => 'term_order', 'order' => 'ASC' ) );
@@ -179,9 +213,11 @@ class Co_Authors_Plus
                         $post_authors[] = $author;
                     }
                 }
+
                 if ( apply_filters( 'molongui_authorship/delete_cap_taxonomies', false ) )
                 {
                     wp_remove_object_terms( $post_id, array( $author_term->term_id ), $this->get_author_tax() );
+
                     if ( empty( get_objects_in_term( $author_term->term_id, $this->get_author_tax() ) ) )
                     {
                         wp_delete_term( $author_term->term_id, $this->get_author_tax() );
@@ -192,7 +228,9 @@ class Co_Authors_Plus
             if ( !empty( $post_authors ) )
             {
                 $this->delete_molongui_authorship_meta( $post_id );
+
                 $this->set_post_main_author( $post_id, $post_authors[0]->ID, $this->get_author_type( $post_authors[0] ) );
+
                 foreach ( $post_authors as $post_author )
                 {
                     $this->set_post_author( $post_id, $post_author->ID, $this->get_author_type( $post_author ) );
@@ -207,5 +245,6 @@ class Co_Authors_Plus
         }
     }
 
-} // class
+}  
+
 new Co_Authors_Plus();

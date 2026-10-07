@@ -2,12 +2,14 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Post
 {
     public static function get( $post = null )
     {
         $post = get_post( $post );
+
         if ( !$post or empty( $post->ID ) )
         {
             global $wp_query;
@@ -34,6 +36,7 @@ class Post
 
         return $post;
     }
+
     public static function get_id( $post = null )
     {
         if ( is_int( $post ) )
@@ -50,6 +53,7 @@ class Post
 
         return (int) $post->ID;
     }
+
     public static function retrieve_post_type( $post_or_id )
     {
         $post = null;
@@ -75,12 +79,14 @@ class Post
 
         return $post->post_type;
     }
+
     public static function get_post_type( $post_or_id = null )
     {
         if ( isset( $post_or_id ) )
         {
             return self::retrieve_post_type( $post_or_id );
         }
+
         global $post, $typenow, $pagenow, $current_screen, $wp_query;
 
         $post_id   = isset( $_REQUEST['post'] ) ? (int)$_REQUEST['post'] : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -117,11 +123,14 @@ class Post
 
         return $post_type;
     }
+
     public static function get_post_types( $type = 'all', $output = 'names', $setting = false )
     {
         $wp_post_types     = ( ( $type == 'wp'  or $type == 'all' ) ? get_post_types( array( 'public' => true, '_builtin' => true  ), $output ) : array() );
         $custom_post_types = ( ( $type == 'cpt' or $type == 'all' ) ? get_post_types( array( 'public' => true, '_builtin' => false ), $output ) : array() );
+
         $post_types = array_merge( $wp_post_types, $custom_post_types );
+
         if ( $setting )
         {
             $options = array();
@@ -133,8 +142,10 @@ class Post
 
             return $options;
         }
+
         return $post_types;
     }
+
     public static function copy_custom_meta( $from_post_id, $to_post_id )
     {
         $from_post_meta = get_post_meta( $from_post_id );
@@ -150,60 +161,85 @@ class Post
             {
                 $value = $values[0];
                 $value = maybe_unserialize( $value );
+
                 update_metadata( 'post', $to_post_id, $meta_key, $value );
             }
         }
     }
-    public static function can_save_post( $post_id, $_post = null )
-    {
-        if ( defined( 'DOING_AUTOSAVE' ) and DOING_AUTOSAVE )
-        {
-            return false;
-        }
-        if ( empty( $post_id ) )
-        {
-            return false;
-        }
-        if ( wp_is_post_revision( $post_id ) !== false )
-        {
-            return false;
-        }
-        if ( !empty( $_POST ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            $_post = $_POST;
-        }
-        if ( !isset( $_post ) or empty( $_post ) )
-        {
-            return false;
-        }
-        if ( !isset( $_post['post_ID'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( (int)$_post['post_ID'] !== (int)$post_id ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( !isset( $_post['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            return false;
-        }
-        if ( 'page' == $_post['post_type'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        {
-            if ( !current_user_can( 'edit_page', $post_id ) )
-            {
-                return false;
-            }
-        }
-        elseif ( !current_user_can( 'edit_post', $post_id ) )
-        {
-            return false;
-        }
-        return true;
-    }
+
+	public static function can_save_post( $post_id, $_post = null )
+	{
+		if ( defined( 'DOING_AUTOSAVE' ) and DOING_AUTOSAVE )
+		{
+			return false;
+		}
+
+		$post_id = absint( $post_id );
+
+		if ( empty( $post_id ) )
+		{
+			return false;
+		}
+
+		if ( wp_is_post_revision( $post_id ) !== false )
+		{
+			return false;
+		}
+
+		if ( null === $_post )
+		{
+			$_post = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		}
+
+		if ( !is_array( $_post ) or empty( $_post ) )
+		{
+			return false;
+		}
+
+		if ( isset( $_post['post_ID'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$request_post_id = absint( $_post['post_ID'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		}
+		elseif ( isset( $_post['ID'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$request_post_id = absint( $_post['ID'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		}
+		else
+		{
+			return false;
+		}
+
+		if ( $request_post_id !== $post_id )
+		{
+			return false;
+		}
+
+		if ( empty( $_post['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			return false;
+		}
+
+		$post_type = sanitize_key( $_post['post_type'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( 'page' === $post_type )
+		{
+			if ( !current_user_can( 'edit_page', $post_id ) )
+			{
+				return false;
+			}
+		}
+		elseif ( !current_user_can( 'edit_post', $post_id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
     public static function clone_post( $post_id = null, $status = null )
     {
         $redirect = false;
+
         if ( empty( $post_id ) )
         {
             $post_id = isset( $_GET['post'] ) ? sanitize_key( $_GET['post'] ) : ( isset( $_POST['post'] ) ? sanitize_key( $_POST['post'] ) : null ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.NonceVerification.Missing
@@ -215,11 +251,14 @@ class Post
 
             $redirect = true;
         }
+
         $post = get_post( $post_id );
+
         if ( isset( $post ) and $post != null )
         {
             $current_user    = wp_get_current_user();
             $new_post_author = $current_user->ID;
+
             $args = array
             (
                 'comment_status' => $post->comment_status,
@@ -236,13 +275,16 @@ class Post
                 'to_ping'        => $post->to_ping,
                 'menu_order'     => $post->menu_order,
             );
+
             $new_post_id = wp_insert_post( $args );
+
             $taxonomies = get_object_taxonomies( $post->post_type );
             foreach ( $taxonomies as $taxonomy )
             {
                 $post_terms = wp_get_object_terms( $post_id, $taxonomy, array( 'fields' => 'slugs' ) );
                 wp_set_object_terms( $new_post_id, $post_terms, $taxonomy, false );
             }
+
             global $wpdb;
             $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id" );
             if ( count( $post_meta_infos ) != 0 )
@@ -257,6 +299,7 @@ class Post
                 $sql_query .= implode( " UNION ALL ", $sql_query_sel );
                 $wpdb->query( $sql_query );
             }
+
             do_action( 'authorship/post_cloned', $new_post_id, $post_id );
 
             if ( $redirect )
@@ -281,6 +324,7 @@ class Post
             }
         }
     }
+
     public static function sanitize_post_status_arg( $post_status, $fallback = 'publish' )
     {
         $valid_statuses = array_keys( get_post_stati() );
@@ -305,6 +349,7 @@ class Post
          * @return string|array           Filtered fallback value.
          */
         $fallback = apply_filters( 'authorship/post_status_fallback', '' );
+
         if ( is_string( $post_status ) )
         {
             $raw = trim( $post_status );
@@ -329,6 +374,7 @@ class Post
                 ? array( $key )
                 : $fallback;
         }
+
         if ( is_array( $post_status ) )
         {
             $out = array();
@@ -356,8 +402,10 @@ class Post
             $out = array_values( array_unique( $out ) );
             return ! empty( $out ) ? $out : $fallback;
         }
+
         return $fallback;
     }
+
     public static function sanitize_cat_query_args( $cat, $options = array() )
     {
         $mode = isset( $options['mode'] ) ? strtolower( trim( (string) $options['mode'] ) ) : 'in';
@@ -368,10 +416,12 @@ class Post
 
         $include = array();
         $exclude = array();
+
         if ( $cat === '' || $cat === null || $cat === false )
         {
             return array();
         }
+
         $tokens = array();
 
         if ( is_array( $cat ) )
@@ -386,6 +436,7 @@ class Post
             {
                 return array();
             }
+
             $tokens = ( strpos( $cat, ',' ) !== false ) ? explode( ',', $cat ) : array( $cat );
         }
         elseif ( is_int( $cat ) || is_float( $cat ) )
@@ -396,6 +447,7 @@ class Post
         {
             return array();
         }
+
         foreach ( $tokens as $token )
         {
             if ( is_int( $token ) || is_float( $token ) )
@@ -417,10 +469,12 @@ class Post
             {
                 continue;
             }
+
             if ( $n === 0 )
             {
                 continue;
             }
+
             if ( $n < 0 )
             {
                 $exclude[] = absint( $n );
@@ -430,12 +484,15 @@ class Post
                 $include[] = absint( $n );
             }
         }
+
         $include = array_values( array_unique( array_filter( $include ) ) );
         $exclude = array_values( array_unique( array_filter( $exclude ) ) );
+
         if ( empty( $include ) && empty( $exclude ) )
         {
             return array();
         }
+
         if ( count( $include ) === 1 && empty( $exclude ) )
         {
             return array( 'cat' => (int) $include[0] );
@@ -445,6 +502,7 @@ class Post
         {
             return array( 'cat' => -1 * (int) $exclude[0] );
         }
+
         $out = array();
 
         if ( ! empty( $include ) )
@@ -461,4 +519,4 @@ class Post
         return $out;
     }
 
-} // class
+}  

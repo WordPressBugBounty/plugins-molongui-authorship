@@ -14,19 +14,23 @@
 
 namespace Molongui\Authorship;
 
+use Molongui\Authorship\Blocks\Author_Box_Block;
 use Molongui\Authorship\Common\Utils\Assets;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Common\Utils\WP;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Author_Box
 {
     static  $javascript     = '';
     static  $stylesheet     = '';
-    private $stylesheet_ltr = '/assets/css/author-box.af84.min.css';
-    private $stylesheet_rtl = '/assets/css/author-box-rtl.4141.min.css';
+    private $stylesheet_ltr = '/assets/css/author-box.75f8.min.css';
+    private $stylesheet_rtl = '/assets/css/author-box-rtl.c114.min.css';
+
     use Singleton;
+
     public function __construct()
     {
         if ( Settings::is_enabled( 'author-box' ) )
@@ -38,6 +42,7 @@ class Author_Box
             Debug::console_log( null, "The Author Box feature is disabled in the plugin settings." );
         }
     }
+
     public function init()
     {
         $this->set_assets();
@@ -49,9 +54,11 @@ class Author_Box
         add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_styles' ) );
         add_filter( "authorship/box_extra_styles", array( $this, 'extra_styles' ) );
         add_filter( '_authorship/box/styles_contents', array( $this, 'update_font_path' ) );
+
         if ( !is_admin() )
         {
             $priority = apply_filters( 'molongui_authorship/author_box_hook_priority', 11 );
+
             if ( $priority <= 10 )
             {
                 remove_filter( 'the_content', 'wpautop' );
@@ -61,34 +68,44 @@ class Author_Box
             add_filter( 'the_content', array( $this, 'filter_content' ), $priority );
         }
     }
+
     public function set_assets()
     {
         self::$stylesheet = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? $this->stylesheet_rtl : $this->stylesheet_ltr );
+
         self::$stylesheet = apply_filters( 'authorship/box/styles', self::$stylesheet );
+
         self::$javascript = MOLONGUI_AUTHORSHIP_FOLDER . self::$javascript;
+
         self::$javascript = apply_filters( 'authorship/box/script', self::$javascript );
     }
+
     public function register_scripts()
     {
         Assets::register_script( self::$javascript, 'box' );
     }
+
     public function enqueue_scripts()
     {
         Assets::enqueue_script( self::$javascript, 'box', true );
     }
+
     public function box_script_params()
     {
         $params = array
         (
         );
+
         return apply_filters( 'authorship/box/script_params', $params );
     }
+
     public function register_styles()
     {
         $deps = array();
 
         Assets::register_style( self::$stylesheet, 'box', $deps );
     }
+
     public static function maybe_enqueue_styles()
     {
         if ( WP::is_block_theme() )
@@ -99,6 +116,7 @@ class Author_Box
             }
         }
     }
+
     public static function enqueue_styles()
     {
         if ( apply_filters( 'molongui_authorship/load_author_box_styles', true ) )
@@ -106,21 +124,26 @@ class Author_Box
             Assets::enqueue_style( self::$stylesheet, 'box', true );
         }
     }
+
     public function extra_styles()
     {
         $options = Settings::get();
         $css     = '';
         $bp      = empty( $options['breakpoint'] ) ? '600' : $options['breakpoint'];
         $bp_low_limit = $bp - 1;
+
         $css .= ":root{ --m-a-box-bp: " . $bp . "px; --m-a-box-bp-l: " . $bp_low_limit . "px; }";
+
         if ( !empty( $options['compatibility_mode_browser'] ) and !empty( $options['element_queries_enabled'] ) and !empty( $options['element_queries_cdn_compatibility'] ) )
         {
             $item_spacing = '20';
             $eqcss        = '';
+
             $eqcss .= '.m-a-box-container[min-width~="'.$bp.'px"] .m-a-box-content .m-a-box-content-top,
                    .m-a-box-container[min-width~="'.$bp.'px"] .m-a-box-content .m-a-box-content-middle,
                    .m-a-box-container[min-width~="'.$bp.'px"] .m-a-box-content .m-a-box-content-bottom { flex-direction: row; flex-wrap: nowrap; }
                   ';
+
             $eqcss .= '.m-a-box-container[max-width~="'.$bp_low_limit.'px"] .m-a-box-name > :first-child { text-align: center !important; }
                    .m-a-box-container[max-width~="'.$bp_low_limit.'px"] .m-a-box-meta { text-align: center !important; }
                   ';
@@ -144,26 +167,34 @@ class Author_Box
                        .m-a-box-container[min-width~="'.$bp.'px"] .m-a-box-content.m-a-box-profile .m-a-box-social { display: flex; flex-direction: column; margin-top: 0; padding: 0 '.$item_spacing.'px 0 0; }
                       ';
             }
+
             $eqcss .= '.m-a-box-container[min-width~="'.$bp.'px"] .m-a-box-content .m-a-box-social .m-a-box-social-icon { margin: 0.4em 0; }';
+
             $eqcss = apply_filters( 'authorship/eqcss/fallback', $eqcss, $bp, $item_spacing );
 
             $css .= $eqcss;
         }
+
         $css .= self::get_styles();
+
         return apply_filters( 'authorship/box/extra_styles', $css );
     }
+
     public static function get_styles( $options = array(), $box_id = '' )
     {
         if ( empty( $options ) )
         {
             $options = apply_filters( 'authorship/box/options', Settings::get() );
         }
+
         if ( !empty( $box_id ) )
         {
             $box_id = '#mab-' . trim( $box_id );
         }
 
         $css = '';
+
+
         $styles  = '';
         $styles .= !empty( $options['author_box_width'] ) ? 'width:'.$options['author_box_width'].'%;' : '';
         $styles .= ( isset( $options['author_box_margin_top'] ) and '' !== $options['author_box_margin_top'] ) ? 'margin-top:'.$options['author_box_margin_top'].' !important;' : '';
@@ -174,6 +205,7 @@ class Author_Box
         {
             $css .= $box_id.'.m-a-box {' . $styles . '}';
         }
+
         $styles  = '';
         $styles .= !empty( $options['author_box_header_background_color'] ) ? 'background-color:'.$options['author_box_header_background_color'].';' : '';
         $styles .= !empty( $options['author_box_header_bottom_space'] ) ? 'margin-bottom:'.$options['author_box_header_bottom_space'].'px;' : '';
@@ -195,6 +227,7 @@ class Author_Box
         {
             $css .= $box_id.' .m-a-box-header > :first-child, '.$box_id.' .m-a-box-header a.m-a-box-header-url {' . $styles . '}';
         }
+
         if ( 'tabbed' === $options['author_box_layout'] )
         {
             $styles  = '';
@@ -286,6 +319,7 @@ class Author_Box
                 $css .= $styles;
             }
         }
+
         $styles  = '';
         $styles .= 'padding-top:' . ( empty( $options['author_box_padding_top'] ) ? '0' : $options['author_box_padding_top'] ) . ';';
         $styles .= 'padding-right:' . ( empty( $options['author_box_padding_right'] ) ? '0' : $options['author_box_padding_right'] ) . ';';
@@ -296,14 +330,15 @@ class Author_Box
         $styles .= 'border-right-width:' . ( empty( $options['author_box_border_right'] ) ? '0' : $options['author_box_border_right'] ) . ';';
         $styles .= 'border-bottom-width:' . ( empty( $options['author_box_border_bottom'] ) ? '0' : $options['author_box_border_bottom'] ) . ';';
         $styles .= 'border-left-width:' . ( empty( $options['author_box_border_left'] ) ? '0' : $options['author_box_border_left'] ) . ';';
-        $styles .= !empty( $options['author_box_border_color'] ) ? 'border-color:'.$options['author_box_border_color'].';' : ''; // '' = inherit
+        $styles .= !empty( $options['author_box_border_color'] ) ? 'border-color:'.$options['author_box_border_color'].';' : '';  
         $styles .= !empty( $options['author_box_border_radius'] ) ? 'border-radius:'.$options['author_box_border_radius'].'px;' : '';
-        $styles .= !empty( $options['author_box_background_color'] ) ? 'background-color:'.$options['author_box_background_color'].';' : ''; // '' = inherit
+        $styles .= !empty( $options['author_box_background_color'] ) ? 'background-color:'.$options['author_box_background_color'].';' : '';  
         $styles .= 'box-shadow:' . ( empty( $options['author_box_shadow_h_offset'] ) ? '0' : $options['author_box_shadow_h_offset'].'px' ) . ' ' . ( empty( $options['author_box_shadow_v_offset'] ) ? '0' : $options['author_box_shadow_v_offset'].'px' ) . ' ' . ( empty( $options['author_box_shadow_blur'] ) ? '0' : $options['author_box_shadow_blur'].'px' ) . ' ' .  ( empty( $options['author_box_shadow_spread'] ) ? '0' : $options['author_box_shadow_spread'].'px' ) . ' ' . $options['author_box_shadow_color'] . ' ' . ( $options['author_box_shadow_inset'] ? 'inset' : '' ) . ';';
         if ( !empty( $styles ) )
         {
             $css .= $box_id.' .m-a-box-container {' . $styles . '}';
         }
+
         $styles  = '';
         $styles .= ( !empty( $options['author_box_profile_valign'] ) and $options['author_box_profile_valign'] != 'center' ) ? 'align-self:'.$options['author_box_profile_valign'].' !important;' : '';
         if ( !empty( $styles ) )
@@ -314,7 +349,7 @@ class Author_Box
         $styles  = '';
         $styles .= !empty( $options['author_box_avatar_border_style'] ) ? 'border-style:'.$options['author_box_avatar_border_style'].';' : '';
         $styles .=  isset( $options['author_box_avatar_border_width'] ) ? 'border-width:'.$options['author_box_avatar_border_width'].'px;' : '';
-        $styles .= !empty( $options['author_box_avatar_border_color'] ) ? 'border-color:'.$options['author_box_avatar_border_color'].';' : ''; // '' = inherit
+        $styles .= !empty( $options['author_box_avatar_border_color'] ) ? 'border-color:'.$options['author_box_avatar_border_color'].';' : '';  
         $styles .= !empty( $options['author_box_avatar_border_radius'] ) ? 'border-radius:'.$options['author_box_avatar_border_radius'].'%;' : '';
         if ( !empty( $styles ) )
         {
@@ -324,8 +359,8 @@ class Author_Box
         if ( 'acronym' === $options['author_box_avatar_source'] )
         {
             $styles  = '';
-            $styles .= !empty( $options['author_box_avatar_background_color'] ) ? 'background-color:'.$options['author_box_avatar_background_color'].';' : ''; // '' = inherit
-            $styles .= !empty( $options['author_box_avatar_color'] ) ? 'color:'.$options['author_box_avatar_color'].';' : ''; // '' = inherit
+            $styles .= !empty( $options['author_box_avatar_background_color'] ) ? 'background-color:'.$options['author_box_avatar_background_color'].';' : '';  
+            $styles .= !empty( $options['author_box_avatar_color'] ) ? 'color:'.$options['author_box_avatar_color'].';' : '';  
             if ( !empty( $styles ) )
             {
                 $css .= $box_id.' .m-a-box-avatar [data-avatar-type="acronym"] {' . $styles . '}';
@@ -339,6 +374,7 @@ class Author_Box
                 $css .= $box_id.' .m-a-box-avatar [data-avatar-type="acronym"] div {' . $styles . '}';
             }
         }
+
         $styles  = '';
         $styles .= ( isset( $options['author_box_name_font_size'] ) and '' !== $options['author_box_name_font_size'] ) ? 'font-size:'.$options['author_box_name_font_size'].'px;' : '';
         $styles .= ( isset( $options['author_box_name_line_height'] ) and '' !== $options['author_box_name_line_height'] ) ? 'line-height:'.$options['author_box_name_line_height'].'px;' : '';
@@ -363,6 +399,7 @@ class Author_Box
         {
             $css .= $box_id.' .m-a-box-container .m-a-box-content.m-a-box-profile .m-a-box-data .m-a-box-name * {' . $styles . '}';
         }
+
         $styles  = '';
         $styles .= !empty( $options['author_box_meta_text_align'] ) ? 'text-align:'.$options['author_box_meta_text_align'].';' : '';
         if ( !empty( $styles ) )
@@ -389,6 +426,7 @@ class Author_Box
         {
             $css .= $box_id.' .m-a-box-meta-divider {' . $styles . '}';
         }
+
         $styles  = '';
         $styles .= ( isset( $options['author_box_bio_font_size'] ) and '' !== $options['author_box_bio_font_size'] ) ? 'font-size:'.$options['author_box_bio_font_size'].'px;' : '';
         $styles .=  ( isset( $options['author_box_bio_line_height'] ) and '' !== $options['author_box_bio_line_height'] ) ? 'line-height:'.$options['author_box_bio_line_height'].'px;' : '';
@@ -402,6 +440,7 @@ class Author_Box
         {
             $css .= $box_id.' .m-a-box-bio > * {' . $styles . '}';
         }
+
         $styles = '';
         if ( isset( $options['author_box_social_color'] ) and $options['author_box_social_color'] != 'inherit' )
         {
@@ -439,6 +478,7 @@ class Author_Box
         {
             $css .= $box_id.' .m-icon-container {' . $styles . '}';
         }
+
         $styles  = '';
         $styles .= ( isset( $options['author_box_related_font_size'] ) and '' !== $options['author_box_related_font_size'] ) ? 'font-size:'.$options['author_box_related_font_size'].'px;' : '';
         $styles .= !empty( $options['author_box_related_font_weight'] ) ? 'font-weight:'.$options['author_box_related_font_weight'].';' : '';
@@ -451,16 +491,20 @@ class Author_Box
         {
             $css .= $box_id.' .m-a-box-related-entry-title, '.$box_id.' .m-a-box-related-entry-title a {' . $styles . '}';
         }
+
         if ( !empty( $options['author_box_custom_css'] ) )
         {
             $css .= $options['author_box_custom_css'];
         }
+
         return apply_filters( 'authorship/get_box_styles', $css, $options, $box_id );
     }
+
     public function update_font_path( $contents )
     {
         return str_replace( "url('../font/molongui-authorship-font.", "url('".MOLONGUI_AUTHORSHIP_URL."assets/font/molongui-authorship-font.", $contents );
     }
+
     public function filter_content( $content )
     {
         if ( !$this->should_add() )
@@ -469,18 +513,21 @@ class Author_Box
         }
 
         $post_id = Post::get_id();
+
         if ( empty( $post_id ) )
         {
             return $content;
         }
 
         $markup = $this->get_markup();
+
         if ( empty( $markup ) )
         {
             return $content;
         }
 
         global $multipage, $page, $numpages;
+
         $position = get_post_meta( $post_id, '_molongui_author_box_position', true );
         if ( empty( $position ) or $position === 'default' )
         {
@@ -496,6 +543,7 @@ class Author_Box
          * @since 5.0.0
          */
         $position = apply_filters( 'molongui_authorship/author_box_position', $position, $post_id );
+
         switch ( $position )
         {
             case "both":
@@ -546,6 +594,7 @@ class Author_Box
 
         return $content;
     }
+
     private function should_add()
     {
         $add = false;
@@ -562,6 +611,7 @@ class Author_Box
                 else
                 {
                     $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
+
                     if ( array_search( 'get_the_block_template_html', array_column( $dbt, 'function' ) ) )
                     {
                         $add = true;
@@ -579,7 +629,16 @@ class Author_Box
             }
         }
 
+        if ( $add
+            and class_exists( Author_Box_Block::class, false )
+            and Author_Box_Block::is_manually_placed( Post::get_id() ) )
+        {
+            $add = false;
+            $log = "Author box not automatically added because an Author Box block is already placed explicitly.";
+        }
+
         $_add = $add;
+
         $add = apply_filters( 'molongui_authorship/add_author_box', $add );
 
         if ( $add !== $_add )
@@ -594,11 +653,13 @@ class Author_Box
 
         return $add;
     }
+
     private function should_display()
     {
         $display   = true;
         $post      = Post::get();
         $post_type = Post::retrieve_post_type( $post );
+
         if ( !in_array( $post_type, Settings::get_post_types_with_author_box() ) )
         {
             $display = false;
@@ -607,6 +668,7 @@ class Author_Box
                 $post_type
             ));
         }
+
         elseif ( 'hide' === get_post_meta( $post->ID, '_molongui_author_box_display', true ) )
         {
             $display = false;
@@ -615,6 +677,7 @@ class Author_Box
                 $post->ID
             ));
         }
+
         elseif ( 'default' === get_post_meta( $post->ID, '_molongui_author_box_display', true )  )
         {
             if ( in_array( $post_type, Settings::get_post_types_with_author_box( 'manual' ) ) )
@@ -631,8 +694,10 @@ class Author_Box
                 }
             }
         }
+
         return apply_filters( 'molongui_authorship/display_author_box', $display );
     }
+
     public function get_markup()
     {
         if ( !$this->should_display() )
@@ -642,7 +707,8 @@ class Author_Box
 
         return self::markup();
     }
-    public static function markup( $profiles = null, $options = array() )
+
+    public static function markup( $profiles = null, $options = array(), $post_id = null )
     {
         if ( empty( $options ) )
         {
@@ -651,13 +717,15 @@ class Author_Box
 
         if ( is_null( $profiles ) )
         {
-            $post_id = Post::get_id();
+            $post_id = Post::get_id( $post_id );
+
             if ( empty( $post_id ) )
             {
                 return '';
             }
 
             $post_authors = Post::get_authors( $post_id );
+
             if ( empty( $post_authors ) )
             {
                 Debug::console_log( null, sprintf( "Author box not displayed: this post (#%s) has no authors.", $post_id ) );
@@ -672,15 +740,17 @@ class Author_Box
             {
                 $author = new Author( $post_author->id, $post_author->type );
 
-                if ( 'hide' === $author->get_meta( 'box_display' ) )
+				if ( 'hide' === $author->get_box_display() )
                 {
                     Debug::console_log( null, sprintf( "Author box not displayed: plugin configured to hide the author box for %s.", $post_author->ref ) );
+
                     continue;
                 }
 
                 if ( !empty( Settings::get( 'author_box_hide_if_empty_bio', false ) ) and empty( $author->get_description() ) )
                 {
                     Debug::console_log( null, sprintf( "Author box not displayed: plugin configured to hide the author box when description is empty (%s has no bio).", $post_author->ref ) );
+
                     continue;
                 }
 
@@ -701,10 +771,12 @@ class Author_Box
          * @since  5.0.0
          */
         $profiles = apply_filters( 'molongui_authorship/author_box_profiles', $profiles );
+
         if ( empty( $profiles ) )
         {
             return '';
         }
+
         if ( count( $profiles ) > 1 )
         {
             $multiple = true;
@@ -713,17 +785,21 @@ class Author_Box
         {
             $multiple = false;
         }
+
         if ( Settings::get( 'compatibility_mode_browser', false ) and Settings::get( 'element_queries_enabled', false ) )
         {
             Assets::enqueue_element_queries();
         }
+
         Author_Box::enqueue_styles();
 
         ob_start();
+
         if ( $multiple and empty( $options['author_box_for_co_authors'] ) )
         {
             include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-multiauthor-layout.php';
         }
+
         elseif ( $multiple )
         {
             foreach ( $profiles as $profile )
@@ -731,9 +807,11 @@ class Author_Box
                 include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-layout.php';
             }
         }
+
         else
         {
             $profile = reset( $profiles );
+
             include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/html-layout.php';
         }
 
@@ -748,10 +826,13 @@ class Author_Box
          */
         return apply_filters( 'molongui_authorship/author_box_markup', ob_get_clean(), $profiles );
     }
+
     public function render()
     {
         echo wp_kses_post( $this->get_markup() );
     }
+
+
     public function maybe_add_to_the_content()
     {
         /*!
@@ -772,24 +853,30 @@ class Author_Box
             }
 
             $priority = apply_filters( 'molongui_authorship/author_box_hook_priority', 11 );
+
             if ( $priority <= 10 )
             {
                 remove_filter( 'the_content', 'wpautop' );
                 add_filter( 'the_content', 'wpautop', $priority - 1 );
             }
+
             add_filter( 'the_content', array( $this, 'add_to_the_content' ), $priority );
         }
     }
+
     public function add_to_the_content( $the_content )
     {
         $post_id = Post::get_id();
+
         if ( empty( $post_id ) )
         {
             return $the_content;
         }
+
         if ( !in_the_loop() )
         {
             $dbt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
+
             if ( array_search( 'get_the_block_template_html', array_column( $dbt, 'function' ) ) )
             {
                 Debug::console_log(null, "Running outside the loop by a block-based theme. Author box added to the_content." );
@@ -816,6 +903,7 @@ class Author_Box
         }
 
         global $multipage, $page, $numpages;
+
         $position = get_post_meta( $post_id, '_molongui_author_box_position', true );
         if ( empty( $position ) or $position === 'default' )
         {
@@ -831,6 +919,7 @@ class Author_Box
          * @since 5.0.0
          */
         $position = apply_filters( 'molongui_authorship/author_box_position', $position, $post_id );
+
         switch ( $position )
         {
             case "both":
@@ -873,9 +962,11 @@ class Author_Box
 
         return $the_content;
     }
+
     public function prevent_autoadd()
     {
         $autoadd = false;
+
         if ( is_single() or is_page() )
         {
             if ( is_main_query() )
@@ -898,21 +989,25 @@ class Author_Box
 
         return $autoadd;
     }
+
     public static function hide()
     {
         $hide      = false;
         $post      = Post::get();
         $post_type = Post::retrieve_post_type( $post );
+
         if ( !in_array( $post_type, Settings::get_post_types_with_author_box() ) )
         {
             $hide = true;
             Debug::console_log( null, sprintf( "Author box not displayed: current post type (%s) doesn't support the author box feature.", Post::retrieve_post_type( $post ) ) );
         }
+
         elseif ( 'hide' === get_post_meta( $post->ID, '_molongui_author_box_display', true ) )
         {
             $hide = true;
             Debug::console_log( null, sprintf( "Author box not displayed: current post (#%s) is configured to not display the author box.", $post->ID ) );
         }
+
         elseif ( 'default' === get_post_meta( $post->ID, '_molongui_author_box_display', true )  )
         {
             if ( in_array( $post_type, Settings::get_post_types_with_author_box( 'manual' ) ) )
@@ -925,8 +1020,10 @@ class Author_Box
                 }
             }
         }
+
         return apply_filters( 'molongui_authorship/hide_author_box', $hide );
     }
+
     public static function maybe_render()
     {
         if ( !self::hide() )
@@ -935,5 +1032,6 @@ class Author_Box
         }
     }
 
-} // class
+}  
+
 Author_Box::instance();

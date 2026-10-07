@@ -19,26 +19,34 @@ use Molongui\Authorship\Common\Utils\Helpers;
 use Molongui\Authorship\Common\Utils\Singleton;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Admin_Author
 {
     private $screen_id;
+
     use Singleton;
+
     public function __construct()
     {
         $this->screen_id = ( !Settings::get( 'dashboard_settings_enabled', true ) or Settings::get( 'dashboard_authors_menu', true ) )
             ? 'toplevel_page_authors'
             : 'admin_page_authors';
+
         add_action( 'admin_menu', array( $this, 'add_menu' ) );
         add_action( 'admin_menu', array( $this, 'add_submenu' ), PHP_INT_MAX - 1 );
         add_filter( 'set-screen-option', array( $this, 'set_screen_options' ), 10, 3 );
+
         add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_new_author' ) );
+
         add_action( 'admin_post_add_author', array( $this, 'handle_add_new_author' ) );
     }
+
     public function get_screen_id()
     {
         return $this->screen_id;
     }
+
     public function add_menu()
     {
         if ( 'toplevel_page_authors' === $this->screen_id )
@@ -53,11 +61,12 @@ class Admin_Author
                 'edit_others_posts',
                 'authors',
                 array( $this, 'render_view_all_screen' ),
-                $icon, //Helpers::get_base64_svg( $this->menu_icon() ),
+                $icon,  
                 $position
             );
         }
     }
+
     public function add_submenu()
     {
         $options = Settings::get();
@@ -71,6 +80,7 @@ class Admin_Author
             'authors',
             array( $this, 'render_view_all_screen' )
         );
+
         add_action( "load-$page_hook", array( $this, 'add_screen_options' ) );
 
         if ( current_user_can( 'create_users' ) or Settings::get( 'guest_author_enabled', true ) )
@@ -116,6 +126,7 @@ class Admin_Author
             'molongui-authorship-help',
             null
         );
+
         global $submenu;
         if ( isset( $submenu['authors'] ) )
         {
@@ -132,6 +143,7 @@ class Admin_Author
             }
         }
     }
+
     public function add_screen_options()
     {
         $arguments = array
@@ -142,6 +154,7 @@ class Admin_Author
         );
         add_screen_option( 'per_page', $arguments );
     }
+
     public function set_screen_options( $screen_option, $option, $value )
     {
         if ( 'authors_per_page' == $option )
@@ -151,6 +164,7 @@ class Admin_Author
 
         return $screen_option;
     }
+
     public function menu_icon()
     {
         return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"
@@ -158,6 +172,7 @@ class Admin_Author
                     <path d="M273.664 682.666667L706.389333 249.941333l-60.330666-60.330666L213.333333 622.336V682.666667h60.330667z m35.370667 85.333333H128v-181.034667L615.893333 99.072a42.666667 42.666667 0 0 1 60.330667 0l120.704 120.704a42.666667 42.666667 0 0 1 0 60.330667L309.034667 768zM128 853.333333h768v85.333334H128v-85.333334z"  />
                 </svg>';
     }
+
     public function render_view_all_screen()
     {
         $authors_table = new Author_List_Table( 'molongui-authorship' );
@@ -165,6 +180,7 @@ class Admin_Author
 
         include MOLONGUI_AUTHORSHIP_DIR . 'views/admin/html-page-authors.php';
     }
+
     public static function render_add_new_screen()
     {
         include MOLONGUI_AUTHORSHIP_DIR . 'views/admin/html-page-author-new.php';
@@ -173,9 +189,11 @@ class Admin_Author
     {
         Settings::render();
     }
+
     public function handle_add_new_author()
     {
         check_admin_referer( 'create-author', 'authorship-create-author-nonce' );
+
         if ( empty( $_REQUEST['user-account'] ) )
         {
             $display_name = $_REQUEST['first-name'] . ' ' . $_REQUEST['last-name'];
@@ -193,20 +211,27 @@ class Admin_Author
                 'comment_status' => 'closed',
                 'ping_status'    => 'closed',
             );
+
             $guest_id = wp_insert_post( $postarr, true );
+
             if ( is_wp_error( $guest_id ) )
             {
                 update_option( 'molongui_authorship_add_author_error_'.get_current_user_id(), $guest_id, true );
                 update_option( 'molongui_authorship_add_author_input_'.get_current_user_id(), $_REQUEST, true );
+
                 wp_safe_redirect( wp_get_referer() );
                 die();
             }
+
             else
             {
-                wp_safe_redirect( add_query_arg( array( 'post' => $guest_id, 'action' => 'edit' ), self_admin_url( 'post.php' ) ) );
+                $edit_url = self::get_edit_url( $guest_id, 'guest' );
+
+                wp_safe_redirect( $edit_url ? $edit_url : admin_url( 'admin.php?page=authors' ) );
                 die();
             }
         }
+
         else
         {
             if ( !current_user_can( 'create_users' ) )
@@ -217,6 +242,7 @@ class Admin_Author
                     403
                 );
             }
+
             $userdata = array
             (
                 'first_name' => $_REQUEST['first-name'],
@@ -228,22 +254,30 @@ class Admin_Author
                 'locale'     => '',
             );
             $user_id = wp_insert_user( $userdata );
+
             if ( is_wp_error( $user_id ) )
             {
                 update_option( 'molongui_authorship_add_author_error_'.get_current_user_id(), $user_id, true );
                 update_option( 'molongui_authorship_add_author_input_'.get_current_user_id(), $_REQUEST, true );
+
                 wp_safe_redirect( wp_get_referer() );
                 die();
             }
+
             else
             {
                 $notify = !empty( $_REQUEST['user-notify'] ) ? 'both' : 'admin';
                 wp_new_user_notification( $user_id, null, $notify );
-                wp_safe_redirect( add_query_arg( 'user_id', $user_id, self_admin_url( 'user-edit.php#molongui-user-fields' ) ) );
+
+                $edit_url = self::get_edit_url( $user_id, 'user' );
+
+                wp_safe_redirect( $edit_url ? $edit_url : admin_url( 'admin.php?page=authors' ) );
                 die();
             }
         }
+
     }
+
     public function admin_bar_new_author()
     {
         if ( 'toplevel_page_authors' !== $this->screen_id )
@@ -261,15 +295,56 @@ class Admin_Author
             'href'   => admin_url( 'admin.php?page=author-new' ),
         ));
     }
+
+
+    public static function get_edit_url( $author_id, $author_type = 'user' ) {
+        $author_id = absint( $author_id );
+
+        if ( ! $author_id ) {
+            return '';
+        }
+
+        switch ( $author_type ) {
+            case 'user':
+                $edit_url = get_edit_user_link( $author_id );
+
+                if ( ! $edit_url ) {
+                    return '';
+                }
+
+                return add_query_arg(
+                    Admin_User::AUTHOR_PROFILE_VIEW_QUERY_ARG,
+                    Admin_User::AUTHOR_PROFILE_VIEW_QUERY_VALUE,
+                    $edit_url
+                );
+
+            case 'guest':
+                $edit_url = get_edit_post_link( $author_id, 'raw' );
+
+                return is_string( $edit_url ) ? $edit_url : '';
+        }
+
+        return '';
+    }
+
+
+
+
     public static function is_guest( $author = null )
     {
         if ( empty( $author ) ) return false;
+
         if ( $author instanceof \WP_User ) return false;
+
         if ( $author instanceof \WP_Post ) return true;
+
         if ( is_object( $author ) ) return ( ( !empty( $author->type ) and $author->type == 'guest' ) ? true : false );
+
         if ( is_string( $author ) ) if ( strncmp( $author, 'guest', strlen( 'guest' ) ) === 0 ) return true;
+
         return false;
     }
+
     public static function has_local_avatar( $author_id = null, $author_type = 'user' )
     {
         if ( empty( $author_id ) )
@@ -290,5 +365,6 @@ class Admin_Author
         return false;
     }
 
-} // class
+}  
+
 Admin_Author::instance();

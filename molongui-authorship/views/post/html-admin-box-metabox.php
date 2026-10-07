@@ -1,8 +1,11 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 $author_box_display  = get_post_meta( $post->ID, '_molongui_author_box_display', true );
 $author_box_position = get_post_meta( $post->ID, '_molongui_author_box_position', true );
+
 if ( empty( $author_box_display ) )
 {
     $author_box_display = 'default';

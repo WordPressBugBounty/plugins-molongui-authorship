@@ -1,5 +1,4 @@
 <?php
-
 /*!
  * Molongui Authorship
  *
@@ -12,7 +11,7 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.2.12
+ * Version:           5.3.0
  * Requires at least: 5.2
  * Tested up to:      7.1
  * Requires PHP:      5.6.20
@@ -39,257 +38,276 @@ use Molongui\Authorship\Common\Modules\DB_Update;
 use Molongui\Authorship\Common\Utils\Debug;
 use Molongui\Authorship\Common\Utils\Singleton;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 require_once __DIR__ . '/common/utils/singleton.php';
-final class MolonguiAuthorship
-{
-    const VERSION = '5.2.12';
-    use Singleton;
-    function __construct()
-    {
-        add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
-        if ( !$this->checks_passed() )
-        {
-            return false;
-        }
-        self::define_constants();
-        require_once MOLONGUI_AUTHORSHIP_DIR . 'common/autoloader.php';
-        register_activation_hook( MOLONGUI_AUTHORSHIP_FILE  , array( $this, 'activate'   ) );
-        register_deactivation_hook( MOLONGUI_AUTHORSHIP_FILE, array( $this, 'deactivate' ) );
-        add_action( 'wpmu_new_blog', array( $this, 'activate_on_new_blog' ), 10, 6 );
-        add_action( 'plugin_loaded' , array( $this, 'on_plugin_loaded'  ) );
-        add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
-        do_action( 'authorship/loaded' );
 
-        return true;
-    }
-    public function load_plugin_textdomain()
-    {
-        load_plugin_textdomain( 'molongui-authorship', false, plugin_dir_path( __FILE__ ) . 'i18n/' );
-    }
-    public function checks_passed()
-    {
-        if ( version_compare( PHP_VERSION, '5.6.20', '<' ) )
-        {
-            add_action( 'admin_notices', array( $this, 'fail_php_error' ) );
-            return false;
-        }
-        if ( version_compare( get_bloginfo( 'version' ), '5.2', '<' ) )
-        {
-            add_action( 'admin_notices', array( $this, 'fail_wp_error' ) );
-            return false;
-        }
+final class MolonguiAuthorship {
 
-        return true;
-    }
-    function fail_php_error()
-    {
-        $min_php_version = '5.6.20';
+	const VERSION = '5.3.0';
 
-        if ( isset( $_GET['activate'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        {
-            unset( $_GET['activate'] );
-        }
+	use Singleton;
 
-        /*! // translators: %1$s: <strong>. %2$s: </strong>. %3$s: Min required PHP version. %4$s: User PHP version */
-        $message  = sprintf( esc_html__( '%1$sMolongui Authorship%2$s requires PHP version %3$s or greater to operate. Unfortunately, your current PHP version (%4$s) is too old, so the plugin has been disabled.', 'molongui-authorship' ), '<strong>', '</strong>', $min_php_version, PHP_VERSION );
-        $message .= sprintf( '<p><a href="%s" class="button-primary" target="_blank">%s</a></p>', 'https://www.molongui.com/help/how-to-update-my-php-version/', __( "How to update PHP?", 'molongui-authorship' ) );
-        $html_message = sprintf( '<div class="notice notice-error">%s</div>', wpautop( $message ) );
-        echo wp_kses_post( $html_message );
-    }
-    function fail_wp_error()
-    {
-        $min_wp_version = '5.2';
+	public function __construct() {
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
-        if ( isset( $_GET['activate'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        {
-            unset( $_GET['activate'] );
-        }
+		if ( ! $this->checks_passed() ) {
+			return;
+		}
 
-        /*! // translators: %1$s: <strong>.%2$s: </strong>. %3$s: Min required WordPress version */
-        $message = sprintf( esc_html__( '%1$sMolongui Authorship%2$s requires WordPress version %3$s or higher. Please update your WordPress to run this plugin.', 'molongui-authorship' ), '<strong>', '</strong>', $min_wp_version );
-        $html_message = sprintf( '<div class="notice notice-error">%s</div>', wpautop( $message ) );
-        echo wp_kses_post( $html_message );
-    }
-    public function define_constants()
-    {
-        foreach( self::get_constants() as $name => $value )
-        {
-            if ( !defined( $name ) )
-            {
-                define( $name, $value );
-            }
-        }
-    }
-    public static function get_constants()
-    {
-        return array
-        (
-            'MOLONGUI_AUTHORSHIP_VERSION'         => self::VERSION,
-            'MOLONGUI_AUTHORSHIP_FILE'            => __FILE__,                               // /var/www/domain/wp-content/plugins/molongui-boilerplate/molongui-boilerplate.php
-            'MOLONGUI_AUTHORSHIP_DIR'             => plugin_dir_path( __FILE__ ),            // /var/www/domain/wp-content/plugins/molongui-boilerplate/
-            'MOLONGUI_AUTHORSHIP_FOLDER'          => dirname( plugin_basename( __FILE__ ) ), // molongui-boilerplate
-            'MOLONGUI_AUTHORSHIP_URL'             => plugin_dir_url( __FILE__ ),             // https://domain.tld/wp-content/plugins/molongui-boilerplate/
-            'MOLONGUI_AUTHORSHIP_BASENAME'        => plugin_basename( __FILE__ ),            // molongui-boilerplate/molongui-boilerplate.php
-            'MOLONGUI_AUTHORSHIP_NAMESPACE'       => '\Molongui\Authorship',
-            'MOLONGUI_AUTHORSHIP_PREFIX'          => 'molongui_authorship',
-            'MOLONGUI_AUTHORSHIP_NAME'            => 'molongui-authorship',                // slug
-            'MOLONGUI_AUTHORSHIP_DB_SCHEMA'       => 25,
-            'MOLONGUI_AUTHORSHIP_DB_VERSION'      => 'molongui_authorship_db_version',     // Options key
-            'MOLONGUI_AUTHORSHIP_INSTALL'         => 'molongui_authorship_install',        // Options key
-            'MOLONGUI_AUTHORSHIP_NOTICES'         => 'molongui_authorship_notices',        // Options key
-            'MOLONGUI_AUTHORSHIP_ID'              => 'authorship',
-            'MOLONGUI_AUTHORSHIP_TITLE'           => 'Molongui Authorship',
-            'MOLONGUI_AUTHORSHIP_DEBUG'           => false,
-            'MOLONGUI_AUTHORSHIP_HAS_PRO'         => true,
-            'MOLONGUI_AUTHORSHIP_MIN_PRO'         => '1.9.0',
-            'MOLONGUI_AUTHORSHIP_RECOMMENDED_PRO' => '1.9.0',
-            'MOLONGUI_AUTHORSHIP_WEB'             => 'https://www.molongui.com/wordpress-plugin-post-authors',
-            'MOLONGUI_AUTHORSHIP_DEMO'            => 'https://demos.molongui.com/test-drive-molongui-authorship-pro/',
-            'MOLONGUI_AUTHORSHIP_TAG'             => 'Authorship',
-            'MOLONGUI_AUTHORSHIP_CPT'             => 'guest_author',
-            'MOLONGUI_AUTHORSHIP_MAIN_SETTINGS'     => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_BOX_SETTINGS'      => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_BYLINE_SETTINGS'   => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_ARCHIVES_SETTINGS' => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_SEO_SETTINGS'      => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_COMPAT_SETTINGS'   => 'molongui_authorship_options',
-            'MOLONGUI_AUTHORSHIP_INSTALLATION'      => 'molongui_authorship_install',
-        );
-    }
-    public function activate( $network_wide )
-    {
-        Activator::activate( $network_wide );
-    }
-    public function deactivate( $network_wide )
-    {
-        Deactivator::deactivate( $network_wide );
-    }
-    public function activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta )
-    {
-        Activator::activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta );
-    }
-    public function on_plugin_loaded( $plugin )
-    {
-        if ( MOLONGUI_AUTHORSHIP_FILE !== $plugin )
-        {
-            return;
-        }
-        require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/overwrites.php';
-    }
-    public function on_plugins_loaded()
-    {
-        self::maybe_enable_debug_mode();
-        if ( self::is_disabled() )
-        {
-            if ( class_exists( '\Molongui\Authorship\Common\Utils\Debug' ) )
-            {
-                Debug::console_log( null, sprintf(
-                    "The %s plugin is disabled. Remove the 'noAuthorship' query string from the URL to enable it.",
-                    MOLONGUI_AUTHORSHIP_TITLE
-                ));
-            }
-            return false;
-        }
-        $this->update_db();
-        if ( !$this->is_compatible() )
-        {
-            return false;
-        }
-        $this->load();
-        return true;
-    }
-    private function maybe_enable_debug_mode()
-    {
-        if ( !is_admin() and isset( $_GET['debugAuthorship'] ) and ( 0 !== $_GET['debugAuthorship'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        {
-            add_filter( 'authorship/debug', '__return_true' );
-        }
-    }
-    private function is_disabled()
-    {
-        if ( !is_admin() and isset( $_GET['noAuthorship'] ) and 0 !== $_GET['noAuthorship'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        {
-            return true;
-        }
+		self::define_constants();
 
-        return false;
-    }
-    private function is_compatible()
-    {
+		require_once MOLONGUI_AUTHORSHIP_DIR . 'common/autoloader.php';
 
-        return true;
-    }
-    private function update_db()
-    {
-        $update_db = new DB_Update( MOLONGUI_AUTHORSHIP_DB_SCHEMA, MOLONGUI_AUTHORSHIP_DB_VERSION, MOLONGUI_AUTHORSHIP_NAMESPACE );
-        if ( $update_db->db_update_needed() )
-        {
-            $update_db->run_update();
-        }
-    }
-    public function load()
-    {
-        $paths = array
-        (
-            MOLONGUI_AUTHORSHIP_DIR . 'dropins/',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/author-box.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/author-filters.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/authors.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/conditional-tags.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/guest-author.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/post.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/settings.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/social.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/template-tags.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/user.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
+		register_activation_hook( MOLONGUI_AUTHORSHIP_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( MOLONGUI_AUTHORSHIP_FILE, array( $this, 'deactivate' ) );
 
-            MOLONGUI_AUTHORSHIP_DIR . 'common/hooks.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/wizard.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
+		add_action( 'wpmu_new_blog', array( $this, 'activate_on_new_blog' ), 10, 6 );
 
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-guest-author.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-post.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/author-box-editor.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/dashboard.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
-            MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
-            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/co-authors-plus.php',
-            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/publishpress-authors.php',
-            require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/one-user-avatar.php',
-        );
-        foreach ( $paths as $path )
-        {
-            self::require_file( $path );
-        }
-        if ( defined( 'WP_CLI' ) && WP_CLI )
-        {
-            self::require_file( MOLONGUI_AUTHORSHIP_DIR . 'includes/integrations/wp-cli.php' );
-        }
-        Debug::console_log( null, sprintf( "%s %s", MOLONGUI_AUTHORSHIP_TITLE, MOLONGUI_AUTHORSHIP_VERSION ) );
-        do_action( 'authorship/init' );
-    }
-    public static function require_file( $path )
-    {
-        if ( is_file( $path ) and file_exists( $path ) )
-        {
-            require_once $path;
-        }
-        elseif ( is_dir( $path ) )
-        {
-            foreach ( new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $path ) ) as $file )
-            {
+		add_action( 'plugin_loaded', array( $this, 'on_plugin_loaded' ) );
+		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
 
-                if ( $file->isFile() and 'php' === $file->getExtension() and 'index.php' !== $file->getFilename() )
-                {
-                    require_once $file->getPathname();
-                }
-            }
-        }
-    }
+		do_action( 'authorship/loaded' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Hook namespaces intentionally use slashes.
+	}
 
-} // class
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( 'molongui-authorship', false, plugin_dir_path( __FILE__ ) . 'i18n/' );
+	}
+
+	public function checks_passed() {
+		if ( version_compare( PHP_VERSION, '5.6.20', '<' ) ) {
+			add_action( 'admin_notices', array( $this, 'fail_php_error' ) );
+			return false;
+		}
+
+		if ( version_compare( get_bloginfo( 'version' ), '5.2', '<' ) ) {
+			add_action( 'admin_notices', array( $this, 'fail_wp_error' ) );
+			return false;
+		}
+
+		return true;
+	}
+
+	public function fail_php_error() {
+		$min_php_version = '5.6.20';
+
+		if ( isset( $_GET['activate'] ) ) {
+			unset( $_GET['activate'] );
+		}
+
+		// translators: %1$s: <strong>. %2$s: </strong>. %3$s: Min required PHP version. %4$s: User PHP version
+		$message      = sprintf( esc_html__( '%1$sMolongui Authorship%2$s requires PHP version %3$s or greater to operate. Unfortunately, your current PHP version (%4$s) is too old, so the plugin has been disabled.', 'molongui-authorship' ), '<strong>', '</strong>', $min_php_version, PHP_VERSION );
+		$message     .= sprintf( '<p><a href="%s" class="button-primary" target="_blank">%s</a></p>', 'https://www.molongui.com/help/how-to-update-my-php-version/', __( 'How to update PHP?', 'molongui-authorship' ) );
+		$html_message = sprintf( '<div class="notice notice-error">%s</div>', wpautop( $message ) );
+		echo wp_kses_post( $html_message );
+	}
+
+	public function fail_wp_error() {
+		$min_wp_version = '5.2';
+
+		if ( isset( $_GET['activate'] ) ) {
+			unset( $_GET['activate'] );
+		}
+
+		// translators: %1$s: <strong>.%2$s: </strong>. %3$s: Min required WordPress version
+		$message      = sprintf( esc_html__( '%1$sMolongui Authorship%2$s requires WordPress version %3$s or higher. Please update your WordPress to run this plugin.', 'molongui-authorship' ), '<strong>', '</strong>', $min_wp_version );
+		$html_message = sprintf( '<div class="notice notice-error">%s</div>', wpautop( $message ) );
+		echo wp_kses_post( $html_message );
+	}
+
+	public function define_constants() {
+		foreach ( self::get_constants() as $name => $value ) {
+			if ( ! defined( $name ) ) {
+				define( $name, $value );
+			}
+		}
+
+	}
+
+	public static function get_constants() {
+		return array(
+			'MOLONGUI_AUTHORSHIP_VERSION'           => self::VERSION,
+
+			'MOLONGUI_AUTHORSHIP_FILE'              => __FILE__,                                
+			'MOLONGUI_AUTHORSHIP_DIR'               => plugin_dir_path( __FILE__ ),             
+			'MOLONGUI_AUTHORSHIP_FOLDER'            => dirname( plugin_basename( __FILE__ ) ),  
+			'MOLONGUI_AUTHORSHIP_URL'               => plugin_dir_url( __FILE__ ),              
+			'MOLONGUI_AUTHORSHIP_BASENAME'          => plugin_basename( __FILE__ ),             
+
+			'MOLONGUI_AUTHORSHIP_NAMESPACE'         => '\Molongui\Authorship',
+			'MOLONGUI_AUTHORSHIP_PREFIX'            => 'molongui_authorship',
+			'MOLONGUI_AUTHORSHIP_NAME'              => 'molongui-authorship',                 
+
+			'MOLONGUI_AUTHORSHIP_DB_SCHEMA'         => 25,
+			'MOLONGUI_AUTHORSHIP_DB_VERSION'        => 'molongui_authorship_db_version',      
+			'MOLONGUI_AUTHORSHIP_INSTALL'           => 'molongui_authorship_install',         
+			'MOLONGUI_AUTHORSHIP_NOTICES'           => 'molongui_authorship_notices',         
+
+			'MOLONGUI_AUTHORSHIP_ID'                => 'authorship',
+			'MOLONGUI_AUTHORSHIP_TITLE'             => 'Molongui Authorship',
+
+			'MOLONGUI_AUTHORSHIP_DEBUG'             => false,
+
+			'MOLONGUI_AUTHORSHIP_HAS_PRO'           => true,
+			'MOLONGUI_AUTHORSHIP_MIN_PRO'           => '1.9.0',
+			'MOLONGUI_AUTHORSHIP_RECOMMENDED_PRO'   => '1.9.0',
+			'MOLONGUI_AUTHORSHIP_WEB'               => 'https://www.molongui.com/wordpress-plugin-post-authors',
+			'MOLONGUI_AUTHORSHIP_DEMO'              => 'https://demos.molongui.com/test-drive-molongui-authorship-pro/',
+
+			'MOLONGUI_AUTHORSHIP_TAG'               => 'Authorship',
+			'MOLONGUI_AUTHORSHIP_CPT'               => 'guest_author',
+
+			'MOLONGUI_AUTHORSHIP_MAIN_SETTINGS'     => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_BOX_SETTINGS'      => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_BYLINE_SETTINGS'   => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_ARCHIVES_SETTINGS' => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_SEO_SETTINGS'      => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_COMPAT_SETTINGS'   => 'molongui_authorship_options',
+			'MOLONGUI_AUTHORSHIP_INSTALLATION'      => 'molongui_authorship_install',
+		);
+	}
+
+	public function activate( $network_wide ) {
+		Activator::activate( $network_wide );
+	}
+
+	public function deactivate( $network_wide ) {
+		Deactivator::deactivate( $network_wide );
+	}
+
+	public function activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+		Activator::activate_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta );
+	}
+
+	public function on_plugin_loaded( $plugin ) {
+		if ( MOLONGUI_AUTHORSHIP_FILE !== $plugin ) {
+			return;
+		}
+
+		require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/overwrites.php';
+	}
+
+	public function on_plugins_loaded() {
+		self::maybe_enable_debug_mode();
+
+		if ( self::is_disabled() ) {
+			if ( class_exists( '\Molongui\Authorship\Common\Utils\Debug' ) ) {
+				Debug::console_log(
+					null,
+					sprintf(
+						"The %s plugin is disabled. Remove the 'noAuthorship' query string from the URL to enable it.",
+						MOLONGUI_AUTHORSHIP_TITLE
+					)
+				);
+			}
+
+			return false;
+		}
+
+		$this->update_db();
+
+		if ( ! $this->is_compatible() ) {
+			return false;
+		}
+
+		$this->load();
+
+		return true;
+	}
+
+	private function maybe_enable_debug_mode() {
+		if ( ! is_admin() and isset( $_GET['debugAuthorship'] ) and ( 0 !== $_GET['debugAuthorship'] ) ) {
+			add_filter( 'authorship/debug', '__return_true' );
+		}
+	}
+
+	private function is_disabled() {
+		if ( ! is_admin() and isset( $_GET['noAuthorship'] ) and 0 !== $_GET['noAuthorship'] ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private function is_compatible() {
+
+		return true;
+	}
+
+	private function update_db() {
+		$update_db = new DB_Update( MOLONGUI_AUTHORSHIP_DB_SCHEMA, MOLONGUI_AUTHORSHIP_DB_VERSION, MOLONGUI_AUTHORSHIP_NAMESPACE );
+		if ( $update_db->db_update_needed() ) {
+			$update_db->run_update();
+		}
+	}
+
+	public function load() {
+		$paths = array(
+			MOLONGUI_AUTHORSHIP_DIR . 'dropins/',
+
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/author-box.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/blocks/categories.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/blocks/author-box.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/blocks/post-byline.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/author-filters.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/authors.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/conditional-tags.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/guest-author.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/post.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/settings.php',
+				MOLONGUI_AUTHORSHIP_DIR . 'includes/social.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/template-tags.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/user.php',
+
+
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/compat.php',
+
+			MOLONGUI_AUTHORSHIP_DIR . 'common/hooks.php',
+
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/wizard.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/pointers.php',
+
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-author.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-guest-author.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-post.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/author-box-editor.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/dashboard.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-author-updater.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/post-count-updater.php',
+			MOLONGUI_AUTHORSHIP_DIR . 'includes/admin/admin-user.php',
+
+			require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/co-authors-plus.php',
+			require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/publishpress-authors.php',
+			require_once MOLONGUI_AUTHORSHIP_DIR . 'includes/migration/one-user-avatar.php',
+		);
+
+		foreach ( $paths as $path ) {
+			self::require_file( $path );
+		}
+
+		Post_Authorship::register_publication_guards();
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			self::require_file( MOLONGUI_AUTHORSHIP_DIR . 'includes/integrations/wp-cli.php' );
+		}
+
+		Debug::console_log( null, sprintf( '%s %s', MOLONGUI_AUTHORSHIP_TITLE, MOLONGUI_AUTHORSHIP_VERSION ) );
+
+		do_action( 'authorship/init' );
+	}
+
+	public static function require_file( $path ) {
+		if ( is_file( $path ) and file_exists( $path ) ) {
+			require_once $path;
+		} elseif ( is_dir( $path ) ) {
+			foreach ( new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $path ) ) as $file ) {
+
+				if ( $file->isFile() and 'php' === $file->getExtension() and 'index.php' !== $file->getFilename() ) {
+					require_once $file->getPathname();
+				}
+			}
+		}
+	}
+}  
+
 MolonguiAuthorship::instance();

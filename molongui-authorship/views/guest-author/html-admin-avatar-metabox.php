@@ -3,7 +3,7 @@
 use Molongui\Authorship\Admin\Author_Box_Editor;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 ?>
 
 <div class="molongui-metabox">

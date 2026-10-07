@@ -2,9 +2,10 @@
 
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $add_microdata = ( !empty( $options['seo_settings_enabled'] ) and !empty( $options['schema_markup_enabled'] ) );
+
 if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) )
 {
     $common_posts = Post::get_coauthored( $profiles, false, array(), 'selected' );
@@ -31,13 +32,16 @@ if ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_sh
      data-authors-count="<?php echo count( $profiles ); ?>">
 
 	<?php
+
     if ( !empty( $options['author_box_header_title'] )  )
 	{
 		include( MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-header.php' );
 	}
+
 	if ( $show_tabs = ( !empty( $options['author_box_layout'] ) and $options['author_box_layout'] == 'tabbed' ) )
 	{
 		echo '<div class="m-a-box-tabs">';
+
 		include( MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-tabs.php' );
 	}
 

@@ -2,13 +2,17 @@
 
 use Molongui\Authorship\Post;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     global $is_related_posts;
+
     $fn     = 'get_avatar';
     $file_1 = '/template-parts/content/entry_meta.php';
     $file_2 = '/template-parts/content/author-box.php';
+
+
     if ( !$is_related_posts and
          !is_admin() and
          $i = array_search( $fn, array_column( $dbt, 'function' ) ) and
@@ -20,16 +24,26 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
         if ( Post::is_guest( $post->ID ) )
         {
             $main = Post::get_main_author( $post->ID );
+
+            if ( empty( $main ) )
+            {
+                return $author;
+            }
+
             $author->id   = $main->id;
             $author->type = 'guest';
         }
     }
+
     return $author;
 }, 10, 3 );
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     $fn   = 'get_avatar';
     $file = '/template-parts/header/navigation.php';
+
+
     if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
         if ( ( isset( $dbt[$i]['file'] ) and substr_compare( $dbt[$i]['file'], $file, strlen( $dbt[$i]['file'] )-strlen( $file ), strlen( $file ) ) === 0 ) )
@@ -43,5 +57,6 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
             }
         }
     }
+
     return $author;
 }, 10, 3 );

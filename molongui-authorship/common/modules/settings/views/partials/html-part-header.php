@@ -1,6 +1,7 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+
+defined( 'ABSPATH' ) or exit;  
 
 $logo = file_exists( MOLONGUI_AUTHORSHIP_DIR . 'assets/img/plugin_logo.png' ) ? MOLONGUI_AUTHORSHIP_URL . 'assets/img/plugin_logo.png' : MOLONGUI_AUTHORSHIP_URL . 'common/modules/settings/assets/img/masthead_logo.png';
 

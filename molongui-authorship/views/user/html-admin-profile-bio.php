@@ -3,8 +3,7 @@
 use Molongui\Authorship\Common\Utils\Plugin;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
-
+defined( 'ABSPATH' ) || exit;  
 ?>
 
 <div id="molongui-bio-info">
@@ -16,7 +15,7 @@ defined( 'ABSPATH' ) or exit; // Exit if accessed directly
         <tr class="m-user-description-wrap">
             <th><label for="description"><?php _e( 'Full Bio', 'molongui-authorship' ); ?></label></th>
             <td>
-                <textarea name="description" id="description" rows="7" cols="30"><?php echo $user->description; // textarea_escaped ?></textarea>
+                <textarea name="description" id="description" rows="7" cols="30"><?php echo $user->description;  ?></textarea>
                 <p class="description"><?php _e( "Biographical information to be shown publicly on several places on your site.", 'molongui-authorship' ); ?></p>
             </td>
         </tr>

@@ -1,10 +1,9 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $user_id = $user->ID;
 $profileuser = get_user_to_edit( $user_id );
-
 ?>
 
 <?php echo get_avatar( $user_id, '150' ); ?>
@@ -12,12 +11,14 @@ $profileuser = get_user_to_edit( $user_id );
     <?php
     if ( IS_PROFILE_PAGE ) {
         $description = sprintf(
+        	// translators: %s: Gravatar URL.
             __( '<a href="%s">You can change your profile picture on Gravatar</a>.' ),
             __( 'https://en.gravatar.com/' )
         );
     } else {
         $description = '';
     }
+
     echo apply_filters( 'user_profile_picture_description', $description, $profileuser );
     ?>
 </p>

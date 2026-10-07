@@ -3,7 +3,9 @@
 use Molongui\Authorship\Common\Utils\WP;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 $error = get_option( 'molongui_authorship_add_author_error_'.get_current_user_id() );
 if ( $error )
 {
@@ -14,15 +16,19 @@ if ( $error )
         </ul>
     </div>
     <?php
+
     $input = get_option( 'molongui_authorship_add_author_input_'.get_current_user_id() );
+
     delete_option( 'molongui_authorship_add_author_error_'.get_current_user_id() );
     delete_option( 'molongui_authorship_add_author_input_'.get_current_user_id() );
 }
+
 if ( empty( Settings::get( 'guest_author_enabled' ) ) )
 {
     $input['user-account'] = true;
     $force_user_account    = true;
 }
+
 
 $current_color = WP::get_admin_color();
 ?>
@@ -63,6 +69,8 @@ $current_color = WP::get_admin_color();
         transition: 0.3s ease all;
         z-index: 1;
     }
+
+    /* Button 17 */
     #button-17 .knobs:before,
     #button-17 .knobs span {
         content: "YES";
@@ -301,6 +309,10 @@ $current_color = WP::get_admin_color();
         font-size: 0.85em;
         cursor: default;
     }
+
+
+    /* Checkbox styling */
+    /* https://codepen.io/avstorm/pen/vYYBxRM */
     .cbx {
         -webkit-user-select: none;
         user-select: none;
@@ -495,7 +507,7 @@ $current_color = WP::get_admin_color();
                                         </p>
                                     </div>
                                 </label>
-                                <?php if ( !empty( $force_user_account ) ) : // Disabled checkboxes are not submitted to $_POST, so we need to recreate it using a hidden input. ?>
+                                <?php if ( !empty( $force_user_account ) ) :  ?>
                                     <input type="hidden" id="__user-account" name="user-account" value="on" />
                                 <?php endif; ?>
                             </div>
@@ -577,6 +589,8 @@ $current_color = WP::get_admin_color();
 </div>
 
 <script>
+
+    // Display account fields based on whether a user account is required.
     let accountCbx = jQuery('#user-account');
     accountCbx.on('m-load change', function(e)
     {

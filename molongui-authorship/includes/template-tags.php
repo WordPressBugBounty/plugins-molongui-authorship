@@ -29,11 +29,13 @@
 use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 function molongui_the_author( $pid = null, $separator = '', $last_separator = '', $before = '', $after = '' )
 {
     echo molongui_get_the_author( $pid, $separator, $last_separator, $before, $after );
 }
+
 function molongui_get_the_author( $pid = null, $separator = '', $last_separator = '', $before = '', $after = '' )
 {
     if ( ( is_null( $pid ) or !is_integer( $pid ) ) and !in_the_loop() )
@@ -43,6 +45,7 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
 
     $prefix  = '';
     $suffix  = '';
+
     if ( !empty( $before ) and is_string( $before ) )
     {
         $prefix = $before;
@@ -59,6 +62,7 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
      * @since 5.0.0
      */
     $prefix = apply_filters( 'molongui_authorship/byline_prefix', $prefix );
+
     if ( !empty( $after ) and is_string( $after ) )
     {
         $suffix = $after;
@@ -75,15 +79,19 @@ function molongui_get_the_author( $pid = null, $separator = '', $last_separator 
      * @since 5.0.0
      */
     $suffix = apply_filters( 'molongui_authorship/byline_suffix', $suffix );
+
     $linked = apply_filters( 'molongui_authorship/link_names_in_post_byline', false );
     $linked = apply_filters_deprecated( 'molongui_author_byline_linked', array( $linked ), '5.0.0', 'molongui_authorship/link_names_in_post_byline' );
     $byline = Post::get_byline( $pid, $separator, $last_separator, $linked );
+
     return $prefix . $byline . $suffix;
 }
+
 function molongui_the_author_posts_link( $pid = null, $separator = null, $last_separator = null, $before = '', $after = '' )
 {
     echo molongui_get_the_author_posts_link( $pid, $separator, $last_separator, $before, $after );
 }
+
 function molongui_get_the_author_posts_link( $pid = null, $separator = null, $last_separator = null, $before = '', $after = '' )
 {
     add_filter( 'molongui_authorship/link_names_in_post_byline', '__return_true' );

@@ -6,7 +6,7 @@ use Molongui\Authorship\Authors;
 use Molongui\Authorship\Author_Box;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $options = Settings::get();
 $profile = array();
@@ -19,6 +19,7 @@ if ( !empty( $_GET['author'] ) )
 else
 {
     $current_user = wp_get_current_user();
+
     if ( apply_filters( 'molongui_authorship/preview_dummy_data', true ) )
     {
         if ( !empty( $options['author_box_bio_source'] ) and 'short' === $options['author_box_bio_source'] )
@@ -29,15 +30,18 @@ else
                 return $defaults;
             } );
         }
+
         echo '<style>.m-a-box-avatar img{width:'.$options['author_box_avatar_width'].'px; height:'.$options['author_box_avatar_height'].'px;}</style>';
 
         $profile['dummy-0'] = new Author( 0, 'dummy' );
     }
+
     elseif ( array_intersect( (array)$current_user->roles, explode(",", $options['user_roles'] ) ) )
     {
         $author = new Author( $current_user->ID, 'user' );
         $profile['user-'.$current_user->ID] = $author;
     }
+
     else
     {
         $random = Authors::get_random_author( 'author', $options['user_roles'] );

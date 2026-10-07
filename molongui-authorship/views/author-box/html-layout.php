@@ -2,7 +2,7 @@
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $add_microdata = ( !empty( $options['seo_settings_enabled'] ) and !empty( $options['schema_markup_enabled'] ) );
 $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options['author_box_show_related_posts'] ) and ( $profile->has_posts() or !empty( $options['author_box_related_show_empty'] ) ) );
@@ -26,6 +26,7 @@ $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options[
      data-author-archived="<?php echo $profile->is_archived(); ?>">
 
 	<?php
+
     if ( !empty( $options['author_box_header_title'] ) )
     {
         if ( $profile === reset($profiles ) )
@@ -33,6 +34,7 @@ $show_related  = ( $options['author_box_layout'] != 'slim' and !empty( $options[
             include MOLONGUI_AUTHORSHIP_DIR . 'views/author-box/parts/html-header.php';
         }
     }
+
     if ( $show_tabs = ( !empty( $options['author_box_layout'] ) and $options['author_box_layout'] == 'tabbed' ) )
     {
         echo '<div class="m-a-box-tabs">';

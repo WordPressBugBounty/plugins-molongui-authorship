@@ -2,9 +2,11 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Helpers
 {
+
     public static function sanitize_boolean_attr( $value )
     {
         if ( is_string( $value ) )
@@ -17,14 +19,18 @@ class Helpers
                 $value = false;
             }
         }
+
         return (bool) $value;
     }
+
+
     public static function array_sort( $array = array(), $order = 'ASC', $orderby = 'key' )
     {
         if ( empty( $array ) )
         {
             return $array;
         }
+
         switch ( $orderby )
         {
             case 'key':
@@ -39,6 +45,7 @@ class Helpers
                 });
                 break;
         }
+
         if ( 'desc' === strtolower( $order ) )
         {
             $array = array_reverse( $array );
@@ -46,6 +53,7 @@ class Helpers
 
         return $array;
     }
+
     public static function array_recursive_sort( array &$array )
     {
         foreach ( $array as &$value )
@@ -57,6 +65,7 @@ class Helpers
         }
         sort( $array );
     }
+
     public static function array_match( $array1, $array2, $operator = '==' )
     {
         $match = false;
@@ -83,6 +92,7 @@ class Helpers
 
         return $match;
     }
+
     public static function arrays_equal( $array1, $array2, $sort = false )
     {
         if ( $sort )
@@ -93,40 +103,52 @@ class Helpers
 
         return ( serialize( $array1 ) === serialize( $array2 ) );
     }
+
     public static function array_find_partial_matches( $array, $searchString )
     {
         $searchString = strtolower( $searchString );
+
         return array_filter( $array, function ( $item ) use ( $searchString )
         {
             return strpos(strtolower( $item ), $searchString ) !== false;
         });
     }
+
     public static function string_to_array( $string )
     {
         $string = (string) $string;
+
         $string = trim( strip_tags( $string ) );
+
         $string = preg_replace( '/\s*,\s*/', ',', $string );
+
         $array = explode( ',', $string );
+
         $array = array_filter( array_map( 'trim', $array ), 'strlen' );
 
         return $array;
     }
+
     public static function space_to_nbsp( $string )
     {
         return str_replace( ' ', "\u{00A0}", (string) $string );
     }
+
     public static function is_bool( $var )
     {
         return ( '0' === $var or '1' === $var );
     }
+
     public static function is_valid_url( $url )
     {
         return filter_var( $url, FILTER_VALIDATE_URL ) !== false;
     }
+
     public static function rand( $length = 10 )
     {
         return substr( number_format( time() * wp_rand(), 0, '', '' ), 0, $length );
     }
+
     public static function let_to_num( $size )
     {
         $l   = substr( $size, - 1 );
@@ -147,6 +169,7 @@ class Helpers
 
         return $ret;
     }
+
     public static function get_acronym ( $words, $length = 3 )
     {
         $acronym = '';
@@ -154,6 +177,7 @@ class Helpers
 
         return strtoupper( mb_substr( $acronym, 0, $length ) );
     }
+
     public static function ascii_encode( $input )
     {
         $output = '';
@@ -163,9 +187,12 @@ class Helpers
         }
         return $output;
     }
+
+
     public static function get_remote_response( $url )
     {
         $response = null;
+
         $args = array
         (
             'method'      => 'GET',
@@ -174,7 +201,9 @@ class Helpers
             'httpversion' => '1.1',
             'sslverify'   => false,
         );
+
         $response = wp_remote_get( $url, $args );
+
         if ( is_wp_error( $response ) or !isset( $response ) or empty( $response ) )
         {
 
@@ -182,10 +211,14 @@ class Helpers
         }
         else
         {
+
             $response = unserialize( wp_remote_retrieve_body( $response ) );
         }
+
         return $response;
     }
+
+
     public static function clean( $var )
     {
         if ( is_array( $var ) )
@@ -197,16 +230,22 @@ class Helpers
             return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
         }
     }
+
+
     public static function clean_php( $snippet, $method = 'tokenization' )
     {
         switch ( $method )
         {
             case 'regexp':
+
                 $snippet = preg_replace('/\/\/[^\r\n]*/', '', $snippet );
+
                 $snippet = preg_replace('/\/\*.*?\*\//s', '', $snippet );
+
                 $snippet = preg_replace('/^\s*[\r\n]/m', '', $snippet );
 
                 break;
+
             case 'tokenization':
             default:
 
@@ -218,10 +257,12 @@ class Helpers
                     if ( is_array( $token ) )
                     {
                         list( $id, $text ) = $token;
+
                         if ( in_array( $id, [T_COMMENT, T_DOC_COMMENT] ) )
                         {
                             continue;
                         }
+
                         if ( $id === T_WHITESPACE )
                         {
                             $text = ' ';
@@ -234,6 +275,7 @@ class Helpers
                         $cleaned_snippet .= $token;
                     }
                 }
+
                 $snippet = preg_replace( '/^\s*[\r\n]/m', '', $cleaned_snippet );
 
                 break;
@@ -241,13 +283,16 @@ class Helpers
 
         return $snippet;
     }
+
     public static function minify_html( $input )
     {
         if (trim($input) === "") return $input;
+
         $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function($matches)
         {
             return '<' . $matches[1] . preg_replace('#([^\s=]+)(\=([\'"]?)(.*?)\3)?(\s+|$)#s', ' $1$2', $matches[2]) . $matches[3] . '>';
         }, str_replace("\r", "", $input));
+
         if (strpos($input, ' style=') !== false)
         {
             $input = preg_replace_callback('#<([^<]+?)\s+style=([\'"])(.*?)\2(?=[\/\s>])#s', function($matches) {
@@ -273,13 +318,13 @@ class Helpers
             (
                 '#<(img|input)(>| .*?>)#s',
                 '#(<!--.*?-->)|(>)(?:\n*|\s{2,})(<)|^\s*|\s*$#s',
-                '#(<!--.*?-->)|(?<!\>)\s+(<\/.*?>)|(<[^\/]*?>)\s+(?!\<)#s', // t+c || o+t
-                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<[^\/]*?>)|(<\/.*?>)\s+(<\/.*?>)#s', // o+o || c+c
-                '#(<!--.*?-->)|(<\/.*?>)\s+(\s)(?!\<)|(?<!\>)\s+(\s)(<[^\/]*?\/?>)|(<[^\/]*?\/?>)\s+(\s)(?!\<)#s', // c+t || t+o || o+t -- separated by long white-space(s)
-                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<\/.*?>)#s', // empty tag
-                '#<(img|input)(>| .*?>)<\/\1>#s', // reset previous fix
-                '#(&nbsp;)&nbsp;(?![<\s])#', // clean up ...
-                '#(?<=\>)(&nbsp;)(?=\<)#', // --ibid
+                '#(<!--.*?-->)|(?<!\>)\s+(<\/.*?>)|(<[^\/]*?>)\s+(?!\<)#s',  
+                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<[^\/]*?>)|(<\/.*?>)\s+(<\/.*?>)#s',  
+                '#(<!--.*?-->)|(<\/.*?>)\s+(\s)(?!\<)|(?<!\>)\s+(\s)(<[^\/]*?\/?>)|(<[^\/]*?\/?>)\s+(\s)(?!\<)#s',  
+                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<\/.*?>)#s',  
+                '#<(img|input)(>| .*?>)<\/\1>#s',  
+                '#(&nbsp;)&nbsp;(?![<\s])#',  
+                '#(?<=\>)(&nbsp;)(?=\<)#',  
                 '#\s*<!--(?!\[if\s).*?-->\s*|(?<!\>)\n+(?=\<[^!])#s'
             ),
             array
@@ -297,6 +342,7 @@ class Helpers
             ),
             $input);
     }
+
     public static function minify_css( $input )
     {
         if(trim($input) === "") return $input;
@@ -333,6 +379,7 @@ class Helpers
             ),
             $input);
     }
+
     public static function minify_js( $input )
     {
         if(trim($input) === "") return $input;
@@ -357,15 +404,19 @@ class Helpers
             ),
             $input);
     }
+
+
     public static function get_attachment_image_url( $attachment_id )
     {
         $url = wp_get_attachment_image_url( $attachment_id );
 
         return is_null( $url ) ? '' : $url;
     }
+
     public static function get_attachment_edit_url( $attachment_id )
     {
         $edit_link = get_edit_post_link( $attachment_id, 'edit' );
+
         if ( empty( $edit_link ) )
         {
             $edit_link = admin_url( sprintf( 'post.php?post=%d', $attachment_id ) );
@@ -380,6 +431,7 @@ class Helpers
             $edit_link
         );
     }
+
     public static function get_base64_svg( $svg, $base64 = true )
     {
         if ( $base64 )
@@ -389,17 +441,22 @@ class Helpers
 
         return $svg;
     }
+
+
     public static function get_language()
     {
         $language = '';
+
         if ( false )
         {
 
         }
+
         elseif ( function_exists( 'pll_current_language' ) )
         {
             $language = pll_current_language();
         }
+
         elseif ( defined( 'ICL_LANGUAGE_CODE' ) )
         {
             $language = ICL_LANGUAGE_CODE;
@@ -408,10 +465,12 @@ class Helpers
         {
             $language = apply_filters( 'wpml_current_language', NULL );
         }
+
         elseif ( array_key_exists( 'TRP_LANGUAGE', $GLOBALS ) )
         {
             $language = $GLOBALS['TRP_LANGUAGE'];
         }
+
         elseif ( function_exists( 'qtrans_getLanguage' ) )
         {
             $language = qtrans_getLanguage();
@@ -423,10 +482,12 @@ class Helpers
                 $language = $GLOBALS['q_config']['language'];
             }
         }
+
         elseif ( function_exists( 'weglot_get_current_language' ) )
         {
             $language = weglot_get_current_language();
         }
+
         elseif ( has_filter( 'mlp_language_api' ) )
         {
             $language = apply_filters( 'mlp_language_api', NULL );
@@ -434,14 +495,18 @@ class Helpers
 
         return $language;
     }
+
+
     public static function is_edit_mode()
     {
         return apply_filters( 'authorship/is_edit_mode', WP::is_block_editor() or self::is_elementor_editor() );
     }
+
     public static function is_block_editor()
     {
         return WP::is_block_editor();
     }
+
     public static function is_elementor_editor()
     {
         $edit_mode = false;
@@ -453,23 +518,32 @@ class Helpers
 
         return apply_filters( 'authorship/is_elementor_editor', $edit_mode );
     }
+
+
     public static function is_time_in_range( $startTime, $endTime, $timezone = 'Europe/Berlin', $weekday = true )
     {
         $originalTimezone = date_default_timezone_get();
+
         date_default_timezone_set( $timezone );
+
         $currentTime = strtotime( date( 'H:i' ) );
-        $currentDay  = (int) date( 'N' ); // Day of the week (1 for Monday, 7 for Sunday)
+        $currentDay  = (int) date( 'N' );  
         $start       = strtotime( $startTime );
         $end         = strtotime( $endTime );
+
         $isWithinRange = $currentTime >= $start && $currentTime < $end;
+
         if ( $weekday )
         {
             $isWithinRange = $isWithinRange && ( $currentDay >= 1 && $currentDay <= 5 );
         }
+
         date_default_timezone_set( $originalTimezone );
 
         return $isWithinRange;
     }
+
+
     public static function load_tidio()
     {
         if ( apply_filters( 'authorship/load_tidio', true ) )
@@ -477,21 +551,26 @@ class Helpers
             echo '<script src="//code.tidio.co/foioudbu7xqepgvwseufnvhcz6wkp7am.js" async></script>';
         }
     }
+
     public static function get_tidio_url()
     {
         return 'https://www.tidiochat.com/chat/foioudbu7xqepgvwseufnvhcz6wkp7am';
     }
+
+
     public static function return_list_true() // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore,PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore
     {
         return array( true, null );
     }
+
     public static function return_list_false() // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore,PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore
     {
         return array( false, null );
     }
+
     public static function short_circuit( $null, $original_value )
     {
         return $original_value;
     }
 
-} // class
+}  

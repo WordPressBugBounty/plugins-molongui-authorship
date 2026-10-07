@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "molongui-authorship/post-byline",
+  "title": "Post Byline",
+  "category": "molongui-authorship",
+  "icon": "admin-users",
+  "description": "Displays the Molongui byline for the current post.",
+  "keywords": [
+    "author",
+    "byline",
+    "co-author"
+  ],
+  "textdomain": "molongui-authorship",
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "attributes": {
+    "prefix": {
+      "type": "string",
+      "default": ""
+    },
+    "suffix": {
+      "type": "string",
+      "default": ""
+    },
+    "showPublishDate": {
+      "type": "boolean",
+      "default": false
+    },
+    "showUpdatedDate": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCategories": {
+      "type": "boolean",
+      "default": false
+    },
+    "showTags": {
+      "type": "boolean",
+      "default": false
+    },
+    "showComments": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "editorScript": "molongui-authorship-post-byline-block",
+  "supports": {
+    "html": false,
+    "multiple": false,
+    "className": false,
+    "customClassName": false
+  }
+}

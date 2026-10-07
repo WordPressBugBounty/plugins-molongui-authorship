@@ -2,11 +2,12 @@
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 if ( !empty( $options['author_box_social_show'] ) )
 {
     $_networks = $profile->get_social();
+
     if ( $profile->get_meta( 'show_icon_web' ) )
     {
         $website = $profile->get_meta( 'web' );
@@ -36,10 +37,12 @@ if ( !empty( $options['author_box_social_show'] ) )
             $_networks['phone'] = $phone;
         }
     }
+
     if ( empty( $_networks ) )
     {
         return;
     }
+
 	if ( isset( $options['author_box_social_style'] ) )
 	{
 		$ico_style = $options['author_box_social_style'];
@@ -48,14 +51,18 @@ if ( !empty( $options['author_box_social_show'] ) )
             $ico_style = '';
         }
 	}
+
 	$nofollow = $options['social_profiles_nofollow'] ? 'rel="nofollow"' : '' ;
+
     $target = !empty( $options['author_box_social_target'] ) ? '_blank' : '_self' ;
+
 	echo '<div class="m-a-box-item m-a-box-social '.( ( isset( $options['author_box_profile_layout'] ) and !in_array( $options['author_box_profile_layout'], array( 'layout-7', 'layout-8' ) ) and isset( $options['author_box_profile_valign'] ) and !empty( $options['author_box_profile_valign'] ) and $options['author_box_profile_valign'] != 'center' ) ? 'molongui-align-self-'.$options['author_box_profile_valign'] : '' ).'">';
         foreach ( $_networks as $network_id => $url )
         {
             if ( 'mail' === $network_id )
             {
                 $mail = sanitize_email( $url );
+
                 if ( !empty( $options['author_email_encoded'] ) )
                 {
                     $url = esc_attr( Helpers::ascii_encode( 'mailto:'.$mail ) );
@@ -68,6 +75,7 @@ if ( !empty( $options['author_box_social_show'] ) )
             elseif ( 'phone' === $network_id )
             {
                 $phone = $url;
+
                 if ( !empty( $options['author_phone_encoded'] ) )
                 {
                     $url = esc_attr( Helpers::ascii_encode( 'tel:'.$phone ) );

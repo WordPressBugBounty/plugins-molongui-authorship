@@ -3,10 +3,9 @@
 use Molongui\Authorship\Common\Utils\Plugin;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $options = Settings::get();
-
 ?>
 
 <div class="molongui-metabox">

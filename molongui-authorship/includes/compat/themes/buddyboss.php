@@ -3,13 +3,19 @@
 use Molongui\Authorship\Post;
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
+
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     $fn     = 'get_avatar';
     $file_1 = '/template-parts/header-aside.php';
     $file_2 = '/template-parts/header-mobile.php';
     $file_3 = '/themes/buddyboss-theme/comments.php';
+
+
     if ( $i = array_search( $fn, array_column( $dbt, 'function' ) ) )
     {
         if ( ( isset( $dbt[$i]['file'] ) and substr_compare( $dbt[$i]['file'], $file_1, strlen( $dbt[$i]['file'] )-strlen( $file_1 ), strlen( $file_1 ) ) === 0 ) or
@@ -25,14 +31,19 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
             }
         }
     }
+
     return $author;
 }, 10, 3 );
+
 add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_or_email, $dbt )
 {
     global $is_related_posts;
+
     $fn     = 'get_avatar';
     $file_1 = '/template-parts/entry-meta.php';
     $file_2 = '/template-parts/author-box.php';
+
+
     if ( !$is_related_posts and
          !is_admin() and
          $i = array_search( $fn, array_column( $dbt, 'function' ) ) and
@@ -44,12 +55,20 @@ add_filter( '_authorship/get_avatar_data/filter/author', function( $author, $id_
         if ( Post::is_guest( $post->ID ) )
         {
             $main = Post::get_main_author( $post->ID );
+
+            if ( empty( $main ) )
+            {
+                return $author;
+            }
+
             $author->id   = $main->id;
             $author->type = 'guest';
         }
     }
+
     return $author;
 }, 10, 3 );
+
 add_filter( 'bp_core_get_user_domain', function( $domain, $user_id, $user_nicename, $user_login )
 {
     if ( apply_filters( 'authorship/buddyboss_author_link', false ) ) return $domain;
@@ -62,6 +81,8 @@ add_filter( 'bp_core_get_user_domain', function( $domain, $user_id, $user_nicena
         $file = '/template-parts/entry-meta.php';
         $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
         if ( empty( $dbt ) ) return $domain;
+
+
         if ( $i = array_search( $fn, array_column( $dbt, 'function' ) )
             and
             ( isset( $dbt[$i]['file'] ) and substr_compare( $dbt[$i]['file'], $file, strlen( $dbt[$i]['file'] )-strlen( $file ), strlen( $file ) ) === 0 )
@@ -73,11 +94,15 @@ add_filter( 'bp_core_get_user_domain', function( $domain, $user_id, $user_nicena
 
     return $domain;
 }, 10, 4 );
+
 add_filter( 'authorship/get_avatar_data/skip', function( $default, $args, $dbt )
 {
     global $is_related_posts;
+
     $fn   = 'get_avatar';
     $file = '/template-parts/entry-meta.php';
+
+
     if ( $is_related_posts and
          !is_admin() and
          $i = array_search( $fn, array_column( $dbt, 'function' ) ) and
@@ -86,5 +111,6 @@ add_filter( 'authorship/get_avatar_data/skip', function( $default, $args, $dbt )
     {
         return true;
     }
-    return $default;//$author;
+
+    return $default; 
 }, 10, 3 );

@@ -4,15 +4,22 @@ namespace Molongui\Authorship\Common\Modules;
 
 use Molongui\Authorship\Common\Utils\Helpers;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
+
 class Setup_Wizard
 {
     private $slug;
+
     protected $settings_slug = 'options-general.php?page=molongui-authorship';
+
     private $settings_page;
+
     private $css;
+
     private $markup;
+
     private $steps;
+
     public function __construct()
     {
         $this->slug   = apply_filters( 'authorship/wizard_slug', MOLONGUI_AUTHORSHIP_NAME . '-setup-wizard' );
@@ -29,24 +36,29 @@ class Setup_Wizard
 
         add_action( 'wp_ajax_save_wizard_settings', array( $this, 'save_wizard_settings' ) );
     }
+
     public function maybe_load_wizard()
     {
         if ( wp_doing_ajax() )
         {
             return;
         }
+
         if ( !current_user_can( 'manage_options' ) )
         {
             return;
         }
+
         if ( !isset( $_GET['page'] ) or $this->slug !== sanitize_key( $_GET['page'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         {
             return;
         }
+
         if ( !$this->should_setup_wizard_load() )
         {
             return;
         }
+
         if ( !file_exists( MOLONGUI_AUTHORSHIP_DIR . $this->css ) )
         {
 
@@ -59,10 +71,12 @@ class Setup_Wizard
 
         $this->load_setup_wizard();
     }
+
     public function should_setup_wizard_load()
     {
         return (bool) apply_filters( 'authorship/load_setup_wizard', true );
     }
+
     private function load_setup_wizard()
     {
         do_action( 'authorship/before_wizard_load', $this );
@@ -70,10 +84,12 @@ class Setup_Wizard
         $this->setup_wizard_header();
         $this->setup_wizard_content();
         $this->setup_wizard_footer();
+
         do_action( 'authorship/after_wizard_load', $this );
 
         exit;
     }
+
     public function setup_wizard_header()
     {
         ?>
@@ -93,6 +109,7 @@ class Setup_Wizard
             <body class="<?php echo esc_attr( $this->slug ); ?> molongui-setup-wizard-welcome">
         <?php
     }
+
     public function setup_wizard_content()
     {
         ?>
@@ -205,6 +222,7 @@ class Setup_Wizard
             {
                 padding-top: 0;
             }
+            /* https://www.smashingmagazine.com/2019/07/css-lists-markers-counters/ */
             .molongui-setup-wizard__description ol ::marker,
             .molongui-setup-wizard__description ul ::marker
             {
@@ -269,6 +287,8 @@ class Setup_Wizard
                 font-weight: bold;
             }
 
+            /* Toggle */
+
             .toggle
             {
                 display: flex;
@@ -291,8 +311,10 @@ class Setup_Wizard
             .toggle .button
             {
                 position: relative;
+                /*top: 50%;*/
                 width: 74px;
                 height: 36px;
+                /*margin: -20px auto 0 auto;*/
                 overflow: hidden;
                 box-shadow: 0 0 2px #bdbcbc;
             }
@@ -398,6 +420,9 @@ class Setup_Wizard
                 font-size: 0.9em;
                 font-weight: 600;
             }
+
+            /* Allow text wrapping within <pre> tags */
+            /* @see https://stackoverflow.com/questions/248011/how-do-i-wrap-text-in-a-pre-tag */
             pre
             {
                 white-space: pre-wrap;
@@ -406,6 +431,8 @@ class Setup_Wizard
                 font-family: Consolas,Monaco,monospace;
                 font-size: 0.9em;
             }
+
+            /* Fixes to add */
             .molongui-setup-wizard-timeline
             {
                 margin: 0 0 -1em;
@@ -481,11 +508,21 @@ class Setup_Wizard
 
         <?php ob_start(); ?>
         <script>
+            // todo: Put all this JS code into a javascript class.
             document.addEventListener('DOMContentLoaded', function()
             {
                 const steps     = document.querySelectorAll('.molongui-setup-wizard__step');
                 const circles   = document.querySelectorAll('.molongui-setup-wizard-timeline-step');
                 let currentStep = 0;
+
+                /**
+                 * Handles the navigation between wizard steps and form submission.
+                 *
+                 * @chatGPT 4o
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 document.querySelectorAll('.molongui-setup-wizard__button.next').forEach(button =>
                 {
                     button.addEventListener('click', nextStep);
@@ -494,10 +531,26 @@ class Setup_Wizard
                 {
                     button.addEventListener('click', previousStep);
                 });
+
+                /**
+                 * Handles the form submission.
+                 *
+                 * @chatGPT 4o
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 document.querySelectorAll('.molongui-setup-wizard__button.finish').forEach(button =>
                 {
                     button.addEventListener('click', submitWizard);
                 });
+
+                /**
+                 * Shows the current step, hiding all others.
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 function showStep(stepIndex)
                 {
                     steps.forEach((step, index) => {
@@ -505,6 +558,13 @@ class Setup_Wizard
                     });
                     updateCircles(stepIndex);
                 }
+
+                /**
+                 * Shows the next step.
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 function nextStep()
                 {
                     if ( currentStep < steps.length - 1 )
@@ -513,6 +573,13 @@ class Setup_Wizard
                         showStep(currentStep);
                     }
                 }
+
+                /**
+                 * Shows the previous step.
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 function previousStep()
                 {
                     if ( currentStep > 0 )
@@ -521,24 +588,43 @@ class Setup_Wizard
                         showStep(currentStep);
                     }
                 }
+
+                /**
+                 * Submits form data so user configuration can be saved.
+                 *
+                 * @param   {@event} event The event that trigger this function.
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 function submitWizard(event)
                 {
                     const inputs   = document.querySelectorAll('input');
                     const formData = new FormData();
+
+                    // Get checkbox inputs value
                     document.querySelectorAll('input[type="checkbox"]').forEach(function(input)
                     {
                         formData.append(input.name, input.checked ? '1' : '0');
                     });
+
+                    // Get radio inputs value
                     document.querySelectorAll('input[type="radio"]:checked').forEach(function(input)
                     {
                         formData.append(input.name, input.value);
                     });
+
+                    // Include hidden fields
                     document.querySelectorAll('input[type="hidden"]').forEach(function(input)
                     {
                         formData.append(input.name, input.value);
                     });
+
+                    // Add action and nonce
                     formData.append( 'action', 'save_wizard_settings' );
                     formData.append( 'nonce', authorshipSetupWizard.nonce );
+
+                    // DEBUG: Which data is being sent to PHP?
+                    //console.log(formData); return;
 
                     fetch(authorshipSetupWizard.ajaxurl,
                         {
@@ -547,19 +633,34 @@ class Setup_Wizard
                         })
                         .then(response => response.json())
                         .then(data => {
+                            // Handle success
                             if (data.success)
                             {
+                                //console.log(formData);
+                                //console.log(data);
+                                //console.log(data.data);
+                                //console.log(event);
                                 window.location.href = authorshipSetupWizard.redirect;
                             }
+                            // Handle failure
                             else
                             {
                                 console.error('Error:', data.data);
                             }
                         })
                         .catch((error) => {
+                            // Handle errors
                             console.error('Error:', error);
                         });
                 }
+
+                /**
+                 * Handles the step tracking circles state.
+                 *
+                 * @param   {@int} stepIndex Current step index.
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 const updateCircles = (stepIndex) => {
                     if ( stepIndex === 0 )
                     {
@@ -586,23 +687,61 @@ class Setup_Wizard
                         });
                     }
                 };
+
+                /**
+                 * Toggle checkboxes state.
+                 *
+                 * @chatGPT 4
+                 *
+                 * Code explanation:
+                 *
+                 *  - The event listener is set for the entire document.
+                 *  - When a click occurs, it first checks if the event target is within a label element with the class
+                 *    'settings-input-long-checkbox'.
+                 *  - Then it checks if the target of the click is not the checkbox input or a child of the checkbox input (to avoid
+                 *    handling clicks directly on the checkbox, which the browser will handle automatically).
+                 *  - If these conditions are met, it toggles the settings-input-long-checkbox-checked class on the label and the
+                 *    checkbox-checked class on the .checkbox span.
+                 *  - The code doesn't explicitly change the state of the actual checkbox input. This is because, in standard HTML
+                 *    behavior, clicking a label that is associated with a checkbox (using the for attribute) automatically toggles
+                 *    the state of the checkbox. Therefore, in most cases, there's no need to manually change the checkbox state in
+                 *    JavaScript.
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 document.addEventListener('click', function(ev)
                 {
+                    // Check if the clicked element is a child of a label with the class 'settings-input-long-checkbox'
                     const label = ev.target.closest('label.settings-input-long-checkbox');
 
                     if (label && !ev.target.matches('input[type="checkbox"], input[type="checkbox"] *'))
                     {
+                        // DEBUG: What does the click event look like?
+                        //console.log(ev); console.log(label);
 
                         const checkboxSpan = label.querySelector('.checkbox');
+
+                        // Toggle classes on label and .checkbox span only if the checkbox is not disabled
                         if (checkboxSpan && !checkboxSpan.classList.contains('checkbox-disabled'))
                         {
                             checkboxSpan.classList.toggle('checkbox-checked');
                             label.classList.toggle('settings-input-long-checkbox-checked');
                         }
+
+                        // No need to find and toggle the state of the actual checkbox input. See code explanation in function desc.
                     }
                 }, false);
+
+                /**
+                 * Toggle radio input state.
+                 *
+                 * @since   3.1.0
+                 * @version 3.1.0
+                 */
                 document.addEventListener('click', function(ev)
                 {
+                    // Check if the clicked element is a child of a label with the class 'settings-input-long-checkbox'
                     const label = ev.target.closest('.molongui-input-radios-with-icons label');
 
                     if (label && !ev.target.matches('input[type="radio"], input[type="radio"] *'))
@@ -614,9 +753,15 @@ class Setup_Wizard
                             return;
                         }
 
+                        // DEBUG: What does the click event look like?
+                        //console.log(ev); console.log(label); console.log(radio);
+
                         const radioSpan = label.querySelector('.molongui-styled-radio');
+
+                        // Toggle classes on label and radio span only if the radio is not disabled
                         if (radioSpan && !radioSpan.classList.contains('molongui-styled-radio-disabled'))
                         {
+                            // Reset all radio button state
                             document.querySelectorAll('.settings-input-long-radio').forEach((element) => {
                                 element.classList.remove('molongui-styled-radio-label-checked');
                             });
@@ -627,6 +772,8 @@ class Setup_Wizard
                             radioSpan.classList.toggle('molongui-styled-radio-checked');
                             label.classList.toggle('molongui-styled-radio-label-checked');
                         }
+
+                        // No need to find and toggle the state of the actual radio input.
                     }
                 }, false);
             });
@@ -635,6 +782,7 @@ class Setup_Wizard
 
         <?php
     }
+
     public function setup_wizard_footer()
     {
         $ajaxurl  = admin_url( 'admin-ajax.php' );
@@ -647,6 +795,7 @@ class Setup_Wizard
         </html>
         <?php
     }
+
     public function maybe_redirect_after_activation() // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
     {
         /*!
@@ -660,15 +809,18 @@ class Setup_Wizard
         {
             return;
         }
+
         if ( wp_doing_ajax() or wp_doing_cron() )
         {
             return;
         }
+
         if ( !get_transient( MOLONGUI_AUTHORSHIP_NAME.'-activation-redirect' ) )
         {
             return;
         }
         delete_transient( MOLONGUI_AUTHORSHIP_NAME.'-activation-redirect' );
+
         if ( isset( $_GET['activate-multi'] ) or is_network_admin() ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         {
             return;
@@ -680,16 +832,19 @@ class Setup_Wizard
         {
             return;
         }
+
         if ( empty( $install['timestamp'] ) or $install['timestamp'] > strtotime( "-2 days" ) )
         {
             wp_safe_redirect( $this->get_url() );
             exit;
         }
     }
+
     public function get_url()
     {
         return admin_url( 'index.php?page=' . $this->slug );
     }
+
     public function add_dashboard_page()
     {
         if ( !$this->should_setup_wizard_load() )
@@ -699,18 +854,23 @@ class Setup_Wizard
 
         add_submenu_page( '', '', '', 'manage_options', $this->slug, '' );
     }
+
     public function save_wizard_settings()
     {
         check_ajax_referer( MOLONGUI_AUTHORSHIP_ID.'_setup_wizard', 'nonce' );
+
         if ( !current_user_can( 'manage_options' ) )
         {
             wp_send_json_error('Insufficient permissions' );
             return;
         }
+
         if ( isset( $_POST ) )
         {
             $wizard_settings = array();
+
             $wizard_settings = apply_filters( 'authorship/wizard_settings', $wizard_settings );
+
             $options = Settings::get();
             update_option( MOLONGUI_AUTHORSHIP_PREFIX.'_options', array_merge( $options, $wizard_settings ), true );
 
@@ -721,6 +881,7 @@ class Setup_Wizard
             wp_send_json_error( 'No data received' );
         }
     }
+
     public function render_timeline( $steps, $current = 0 )
     {
         --$current;
@@ -752,6 +913,7 @@ class Setup_Wizard
         </div>
         <?php
     }
+
     public function render_long_checkbox( $id, $label, $description = null, $checked = false, $disabled = false, $pro = false )
     {
         $label_class = "settings-input-long-checkbox";
@@ -796,6 +958,7 @@ class Setup_Wizard
 
         <?php
     }
+
     public function render_radio( $id, $label, $description, $value, $checked = false, $disabled = false, $pro = false )
     {
         $label_class = "settings-input-long-radio";

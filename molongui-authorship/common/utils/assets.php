@@ -2,15 +2,28 @@
 
 namespace Molongui\Authorship\Common\Utils;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class Assets
 {
+	public static function is_readable( $file ) {
+		if ( ! is_string( $file ) || '' === $file ) {
+			return false;
+		}
+
+		$path = trailingslashit( WP_PLUGIN_DIR ) . ltrim( $file, '/\\' );
+
+		return is_readable( $path );
+	}
+
+
     public static function register_script( $file, $scope, $deps = array( 'jquery' ), $handle = null, $version = null )
     {
         if ( empty( $file ) or empty( $scope ) )
         {
             return;
         }
+
         if ( file_exists( trailingslashit( WP_PLUGIN_DIR ) . $file ) )
         {
             do_action( "authorship/{$scope}/pre_register_script", $scope );
@@ -19,6 +32,7 @@ class Assets
             $version = !empty( $version ) ? $version : MOLONGUI_AUTHORSHIP_VERSION;
 
             wp_register_script( $handle, plugins_url( '/' ).$file, $deps, $version, true );
+
             $params = apply_filters( "authorship/{$scope}_script_params", '' );
 
             if ( !empty( $params ) )
@@ -28,6 +42,7 @@ class Assets
             do_action( "authorship/{$scope}/script_registered", $scope );
         }
     }
+
     public static function enqueue_script( $file, $scope, $admin = false, $handle = null, $version = null )
     {
         if ( empty( $file ) or empty( $scope ) )
@@ -40,6 +55,7 @@ class Assets
         if ( file_exists( $filepath ) )
         {
             $filesize = filesize( $filepath );
+
             if ( !$filesize )
             {
                 return;
@@ -47,8 +63,12 @@ class Assets
 
             $handle  = !empty( $handle )  ? $handle  : str_replace( '_', '-', MOLONGUI_AUTHORSHIP_PREFIX . '-' . $scope );
             $version = !empty( $version ) ? $version : MOLONGUI_AUTHORSHIP_VERSION;
+
             $inline = apply_filters( "authorship/{$scope}/inline_script", $filesize < 4096 );
+
+
             do_action( "authorship/{$scope}/pre_enqueue_script", $scope, $inline );
+
             if ( $inline )
             {
                 /*! This action is documented in includes/helpers/assets/scripts.php */
@@ -59,7 +79,9 @@ class Assets
                     add_action( $hook, function() use ( $scope, $filepath, $handle, $version )
                     {
                         do_action( "authorship/{$scope}/pre_inline_script", $scope, $filepath, $handle );
+
                         $contents = file_get_contents( $filepath ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
                         $params = apply_filters( "authorship/{$scope}_script_params", '' );
                         if ( !empty( $params ) )
                         {
@@ -89,15 +111,19 @@ class Assets
             {
                 wp_enqueue_script( $handle );
             }
+
             do_action( "authorship/{$scope}/script_loaded", $scope );
         }
     }
+
+
     public static function register_style( $file, $scope, $deps = array(), $handle = null, $version = null )
     {
         if ( empty( $file ) or empty( $scope ) )
         {
             return;
         }
+
         if ( file_exists( trailingslashit( WP_PLUGIN_DIR ) . $file ) )
         {
             do_action( "authorship/{$scope}/pre_register_styles", $scope );
@@ -109,6 +135,7 @@ class Assets
             do_action( "authorship/{$scope}/styles_registered", $scope );
         }
     }
+
     public static function enqueue_style( $file, $scope, $admin = false, $handle = null, $version = null )
     {
         if ( empty( $file ) or empty( $scope ) )
@@ -121,6 +148,7 @@ class Assets
         if ( file_exists( $filepath ) )
         {
             $filesize = filesize( $filepath );
+
             if ( !$filesize )
             {
                 return;
@@ -128,8 +156,12 @@ class Assets
 
             $handle  = !empty( $handle )  ? $handle  : str_replace( '_', '-', MOLONGUI_AUTHORSHIP_PREFIX . '-' . $scope );
             $version = !empty( $version ) ? $version : MOLONGUI_AUTHORSHIP_VERSION;
+
             $inline = apply_filters( "authorship/{$scope}/inline_styles", $filesize < 4096 );
+
+
             do_action( "authorship/{$scope}/pre_enqueue_styles", $scope, $inline );
+
             if ( $inline )
             {
                 /*! This action is documented in includes/helpers/assets/styles.php */
@@ -157,6 +189,7 @@ class Assets
                          * @todo Is this filter being used by any plugin? REMOVE it if it is not.
                          */
                         $contents = apply_filters( "_authorship/{$scope}/styles_contents", $contents, $filepath );
+
                         $extra = apply_filters( "authorship/{$scope}_extra_styles", '' );
                         echo '<style id="'.esc_attr( $handle ).'-inline-css" data-file="'.esc_attr( basename( $filepath ) ).'" data-version="'.esc_attr( $version ).'">' . $contents . $extra . '</style>';
                     });
@@ -177,9 +210,16 @@ class Assets
                     do_action( "_authorship/{$scope}/styles_inlined" );
                 }
             }
+
             else
             {
+				if ( ! wp_style_is( $handle, 'registered' ) )
+				{
+					self::register_style( $file, $scope );
+				}
+
                 wp_enqueue_style( $handle );
+
                 $extra = apply_filters( "authorship/{$scope}_extra_styles", '' );
 
                 if ( !empty( $extra ) )
@@ -187,22 +227,12 @@ class Assets
                     wp_add_inline_style( $handle, $extra );
                 }
             }
+
             do_action( "authorship/{$scope}/styles_loaded", $scope );
         }
     }
-    public static function register_media_uploader()
-    {
-        $file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/media-upload-rtl.min.css' : '/assets/css/common/media-upload.min.css' );
-        $deps = array();
 
-        Assets::register_style( $file, 'media-uploader', $deps );
-    }
-    public static function enqueue_media_uploader_styles()
-    {
-        $file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/media-upload-rtl.min.css' : '/assets/css/common/media-upload.min.css' );
 
-        Assets::enqueue_style( $file, 'media-uploader', true );
-    }
     public static function register_sweetalert()
     {
         $version = '2.1.2';
@@ -215,21 +245,27 @@ class Assets
         {
             $sweetalert_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/sweetalert/sweetalert.min.js';
         }
+
         wp_register_script( 'molongui-sweetalert', $sweetalert_js_url, array( 'jquery' ), $version, true );
     }
+
     public static function enqueue_sweetalert()
     {
         $handle = 'molongui-sweetalert';
+
         if ( !wp_script_is( $handle, 'registered' ) )
         {
             self::register_sweetalert();
         }
+
         if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
         {
             wp_enqueue_script( $handle );
+
             wp_add_inline_script( $handle, 'var molongui_swal = swal;' );
         }
     }
+
     public static function register_typeahead()
     {
         $version = apply_filters( 'authorship/typeahead_version', '1.3.4' );
@@ -242,20 +278,25 @@ class Assets
         {
             $typeahead_js_url = 'https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/'.$version.'/typeahead.jquery.min.js';
         }
+
         wp_register_script( 'molongui-typeahead', $typeahead_js_url, array( 'jquery' ), $version, true );
     }
+
     public static function enqueue_typeahead()
     {
         $handle = 'molongui-typeahead';
+
         if ( !wp_script_is( $handle, 'registered' ) )
         {
             self::register_typeahead();
         }
+
         if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
         {
             wp_enqueue_script( $handle );
         }
     }
+
     public static function register_element_queries()
     {
         if ( apply_filters( 'authorship/load_element_queries', true ) )
@@ -272,31 +313,55 @@ class Assets
                 $rs_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ResizeSensor.min.js';
                 $eq_js_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/element-queries/ElementQueries.min.js';
             }
+
             wp_register_script( 'molongui-resizesensor',   $rs_js_url, array( 'jquery' ), $version, true );
             wp_register_script( 'molongui-elementqueries', $eq_js_url, array( 'jquery' ), $version, true );
         }
     }
+
     public static function enqueue_element_queries()
     {
         $handle = 'molongui-resizesensor';
+
         if ( !wp_script_is( $handle, 'registered' ) )
         {
             self::register_element_queries();
         }
+
         if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
         {
             wp_enqueue_script( $handle );
         }
+
         $handle = 'molongui-elementqueries';
+
         if ( !wp_script_is( $handle, 'registered' ) )
         {
             self::register_element_queries();
         }
+
         if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
         {
             wp_enqueue_script( $handle );
         }
     }
+
+
+	public static function register_media_uploader()
+	{
+		$file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/media-upload-rtl.min.css' : '/assets/css/common/media-upload.min.css' );
+		$deps = array();
+
+		Assets::register_style( $file, 'media-uploader', $deps );
+	}
+
+	public static function enqueue_media_uploader_styles()
+	{
+		$file = MOLONGUI_AUTHORSHIP_FOLDER . ( is_rtl() ? '/assets/css/common/media-upload-rtl.min.css' : '/assets/css/common/media-upload.min.css' );
+
+		Assets::enqueue_style( $file, 'media-uploader', true );
+	}
+
     public static function register_selectr()
     {
         $version = '2.4.13';
@@ -311,26 +376,32 @@ class Assets
             $selectr_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/selectr/selectr.min.js';
             $selectr_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/selectr/selectr.min.css';
         }
+
         wp_register_script( 'molongui-selectr', $selectr_js_url, array(), $version, true );
         wp_register_style( 'molongui-selectr', $selectr_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_selectr()
     {
         $handle = 'molongui-selectr';
+
         if ( !wp_script_is( $handle, 'registered' ) )
         {
             self::register_selectr();
         }
+
         if ( wp_script_is( $handle, 'registered' ) and !wp_script_is( $handle, 'enqueued' ) )
         {
             wp_enqueue_script( $handle );
             wp_enqueue_style( $handle );
+
             wp_add_inline_script( $handle, 'var MolonguiSelectr = Selectr; Selectr = undefined;' );
         }
     }
+
     public static function register_sortable()
     {
-        $version = '1.10.2'; //'1.14.0';
+        $version = '1.10.2';  
 
         if ( apply_filters( 'authorship/assets/load_remote', true ) )
         {
@@ -340,20 +411,25 @@ class Assets
         {
             $sortable_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/sortable/Sortable.min.js';
         }
+
         wp_register_script( 'molongui-sortable', $sortable_js_url, array( 'jquery' ), $version, true );
     }
+
     public static function enqueue_sortable()
     {
         $handle = 'molongui-sortable';
+
         if (!wp_script_is($handle, 'registered'))
         {
             self::register_sortable();
         }
+
         if (wp_script_is($handle, 'registered') and !wp_script_is($handle, 'enqueued'))
         {
             wp_enqueue_script($handle);
         }
     }
+
     public static function register_semantic_ui_dropdown()
     {
         $version = '2.4.1';
@@ -368,14 +444,17 @@ class Assets
             $dropdown_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/dropdown.'.$version.'.min.js';
             $dropdown_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/dropdown.'.$version.'.min.css';
         }
+
         wp_register_script( 'molongui-dropdown', $dropdown_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-dropdown' , $dropdown_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_semantic_ui_dropdown()
     {
         wp_enqueue_script( 'molongui-dropdown' );
         wp_enqueue_style( 'molongui-dropdown'  );
     }
+
     public static function register_semantic_ui_transition()
     {
         $version = '2.3.1';
@@ -390,14 +469,17 @@ class Assets
             $transition_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/transition.'.$version.'.min.js';
             $transition_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/transition.'.$version.'.min.css';
         }
+
         wp_register_script( 'molongui-transition', $transition_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-transition' , $transition_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_semantic_ui_transition()
     {
         wp_enqueue_script( 'molongui-transition' );
         wp_enqueue_style( 'molongui-transition'  );
     }
+
     public static function register_semantic_ui_icon()
     {
         $version = '2.3.3';
@@ -410,12 +492,15 @@ class Assets
         {
             $icon_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/icon.'.$version.'.min.css';
         }
+
         wp_register_style( 'molongui-icon', $icon_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_semantic_ui_icon()
     {
         wp_enqueue_style( 'molongui-icon' );
     }
+
     public static function register_semantic_ui_label()
     {
         $version = '2.3.2';
@@ -428,12 +513,15 @@ class Assets
         {
             $label_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/label.'.$version.'.min.css';
         }
+
         wp_register_style( 'molongui-label', $label_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_semantic_ui_label()
     {
         wp_enqueue_style( 'molongui-label' );
     }
+
     public static function register_semantic_ui_popup()
     {
         $version = '2.3.1';
@@ -448,21 +536,24 @@ class Assets
             $popup_js_url  = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/popup.'.$version.'.min.js';
             $popup_css_url = MOLONGUI_AUTHORSHIP_URL . 'common/assets/vendor/semantic/popup.'.$version.'.min.css';
         }
+
         wp_register_script( 'molongui-popup', $popup_js_url , array( 'jquery' ), $version, true );
         wp_register_style( 'molongui-popup' , $popup_css_url, array(), $version, 'screen' );
     }
+
     public static function enqueue_semantic_ui_popup()
     {
         wp_enqueue_script( 'molongui-popup' );
         wp_enqueue_style( 'molongui-popup'  );
     }
+
     public static function enqueue_semantic()
     {
-        self::enqueue_semantic_ui_transition(); // Dependency. Required by Semantic UI Dropdown
-        self::enqueue_semantic_ui_icon();       // Used by Semantic UI Dropdown. Not a hard dependency
-        self::enqueue_semantic_ui_label();      // Used by Semantic UI Dropdown. Not a hard dependency
+        self::enqueue_semantic_ui_transition();  
+        self::enqueue_semantic_ui_icon();        
+        self::enqueue_semantic_ui_label();       
         self::enqueue_semantic_ui_dropdown();
         self::enqueue_semantic_ui_popup();
     }
 
-} // class
+}  

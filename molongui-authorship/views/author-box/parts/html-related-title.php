@@ -1,8 +1,10 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 
 $label = apply_filters( 'authorship/box/related/title', $options['author_box_related_title'], $profile );
+
 if ( empty( $label ) )
 {
     return;

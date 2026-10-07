@@ -27,6 +27,7 @@ Tired of jumping through hoops to properly attribute authors? **Molongui Authors
 ✔️ Add author boxes with bios and social links
 ✔️ Credit guest authors without user accounts
 ✔️ Add co-authors to any post or page
+✔️ Build author layouts visually with native Gutenberg blocks
 ✔️ Boost author credibility and SEO
 ✔️ Seamless 1-click migration from other plugins
 
@@ -110,6 +111,21 @@ Credit every contributor fairly—whether it's joint articles, team projects, or
   > - Byline modifiers (add prefixes like "By" or suffixes like "et al.")
   > - REST API support for headless WordPress setups
   > - Shortcodes to display co-author lists anywhere
+
+🧱 **Native Gutenberg Blocks – Put Authorship Exactly Where It Belongs**
+Build authorship directly into your content and site templates using native WordPress blocks—no shortcodes and no duplicated author data. Available on **WordPress 6.3 and later**.
+
+  > ✨ **Two Dynamic Blocks, Built for Real Editorial Workflows**
+
+  > - **Author Box** – Drop your fully configured Molongui Author Box anywhere in a post or template
+  > - **Post Byline** – Display the current post's Molongui authors, including guest authors and co-authors
+  > - Context-aware rendering keeps each block in sync with the post being displayed
+  > - Works naturally in the Post Editor, Site Editor, and Query Loop templates
+  > - Uses your existing Molongui settings, so there is nothing extra to maintain
+
+  > ⚡ **Premium Byline Controls**
+
+  > With Molongui Authorship Pro, the Post Byline block unlocks custom prefix and suffix text plus optional published date, updated date, categories, tags, and comment count.
 
 🚀 **1-Click Migration Tool – Switch Without Losing Data**
 Switching from _Co-Authors Plus_, _PublishPress Authors_, or _One User Avatar_? **Import your existing author data with 1 click**! No manual work needed.
@@ -253,6 +269,55 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.3.0 (2026-10-06) =
+
+* **Added**: Author Box Gutenberg block for WordPress 6.3 and later.
+* **Added**: Post Byline Gutenberg block for WordPress 6.3 and later.
+* **Added**: Option to upload a custom default avatar for authors without an avatar.
+* **Added**: Ability to disable Gravatar.
+* **Added**: Option to reassign a deleted user's authorship to an existing Guest Author.
+* **Added**: Option to remove a deleted user's authorship while keeping their content.
+* **Added**: Option to reassign a deleted guest author's authorship to a user.
+* **Added**: Option to reassign a deleted guest author's authorship to another Guest Author.
+* **Added**: Option to remove a deleted guest author's authorship while keeping their content.
+* **Added**: Redesigned Author Profile UI for WordPress Users and Guest Authors, including dedicated Public Name and Contact Info sections.
+* **Added**: Support for custom author name prefixes and suffixes.
+* **Added**: Credentials field.
+* **Added**: Professional Headline field.
+* **Added**: Department field.
+* **Added**: Author Location field.
+* **Added**: Configurable Author Box meta fields for Professional Headline, Job Title, Company, Department, Location, Email, Phone, and Website.
+* **Added**: Per-author Default, Show, and Hide overrides for Author Box meta fields.
+* **Enhanced**: Split the Authors column into separate Author and Co-authors columns for clearer post attribution.
+* **Enhanced**: Centralized avatar resolution so frontend and admin screens consistently honor the configured avatar sources and fallbacks.
+* **Enhanced**: Public author names can now include prefixes, suffixes, and credentials.
+* **Enhanced**: Profile Picture controls now use clearer Upload, Change, Edit, and Remove actions.
+* **Enhanced**: Added Ctrl+S and Cmd+S keyboard shortcuts for saving Author Profile changes.
+* **Changed**: Moved the Phone field to the Contact Info section.
+* **Changed**: Replaced the legacy avatar uploader with the common Media Picker component.
+* **Changed**: Email and Phone Author Box visibility now use the same Default, Show, and Hide system as other meta fields.
+* **Changed**: Updated framework files to v3.4.4.
+* **Fixed**: PHP fatal error caused by calling an undefined method on the edit-user screen.
+* **Fixed**: Stored DOM-based XSS vulnerability in byline link processing by validating decoded URL protocols before updating links.
+* **Fixed**: Phone value not being saved for WordPress Users.
+* **Fixed**: Local Avatar controls not behaving correctly when the Local Avatar feature was disabled.
+* **Fixed**: Social profile fallbacks no longer use stale or orphaned third-party data when the source contact method is no longer registered.
+* **Fixed**: Social profile placeholders making empty fields appear populated.
+* **Fixed**: Media Picker asset paths resolving to the wrong location.
+* **Fixed**: Guest Author avatars and email addresses not being displayed correctly in admin author tables.
+* **Fixed**: Incorrect Author Box visibility status in the posts list.
+* **Deprecated**: `authorship/edit/user/fields` in favor of `authorship/edit_user/fields`.
+* **Removed**: Legacy `edit-avatar.js` usage from the user profile screen.
+* **Removed**: `authorship/edit/user/tools/tmpl` filter.
+* **Dev**: Added `authorship/edit_user/fields` action hook.
+* **Dev**: Added `authorship/edit_user/sidebar` action hook.
+* **Dev**: Added `authorship/edit_user/conversion/tmpl` filter hook.
+* **Dev**: Added a centralized Author Meta Fields registry for field definitions, visibility, values, aliases, and prefetch requirements.
+* **Dev**: Added `molongui_authorship/author_meta_fields` filter to extend or customize registered author meta fields.
+* **Dev**: Added `molongui_authorship/author_meta_field_visibility` filter to control field visibility by context.
+* **Dev**: Added `molongui_authorship/author_meta_field_value` filter to customize resolved field values.
+* **Dev**: Author Box bio filters now receive the current Author Box options as an additional argument.
+
 = 5.2.12 (2026-09-11) =
 
 * **Fixed**: PHP fatal error on the user edit screen caused by a missing social meta compatibility method.
@@ -264,7 +329,7 @@ In order to run, Molongui Authorship requires:
 * **Fixed**: PHP warnings related to unavailable admin screen data.
 * **Fixed**: Missing styles for the author selector.
 
-= 5.2.10 (2026-08-28) =
+= 5.2.10 (2026-08-27) =
 
 * **Fixed**: Replaced `&nbsp;` usage with the Unicode non-breaking space character (`U+00A0`) for better compatibility.
 * **Fixed**: Archive Author checkbox no longer becomes unclickable when Disable author box is set to Hide.
@@ -467,95 +532,6 @@ In order to run, Molongui Authorship requires:
 * Dev: Major code refactor.
 * Dev: Removed 'get_byline' helper function.
 * Dev: Removed 'get_post_authors' helper function.
-
-= 4.9.7 (2024-08-29) =
-
-* Added filter to control the separator used before each author meta item
-* Fixed PHP warning on undefined property
-* Fixed issue with the Molongui Post Contributors plugin
-
-= 4.9.6 (2024-08-01) =
-
-* Editors can now quickly add guest authors from the post edit screen
-* Fixed related posts toggle not showing when using the "slim" layout for the author box
-* Enhanced compatibility with the jNews theme
-* Updated framework files to version 3.1.0
-
-= 4.9.5 (2024-07-09) =
-
-* Fixed load time impact on the post list screen for installations with over 5,000 authors
-* Added WordPress 6.6 compatibility
-
-= 4.9.4 (2024-07-03) =
-
-* Added 'WeChat' social network
-* Fixed PHP warning regarding dynamic property
-
-= 4.9.3 (2024-06-24) =
-
-* Fixed users with the 'contributor' user role not being selectable as post author
-* Removed the 'edit_posts' capability requirement to be eligible as post author
-* Enhanced compatibility with the Molongui Post Contributors plugin
-
-= 4.9.2 (2024-06-20) =
-
-* The email field is not required any more for quick-adding guest authors from the edit-post screen
-* Fixed javascript conflict when editing a post using the old/classic WordPress editor
-
-= 4.9.1 (2024-06-17) =
-
-* Fixed missing author bio on author pages
-* Enhanced compatibility with the Jannah theme
-* Updated framework files to version 3.0.3
-
-= 4.9.0 (2024-06-13) =
-
-* Reduced number of queries
-* Redesigned post author selector
-* Refactored some code
-* Improved some messages readability
-
-= 4.8.6 (2024-06-03) =
-
-* Fixed some data sanitization
-* Fixed misleading debug message
-* Updated framework files to version 3.0.2
-
-= 4.8.5 (2024-05-31) =
-
-* Enhanced compatibility with the Avada theme
-* Fixed issue with mailto links in the author box
-
-= 4.8.4 (2024-05-20) =
-
-* Fixed deprecated function returning void
-
-= 4.8.3 (2024-05-20) =
-
-* Fixed quick edit hanging on saving
-* Fixed typo in constant name
-
-= 4.8.2 (2024-05-15) =
-
-* Fixed missing author validation
-
-= 4.8.1 (2024-05-14) =
-
-* Fixed debug messages showing in browser console
-
-= 4.8.0 (2024-05-14) =
-
-* Added option to allow non-privileged users to publish content on behalf of others
-* Added option to disable guest author translations for Polylang
-* Fixed issues with the authors assigned to a post
-* Fixed email icons in the author box not working properly
-* Fixed break line as separator for the author meta not working
-* Fixed some PHP warnings
-* Minor code refactor
-* Updated plugin bootstrap
-* Updated framework files to version 3.0.0
-* Raised min PHP supported version to 5.6.20... come on
-* Added WordPress 6.5 compatibility
 
 See changelog for all versions [here](https://www.molongui.com/help/molongui-authorship-changelog/ "Full changelog").
 

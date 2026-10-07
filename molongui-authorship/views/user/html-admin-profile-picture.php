@@ -2,11 +2,10 @@
 
 use Molongui\Authorship\Settings;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;  
 
 $user_profile = Settings::is_enabled( 'user-profile' );
 $local_avatar = Settings::is_enabled( 'local-avatar' );
-
 ?>
 
 <?php if ( $local_avatar ) : ?>

@@ -5,11 +5,12 @@ use Molongui\Authorship\Settings;
 use Molongui\Authorship\Social;
 use Molongui\Authorship\User;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
 
 $options  = Settings::get();
 $is_pro   = Plugin::has_pro();
 $networks = Social::get( 'enabled' );
+
 $compatible_social      = User::get_compatible_social_meta_keys();
 $contact_methods        = array();
 $user_meta              = array();
@@ -19,6 +20,7 @@ if ( !empty( $user->ID ) )
 {
     $contact_methods = wp_get_user_contact_methods( $user );
     $user_meta       = get_user_meta( $user->ID );
+
     foreach ( $compatible_social as $network_id => $meta_keys )
     {
         if ( ! is_array( $meta_keys ) )
@@ -73,6 +75,7 @@ if ( !empty( $user->ID ) )
     <?php
     $default_bio_template = __DIR__ . '/html-admin-profile-bio.php';
     $bio_template         = apply_filters( 'authorship/edit/user/bio/tmpl', $default_bio_template );
+
     if ( !is_string( $bio_template ) || !is_readable( $bio_template ) )
     {
         $bio_template = $default_bio_template;

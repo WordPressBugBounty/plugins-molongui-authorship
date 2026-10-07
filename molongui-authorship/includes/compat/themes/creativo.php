@@ -1,6 +1,8 @@
 <?php
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
+
 add_filter( 'authorship/pre_the_author_posts_link', function( $link, $original_link )
 {
     $dbt  = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );

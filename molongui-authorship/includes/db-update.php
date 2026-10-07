@@ -13,7 +13,8 @@
 
 namespace Molongui\Authorship;
 
-defined( 'ABSPATH' ) or exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;  
+
 class DB_Update
 {
     public function db_update_25()
@@ -26,11 +27,15 @@ class DB_Update
         unset( $settings['object_cache_enabled'] );
         update_option( 'molongui_authorship_options', $settings, true );
     }
+
     public function db_update_24()
     {
         $options = get_option( 'molongui_authorship_options', array() );
+
         add_option( 'molongui_authorship_options_23', $options, '', false );
+
         delete_option( 'molongui_authorship_options_backup_19' );
+
         $renames = array
         (
             'author_box'                    => 'author_box_enabled',
@@ -71,7 +76,9 @@ class DB_Update
             unset( $options[$old] );
         }
 
+
         $options['co_authors_post_types'] = $options['guest_author_post_types'];
+
 
         $uninstall = 'files';
         if ( empty( $options['keep_config'] ) )
@@ -87,10 +94,13 @@ class DB_Update
         unset( $options['keep_config'] );
         unset( $options['keep_data'] );
 
+
         $options['default_post_author_enabled'] = false;
         $options['default_post_author']         = '';
         $options['user_roles_enabled']          = true;
         $options['hide_others_posts_enabled']   = false;
+
+
         if ( 'main' === $options['byline_multiauthor_display'] )
         {
             $options['co_authors_in_byline']        = false;
@@ -102,6 +112,7 @@ class DB_Update
             $options['co_authors_in_byline_format'] = $options['byline_multiauthor_display'];
         }
         unset( $options['byline_multiauthor_display'] );
+
         $options['co_authors_separators']      = false;
         $options['co_authors_separator']       = '';
         $options['co_authors_last_separator']  = '';
@@ -120,6 +131,7 @@ class DB_Update
 
         unset( $options['byline_multiauthor_separator'] );
         unset( $options['byline_multiauthor_last_separator'] );
+
 
         $options['author_box_customization_enabled'] = $options['author_box_enabled'];
 
@@ -152,17 +164,23 @@ class DB_Update
         }
         unset( $options['box_layout_multiauthor'] );
 
+
         $options['author_pages_enabled']            = true;
         $options['user_archive_template_checkbox']  = true;
         $options['guest_archive_template_checkbox'] = false;
 
+
         $options['search_results_enabled'] = false;
+
 
         $options['author_data_encode_enabled'] = false;
 
+
         $options['social_profiles_enabled'] = true;
 
+
         $options['seo_settings_enabled'] = true;
+
 
         if ( !empty( $options['enable_guests_in_api'] ) or !empty( $options['enable_authors_in_api'] ) or !empty( $options['rest_api_add_guests_authors'] ) or !empty( $options['rest_api_add_post_authors'] ) )
         {
@@ -172,6 +190,7 @@ class DB_Update
         {
             $options['rest_api_integration_enabled'] = false;
         }
+
 
         if ( !empty( $options['compatibility_mode_themes'] ) or !empty( $options['compatibility_mode_plugins'] ) or !empty( $options['object_cache_enabled'] ) )
         {
@@ -187,6 +206,7 @@ class DB_Update
 
         unset( $options['assets_cdn'] );
 
+
         $options['dashboard_settings_enabled'] = true;
 
         if ( !isset( $options['dashboard_guest_authors_menu_location'] ) )
@@ -195,6 +215,7 @@ class DB_Update
         }
 
         unset( $options['molongui_menu'] );
+
 
         if ( !empty( $options['hide_elements'] ) )
         {
@@ -206,6 +227,7 @@ class DB_Update
             );
         }
         unset( $options['hide_elements'] );
+
 
         if ( !empty( $options['box_hook_priority'] ) and '11' != $options['box_hook_priority'] )
         {
@@ -228,6 +250,7 @@ class DB_Update
             );
         }
         unset( $options['enable_author_box_styles'] );
+
         if ( empty( $options['byline_multiauthor_link'] ) )
         {
             if ( !isset( $options['custom_php'] ) )
@@ -244,10 +267,12 @@ class DB_Update
         }
         unset( $options['byline_multiauthor_link'] );
 
+
         $options['author_box_name_show'] = true;
 
         update_option( 'molongui_authorship_options', $options, true );
     }
+
     public function db_update_23()
     {
         $options = get_option( 'molongui_authorship_options', array() );
@@ -264,6 +289,7 @@ class DB_Update
 
         update_option( 'molongui_authorship_options', $options, true );
     }
+
     public function db_update_22()
     {
         $options = get_option( 'molongui_authorship_options', array() );
@@ -280,6 +306,7 @@ class DB_Update
 
         update_option( 'molongui_authorship_options', $options, true );
     }
+
     public function db_update_21()
     {
         $options = get_option( 'molongui_authorship_options', array() );
@@ -296,6 +323,7 @@ class DB_Update
 
         update_option( 'molongui_authorship_options', $options, true );
     }
+
     public function db_update_20()
     {
         $now = get_option( 'molongui_authorship_installation', array() );
@@ -310,9 +338,13 @@ class DB_Update
             update_option( 'molongui_authorship_install', $new, false );
             delete_option( 'molongui_authorship_installation' );
         }
+
         $options = get_option( 'molongui_authorship_options', array() );
+
         add_option( 'molongui_authorship_options_backup_19', $options, '', false );
+
         $options = $this->_options_update_20( $options );
+
         if ( false )
         {
             unset( $options['headline'] );
@@ -337,12 +369,14 @@ class DB_Update
             unset( $options['web'] );
             unset( $options['more_posts'] );
             unset( $options['bio'] );
+
             unset( $options['bio_text_size'] );
             unset( $options['bio_line_height'] );
             unset( $options['bio_text_case'] );
             unset( $options['bio_text_style'] );
             unset( $options['bio_text_align'] );
             unset( $options['bio_text_color'] );
+
             unset( $options['show_empty_related'] );
             unset( $options['related_orderby'] );
             unset( $options['related_order'] );
@@ -375,14 +409,17 @@ class DB_Update
             unset( $options['related_posts'] );
             unset( $options['box_class'] );
         }
+
         update_option( 'molongui_authorship_options', $options, true );
     }
+
     public function _options_update_20( $options )
     {
         if ( empty( $options ) or !is_array( $options ) )
         {
             return $options;
         }
+
         if ( isset( $options['headline'] ) and !empty( $options['show_headline'] ) )
         {
             $options['author_box_header_title'] = $options['headline'];
@@ -417,6 +454,7 @@ class DB_Update
         {
             $options['author_box_header_tag'] = $options['box_headline_tag'];
         }
+
         if ( isset( $options['show_avatar'] ) )
         {
             if ( empty( $options['show_avatar'] ) )
@@ -485,6 +523,7 @@ class DB_Update
         {
             $options['author_box_avatar_acronym_background_color'] = $options['avatar_border_color'];
         }
+
         if ( isset( $options['name_text_size'] ) )
         {
             $options['author_box_name_font_size'] = $options['name_text_size'];
@@ -526,6 +565,7 @@ class DB_Update
         {
             $options['author_box_name_tag'] = $options['box_author_name_tag'];
         }
+
         if ( isset( $options['show_meta'] ) )
         {
             if ( empty( $options['show_meta'] ) )
@@ -561,6 +601,7 @@ class DB_Update
         if ( isset( $options['web'] ) ) $options['author_box_meta_web'] = $options['web'];
         if ( isset( $options['more_posts'] ) ) $options['author_box_meta_posts'] = $options['more_posts'];
         if ( isset( $options['bio'] ) ) $options['author_box_meta_bio'] = $options['bio'];
+
         if ( isset( $options['bio_field'] ) ) $options['author_box_bio_source'] = $options['bio_field'];
         if ( isset( $options['bio_text_size'] ) )
         {
@@ -583,6 +624,7 @@ class DB_Update
         }
         if ( isset( $options['bio_text_align'] ) ) $options['author_box_bio_text_align'] = $options['bio_text_align'];
         if ( isset( $options['bio_text_color'] ) ) $options['author_box_bio_color'] = $options['bio_text_color'];
+
         if ( isset( $options['show_icons'] ) )
         {
             if ( empty( $options['show_icons'] ) ) $options['author_box_social_show'] = '0';
@@ -592,6 +634,7 @@ class DB_Update
         if ( isset( $options['icons_size'] ) ) $options['author_box_social_font_size'] = $options['icons_size'];
         if ( isset( $options['icons_color'] ) ) $options['author_box_social_color'] = $options['icons_color'];
         if ( isset( $options['social_link_target'] ) ) $options['author_box_social_target'] = '_self' === $options['social_link_target'] ? false : true;
+
         if ( isset( $options['show_related'] ) )
         {
             if ( empty( $options['show_related'] ) ) $options['author_box_related_show'] = '0';
@@ -620,6 +663,7 @@ class DB_Update
             }
         }
         if ( isset( $options['related_text_color'] ) ) $options['author_box_related_font_style'] = $options['related_text_color'];
+
         if ( isset( $options['author_box_width'] ) ) $options['author_box_width'] = $options['box_width'];
 
         if ( isset( $options['box_background'] ) ) $options['author_box_background_color'] = $options['box_background'];
@@ -710,7 +754,7 @@ class DB_Update
         {
             switch ( $options['box_shadow'] )
             {
-                case 'left': // box-shadow: -10px 10px 10px #ababab;
+                case 'left':  
                     $options['author_box_shadow_h_offset'] = '-10';
                     $options['author_box_shadow_v_offset'] = '10';
                     $options['author_box_shadow_blur']     = '10';
@@ -719,7 +763,7 @@ class DB_Update
                     $options['author_box_shadow_inset']    = 0;
                     break;
 
-                case 'right': // box-shadow: 10px 10px 10px #ababab;
+                case 'right':  
                     $options['author_box_shadow_h_offset'] = '10';
                     $options['author_box_shadow_v_offset'] = '10';
                     $options['author_box_shadow_blur']     = '10';
@@ -729,7 +773,7 @@ class DB_Update
                     break;
 
                 default:
-                case 'none': // box-shadow: none;
+                case 'none':  
                     $options['author_box_shadow_h_offset'] = '';
                     $options['author_box_shadow_v_offset'] = '';
                     $options['author_box_shadow_blur']     = '';
@@ -769,7 +813,7 @@ class DB_Update
         if ( isset( $options['tabs_text_color'] ) )
         {
             $options['author_box_tabs_text_color'] = $options['tabs_text_color'];
-            $options['author_box_tabs_active_text_color'] = $options['tabs_text_color'].'80'; // Add 50% opacity removed from CSS rules
+            $options['author_box_tabs_active_text_color'] = $options['tabs_text_color'].'80';  
         }
         if ( isset( $options['tabs_border'] ) ) $options['author_box_tabs_active_border'] = $options['tabs_border'];
         if ( isset( $options['tabs_border_style'] ) ) $options['author_box_tabs_active_border_style'] = $options['tabs_border_style'];
@@ -780,6 +824,7 @@ class DB_Update
 
         return $options;
     }
+
     public function db_update_19()
     {
         $main     = get_option( 'molongui_authorship_main', array() );
@@ -789,6 +834,7 @@ class DB_Update
         $seo      = get_option( 'molongui_authorship_seo', array() );
         $compat   = get_option( 'molongui_authorship_compat', array() );
         $options  = array_merge( $main, $box, $byline, $archives, $seo, $compat );
+
         $options['author_box'] = $options['enable_author_boxes'];
         $options['guest_authors'] = $options['enable_guest_authors'];
         $options['guest_pages'] = $options['guest_archive_enabled'];
@@ -798,6 +844,7 @@ class DB_Update
         $options['box_layout'] = $options['layout'];
         $options['box_position'] = $options['position'];
         $options['box_schema'] = $options['enable_author_box_schema'];
+
         switch( $options['display'] )
         {
             case 'posts':
@@ -819,11 +866,12 @@ class DB_Update
         }
         $options['guests_menu']         = ( 'top' === $options['guests_menu_level'] ? false : true );
         $options['authors_menu']        = true;
-        $options['molongui_menu']       = false; // Actually not necessary if set to 'false'
+        $options['molongui_menu']       = false;  
         $options['posts_submenu']       = true;
         $options['settings_submenu']    = true;
         $options['appearance_submenu']  = true;
         $options['assets_cdn']          = true;
+
         unset( $options['enable_author_boxes'] );
         unset( $options['enable_guest_authors'] );
         unset( $options['guest_archive_enabled'] );
@@ -833,42 +881,53 @@ class DB_Update
         unset( $options['multiauthor_box_layout'] );
         unset( $options['layout'] );
         unset( $options['enable_author_box_schema'] );
+
         update_option( 'molongui_authorship_options', $options, true );
+
         delete_option( 'molongui_authorship_main' );
         delete_option( 'molongui_authorship_box' );
         delete_option( 'molongui_authorship_byline' );
         delete_option( 'molongui_authorship_archives' );
         delete_option( 'molongui_authorship_seo' );
         delete_option( 'molongui_authorship_compat' );
+
         if ( $options['guest_authors'] or $options['enable_multi_authors'] )
         {
-            add_option( 'molongui_authorship_update_post_authors', true, '', true );
+            update_option( 'molongui_authorship_update_post_authors', true, false );
         }
     }
+
     public function db_update_18()
     {
         $strings = get_option( 'molongui_authorship_strings', array() );
         $box     = get_option( 'molongui_authorship_box', array() );
+
         foreach ( $strings as $key => $value )
         {
             $box[$key] = $value;
         }
+
         delete_option( 'molongui_authorship_strings' );
         update_option( 'molongui_authorship_box' , $box, true );
     }
+
     public function db_update_17()
     {
         $strings = get_option( 'molongui_authorship_strings', array() );
         $box     = get_option( 'molongui_authorship_box', array() );
+
         $box['no_related_posts'] = $strings['no_related_posts'];
         unset( $strings['no_related_posts'] );
+
         update_option( 'molongui_authorship_strings', $strings, true );
         update_option( 'molongui_authorship_box' , $box, true );
     }
+
     public function db_update_16()
     {
         $main = get_option( 'molongui_authorship_main', array() );
         $box  = get_option( 'molongui_authorship_box', array() );
+
         if ( !function_exists( 'get_editable_roles' ) ) require_once ABSPATH . 'wp-admin/includes/user.php';
         $ur = array();
         $user_roles = get_editable_roles();
@@ -877,7 +936,9 @@ class DB_Update
             if ( !empty( $main['user_role_'.$id] ) ) $ur[] = $id;
             if ( isset( $main['user_role_'.$id] ) )  unset( $main['user_role_'.$id] );
         }
+
         $main['user_roles'] = implode ( ",", $ur );
+
         $sn = array();
 
         if ( file_exists( MOLONGUI_AUTHORSHIP_DIR . '/config/social.php' ) )
@@ -888,8 +949,10 @@ class DB_Update
                 if ( !empty( $box['show_'.$id] ) ) $sn[] = $id;
                 if ( isset( $box['show_'.$id] ) )  unset( $box['show_'.$id] );
             }
+
             $main['social_networks'] = implode ( ",", $sn );
         }
+
         $pt = array();
         $post_types = Post::get_post_types();
         foreach ( $post_types as $post_type )
@@ -897,14 +960,18 @@ class DB_Update
             if ( !empty( $main['extend_to_'.$post_type] ) ) $pt[] = $post_type;
             if ( isset(  $main['extend_to_'.$post_type] ) ) unset( $main['extend_to_'.$post_type] );
         }
+
         $main['post_types'] = implode ( ",", $pt );
+
         $related = array();
         foreach ( $post_types as $post_type )
         {
             if ( !empty( $box['related_post_type_'.$post_type] ) ) $related[] = $post_type;
             if ( isset( $box['related_post_type_'.$post_type] ) )  unset( $box['related_post_type_'.$post_type] );
         }
+
         $box['related_post_types'] = implode ( ",", $related );
+
         $cats = array();
         foreach ( get_categories() as $category )
         {
@@ -918,34 +985,49 @@ class DB_Update
                 unset( $box['hide_on_category_'.$category->slug] );
             }
         }
+
         $box['hide_on_categories'] = implode ( ",", $cats );
+
         $box['related_orderby'] = $box['related_order_by'];
         unset( $box['related_order_by'] );
+
         $main['encode_email'] = $box['encode_email'];
         $main['encode_phone'] = $box['encode_phone'];
         unset( $box['encode_email'], $box['encode_phone'] );
+
         update_option( 'molongui_authorship_main', $main, true );
         update_option( 'molongui_authorship_box' , $box, true  );
     }
+
     public function db_update_15()
     {
         global $wpdb;
 
+
         $wpdb->query( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE 'molongui_author_%_count';" );
         $wpdb->query( "DELETE FROM {$wpdb->prefix}postmeta WHERE meta_key LIKE '_molongui_guest_author_%_count';" );
+
+
         add_option( 'molongui_authorship_update_post_counters', true, '', true );
     }
+
     public function db_update_14()
     {
         global $wpdb;
 
+
         $wpdb->query( "UPDATE {$wpdb->prefix}posts SET post_type = 'guest_author' WHERE post_type = 'molongui_guestauthor';" );
+
+
         add_option( 'molongui_authorship_update_post_counters', true, '', true );
+
+
         $box_settings      = (array) get_option( 'molongui_authorship_box', array() );
         $byline_settings   = (array) get_option( 'molongui_authorship_byline', array() );
         $authors_settings  = (array) get_option( 'molongui_authorship_authors', array() );
         $archives_settings = (array) get_option( 'molongui_authorship_archives', array() );
         $advanced_settings = (array) get_option( 'molongui_authorship_advanced', array() );
+
         $box_settings['show_meta']               = true;
         $box_settings['avatar_src']              = 'local';
         $box_settings['avatar_local_fallback']   = 'gravatar';
@@ -954,9 +1036,11 @@ class DB_Update
         $box_settings['avatar_bg_color']         = !empty( $box_settings['acronym_bg_color'] ) ? $box_settings['acronym_bg_color'] : '#000000';
         $box_settings['encode_email']            = !empty( $advanced_settings['encode_email'] ) ? true : false;
         $box_settings['encode_phone']            = !empty( $advanced_settings['encode_phone'] ) ? true : false;
+
         unset( $box_settings['avatar_default_img'] );
         unset( $box_settings['acronym_text_color'] );
         unset( $box_settings['acronym_bg_color'] );
+
         $byline = array
         (
             'byline_multiauthor_display'        => !empty( $byline_settings['byline_multiauthor_display'] ) ? $byline_settings['byline_multiauthor_display'] : 'all',
@@ -968,13 +1052,16 @@ class DB_Update
             'byline_suffix'                     => !empty( $byline_settings['byline_modifier_after'] ) ? $byline_settings['byline_modifier_after'] : '',
             'enable_byline_template_tags'       => false,
         );
+
         unset( $box_settings['byline_automatic_integration'] );
         unset( $box_settings['byline_modifier_before'] );
         unset( $box_settings['byline_modifier_after'] );
+
         $archives_settings['guest_archive_title_prefix'] = '';
         $archives_settings['guest_archive_title_suffix'] = '';
         $archives_settings['user_archive_title_prefix']  = '';
         $archives_settings['user_archive_title_suffix']  = '';
+
         $main = array
         (
             'enable_multi_authors'    => true,
@@ -984,24 +1071,29 @@ class DB_Update
             'enable_user_profiles'    => true,
             'enable_search_by_author' => !empty( $authors_settings['enable_search_by_author']  ) ? true : false,
             'enable_guests_in_search' => !empty( $authors_settings['include_guests_in_search'] ) ? true : false,
+
             'extend_to_post' => !empty( $advanced_settings['extend_to_post'] ) ? true : false ,
             'extend_to_page' => !empty( $advanced_settings['extend_to_page'] ) ? true : false ,
+
             'guest_menu_item_level' => !empty( $authors_settings['guest_menu_item_level'] ) ? $authors_settings['guest_menu_item_level'] : 'top',
+
             'keep_config' => !empty( $advanced_settings['keep_config'] ) ? true : false,
             'keep_data'   => !empty( $advanced_settings['keep_data']   ) ? true : false,
         );
+
         $seo = array
         (
-            'add_html_meta'            => !empty( $advanced_settings['add_opengraph_meta'] ) ? true : false, // Assume the user wants the same config than OpenGraph meta.
+            'add_html_meta'            => !empty( $advanced_settings['add_opengraph_meta'] ) ? true : false,  
             'add_opengraph_meta'       => !empty( $advanced_settings['add_opengraph_meta'] ) ? true : false,
             'add_facebook_meta'        => !empty( $advanced_settings['add_facebook_meta']  ) ? true : false,
-            'add_twitter_meta'         => !empty( $advanced_settings['add_facebook_meta']  ) ? true : false, // Assume the user wants the same config than Facebook meta.
+            'add_twitter_meta'         => !empty( $advanced_settings['add_facebook_meta']  ) ? true : false,  
             'multi_author_meta'        => 'many',
             'enable_author_box_schema' => true,
             'add_nofollow'             => !empty( $advanced_settings['add_nofollow'] ) ? true : false,
             'box_headline_tag'         => !empty( $advanced_settings['box_headline_tag']    ) ? $advanced_settings['box_headline_tag'] : 'h3',
             'box_author_name_tag'      => !empty( $advanced_settings['box_author_name_tag'] ) ? $advanced_settings['box_author_name_tag'] : 'h5',
         );
+
         $compat = array
         (
             'enable_theme_compat'   => true,
@@ -1010,6 +1102,7 @@ class DB_Update
             'hide_elements'         => !empty( $advanced_settings['hide_elements'] ) ? $advanced_settings['hide_elements'] : '',
             'enable_sc_text_widget' => !empty( $advanced_settings['enable_sc_text_widgets'] ) ? true : false,
         );
+
         unset( $advanced_settings['encode_email'] );
         unset( $advanced_settings['encode_phone'] );
         unset( $advanced_settings['keep_config'] );
@@ -1023,16 +1116,21 @@ class DB_Update
         unset( $advanced_settings['hide_elements'] );
         unset( $advanced_settings['enable_sc_text_widgets'] );
         unset( $advanced_settings['plugin_version'] );
+
         $main = array_merge( $main, $advanced_settings );
+
         update_option( 'molongui_authorship_box', $box_settings, true );
         update_option( 'molongui_authorship_byline', $byline, true );
         update_option( 'molongui_authorship_archives', $archives_settings, true );
+
         update_option( 'molongui_authorship_main', $main, true );
         update_option( 'molongui_authorship_seo', $seo, true );
         update_option( 'molongui_authorship_compat', $compat, true );
+
         delete_option( 'molongui_authorship_authors' );
         delete_option( 'molongui_authorship_advanced' );
     }
+
     public function db_update_13()
     {
         $transients = array
@@ -1048,6 +1146,7 @@ class DB_Update
         foreach ( $transients as $transient_name => $key )
         {
             $value = get_site_transient( $transient_name );
+
             if ( $value )
             {
                 $notices = get_option( 'molongui_authorship_notices', array() );
@@ -1055,23 +1154,31 @@ class DB_Update
                 $notices[$key] = $value;
                 update_option( 'molongui_authorship_notices', $notices, true );
             }
+
             delete_site_transient( $transient_name );
         }
     }
+
     public function db_update_12()
     {
         global $wpdb;
+
         $guests = $wpdb->get_results( "SELECT ID, post_title FROM {$wpdb->prefix}posts WHERE post_type = 'molongui_guestauthor';" );
+
         foreach ( $guests as $guest )
         {
             $wpdb->query( "INSERT INTO {$wpdb->prefix}postmeta (post_id, meta_key, meta_value) SELECT '{$guest->ID}', '_molongui_guest_author_display_name', '{$guest->post_title}' WHERE NOT EXISTS (SELECT * FROM {$wpdb->prefix}postmeta WHERE post_id = '{$guest->ID}' and meta_key = '_molongui_guest_author_display_name');" );
         }
     }
+
     public function db_update_11()
     {
         global $wpdb;
+
         $guest_settings = get_option( 'molongui_authorship_guest', array() );
+
         delete_option( 'molongui_authorship_guest' );
+
         if ( did_action( 'authorship_pro/loaded' ) and $guest_settings['include_guests_in_search'] )
         {
             $guest_settings['include_guests_in_search'] = true;
@@ -1080,6 +1187,7 @@ class DB_Update
         {
             $guest_settings['include_guests_in_search'] = false;
         }
+
         $author_settings = array
         (
             'enable_guest_authors_feature' => $guest_settings['enable_guest_authors_feature'],
@@ -1087,12 +1195,22 @@ class DB_Update
             'include_guests_in_search'     => $guest_settings['include_guests_in_search'],
             'guest_menu_item_level'        => $guest_settings['guest_menu_item_level'],
         );
+
         add_option( 'molongui_authorship_authors', $author_settings, '', true );
+
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_box_display' WHERE meta_key = '_molongui_guest_author_hide_box';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_key = 'molongui_author_box_display' WHERE meta_key = 'molongui_author_hide_box';" );
+
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_value = 'hide' WHERE meta_key = '_molongui_guest_author_box_display' AND meta_value = '1';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_value = 'hide' WHERE meta_key = 'molongui_author_box_display' AND meta_value = '1';" );
+
+
         $box_settings = get_option( 'molongui_authorship_box', array() );
+
         $display = array
         (
             '1'     => 'show',
@@ -1101,45 +1219,69 @@ class DB_Update
             '0'     => 'hide',
         );
         $box_settings['display'] = $display[$box_settings['display']];
+
         update_option( 'molongui_authorship_box', $box_settings, true );
     }
+
     public function db_update_10()
     {
         global $wpdb;
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_value = '1' WHERE meta_key = '_molongui_guest_author_show_mail' AND meta_value = 'yes';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_value = '1' WHERE meta_key = '_molongui_guest_author_show_phone' AND meta_value = 'yes';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_show_meta_mail' WHERE meta_key = '_molongui_guest_author_show_mail';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_show_meta_phone' WHERE meta_key = '_molongui_guest_author_show_phone';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_web' WHERE meta_key = '_molongui_guest_author_link';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_value = '1' WHERE meta_key = 'molongui_author_show_mail' AND meta_value = 'yes';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_value = '1' WHERE meta_key = 'molongui_author_show_phone' AND meta_value = 'yes';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_key = 'molongui_author_show_meta_mail' WHERE meta_key = 'molongui_author_show_mail';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_key = 'molongui_author_show_meta_phone' WHERE meta_key = 'molongui_author_show_phone';" );
+
         if ( is_admin() )
         {
             require_once( ABSPATH . 'wp-includes/pluggable.php' );
+
             $users = get_users();
             foreach ( $users as $user )
             {
                 $molongui_link = get_user_meta( $user->ID, 'molongui_author_link', true );
+
                 if ( $molongui_link and empty( $user->user_url ) ) wp_update_user( array( 'ID' => $user->ID, 'user_url' => $molongui_link ) );
+
                 delete_user_meta( $user->ID, 'molongui_author_link' );
             }
         }
+
+
         $box_settings = get_option( 'molongui_authorship_box', array() );
+
         unset( $box_settings['show_mail'] );
         unset( $box_settings['show_web'] );
+
         update_option( 'molongui_authorship_box', $box_settings, true );
     }
+
     public function db_update_9()
     {
         $box_settings = get_option( 'molongui_authorship_box', array() );
+
         $box_settings['show_mail'] = '0';
+
         update_option( 'molongui_authorship_box', $box_settings, true );
     }
+
     public function db_update_8()
     {
         $box_settings = get_option( 'molongui_authorship_box', array() );
+
         if ( isset( $box_settings['box_border_style'] ) and $box_settings['box_border_style'] == 'none' )
         {
             $box_settings['box_border']       = 'none';
@@ -1154,6 +1296,7 @@ class DB_Update
             $box_settings['box_border']       = 'none';
             $box_settings['box_border_style'] = 'solid';
         }
+
         $profile = array
         (
             'layout-1' => 'layout-1',
@@ -1163,6 +1306,7 @@ class DB_Update
             'layout-5' => 'layout-8',
         );
         $box_settings['profile_layout'] = $profile[$box_settings['layout']];
+
         $layout = array
         (
             'layout-1' => 'slim',
@@ -1172,14 +1316,18 @@ class DB_Update
             'layout-5' => 'slim',
         );
         $box_settings['layout'] = $layout[$box_settings['layout']];
+
         update_option( 'molongui_authorship_box', $box_settings, true );
     }
+
     public function db_update_7() {}
+
     public function db_update_6()
     {
         $main_settings     = get_option( 'molongui_authorship_main', array() );
         $box_settings      = get_option( 'molongui_authorship_box', array() );
         $advanced_settings = get_option( 'molongui_authorship_advanced', array() );
+
         $text_styles = array
         (
             'normal'   => 'normal',
@@ -1215,9 +1363,11 @@ class DB_Update
         $box_settings['box_border_width']    = $border_widths[$box_settings['box_border']];
         $box_settings['bottom_border_width'] = $border_widths[$box_settings['bottom_border']];
         $box_settings['avatar_border_width'] = $border_widths[$box_settings['img_border']];
+
         $box_settings['avatar_style']        = $box_settings['img_style'];
         $box_settings['avatar_border_color'] = $box_settings['img_border_color'];
         $box_settings['avatar_default_img']  = $box_settings['img_default'];
+
         unset( $box_settings['headline_style'] );
         unset( $box_settings['bio_style'] );
         unset( $box_settings['headline_size'] );
@@ -1230,6 +1380,7 @@ class DB_Update
         unset( $box_settings['img_style'] );
         unset( $box_settings['img_border_color'] );
         unset( $box_settings['img_default'] );
+
         $name_link = array
         (
             'link'   => 'keep',
@@ -1237,36 +1388,48 @@ class DB_Update
         );
         if ( $box_settings['name_link'] == 'link' ) $box_settings['name_text_style'] = 'underline';
         $box_settings['name_inherited_underline'] = $name_link[$box_settings['name_link']];
+
         unset( $box_settings['name_link'] );
+
         $advanced_settings['add_opengraph_meta'] = $main_settings['add_opengraph_meta'];
         $advanced_settings['add_google_meta']    = $main_settings['add_google_meta'];
         $advanced_settings['add_facebook_meta']  = $main_settings['add_facebook_meta'];
+
         unset ( $main_settings['add_opengraph_meta'] );
         unset ( $main_settings['add_google_meta'] );
         unset ( $main_settings['add_facebook_meta'] );
+
         $guest_settings = array();
         $guest_settings['include_guests_in_search'] = $main_settings['include_guests_in_search'];
         $guest_settings['guest_menu_item_level']    = ( $main_settings['admin_menu_level'] == 'true' ? 'top' : $main_settings['admin_menu_level'] );
+
         unset ( $main_settings['include_guests_in_search'] );
         unset ( $main_settings['admin_menu_level'] );
+
         $archives_settings = array();
         $archives_settings['guest_archive_enabled']   = $main_settings['enable_guest_archive'];
         $archives_settings['guest_archive_permalink'] = $main_settings['guest_archive_permalink'];
         $archives_settings['guest_archive_base']      = $main_settings['guest_archive_slug'];
         $archives_settings['guest_archive_tmpl']      = $main_settings['guest_archive_tmpl'];
+
         unset ( $main_settings['enable_guest_archive'] );
         unset ( $main_settings['guest_archive_permalink'] );
         unset ( $main_settings['guest_archive_slug'] );
         unset ( $main_settings['guest_archive_tmpl'] );
+
         $byline_settings = array();
         $byline_settings['byline_automatic_integration'] = $main_settings['byline_auto_update'];
         $byline_settings['byline_multiauthor_display']   = $main_settings['by_line'];
         $byline_settings['byline_multiauthor_link']      = $main_settings['by_line_link'];
+
         unset ( $main_settings['by_line'] );
         unset ( $main_settings['by_line_link'] );
         unset ( $main_settings['byline_auto_update'] );
+
         $box_settings['multiauthor_box_layout'] = $main_settings['multiauthor_layout'];
+
         unset ( $main_settings['multiauthor_layout'] );
+
         $box_settings['bottom_background_color'] = $box_settings['bottom_bg'];
         $box_settings['headline_text_align']     = $box_settings['headline_align'];
         $box_settings['headline_text_color']     = $box_settings['headline_color'];
@@ -1275,6 +1438,7 @@ class DB_Update
         $box_settings['meta_text_color']         = $box_settings['meta_color'];
         $box_settings['bio_text_align']          = $box_settings['bio_align'];
         $box_settings['bio_text_color']          = $box_settings['bio_color'];
+
         unset( $box_settings['bottom_bg'] );
         unset( $box_settings['headline_align'] );
         unset( $box_settings['headline_color'] );
@@ -1283,6 +1447,7 @@ class DB_Update
         unset( $box_settings['meta_color'] );
         unset( $box_settings['bio_align'] );
         unset( $box_settings['bio_color'] );
+
         $layout = array
         (
             'default'     => 'layout-1',
@@ -1292,14 +1457,18 @@ class DB_Update
             'ribbon-rtl'  => 'layout-5',
         );
         $box_settings['layout'] = $layout[$box_settings['layout']];
+
         $box_settings = array_merge( $box_settings, $main_settings );
+
         update_option( 'molongui_authorship_byline', $byline_settings, true );
         update_option( 'molongui_authorship_box', $box_settings, true );
         update_option( 'molongui_authorship_guest', $guest_settings, true );
         update_option( 'molongui_authorship_archives', $archives_settings, true );
         update_option( 'molongui_authorship_advanced', $advanced_settings, true );
+
         delete_option( 'molongui_authorship_main' );
     }
+
     public function db_update_5()
     {
         $users = get_users();
@@ -1307,13 +1476,17 @@ class DB_Update
         foreach ( $users as $user )
         {
             if ( $bio = get_user_meta( $user->ID, 'molongui_author_bio', true ) ) update_user_meta( $user->ID, 'description', $bio );
+
             delete_user_meta( $user->ID, 'molongui_author_bio' );
         }
     }
+
     public function db_update_4()
     {
         global $wpdb;
+
         $main_settings = get_option( 'molongui_authorship_main', array() );
+
         $advanced_settings = array(
             'extend_to_post'         => '1',
             'extend_to_page'         => '1',
@@ -1321,33 +1494,47 @@ class DB_Update
             'keep_config'            => $main_settings['keep_config'],
             'keep_data'              => $main_settings['keep_data'],
         );
+
         update_option( 'molongui_authorship_advanced', $advanced_settings, true );
+
         unset( $main_settings['enable_sc_text_widgets'] );
         unset( $main_settings['keep_config'] );
         unset( $main_settings['keep_data'] );
+
         update_option( 'molongui_authorship_main', $main_settings, true );
+
         $rows = $wpdb->get_results( "SELECT meta_id, post_id, meta_value FROM {$wpdb->prefix}postmeta WHERE meta_id IN (SELECT meta_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '_molongui_guest_author_id' AND meta_value IS NOT NULL)" );
         foreach ( $rows as $row )
         {
             $author_value = 'guest-'.$row->meta_value;
+
             $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_author', meta_value = '{$author_value}' WHERE meta_id = {$row->meta_id};" );
+
             $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_main_author', meta_value = '{$author_value}' WHERE meta_key = '_molongui_guest_author' AND post_id = {$row->post_id};" );
         }
+
         $rows = $wpdb->get_results( "SELECT meta_id, post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '_molongui_guest_author' AND meta_value = '0'" );
         foreach ( $rows as $row )
         {
             $author_id    = $wpdb->get_col( "SELECT post_author FROM {$wpdb->prefix}posts WHERE ID = {$row->post_id}" );
             $author_value = 'user-'.$author_id[0];
+
             $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_author', meta_value = '{$author_value}' WHERE meta_id = {$row->meta_id};" );
+
             $wpdb->query( "INSERT INTO {$wpdb->prefix}postmeta (post_id, meta_key, meta_value) VALUES ({$row->post_id}, '_molongui_main_author', '{$author_value}');" );
         }
+
         $wpdb->query( "DELETE FROM {$wpdb->prefix}postmeta WHERE meta_key = '_molongui_guest_author';" );
+
         $wpdb->query( "DELETE FROM {$wpdb->prefix}postmeta WHERE meta_key = '_molongui_guest_author_id';" );
     }
+
     public function db_update_3()
     {
         global $wpdb;
+
         $settings = get_option( 'molongui_authorship_main', array() );
+
         $main_settings = array(
             'show_related'            => $settings['show_related'],
             'related_order_by'        => $settings['related_order_by'],
@@ -1393,14 +1580,20 @@ class DB_Update
             'keep_config'             => $settings['keep_config'],
             'keep_data'               => $settings['keep_data'],
         );
+
         update_option( 'molongui_authorship_main', $main_settings, true );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_googleplus' WHERE meta_key = '_molongui_guest_author_gplus';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}usermeta SET meta_key = 'molongui_author_googleplus' WHERE meta_key = 'molongui_author_gplus';" );
     }
+
     public function db_update_2()
     {
         global $wpdb;
+
         $settings = get_option( 'molongui_authorship_config', array() );
+
         $main_settings = array
         (
             'show_related'       => $settings['molongui_authorship_related_show'],
@@ -1468,11 +1661,15 @@ class DB_Update
             'bottom_border'       => $settings['molongui_authorship_bottom_border'],
             'bottom_border_color' => $settings['molongui_authorship_bottom_border_color'],
         );
+
         add_option( 'molongui_authorship_main', $main_settings, '', true );
         add_option( 'molongui_authorship_box', $box_settings, '', true );
+
         delete_option( 'molongui_authorship_config' );
         delete_option( 'molongui_authorship_deactivate_checkbox' );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = 'molongui_guest_author_blog' WHERE meta_key = 'molongui_guest_author_link';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_id' WHERE meta_key = 'molongui_guest_author_id';" );
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_mail' WHERE meta_key = 'molongui_guest_author_mail';" );
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_link' WHERE meta_key = 'molongui_guest_author_blog';" );
@@ -1504,6 +1701,7 @@ class DB_Update
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_foursquare' WHERE meta_key = 'molongui_guest_author_foursquare';" );
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_spotify' WHERE meta_key = 'molongui_guest_author_spotify';" );
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_guest_author_vimeo' WHERE meta_key = 'molongui_guest_author_vimeo';" );
+
         $wpdb->query( "UPDATE {$wpdb->prefix}postmeta SET meta_key = '_molongui_author_box_display' WHERE meta_key = 'molongui_author_box_display';" );
     }
 }
