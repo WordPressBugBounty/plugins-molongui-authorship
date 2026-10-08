@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 class Author_Filters {
 
-	private $javascript = '/assets/js/byline.849a.min.js';
+	private $javascript = '/assets/js/byline.721e.min.js';
 
 	private $avatar_javascript = '/assets/js/avatar.4ce9.min.js';
 
@@ -80,6 +80,8 @@ class Author_Filters {
 					PHP_INT_MAX,
 					3
 				);
+
+				add_action( 'rest_api_init', array( $this, 'register_byline_data_route' ) );
 			}
 
 			add_filter(
@@ -146,6 +148,119 @@ class Author_Filters {
 		Assets::enqueue_script( $this->javascript, 'byline' );
 	}
 
+	public function register_byline_data_route() {
+		register_rest_route(
+			'molongui-authorship/v1',
+			'/bylines',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_byline_data_for_posts' ),
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'ids' => array(
+						'required' => true,
+						'type'     => 'string',
+						),
+				),
+			)
+		);
+	}
+
+	public function get_byline_data_for_posts( $request ) {
+		$ids     = wp_parse_id_list( explode( ',', substr( (string) $request->get_param( 'ids' ), 0, 1024 ) ) );
+		$ids     = array_slice( $ids, 0, 50 );
+		$data    = array();
+		$options = Settings::get();
+
+		if ( empty( $options['co_authors_in_byline'] ) ) {
+			return rest_ensure_response( $data );
+		}
+
+		$readable_ids = array();
+		foreach ( $ids as $post_id ) {
+			$post = get_post( $post_id );
+
+			if ( ! $post ) {
+				continue;
+			}
+
+			$post_type = get_post_type_object( $post->post_type );
+			$is_public = 'publish' === $post->post_status && $post_type && is_post_type_viewable( $post_type );
+			if ( $is_public || current_user_can( 'read_post', $post_id ) ) {
+				$readable_ids[] = $post_id;
+			}
+		}
+
+		if ( ! empty( $readable_ids ) ) {
+			update_meta_cache( 'post', $readable_ids );
+		}
+
+		foreach ( $readable_ids as $post_id ) {
+			if ( ! Post::has_multiple_authors( $post_id ) || ! apply_filters( 'molongui_authorship/link_coauthor_name', true ) ) {
+				continue;
+			}
+
+			$post_authors = Post::get_authors( $post_id );
+			if ( ! is_array( $post_authors ) || count( $post_authors ) < 2 ) {
+				continue;
+			}
+
+			$count            = count( $post_authors );
+			$names_to_display = apply_filters(
+				'molongui_authorship/co_authors_in_byline',
+				Settings::get( 'co_authors_in_byline_format', 'all' ),
+				$post_id,
+				$post_authors
+			);
+
+			$names_to_display = is_numeric( $names_to_display )
+				? max( 1, min( (int) $names_to_display, $count ) )
+				: $count;
+
+			$show_remaining = $names_to_display < $count;
+			$byline_authors = $show_remaining ? array_slice( $post_authors, 0, $names_to_display ) : $post_authors;
+			$byline_data    = self::format_byline_data( $byline_authors, $names_to_display, $count, $show_remaining );
+
+			if ( ! empty( $byline_data ) ) {
+				$data[ $post_id ] = $byline_data;
+			}
+		}
+
+		return rest_ensure_response( $data );
+	}
+
+	private static function format_byline_data( $byline_authors, $names_to_display, $count, $show_remaining ) {
+		$data = array();
+
+		foreach ( $byline_authors as $byline_author ) {
+			if ( ! is_object( $byline_author ) || empty( $byline_author->id ) || empty( $byline_author->type ) ) {
+				return array();
+			}
+
+			$author = new Author( $byline_author->id, $byline_author->type );
+			$data[] = array(
+				'type' => $author->get_type(),
+				'id'   => $author->get_id(),
+				'name' => esc_html( $author->get_display_name() ),
+				'url'  => esc_url( $author->get_archive_url() ),
+			);
+		}
+
+		if ( $show_remaining && $count > $names_to_display ) {
+			$data[] = array(
+				'type' => '',
+				'id'   => '',
+				'name' => sprintf(
+					_x( '%d more', 'Not displayed co-authors count', 'molongui-authorship' ),
+					$count - $names_to_display
+				),
+				'url'  => '',
+			);
+		}
+
+		return $data;
+	}
+
 	public function localize_scripts() {
 		list( $separator, $last_separator ) = Post::get_byline_separators();
 
@@ -167,6 +282,8 @@ class Author_Filters {
 			'byline_dom_append'        => apply_filters( 'authorship/byline/dom_append', '' ),
 
 			'byline_decoder'           => apply_filters( 'authorship/author_link/filter_version', 'v3' ),
+			'byline_data_url'          => esc_url_raw( rest_url( 'molongui-authorship/v1/bylines' ) ),
+			'byline_rest_nonce'        => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
 		);
 
 		return apply_filters( 'authorship/byline/script_params', $params );
@@ -626,31 +743,10 @@ class Author_Filters {
 					add_filter(
 						'wp_print_footer_scripts',
 						function () use ( $post_id, $byline_authors, $names_to_display, $count, $show_remaining ) {
-							$data = array();
-							foreach ( $byline_authors as $byline_author ) {
-								$author = new Author( $byline_author->id, $byline_author->type );
-								$data[] = array(
-									'type' => $author->get_type(),
-									'id'   => $author->get_id(),
-									'name' => esc_html( $author->get_display_name() ),
-									'url'  => esc_url( $author->get_archive_url() ),
-								);
-							}
+							$data = self::format_byline_data( $byline_authors, $names_to_display, $count, $show_remaining );
 
-							if ( $show_remaining and $count > $names_to_display ) {
-								$data[] = array(
-									'type' => '',
-									'id'   => '',
-									'name' => sprintf(
-										// translators: Not displayed co-authors count.
-										_x( '%d more', 'Not displayed co-authors count', 'molongui-authorship' ),
-										$count - $names_to_display
-									),
-									'url'  => '',
-								);
-							}
 							if ( ! empty( $data ) ) {
-								echo '<script data-type="' . MOLONGUI_AUTHORSHIP_NAME . '-byline-data" data-id="' . $post_id . '">var molongui_authorship_byline_data_' . $post_id . ' = ' . json_encode( $data ) . ';' . '</script>';
+								echo '<script data-type="' . MOLONGUI_AUTHORSHIP_NAME . '-byline-data" data-id="' . (int) $post_id . '">var molongui_authorship_byline_data_' . (int) $post_id . ' = ' . wp_json_encode( $data ) . ';' . '</script>';
 							}
 						}
 					);

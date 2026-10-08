@@ -28,6 +28,9 @@ final class Post_Authorship {
 
 	private static $publication_hooks_registered = false;
 
+
+	private static $rest_editor_authorship_candidates = array();
+
 	public static function register_publication_guards() {
 		if ( self::$publication_hooks_registered ) {
 			return;
@@ -36,6 +39,150 @@ final class Post_Authorship {
 		self::$publication_hooks_registered = true;
 
 		add_filter( 'wp_insert_post_data', array( __CLASS__, 'guard_publication_status' ), PHP_INT_MAX, 3 );
+		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_editor_publication_guards' ) );
+		add_filter( 'molongui_authorship/publication_authorship_candidate', array( __CLASS__, 'filter_rest_editor_publication_candidate' ), 20, 4 );
+		add_filter( 'rest_request_after_callbacks', array( __CLASS__, 'clear_rest_editor_publication_candidates' ), 10, 3 );
+	}
+
+	public static function register_rest_editor_publication_guards() {
+		if ( ! Post::byline_takeover() ) {
+			return;
+		}
+
+		foreach ( Settings::enabled_post_types() as $post_type ) {
+			$post_type_object = get_post_type_object( $post_type );
+
+			if ( ! $post_type_object || empty( $post_type_object->show_in_rest ) ) {
+				continue;
+			}
+
+			add_filter( 'rest_pre_insert_' . $post_type, array( __CLASS__, 'validate_rest_editor_publication' ), 20, 2 );
+			add_action( 'rest_after_insert_' . $post_type, array( __CLASS__, 'persist_rest_editor_authorship' ), 10, 3 );
+		}
+	}
+
+	public static function validate_rest_editor_publication( $prepared_post, $request ) {
+		if ( is_wp_error( $prepared_post ) || ! $request instanceof \WP_REST_Request ) {
+			return $prepared_post;
+		}
+
+		$post_id   = ! empty( $prepared_post->ID ) ? absint( $prepared_post->ID ) : absint( $request->get_param( 'id' ) );
+		$post_type = ! empty( $prepared_post->post_type ) ? sanitize_key( $prepared_post->post_type ) : '';
+
+		if ( ! $post_type || ! Post::byline_takeover() || ! Post::is_post_type_enabled( $post_type, $post_id ) ) {
+			return $prepared_post;
+		}
+
+		$params = $request->get_params();
+
+		if ( is_array( $params ) && array_key_exists( 'molongui_editor_authorship', $params ) && ! array_key_exists( 'authors', $params ) ) {
+			$submitted = $params['molongui_editor_authorship'];
+
+			if ( ! is_array( $submitted ) || ! array_key_exists( 'main', $submitted ) || ! is_string( $submitted['main'] ) || ! isset( $submitted['authors'] ) || ! is_array( $submitted['authors'] ) ) {
+				return new \WP_Error(
+					'molongui_authorship_invalid_editor_authorship',
+					__( 'The submitted author selection is invalid.', 'molongui-authorship' ),
+					array( 'status' => 400 )
+				);
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
+			$can_edit         = $post_id
+				? current_user_can( 'edit_post', $post_id )
+				: current_user_can( $post_type_object->cap->create_posts );
+
+			if ( ! $can_edit ) {
+				return new \WP_Error(
+					'molongui_authorship_editor_forbidden',
+					__( 'You are not allowed to change authors for this post.', 'molongui-authorship' ),
+					array( 'status' => 403 )
+				);
+			}
+
+			$authorship = \Molongui\Authorship\Admin\Admin_Post::prepare_authorship_for_save(
+				$post_id,
+				$submitted['authors'],
+				$submitted['main']
+			);
+
+			if ( is_wp_error( $authorship ) ) {
+				return new \WP_Error(
+					'molongui_authorship_invalid_editor_authorship',
+					$authorship->get_error_message(),
+					array( 'status' => 400 )
+				);
+			}
+
+			self::$rest_editor_authorship_candidates[ $post_id ] = $authorship;
+		}
+
+		$status = ! empty( $prepared_post->post_status ) ? $prepared_post->post_status : ( $post_id ? get_post_status( $post_id ) : 'draft' );
+
+		if ( self::post_status_requires_main_author( $status ) ) {
+			$authorship = self::get_publication_authorship_candidate( $post_id, array(), (array) $prepared_post );
+
+			if ( is_wp_error( $authorship ) || ! self::is_publishable_authorship( $authorship['main'], $authorship['authors'] ) ) {
+				unset( self::$rest_editor_authorship_candidates[ $post_id ] );
+
+				return new \WP_Error(
+					'molongui_authorship_main_author_required',
+					self::main_author_required_message(),
+					array( 'status' => 400 )
+				);
+			}
+		}
+
+		return $prepared_post;
+	}
+
+	public static function main_author_required_message() {
+		return __( 'Select a valid main author before publishing or updating a published post.', 'molongui-authorship' );
+	}
+
+	public static function filter_rest_editor_publication_candidate( $authorship, $post_id, $postarr, $data ) {
+		$post_id = absint( $post_id );
+
+		if ( isset( self::$rest_editor_authorship_candidates[ $post_id ] ) ) {
+			return self::$rest_editor_authorship_candidates[ $post_id ];
+		}
+
+		return $authorship;
+	}
+
+	public static function persist_rest_editor_authorship( $post, $request, $creating ) {
+		$post_id = absint( $post->ID );
+		$key     = isset( self::$rest_editor_authorship_candidates[ $post_id ] ) ? $post_id : 0;
+
+		if ( ! isset( self::$rest_editor_authorship_candidates[ $key ] ) ) {
+			return;
+		}
+
+		$authorship = self::$rest_editor_authorship_candidates[ $key ];
+		unset( self::$rest_editor_authorship_candidates[ $key ] );
+
+		$result = \Molongui\Authorship\Admin\Admin_Post::update_authors(
+			$authorship['authors'],
+			$post_id,
+			$post->post_type,
+			$post->post_author,
+			$authorship['main']
+		);
+
+		if ( ! is_wp_error( $result ) && false !== $result ) {
+			$saved_post = get_post( $post_id );
+
+			if ( $saved_post instanceof \WP_Post ) {
+				$post->post_author       = $saved_post->post_author;
+				$post->post_modified     = $saved_post->post_modified;
+				$post->post_modified_gmt = $saved_post->post_modified_gmt;
+			}
+		}
+	}
+
+	public static function clear_rest_editor_publication_candidates( $response, $handler, $request ) {
+		self::$rest_editor_authorship_candidates = array();
+
+		return $response;
 	}
 
 	private static function register_cache_invalidation_hooks() {
@@ -220,6 +367,13 @@ final class Post_Authorship {
 		$authors     = isset( $authorship['authors'] ) && is_array( $authorship['authors'] ) ? $authorship['authors'] : array();
 
 		if ( self::is_publishable_authorship( $main_author, $authors ) ) {
+			return $data;
+		}
+
+		$previous_status = $post_id ? get_post_status( $post_id ) : false;
+
+		if ( $previous_status && self::post_status_requires_main_author( $previous_status ) ) {
+			$data['post_status'] = $previous_status;
 			return $data;
 		}
 

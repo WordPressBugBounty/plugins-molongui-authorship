@@ -36,7 +36,8 @@ defined( 'ABSPATH' ) || exit;
 class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 {
 	private $javascript           = '/assets/js/edit-post.ba77.min.js';
-	private $javascript_gutenberg = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-gutenberg.157f.min.js';
+	private $javascript_gutenberg = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-gutenberg.4727.min.js';
+	private $javascript_classic   = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-classic.min.js';
 	private $stylesheet           = '';
 	private $stylesheet_ltr       = '';
 	private $stylesheet_rtl       = '';
@@ -87,7 +88,9 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 
 			add_filter( 'wp_insert_post_data', array( $this, 'update_post_author' ), 10, 3 );
 			add_action( 'pre_post_update', array( $this, 'post_status_before_update' ), 10, 2 );
+			add_action( 'check_admin_referer', array( $this, 'preflight_classic_editor_publication' ), 10, 2 );
 			add_action( 'molongui_authorship/post_publication_blocked', array( $this, 'flag_main_author_required_error' ), 10, 4 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_classic_publication_guard' ) );
 			add_action( 'admin_notices', array( $this, 'main_author_required_admin_notice' ) );
 
 			add_action( 'trashed_post', array( $this, 'on_trash' ) );
@@ -1301,8 +1304,18 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 
 		wp_enqueue_script( 'molongui-authorship-block-editor-script'
 			, $this->javascript_gutenberg
-			, array( 'wp-data', 'wp-plugins', 'wp-edit-post', 'wp-element' )
+			, array( 'wp-data', 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-api-fetch' )
 			, MOLONGUI_AUTHORSHIP_VERSION
+		);
+
+		$post_type_object = get_post_type_object( $current_screen->post_type );
+		$rest_namespace   = ! empty( $post_type_object->rest_namespace ) ? $post_type_object->rest_namespace : 'wp/v2';
+		$rest_base        = ! empty( $post_type_object->rest_base ) ? $post_type_object->rest_base : $current_screen->post_type;
+
+		wp_localize_script(
+			'molongui-authorship-block-editor-script',
+			'molonguiAuthorshipSaveBridge',
+			array( 'restPath' => '/' . trim( $rest_namespace, '/' ) . '/' . trim( $rest_base, '/' ) )
 		);
 
 		global $current_user;
@@ -1529,7 +1542,7 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 	}
 
 
-	private static function prepare_authorship_for_save( $post_id, $post_authors, $submitted_main_author = null )
+	public static function prepare_authorship_for_save( $post_id, $post_authors, $submitted_main_author = null )
 	{
 		$post_id       = absint( $post_id );
 		$stored        = Post_Authorship::get_authorship( $post_id, true );
@@ -1588,67 +1601,166 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 		setcookie( 'ma_cannot_post_as_others', _x( "You are not permitted to post on behalf of others. If you wish to remove your name as the post author, please contact the site administrator to enable that option for you.", 'Error message displayed on the WP Block Editor', 'molongui-authorship' ), 0, '/' );
 	}
 
-	public function flag_main_author_required_error( $post_id, $requested_status, $fallback_status, $authorship )
+	public function enqueue_classic_publication_guard( $hook_suffix )
 	{
-		$selected_posts = isset( $_REQUEST['post'] ) ? (array) wp_unslash( $_REQUEST['post'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected_posts = array_filter( array_map( 'absint', $selected_posts ) );
-
-		if ( count( $selected_posts ) > 1 )
+		if ( !in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) )
 		{
-			$message = __( "One or more posts could not be published because they do not have a valid main author. Select a main author for those posts and try again.", 'molongui-authorship' );
+			return;
+		}
+
+		$screen = get_current_screen();
+
+		if ( !$screen || !$screen->post_type || !Post::is_post_type_enabled( $screen->post_type ) || Helpers::is_block_editor() )
+		{
+			return;
+		}
+
+		wp_enqueue_script(
+			'molongui-authorship-classic-publication-guard',
+			$this->javascript_classic,
+			array(),
+			MOLONGUI_AUTHORSHIP_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'molongui-authorship-classic-publication-guard',
+			'molonguiAuthorshipClassicGuard',
+			array( 'message' => Post_Authorship::main_author_required_message() )
+		);
+	}
+
+	public function preflight_classic_editor_publication( $action, $result )
+	{
+		global $pagenow;
+
+		if ( 'post.php' !== $pagenow || ! $result || 'POST' !== ( isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '' ) )
+		{
+			return;
+		}
+
+		$request_action = isset( $_POST['action'] ) && is_string( $_POST['action'] )
+			? sanitize_key( wp_unslash( $_POST['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( !in_array( $request_action, array( 'editpost', 'post' ), true ) )
+		{
+			return;
+		}
+
+		$post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post    = $post_id ? get_post( $post_id ) : false;
+		$type    = $post ? $post->post_type : ( isset( $_POST['post_type'] ) && is_string( $_POST['post_type'] )
+			? sanitize_key( wp_unslash( $_POST['post_type'] ) ) : 'post' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		$expected_action = 'editpost' === $request_action ? 'update-post_' . $post_id : 'add-' . $type;
+
+		if ( $action !== $expected_action || !Post::byline_takeover() || !Post::is_post_type_enabled( $type, $post_id ) )
+		{
+			return;
+		}
+
+		$type_object = get_post_type_object( $type );
+
+		if ( !$type_object || ( $post_id && !current_user_can( 'edit_post', $post_id ) )
+			|| ( !$post_id && !current_user_can( $type_object->cap->create_posts ) ) )
+		{
+			return;
+		}
+
+		$status = isset( $_POST['post_status'] ) && is_string( $_POST['post_status'] )
+			? sanitize_key( wp_unslash( $_POST['post_status'] ) ) : ( $post ? $post->post_status : 'draft' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( !empty( $_POST['publish'] ) && 'private' !== $status ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$status = 'publish';
+		}
+		if ( !empty( $_POST['saveasdraft'] ) || !empty( $_POST['advanced'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$status = 'draft';
+		}
+		if ( !empty( $_POST['pending'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$status = 'pending';
+		}
+		if ( isset( $_POST['visibility'] ) && 'private' === $_POST['visibility'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		{
+			$status = 'private';
+		}
+
+		if ( !Post_Authorship::post_status_requires_main_author( $status ) )
+		{
+			return;
+		}
+
+		if ( WP::verify_nonce( 'molongui_post_authors' ) )
+		{
+			$submitted_authors = isset( $_POST['molongui_post_authors'] ) && is_array( $_POST['molongui_post_authors'] )
+				? wp_unslash( $_POST['molongui_post_authors'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$submitted_main    = isset( $_POST['molongui_main_author'] ) && is_string( $_POST['molongui_main_author'] )
+				? sanitize_text_field( wp_unslash( $_POST['molongui_main_author'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$authorship        = self::prepare_authorship_for_save( $post_id, $submitted_authors, $submitted_main );
 		}
 		else
 		{
-			$message = __( "This post cannot be published because it does not have a valid main author. Select a main author and try again.", 'molongui-authorship' );
+			$authorship = Post_Authorship::get_publication_authorship_candidate(
+				$post_id,
+				array(),
+				array( 'post_author' => $post ? $post->post_author : get_current_user_id() )
+			);
 		}
+
+		if ( is_wp_error( $authorship ) || !Post_Authorship::is_publishable_authorship( $authorship['main'], $authorship['authors'] ) )
+		{
+			wp_die(
+				esc_html( Post_Authorship::main_author_required_message() ),
+				esc_html__( 'Publication blocked', 'molongui-authorship' ),
+				array( 'response' => 400, 'back_link' => true )
+			);
+		}
+	}
+
+	public function flag_main_author_required_error( $post_id, $requested_status, $fallback_status, $authorship )
+	{
+		global $pagenow;
+
+		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( !wp_doing_ajax() && 'edit.php' !== $pagenow ) )
+		{
+			return;
+		}
+
+		$selected_posts = isset( $_REQUEST['post'] ) ? (array) wp_unslash( $_REQUEST['post'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$selected_posts = array_filter( array_map( 'absint', $selected_posts ) );
+		$message        = count( $selected_posts ) > 1
+			? __( 'One or more posts need a valid main author before they can be published.', 'molongui-authorship' )
+			: Post_Authorship::main_author_required_message();
 
 		if ( !headers_sent() )
 		{
 			setcookie( 'ma_main_author_required', $message, 0, '/' );
 		}
-
-		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || wp_doing_ajax() )
-		{
-			return;
-		}
-
-		if ( is_admin() )
-		{
-			add_filter( 'redirect_post_location', function( $location )
-			{
-				return add_query_arg( 'molongui-main-author', 'required', $location );
-			});
-		}
 	}
 
 	public function main_author_required_admin_notice()
 	{
-		$query_notice  = '';
-		$cookie_notice = '';
+		global $pagenow;
 
-		if ( isset( $_GET['molongui-main-author'] ) and is_string( $_GET['molongui-main-author'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		{
-			$query_notice = sanitize_key( wp_unslash( $_GET['molongui-main-author'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
-
-		if ( isset( $_COOKIE['ma_main_author_required'] ) and is_string( $_COOKIE['ma_main_author_required'] ) )
-		{
-			$cookie_notice = sanitize_text_field( wp_unslash( $_COOKIE['ma_main_author_required'] ) );
-
-			if ( !headers_sent() )
-			{
-				setcookie( 'ma_main_author_required', '', time() - HOUR_IN_SECONDS, '/' );
-			}
-
-			unset( $_COOKIE['ma_main_author_required'] );
-		}
-
-		if ( 'required' !== $query_notice and '' === $cookie_notice )
+		if ( !isset( $_COOKIE['ma_main_author_required'] ) || !is_string( $_COOKIE['ma_main_author_required'] ) )
 		{
 			return;
 		}
 
-		$message = $cookie_notice ? $cookie_notice : __( "This post cannot be published because it does not have a valid main author. Select a main author and try again.", 'molongui-authorship' );
+		$message = sanitize_text_field( wp_unslash( $_COOKIE['ma_main_author_required'] ) );
+
+		if ( !headers_sent() )
+		{
+			setcookie( 'ma_main_author_required', '', time() - HOUR_IN_SECONDS, '/' );
+		}
+		unset( $_COOKIE['ma_main_author_required'] );
+
+		if ( 'edit.php' !== $pagenow || '' === $message )
+		{
+			return;
+		}
 		?>
 		<div class="notice notice-error is-dismissible">
 			<p><?php echo esc_html( $message ); ?></p>
@@ -1951,6 +2063,15 @@ class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 		if ( is_wp_error( $new_authorship ) )
 		{
 			return $new_authorship;
+		}
+
+		if ( Post_Authorship::post_status_requires_main_author( get_post_status( $post_id ) )
+			&& ! Post_Authorship::is_publishable_authorship( $new_authorship['main'], $new_authorship['authors'] ) )
+		{
+			return new \WP_Error(
+				'molongui_authorship_main_author_required',
+				__( 'Select a valid main author before updating a published post.', 'molongui-authorship' )
+			);
 		}
 
 		$old_post_authors = $old_authorship['authors'];

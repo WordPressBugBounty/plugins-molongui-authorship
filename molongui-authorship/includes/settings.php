@@ -58,6 +58,7 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
 		add_filter( 'authorship/common_settings_section_id', array( $this, 'define_common_settings_section_id' ) );
 		add_filter( 'authorship/common_settings_section_name', array( $this, 'define_common_settings_section_name' ) );
 		add_filter( 'authorship/default_options', array( __CLASS__, 'set_defaults' ) );
+		add_action( 'init', array( __CLASS__, 'migrate_avatar_settings' ), 11 );
 		add_action( 'authorship/options', array( __CLASS__, 'add_defaults' ) );
 		add_filter( 'authorship/plugin_settings', array( $this, 'define_plugin_settings' ) );
 		add_filter( 'authorship/validate_options', array( $this, 'validate_freemium' ), 10, 2 );
@@ -76,6 +77,30 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
 
 		add_filter( 'authorship/validate_options', array( $this, 'keep_db_19_keys' ), 20, 2 );
 		add_filter( 'authorship/validate_editor_options', array( $this, 'keep_db_19_keys' ), 20, 2 );
+	}
+
+	public static function migrate_avatar_settings()
+	{
+		$options = get_option( MOLONGUI_AUTHORSHIP_PREFIX . '_options', array() );
+
+		if ( ! is_array( $options ) || empty( $options ) )
+		{
+			return;
+		}
+
+		$missing = array_diff_key(
+			array(
+				'gravatar_enabled'       => true,
+				'default_avatar_enabled' => false,
+				'default_avatar_id'      => 0,
+			),
+			$options
+		);
+
+		if ( ! empty( $missing ) )
+		{
+			update_option( MOLONGUI_AUTHORSHIP_PREFIX . '_options', array_merge( $missing, $options ) );
+		}
 	}
 
 	public function define_common_settings_section_id()
@@ -4855,7 +4880,19 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
 			'guest-in-api'         => 'rest_api_add_guests_authors',
 		);
 
-		return !empty( $options[$features[$feature]] );
+		if ( ! isset( $features[ $feature ] ) )
+		{
+			return false;
+		}
+
+		$key = $features[ $feature ];
+
+		if ( 'gravatar' === $feature && ! array_key_exists( $key, $options ) )
+		{
+			return true;
+		}
+
+		return ! empty( $options[ $key ] );
 	}
 
 	public static function display_contributors_ad()

@@ -269,7 +269,15 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
-= 5.3.0 (2026-10-06) =
+= 5.3.1 (2026-10-08) =
+
+* **Enhanced**: Security and WordPress coding standards compliance.
+* **Fixed**: Issue where posts could fail to publish or unexpectedly revert to Draft when using Gutenberg or Classic Editor.
+* **Fixed**: Missing Gravatar images after updating from previous versions..
+* **Fixed**: Performance issue that could cause browser freezes on pages with frequent DOM updates.
+* **Fixed**: Several admin UI escaping and validation issues.
+
+= 5.3.0 (2026-10-07) =
 
 * **Added**: Author Box Gutenberg block for WordPress 6.3 and later.
 * **Added**: Post Byline Gutenberg block for WordPress 6.3 and later.

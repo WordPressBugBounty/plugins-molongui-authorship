@@ -11,7 +11,7 @@
  * Plugin Name:       Molongui Authorship
  * Plugin URI:        https://www.molongui.com/wordpress-plugin-post-authors
  * Description:       All-in-One Authorship Solution: Seamless Author Box, Guest Authors, and Co-Authors to enhance your site's authority, credibility, engagement, and SEO.
- * Version:           5.3.0
+ * Version:           5.3.1
  * Requires at least: 5.2
  * Tested up to:      7.1
  * Requires PHP:      5.6.20
@@ -44,7 +44,7 @@ require_once __DIR__ . '/common/utils/singleton.php';
 
 final class MolonguiAuthorship {
 
-	const VERSION = '5.3.0';
+	const VERSION = '5.3.1';
 
 	use Singleton;
 
