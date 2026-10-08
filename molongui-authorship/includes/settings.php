@@ -30,7 +30,7 @@ class Settings extends \Molongui\Authorship\Common\Modules\Settings
 {
 	private $stylesheet = '/assets/js/options.xxxx.min.css';
 
-	private $javascript = 'assets/js/options.839f.min.js';
+	private $javascript = 'assets/js/options.71be.min.js';
 
 	private $screen_id;
 

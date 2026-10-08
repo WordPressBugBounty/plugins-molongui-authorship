@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
 
 class Author_Box_Editor
 {
-	static  $javascript     = '/assets/js/editor.4900.min.js';
+	static  $javascript     = '/assets/js/editor.12d5.min.js';
 	static  $stylesheet     = '';
 	private $stylesheet_ltr = '/assets/css/editor.7b83.min.css';
 	private $stylesheet_rtl = '/assets/css/editor-rtl.700f.min.css';

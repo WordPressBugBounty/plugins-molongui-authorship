@@ -269,6 +269,10 @@ In order to run, Molongui Authorship requires:
 
 <strong>Important</strong>: If you use a caching plugin, please clear your cache after updating any plugins.
 
+= 5.3.2 (2026-10-08) =
+
+* **Fixed**: Automatic Main Author assignment when adding, replacing, or removing post authors.
+
 = 5.3.1 (2026-10-08) =
 
 * **Enhanced**: Security and WordPress coding standards compliance.

@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 
 class Admin_Post extends \Molongui\Authorship\Common\Utils\Post
 {
-	private $javascript           = '/assets/js/edit-post.ba77.min.js';
+	private $javascript           = '/assets/js/edit-post.38ea.min.js';
 	private $javascript_gutenberg = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-gutenberg.4727.min.js';
 	private $javascript_classic   = MOLONGUI_AUTHORSHIP_URL . 'assets/js/edit-post-classic.min.js';
 	private $stylesheet           = '';
